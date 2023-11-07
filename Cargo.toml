@@ -1,0 +1,12 @@
+[package]
+name = "etsi-web"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rasn = { git = "https://github.com/6d7a/rasn", branch = "feature/jer" }
+
+[dev-dependencies]
+hex = { version = "0.4", default-features = false }
