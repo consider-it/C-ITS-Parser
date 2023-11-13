@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rasn = { git = "https://github.com/6d7a/rasn", branch = "feature/jer" }
+etsi-geonetworking = { git = "https://github.com/consider-it/V2X-Geonetworking" }
+etsi-transports = { git = "https://github.com/consider-it/V2X-Transport_protocols" }
+rasn = { git = "https://github.com/XAMPPRocky/rasn"  }
 
 [dev-dependencies]
-hex = { version = "0.4", default-features = false }
+hex = { version = "0.4" }

@@ -1,6 +1,5 @@
 #![recursion_limit = "32"]
-#![no_std]
-
+#![cfg_attr(not(test), no_std)]
 mod standards;
 
 pub fn add(left: usize, right: usize) -> usize {
