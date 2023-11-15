@@ -1,6 +1,3 @@
-extern crate alloc;
-
-use alloc::{format, string::String};
 use etsi_geonetworking::{
     Decodable, Decode, Encode, Header as GeoNetworkingHeader, NextAfterCommon,
 };
@@ -9,7 +6,7 @@ use etsi_transports::{
 };
 use wasm_bindgen::prelude::*;
 
-use crate::EtsiJson;
+use crate::{EtsiJson, map_err_to_string};
 
 macro_rules! btp {
     ($btp_ty:ty, $input:ident) => {
@@ -25,18 +22,18 @@ macro_rules! btp {
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 #[no_mangle]
-pub fn decodeDenmToJson(
+pub fn decodeDenm(
     denm: &[u8],
     version: u32,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(denm, includesHeaders)?;
     etsi_json.its = match version {
-        131 => Some(transcode_uper_to_jer_bytes::<
+        131 => Some(transcode_uper_to_jer::<
             crate::standards::denm_1_3_1::DENM,
         >(&denm[bytes_read..]))
         .transpose(),
-        211 => Some(transcode_uper_to_jer_bytes::<
+        211 => Some(transcode_uper_to_jer::<
             crate::standards::denm_2_1_1::DENM,
         >(&denm[bytes_read..]))
         .transpose(),
@@ -52,14 +49,14 @@ pub fn decodeDenmToJson(
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 #[no_mangle]
-pub fn decodeCamToJson(
+pub fn decodeCam(
     cam: &[u8],
     version: u32,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(cam, includesHeaders)?;
     etsi_json.its = match version {
-        141 => Some(transcode_uper_to_jer_bytes::<
+        141 => Some(transcode_uper_to_jer::<
             crate::standards::cam_1_4_1::CAM,
         >(&cam[bytes_read..]))
         .transpose(),
@@ -75,14 +72,14 @@ pub fn decodeCamToJson(
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 #[no_mangle]
-pub fn decodeMapemToJson(
+pub fn decodeMapem(
     mapem: &[u8],
     version: u32,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(mapem, includesHeaders)?;
     etsi_json.its = match version {
-        131 => Some(transcode_uper_to_jer_bytes::<
+        131 => Some(transcode_uper_to_jer::<
             crate::standards::is_1_3_1::MAPEM,
         >(&mapem[bytes_read..]))
         .transpose(),
@@ -98,14 +95,14 @@ pub fn decodeMapemToJson(
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 #[no_mangle]
-pub fn decodeSpatemToJson(
+pub fn decodeSpatem(
     spatem: &[u8],
     version: u32,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(spatem, includesHeaders)?;
     etsi_json.its = match version {
-        131 => Some(transcode_uper_to_jer_bytes::<
+        131 => Some(transcode_uper_to_jer::<
             crate::standards::is_1_3_1::SPATEM,
         >(&spatem[bytes_read..]))
         .transpose(),
@@ -121,14 +118,14 @@ pub fn decodeSpatemToJson(
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 #[no_mangle]
-pub fn decodeIvimToJson(
+pub fn decodeIvim(
     ivim: &[u8],
     version: u32,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(ivim, includesHeaders)?;
     etsi_json.its = match version {
-        131 => Some(transcode_uper_to_jer_bytes::<
+        131 => Some(transcode_uper_to_jer::<
             crate::standards::is_1_3_1::IVIM,
         >(&ivim[bytes_read..]))
         .transpose(),
@@ -144,14 +141,14 @@ pub fn decodeIvimToJson(
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 #[no_mangle]
-pub fn decodeSremToJson(
+pub fn decodeSrem(
     srem: &[u8],
     version: u32,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(srem, includesHeaders)?;
     etsi_json.its = match version {
-        131 => Some(transcode_uper_to_jer_bytes::<
+        131 => Some(transcode_uper_to_jer::<
             crate::standards::is_1_3_1::SREM,
         >(&srem[bytes_read..]))
         .transpose(),
@@ -167,14 +164,14 @@ pub fn decodeSremToJson(
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 #[no_mangle]
-pub fn decodeSsemToJson(
+pub fn decodeSsem(
     ssem: &[u8],
     version: u32,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(ssem, includesHeaders)?;
     etsi_json.its = match version {
-        131 => Some(transcode_uper_to_jer_bytes::<
+        131 => Some(transcode_uper_to_jer::<
             crate::standards::is_1_3_1::SSEM,
         >(&ssem[bytes_read..]))
         .transpose(),
@@ -233,10 +230,6 @@ fn decode_geonetworking_header(
     Ok((bits_read / 8, geonetworking.transpose()?, next_header))
 }
 
-fn map_err_to_string<E: core::fmt::Debug>(error: E) -> String {
-    format!("{error:?}")
-}
-
 fn decode_transport_header(
     input: &[u8],
     header_type: NextAfterCommon,
@@ -254,7 +247,7 @@ fn decode_transport_header(
     }
 }
 
-fn transcode_uper_to_jer_bytes<T: rasn::Decode + rasn::Encode>(
+fn transcode_uper_to_jer<T: rasn::Decode + rasn::Encode>(
     input: &[u8],
 ) -> Result<String, String> {
     rasn::jer::encode(&rasn::uper::decode::<T>(input).map_err(map_err_to_string)?)

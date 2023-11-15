@@ -1,6 +1,5 @@
-extern crate alloc;
-
 pub mod de;
+pub mod en;
 pub mod standards;
 
 use wasm_bindgen::prelude::*;
@@ -10,4 +9,8 @@ pub struct EtsiJson {
     pub geonetworking: Option<String>,
     pub transport: Option<String>,
     pub its: Option<String>,
+}
+
+pub(crate) fn map_err_to_string<E: core::fmt::Debug>(error: E) -> String {
+    format!("{error:?}")
 }
