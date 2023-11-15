@@ -4,7 +4,7 @@ use etsi_transports::{BasicTransportAHeader, BasicTransportBHeader, Encode as Tp
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(js_name = encodeDenm)]
-/// Encodes a DENM message into binary UPER with optional headers 
+/// Encodes a DENM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, denms of the following versions are supported: v2.1.1 (211) and v1.3.1 (131)
 /// Throws string error on encoding error
@@ -33,7 +33,7 @@ pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, 
 }
 
 #[wasm_bindgen(js_name = encodeCam)]
-/// Encodes a CAM message into binary UPER with optional headers 
+/// Encodes a CAM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cams of the following versions are supported: v1.4.1 (141)
 /// Throws string error on encoding error
@@ -57,7 +57,7 @@ pub fn encode_cam(cam: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, St
 }
 
 #[wasm_bindgen(js_name = encodeMapem)]
-/// Encodes a MAPEM message into binary UPER with optional headers 
+/// Encodes a MAPEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, mapems of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
@@ -81,7 +81,7 @@ pub fn encode_mapem(mapem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array
 }
 
 #[wasm_bindgen(js_name = encodeSpatem)]
-/// Encodes a SPATEM message into binary UPER with optional headers 
+/// Encodes a SPATEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, spatems of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
@@ -105,7 +105,7 @@ pub fn encode_spatem(spatem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Arr
 }
 
 #[wasm_bindgen(js_name = encodeIvim)]
-/// Encodes a IVIM message into binary UPER with optional headers 
+/// Encodes a IVIM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ivims of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
@@ -129,7 +129,7 @@ pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, 
 }
 
 #[wasm_bindgen(js_name = encodeSrem)]
-/// Encodes a SREM message into binary UPER with optional headers 
+/// Encodes a SREM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, srems of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
@@ -153,7 +153,7 @@ pub fn encode_srem(srem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, 
 }
 
 #[wasm_bindgen(js_name = encodeCpm)]
-/// Encodes a CPM message into binary UPER with optional headers 
+/// Encodes a CPM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cpms of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
@@ -163,9 +163,7 @@ pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, St
     match (&cpm.its, version) {
         (None, 131) => return Err(format!("No CPM JSON provided.")),
         (Some(json), 131) => {
-            encoded.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::CPM,
-            >(json)?);
+            encoded.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::CPM>(json)?);
         }
         _ => {
             return Err(format!(
@@ -177,7 +175,7 @@ pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, St
 }
 
 #[wasm_bindgen(js_name = encodeSsem)]
-/// Encodes a SSEM message into binary UPER with optional headers 
+/// Encodes a SSEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ssems of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error

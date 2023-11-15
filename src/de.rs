@@ -33,7 +33,11 @@ pub fn decode_denm_default(denm: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports DENM versions v2.1.1 (211) and v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_denm(denm: &[u8], version: Option<u32>, includesHeaders: bool) -> Result<EtsiJson, String> {
+pub fn decode_denm(
+    denm: &[u8],
+    version: Option<u32>,
+    includesHeaders: bool,
+) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(denm, includesHeaders)?;
     etsi_json.its = match version {
         Some(131) => Some(transcode_uper_to_jer::<crate::standards::denm_1_3_1::DENM>(
@@ -66,7 +70,11 @@ pub fn decode_cam_default(cam: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports CAM version v1.4.1 (141)
 /// Set `includesHeaders` to `false` if the given binary CAM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_cam(cam: &[u8], version: Option<u32>, includesHeaders: bool) -> Result<EtsiJson, String> {
+pub fn decode_cam(
+    cam: &[u8],
+    version: Option<u32>,
+    includesHeaders: bool,
+) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(cam, includesHeaders)?;
     etsi_json.its = match version {
         None | Some(141) => Some(transcode_uper_to_jer::<crate::standards::cam_1_4_1::CAM>(
@@ -87,7 +95,7 @@ pub fn decode_cam(cam: &[u8], version: Option<u32>, includesHeaders: bool) -> Re
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
 pub fn decode_mapem_default(mapem: &[u8]) -> Result<EtsiJson, String> {
-   decode_mapem(mapem, None, true)
+    decode_mapem(mapem, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeMapemVersion)]
@@ -95,7 +103,11 @@ pub fn decode_mapem_default(mapem: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports MAPEM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary MAPEM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_mapem(mapem: &[u8], version: Option<u32>, includesHeaders: bool) -> Result<EtsiJson, String> {
+pub fn decode_mapem(
+    mapem: &[u8],
+    version: Option<u32>,
+    includesHeaders: bool,
+) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(mapem, includesHeaders)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::MAPEM>(
@@ -116,7 +128,7 @@ pub fn decode_mapem(mapem: &[u8], version: Option<u32>, includesHeaders: bool) -
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
 pub fn decode_spatem_default(spatem: &[u8]) -> Result<EtsiJson, String> {
-   decode_spatem(spatem, None, true)
+    decode_spatem(spatem, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeSpatemVersion)]
@@ -149,7 +161,7 @@ pub fn decode_spatem(
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
 pub fn decode_ivim_default(ivim: &[u8]) -> Result<EtsiJson, String> {
-   decode_ivim(ivim, None, true)
+    decode_ivim(ivim, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeIvimVersion)]
@@ -157,7 +169,11 @@ pub fn decode_ivim_default(ivim: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports IVIM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary IVIM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_ivim(ivim: &[u8], version: Option<u32>, includesHeaders: bool) -> Result<EtsiJson, String> {
+pub fn decode_ivim(
+    ivim: &[u8],
+    version: Option<u32>,
+    includesHeaders: bool,
+) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(ivim, includesHeaders)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::IVIM>(
@@ -178,7 +194,7 @@ pub fn decode_ivim(ivim: &[u8], version: Option<u32>, includesHeaders: bool) -> 
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
 pub fn decode_srem_default(srem: &[u8]) -> Result<EtsiJson, String> {
-   decode_srem(srem, None, true)
+    decode_srem(srem, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeSremVersion)]
@@ -186,7 +202,11 @@ pub fn decode_srem_default(srem: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports DENM versions v1.3.1 (211) and v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_srem(srem: &[u8], version: Option<u32>, includesHeaders: bool) -> Result<EtsiJson, String> {
+pub fn decode_srem(
+    srem: &[u8],
+    version: Option<u32>,
+    includesHeaders: bool,
+) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(srem, includesHeaders)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::SREM>(
@@ -207,7 +227,7 @@ pub fn decode_srem(srem: &[u8], version: Option<u32>, includesHeaders: bool) -> 
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
 pub fn decode_cpm_default(cpm: &[u8]) -> Result<EtsiJson, String> {
-   decode_cpm(cpm, None, true)
+    decode_cpm(cpm, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeCpmVersion)]
@@ -215,7 +235,11 @@ pub fn decode_cpm_default(cpm: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports CPM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary CPM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_cpm(cpm: &[u8], version: Option<u32>, includesHeaders: bool) -> Result<EtsiJson, String> {
+pub fn decode_cpm(
+    cpm: &[u8],
+    version: Option<u32>,
+    includesHeaders: bool,
+) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(cpm, includesHeaders)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::CPM>(
@@ -236,7 +260,7 @@ pub fn decode_cpm(cpm: &[u8], version: Option<u32>, includesHeaders: bool) -> Re
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
 pub fn decode_ssem_default(ssem: &[u8]) -> Result<EtsiJson, String> {
-   decode_ssem(ssem, None, true)
+    decode_ssem(ssem, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeSsemVersion)]
@@ -244,7 +268,11 @@ pub fn decode_ssem_default(ssem: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports SSEM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary SSEM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_ssem(ssem: &[u8], version: Option<u32>, includesHeaders: bool) -> Result<EtsiJson, String> {
+pub fn decode_ssem(
+    ssem: &[u8],
+    version: Option<u32>,
+    includesHeaders: bool,
+) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(ssem, includesHeaders)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::SSEM>(
