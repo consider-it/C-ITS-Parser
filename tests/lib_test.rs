@@ -1,6 +1,6 @@
 use etsi_web::{
-    de::{decodeCam, decodeDenm, decodeMapem, decodeSpatem, decodeIvim, decodeSrem, decodeCpm},
-    en::{encodeCam, encodeDenm, encodeMapem, encodeSpatem, encodeIvim, encodeSrem, encodeCpm},
+    de::{decode_cam, decode_denm, decode_mapem, decode_spatem, decode_ivim, decode_srem, decode_cpm},
+    en::{encode_cam, encode_denm, encode_mapem, encode_spatem, encode_ivim, encode_srem, encode_cpm},
     standards::{
         cam_1_4_1::CAM,
         denm_2_1_1::DENM,
@@ -50,8 +50,8 @@ fn round_trip_denm() {
             .unwrap()
         ).unwrap())
     };
-    let encoded = encodeDenm(&json, 211).unwrap();
-    let decoded = decodeDenm(&encoded.to_vec(), 211, true).unwrap();
+    let encoded = encode_denm(&json, 211).unwrap();
+    let decoded = decode_denm(&encoded.to_vec(), None, true).unwrap();
     assert_eq!(json, decoded)
 }
 
@@ -67,8 +67,8 @@ fn round_trip_cam() {
             .unwrap()
         ).unwrap())
     };
-    let encoded = encodeCam(&json, 141).unwrap();
-    let decoded = decodeCam(&encoded.to_vec(), 141, true).unwrap();
+    let encoded = encode_cam(&json, 141).unwrap();
+    let decoded = decode_cam(&encoded.to_vec(), None, true).unwrap();
     assert_eq!(json, decoded)
 }
 
@@ -84,8 +84,8 @@ fn round_trip_mapem() {
             .unwrap()
         ).unwrap())
     };
-    let encoded = encodeMapem(&json, 131).unwrap();
-    let decoded = decodeMapem(&encoded.to_vec(), 131, true).unwrap();
+    let encoded = encode_mapem(&json, 131).unwrap();
+    let decoded = decode_mapem(&encoded.to_vec(), None, true).unwrap();
     assert_eq!(json, decoded)
 }
 
@@ -101,8 +101,8 @@ fn round_trip_spatem() {
             .unwrap()
         ).unwrap())
     };
-    let encoded = encodeSpatem(&json, 131).unwrap();
-    let decoded = decodeSpatem(&encoded.to_vec(), 131, true).unwrap();
+    let encoded = encode_spatem(&json, 131).unwrap();
+    let decoded = decode_spatem(&encoded.to_vec(), None, true).unwrap();
     assert_eq!(json, decoded)
 }
 
@@ -118,8 +118,8 @@ fn round_trip_ivim() {
             .unwrap()
         ).unwrap())
     };
-    let encoded = encodeIvim(&json, 131).unwrap();
-    let decoded = decodeIvim(&encoded.to_vec(), 131, true).unwrap();
+    let encoded = encode_ivim(&json, 131).unwrap();
+    let decoded = decode_ivim(&encoded.to_vec(), None, true).unwrap();
     assert_eq!(json, decoded)
 }
 
@@ -131,8 +131,8 @@ fn round_trip_srem() {
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some("{\"header\":{\"protocol_version\":2,\"message_i_d\":9,\"station_i_d\":760129084},\"srm\":{\"time_stamp\":98917,\"second\":23692,\"sequence_number\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"request_i_d\":0,\"request_type\":2,\"in_bound_lane\":{\"Approach\":0},\"out_bound_lane\":{\"Approach\":0}}}],\"requester\":{\"id\":{\"StationID\":3919},\"r_type\":{\"role\":1},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":7,\"speed\":232}},\"transit_status\":\"00000000\",\"transit_occupancy\":4,\"transit_schedule\":4}}}".into())
     };
-    let encoded = encodeSrem(&json, 131).unwrap();
-    let decoded: EtsiJson = decodeSrem(&encoded.to_vec(), 131, true).unwrap();
+    let encoded = encode_srem(&json, 131).unwrap();
+    let decoded: EtsiJson = decode_srem(&encoded.to_vec(), None, true).unwrap();
     assert_eq!(json, decoded)
 }
 
@@ -147,7 +147,7 @@ fn round_trip_cpm() {
             ]).unwrap()
         ).unwrap())
     };
-    let encoded = encodeCpm(&json, 131).unwrap();
-    let decoded = decodeCpm(&encoded.to_vec(), 131, true).unwrap();
+    let encoded = encode_cpm(&json, 131).unwrap();
+    let decoded = decode_cpm(&encoded.to_vec(), None, true).unwrap();
     assert_eq!(json, decoded)
 }

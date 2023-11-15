@@ -3,10 +3,12 @@ use etsi_geonetworking::{Decode, Encode, Encoder, Header as GeoNetworkingHeader}
 use etsi_transports::{BasicTransportAHeader, BasicTransportBHeader, Encode as TpEncode};
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
-#[allow(non_snake_case)]
-#[no_mangle]
-pub fn encodeDenm(denm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+#[wasm_bindgen(js_name = encodeDenm)]
+/// Encodes a DENM message into binary UPER with optional headers 
+/// The encoder expects either both (GeoNetworking and Transport) headers or none
+/// Currently, denms of the following versions are supported: v2.1.1 (211) and v1.3.1 (131)
+/// Throws string error on encoding error
+pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&denm.geonetworking, &denm.transport, &mut encoded)?;
     match (&denm.its, version) {
@@ -30,10 +32,12 @@ pub fn encodeDenm(denm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, S
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
-#[wasm_bindgen]
-#[allow(non_snake_case)]
-#[no_mangle]
-pub fn encodeCam(cam: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+#[wasm_bindgen(js_name = encodeCam)]
+/// Encodes a CAM message into binary UPER with optional headers 
+/// The encoder expects either both (GeoNetworking and Transport) headers or none
+/// Currently, cams of the following versions are supported: v1.4.1 (141)
+/// Throws string error on encoding error
+pub fn encode_cam(cam: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&cam.geonetworking, &cam.transport, &mut encoded)?;
     match (&cam.its, version) {
@@ -52,10 +56,12 @@ pub fn encodeCam(cam: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, Str
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
-#[wasm_bindgen]
-#[allow(non_snake_case)]
-#[no_mangle]
-pub fn encodeMapem(mapem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+#[wasm_bindgen(js_name = encodeMapem)]
+/// Encodes a MAPEM message into binary UPER with optional headers 
+/// The encoder expects either both (GeoNetworking and Transport) headers or none
+/// Currently, mapems of the following versions are supported: v1.3.1 (131)
+/// Throws string error on encoding error
+pub fn encode_mapem(mapem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&mapem.geonetworking, &mapem.transport, &mut encoded)?;
     match (&mapem.its, version) {
@@ -74,10 +80,12 @@ pub fn encodeMapem(mapem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array,
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
-#[wasm_bindgen]
-#[allow(non_snake_case)]
-#[no_mangle]
-pub fn encodeSpatem(spatem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+#[wasm_bindgen(js_name = encodeSpatem)]
+/// Encodes a SPATEM message into binary UPER with optional headers 
+/// The encoder expects either both (GeoNetworking and Transport) headers or none
+/// Currently, spatems of the following versions are supported: v1.3.1 (131)
+/// Throws string error on encoding error
+pub fn encode_spatem(spatem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&spatem.geonetworking, &spatem.transport, &mut encoded)?;
     match (&spatem.its, version) {
@@ -96,10 +104,12 @@ pub fn encodeSpatem(spatem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Arra
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
-#[wasm_bindgen]
-#[allow(non_snake_case)]
-#[no_mangle]
-pub fn encodeIvim(ivim: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+#[wasm_bindgen(js_name = encodeIvim)]
+/// Encodes a IVIM message into binary UPER with optional headers 
+/// The encoder expects either both (GeoNetworking and Transport) headers or none
+/// Currently, ivims of the following versions are supported: v1.3.1 (131)
+/// Throws string error on encoding error
+pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&ivim.geonetworking, &ivim.transport, &mut encoded)?;
     match (&ivim.its, version) {
@@ -118,10 +128,12 @@ pub fn encodeIvim(ivim: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, S
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
-#[wasm_bindgen]
-#[allow(non_snake_case)]
-#[no_mangle]
-pub fn encodeSrem(srem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+#[wasm_bindgen(js_name = encodeSrem)]
+/// Encodes a SREM message into binary UPER with optional headers 
+/// The encoder expects either both (GeoNetworking and Transport) headers or none
+/// Currently, srems of the following versions are supported: v1.3.1 (131)
+/// Throws string error on encoding error
+pub fn encode_srem(srem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&srem.geonetworking, &srem.transport, &mut encoded)?;
     match (&srem.its, version) {
@@ -140,10 +152,12 @@ pub fn encodeSrem(srem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, S
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
-#[wasm_bindgen]
-#[allow(non_snake_case)]
-#[no_mangle]
-pub fn encodeCpm(cpm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+#[wasm_bindgen(js_name = encodeCpm)]
+/// Encodes a CPM message into binary UPER with optional headers 
+/// The encoder expects either both (GeoNetworking and Transport) headers or none
+/// Currently, cpms of the following versions are supported: v1.3.1 (131)
+/// Throws string error on encoding error
+pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&cpm.geonetworking, &cpm.transport, &mut encoded)?;
     match (&cpm.its, version) {
@@ -162,10 +176,12 @@ pub fn encodeCpm(cpm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, Str
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
-#[wasm_bindgen]
-#[allow(non_snake_case)]
-#[no_mangle]
-pub fn encodeSsem(ssem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+#[wasm_bindgen(js_name = encodeSsem)]
+/// Encodes a SSEM message into binary UPER with optional headers 
+/// The encoder expects either both (GeoNetworking and Transport) headers or none
+/// Currently, ssems of the following versions are supported: v1.3.1 (131)
+/// Throws string error on encoding error
+pub fn encode_ssem(ssem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&ssem.geonetworking, &ssem.transport, &mut encoded)?;
     match (&ssem.its, version) {
