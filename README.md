@@ -13,6 +13,12 @@ V2X Etsi Web provides an npm package for de- and encoding the most common ETSI m
 * SSEM v1.3.1
 * CPM v1.3.1
 
+### Installation
+Install using npm:
+```sh
+npm install @consider-it/etsi-web
+ ```
+
 ### API
 For each of the messages (see above), the library exposes two functions for decoding and one for encoding.
 For example, for DENM messages:
