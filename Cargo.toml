@@ -16,7 +16,6 @@ lto = true
 [dependencies]
 etsi-geonetworking = { git = "https://github.com/consider-it/V2X-Geonetworking" }
 etsi-transports = { git = "https://github.com/consider-it/V2X-Transport_protocols" }
-js-sys = "0.3.65"
 rasn = { version = "0.12"  }
 wasm-bindgen = "0.2.87"
 
