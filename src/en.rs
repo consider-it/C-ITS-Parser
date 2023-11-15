@@ -10,15 +10,17 @@ pub fn encodeDenm(denm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, S
     let mut encoded = vec![];
     optionally_encode_headers(&denm.geonetworking, &denm.transport, &mut encoded)?;
     match (&denm.its, version) {
-        (None, 131) | (None, 211) => return Err(format!(
-            "No DENM JSON provided."
-        )),
+        (None, 131) | (None, 211) => return Err(format!("No DENM JSON provided.")),
         (Some(denm_json), 131) => {
-            encoded.append(&mut transcode_jer_to_uper::<crate::standards::denm_1_3_1::DENM>(denm_json)?);
-        },
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::denm_1_3_1::DENM,
+            >(denm_json)?);
+        }
         (Some(denm_json), 211) => {
-            encoded.append(&mut transcode_jer_to_uper::<crate::standards::denm_2_1_1::DENM>(denm_json)?);
-        },
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::denm_2_1_1::DENM,
+            >(denm_json)?);
+        }
         _ => {
             return Err(format!(
                 "Unsupported DENM version: Supported DENM versions are 131 and 211."
@@ -35,12 +37,12 @@ pub fn encodeCam(cam: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, Str
     let mut encoded = vec![];
     optionally_encode_headers(&cam.geonetworking, &cam.transport, &mut encoded)?;
     match (&cam.its, version) {
-        (None, 141) => return Err(format!(
-            "No CAM JSON provided."
-        )),
+        (None, 141) => return Err(format!("No CAM JSON provided.")),
         (Some(json), 141) => {
-            encoded.append(&mut transcode_jer_to_uper::<crate::standards::cam_1_4_1::CAM>(json)?);
-        },
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::cam_1_4_1::CAM,
+            >(json)?);
+        }
         _ => {
             return Err(format!(
                 "Unsupported CAM version: Supported CAM version is 141."
@@ -57,12 +59,12 @@ pub fn encodeMapem(mapem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array,
     let mut encoded = vec![];
     optionally_encode_headers(&mapem.geonetworking, &mapem.transport, &mut encoded)?;
     match (&mapem.its, version) {
-        (None, 131) => return Err(format!(
-            "No MAPEM JSON provided."
-        )),
+        (None, 131) => return Err(format!("No MAPEM JSON provided.")),
         (Some(json), 131) => {
-            encoded.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::MAPEM>(json)?);
-        },
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::is_1_3_1::MAPEM,
+            >(json)?);
+        }
         _ => {
             return Err(format!(
                 "Unsupported MAPEM version: Supported MAPEM version is 131."
@@ -79,12 +81,12 @@ pub fn encodeSpatem(spatem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Arra
     let mut encoded = vec![];
     optionally_encode_headers(&spatem.geonetworking, &spatem.transport, &mut encoded)?;
     match (&spatem.its, version) {
-        (None, 131) => return Err(format!(
-            "No SPATEM JSON provided."
-        )),
+        (None, 131) => return Err(format!("No SPATEM JSON provided.")),
         (Some(json), 131) => {
-            encoded.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::SPATEM>(json)?);
-        },
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::is_1_3_1::SPATEM,
+            >(json)?);
+        }
         _ => {
             return Err(format!(
                 "Unsupported SPATEM version: Supported SPATEM version is 131."
@@ -101,12 +103,12 @@ pub fn encodeIvim(ivim: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, S
     let mut encoded = vec![];
     optionally_encode_headers(&ivim.geonetworking, &ivim.transport, &mut encoded)?;
     match (&ivim.its, version) {
-        (None, 131) => return Err(format!(
-            "No IVIM JSON provided."
-        )),
+        (None, 131) => return Err(format!("No IVIM JSON provided.")),
         (Some(json), 131) => {
-            encoded.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::IVIM>(json)?);
-        },
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::is_1_3_1::IVIM,
+            >(json)?);
+        }
         _ => {
             return Err(format!(
                 "Unsupported IVIM version: Supported IVIM version is 131."
@@ -123,15 +125,37 @@ pub fn encodeSrem(srem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, S
     let mut encoded = vec![];
     optionally_encode_headers(&srem.geonetworking, &srem.transport, &mut encoded)?;
     match (&srem.its, version) {
-        (None, 131) => return Err(format!(
-            "No SREM JSON provided."
-        )),
+        (None, 131) => return Err(format!("No SREM JSON provided.")),
         (Some(json), 131) => {
-            encoded.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::SREM>(json)?);
-        },
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::is_1_3_1::SREM,
+            >(json)?);
+        }
         _ => {
             return Err(format!(
                 "Unsupported SREM version: Supported SREM version is 131."
+            ))
+        }
+    };
+    Ok(js_sys::Uint8Array::from(encoded.as_slice()))
+}
+
+#[wasm_bindgen]
+#[allow(non_snake_case)]
+#[no_mangle]
+pub fn encodeCpm(cpm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
+    let mut encoded = vec![];
+    optionally_encode_headers(&cpm.geonetworking, &cpm.transport, &mut encoded)?;
+    match (&cpm.its, version) {
+        (None, 131) => return Err(format!("No CPM JSON provided.")),
+        (Some(json), 131) => {
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::is_1_3_1::CPM,
+            >(json)?);
+        }
+        _ => {
+            return Err(format!(
+                "Unsupported CPM version: Supported CPM version is 131."
             ))
         }
     };
@@ -145,12 +169,12 @@ pub fn encodeSsem(ssem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, S
     let mut encoded = vec![];
     optionally_encode_headers(&ssem.geonetworking, &ssem.transport, &mut encoded)?;
     match (&ssem.its, version) {
-        (None, 131) => return Err(format!(
-            "No SSEM JSON provided."
-        )),
+        (None, 131) => return Err(format!("No SSEM JSON provided.")),
         (Some(json), 131) => {
-            encoded.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::SSEM>(json)?);
-        },
+            encoded.append(&mut transcode_jer_to_uper::<
+                crate::standards::is_1_3_1::SSEM,
+            >(json)?);
+        }
         _ => {
             return Err(format!(
                 "Unsupported SSEM version: Supported SSEM version is 131."

@@ -8,17 +8,18 @@ readme = "./README.md"
 
 [lib]
 name = "etsi_web"
-crate-type = ["cdylib"]
+crate-type = ["lib", "cdylib"]
 
 [profile.release]
 lto = true
 
 [dependencies]
-etsi-geonetworking = { git = "https://github.com/consider-it/V2X-Geonetworking" }
-etsi-transports = { git = "https://github.com/consider-it/V2X-Transport_protocols" }
+etsi-geonetworking = { git = "https://github.com/consider-it/V2X-Geonetworking", tag = "v0.1.0" }
+etsi-transports = { git = "https://github.com/consider-it/V2X-Transport_protocols", tag = "v0.1.0" }
 js-sys = "0.3.65"
 rasn = { version = "0.12"  }
 wasm-bindgen = "0.2.87"
 
 [dev-dependencies]
 hex = { version = "0.4" }
+wasm-bindgen-test = "0.3.0"
