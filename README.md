@@ -20,6 +20,18 @@ npm install @consider-it/etsi-web
  ```
 
 ### API
+The `decode` function is a catch-all method for decoding ITS messages of undefined type.
+```typescript
+* Decodes an ITS message of undefined type.
+* Tries to parse the ITS PDU header to read the message ID that identifies the message type.
+* Set `includesHeaders` to `false` if the given binary message does not contain GeoNetworking or Transport headers.
+* Throws string error on decoding errors.
+* @param {Uint8Array} message
+* @param {boolean} includesHeaders
+* @returns {EtsiJson}
+*/
+export function decode(message: Uint8Array, includesHeaders: boolean): EtsiJson;
+```
 For each of the messages (see above), the library exposes two functions for decoding and one for encoding.
 For example, for DENM messages:
 ```typescript

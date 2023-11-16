@@ -7,7 +7,7 @@ use etsi_transports::{
 };
 use wasm_bindgen::prelude::*;
 
-use crate::{map_err_to_string, EtsiJson};
+use crate::{map_err_to_string, EtsiJson, standards::is_1_3_1::ItsPduHeader};
 
 macro_rules! btp {
     ($btp_ty:ty, $input:ident) => {
@@ -18,6 +18,36 @@ macro_rules! btp {
             .map_err(map_err_to_string)
             .map(|buf| (4, Some(buf)))
     };
+}
+
+#[wasm_bindgen(js_name = decode)]
+/// Decodes an ITS message of undefined type.
+/// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
+/// Set `includesHeaders` to `false` if the given binary message does not contain GeoNetworking or Transport headers.
+/// Throws string error on decoding errors.
+pub fn decode(
+    message: &[u8],
+    includesHeaders: bool
+) -> Result<EtsiJson, String> {
+    let (bytes_read, mut etsi_json) = optionally_decode_headers(message, includesHeaders)?;
+    let message_type = rasn::uper::decode::<ItsPduHeader>(&message[bytes_read..]);
+    etsi_json.its = match message_type {
+        Ok(ItsPduHeader { message_i_d: 1, .. }) => decode_denm(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 2, .. }) => decode_cam(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 4, .. }) => decode_spatem(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 5, .. }) => decode_mapem(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 6, .. }) => decode_ivim(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 9, .. }) => decode_srem(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 10, .. }) => decode_ssem(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 14, .. }) => decode_cpm(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d, .. }) => return Err(format!(
+            "Unsupported ITS message type: Found message id {message_i_d}."
+        )),
+        _ => return Err(format!(
+                "Failed to detect message ID of ITS PDU header."
+            ))
+    };
+    Ok(etsi_json)
 }
 
 #[wasm_bindgen(js_name = decodeDenm)]
