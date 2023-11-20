@@ -188,7 +188,7 @@ pub fn decode_spatem(
 
 #[wasm_bindgen(js_name = decodeIvim)]
 /// Decodes a IVIM message with the default decoding options.
-/// The default options expect a message with headers and version 1.3.1
+/// The default options expect a message with headers and version 2.2.1
 /// Throws string error on decoding errors.
 pub fn decode_ivim_default(ivim: &[u8]) -> Result<EtsiJson, String> {
     decode_ivim(ivim, None, true)
@@ -196,7 +196,7 @@ pub fn decode_ivim_default(ivim: &[u8]) -> Result<EtsiJson, String> {
 
 #[wasm_bindgen(js_name = decodeIvimVersion)]
 /// Decodes a IVIM message with custom decoding options.
-/// Currently, the library supports IVIM versions v1.3.1 (131)
+/// Currently, the library supports IVIM versions v2.2.1 (221)
 /// Set `includesHeaders` to `false` if the given binary IVIM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
 pub fn decode_ivim(
@@ -206,13 +206,13 @@ pub fn decode_ivim(
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(ivim, includesHeaders)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::IVIM>(
+        None | Some(221) => Some(transcode_uper_to_jer::<crate::standards::ivim_2_2_1::IVIM>(
             &ivim[bytes_read..],
         ))
         .transpose(),
         _ => {
             return Err(format!(
-                "Unsupported IVIM version: Supported IVIM version is 131."
+                "Unsupported IVIM version: Supported IVIM version is 221."
             ))
         }
     }?;

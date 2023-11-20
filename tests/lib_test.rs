@@ -166,7 +166,7 @@ fn round_trip_ivim() {
             .unwrap()
         ).unwrap())
     };
-    let encoded = encode_ivim(&json, 131).unwrap();
+    let encoded = encode_ivim(&json, 221).unwrap();
     let decoded = decode_ivim(&encoded.to_vec(), None, true).unwrap();
     assert_eq!(json, decoded)
 }

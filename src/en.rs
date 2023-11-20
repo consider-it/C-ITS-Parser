@@ -107,21 +107,21 @@ pub fn encode_spatem(spatem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Arr
 #[wasm_bindgen(js_name = encodeIvim)]
 /// Encodes a IVIM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
-/// Currently, ivims of the following versions are supported: v1.3.1 (131)
+/// Currently, ivims of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
 pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, String> {
     let mut encoded = vec![];
     optionally_encode_headers(&ivim.geonetworking, &ivim.transport, &mut encoded)?;
     match (&ivim.its, version) {
-        (None, 131) => return Err(format!("No IVIM JSON provided.")),
-        (Some(json), 131) => {
+        (None, 221) => return Err(format!("No IVIM JSON provided.")),
+        (Some(json), 221) => {
             encoded.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::IVIM,
+                crate::standards::ivim_2_2_1::IVIM,
             >(json)?);
         }
         _ => {
             return Err(format!(
-                "Unsupported IVIM version: Supported IVIM version is 131."
+                "Unsupported IVIM version: Supported IVIM version is 221."
             ))
         }
     };
