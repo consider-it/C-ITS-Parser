@@ -5,6 +5,7 @@ use etsi_geonetworking::{
 use etsi_transports::{
     BasicTransportAHeader, BasicTransportBHeader, Decode as TransportDecode, IPv6Header,
 };
+#[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
 use crate::{map_err_to_string, EtsiJson, standards::is_1_3_1::ItsPduHeader};
@@ -20,7 +21,7 @@ macro_rules! btp {
     };
 }
 
-#[wasm_bindgen(js_name = decode)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decode))]
 /// Decodes an ITS message of undefined type.
 /// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
 /// Set `includesHeaders` to `false` if the given binary message does not contain GeoNetworking or Transport headers.
@@ -50,7 +51,7 @@ pub fn decode_to_json(
     Ok(etsi_json)
 }
 
-#[wasm_bindgen(js_name = decodeDenm)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeDenm))]
 /// Decodes a DENM message with the default decoding options.
 /// The default options expect a message with headers and version 2.2.1
 /// Throws string error on decoding errors.
@@ -58,7 +59,7 @@ pub fn decode_denm_default_to_json(denm: &[u8]) -> Result<EtsiJson, String> {
     decode_denm_to_json(denm, None, true)
 }
 
-#[wasm_bindgen(js_name = decodeDenmVersion)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeDenmVersion))]
 /// Decodes a DENM message with custom decoding options.
 /// Currently, the library supports DENM versions v2.1.1 (211) and v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
@@ -87,7 +88,7 @@ pub fn decode_denm_to_json(
     Ok(etsi_json)
 }
 
-#[wasm_bindgen(js_name = decodeCam)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeCam))]
 /// Decodes a CAM message with the default decoding options.
 /// The default options expect a message with headers and version 1.4.1
 /// Throws string error on decoding errors.
@@ -95,7 +96,7 @@ pub fn decode_cam_default_to_json(cam: &[u8]) -> Result<EtsiJson, String> {
     decode_cam_to_json(cam, None, true)
 }
 
-#[wasm_bindgen(js_name = decodeCamVersion)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeCamVersion))]
 /// Decodes a CAM message with custom decoding options.
 /// Currently, the library supports CAM version v1.4.1 (141)
 /// Set `includesHeaders` to `false` if the given binary CAM does not contain GeoNetworking or Transport headers.
@@ -120,7 +121,7 @@ pub fn decode_cam_to_json(
     Ok(etsi_json)
 }
 
-#[wasm_bindgen(js_name = decodeMapem)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeMapem))]
 /// Decodes a MAPEM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
@@ -128,7 +129,7 @@ pub fn decode_mapem_default_to_json(mapem: &[u8]) -> Result<EtsiJson, String> {
     decode_mapem_to_json(mapem, None, true)
 }
 
-#[wasm_bindgen(js_name = decodeMapemVersion)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeMapemVersion))]
 /// Decodes a MAPEM message with custom decoding options.
 /// Currently, the library supports MAPEM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary MAPEM does not contain GeoNetworking or Transport headers.
@@ -153,7 +154,7 @@ pub fn decode_mapem_to_json(
     Ok(etsi_json)
 }
 
-#[wasm_bindgen(js_name = decodeSpatem)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeSpatem))]
 /// Decodes a SPATEM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
@@ -161,7 +162,7 @@ pub fn decode_spatem_default_to_json(spatem: &[u8]) -> Result<EtsiJson, String> 
     decode_spatem_to_json(spatem, None, true)
 }
 
-#[wasm_bindgen(js_name = decodeSpatemVersion)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeSpatemVersion))]
 /// Decodes a SPATEM message with custom decoding options.
 /// Currently, the library supports SPATEM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary SPATEM does not contain GeoNetworking or Transport headers.
@@ -186,7 +187,7 @@ pub fn decode_spatem_to_json(
     Ok(etsi_json)
 }
 
-#[wasm_bindgen(js_name = decodeIvim)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeIvim))]
 /// Decodes a IVIM message with the default decoding options.
 /// The default options expect a message with headers and version 2.2.1
 /// Throws string error on decoding errors.
@@ -194,7 +195,7 @@ pub fn decode_ivim_default_to_json(ivim: &[u8]) -> Result<EtsiJson, String> {
     decode_ivim_to_json(ivim, None, true)
 }
 
-#[wasm_bindgen(js_name = decodeIvimVersion)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeIvimVersion))]
 /// Decodes a IVIM message with custom decoding options.
 /// Currently, the library supports IVIM versions v2.2.1 (221)
 /// Set `includesHeaders` to `false` if the given binary IVIM does not contain GeoNetworking or Transport headers.
@@ -219,7 +220,7 @@ pub fn decode_ivim_to_json(
     Ok(etsi_json)
 }
 
-#[wasm_bindgen(js_name = decodeSrem)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeSrem))]
 /// Decodes a DENM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
@@ -227,7 +228,7 @@ pub fn decode_srem_default_to_json(srem: &[u8]) -> Result<EtsiJson, String> {
     decode_srem_to_json(srem, None, true)
 }
 
-#[wasm_bindgen(js_name = decodeSremVersion)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeSremVersion))]
 /// Decodes a DENM message with custom decoding options.
 /// Currently, the library supports DENM versions v1.3.1 (211) and v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
@@ -252,7 +253,7 @@ pub fn decode_srem_to_json(
     Ok(etsi_json)
 }
 
-#[wasm_bindgen(js_name = decodeCpm)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeCpm))]
 /// Decodes a CPM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
@@ -260,7 +261,7 @@ pub fn decode_cpm_default_to_json(cpm: &[u8]) -> Result<EtsiJson, String> {
     decode_cpm_to_json(cpm, None, true)
 }
 
-#[wasm_bindgen(js_name = decodeCpmVersion)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeCpmVersion))]
 /// Decodes a CPM message with custom decoding options.
 /// Currently, the library supports CPM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary CPM does not contain GeoNetworking or Transport headers.
@@ -285,7 +286,7 @@ pub fn decode_cpm_to_json(
     Ok(etsi_json)
 }
 
-#[wasm_bindgen(js_name = decodeSsem)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeSsem))]
 /// Decodes a SSEM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
@@ -293,7 +294,7 @@ pub fn decode_ssem_default_to_json(ssem: &[u8]) -> Result<EtsiJson, String> {
     decode_ssem_to_json(ssem, None, true)
 }
 
-#[wasm_bindgen(js_name = decodeSsemVersion)]
+#[cfg_attr(feature = "wasm", wasm_bindgen(js_name = decodeSsemVersion))]
 /// Decodes a SSEM message with custom decoding options.
 /// Currently, the library supports SSEM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary SSEM does not contain GeoNetworking or Transport headers.

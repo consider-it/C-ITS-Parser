@@ -1,8 +1,10 @@
 use crate::{map_err_to_string, EtsiJson};
 use etsi_geonetworking::{Decode, Encode, Encoder, Header as GeoNetworkingHeader};
 use etsi_transports::{BasicTransportAHeader, BasicTransportBHeader, Encode as TpEncode};
+#[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = encodeDenm)]
 /// Encodes a DENM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -32,6 +34,7 @@ pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, 
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = encodeCam)]
 /// Encodes a CAM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -56,6 +59,7 @@ pub fn encode_cam(cam: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, St
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = encodeMapem)]
 /// Encodes a MAPEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -80,6 +84,7 @@ pub fn encode_mapem(mapem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = encodeSpatem)]
 /// Encodes a SPATEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -104,6 +109,7 @@ pub fn encode_spatem(spatem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Arr
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = encodeIvim)]
 /// Encodes a IVIM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -128,6 +134,7 @@ pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, 
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = encodeSrem)]
 /// Encodes a SREM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -152,6 +159,7 @@ pub fn encode_srem(srem: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, 
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = encodeCpm)]
 /// Encodes a CPM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -174,6 +182,7 @@ pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<js_sys::Uint8Array, St
     Ok(js_sys::Uint8Array::from(encoded.as_slice()))
 }
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen(js_name = encodeSsem)]
 /// Encodes a SSEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
