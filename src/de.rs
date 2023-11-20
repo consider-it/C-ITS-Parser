@@ -25,21 +25,21 @@ macro_rules! btp {
 /// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
 /// Set `includesHeaders` to `false` if the given binary message does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode(
+pub fn decode_to_json(
     message: &[u8],
     includesHeaders: bool
 ) -> Result<EtsiJson, String> {
     let (bytes_read, mut etsi_json) = optionally_decode_headers(message, includesHeaders)?;
     let message_type = rasn::uper::decode::<ItsPduHeader>(&message[bytes_read..]);
     etsi_json.its = match message_type {
-        Ok(ItsPduHeader { message_i_d: 1, .. }) => decode_denm(&message[bytes_read..], None, false)?.its,
-        Ok(ItsPduHeader { message_i_d: 2, .. }) => decode_cam(&message[bytes_read..], None, false)?.its,
-        Ok(ItsPduHeader { message_i_d: 4, .. }) => decode_spatem(&message[bytes_read..], None, false)?.its,
-        Ok(ItsPduHeader { message_i_d: 5, .. }) => decode_mapem(&message[bytes_read..], None, false)?.its,
-        Ok(ItsPduHeader { message_i_d: 6, .. }) => decode_ivim(&message[bytes_read..], None, false)?.its,
-        Ok(ItsPduHeader { message_i_d: 9, .. }) => decode_srem(&message[bytes_read..], None, false)?.its,
-        Ok(ItsPduHeader { message_i_d: 10, .. }) => decode_ssem(&message[bytes_read..], None, false)?.its,
-        Ok(ItsPduHeader { message_i_d: 14, .. }) => decode_cpm(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 1, .. }) => decode_denm_to_json(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 2, .. }) => decode_cam_to_json(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 4, .. }) => decode_spatem_to_json(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 5, .. }) => decode_mapem_to_json(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 6, .. }) => decode_ivim_to_json(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 9, .. }) => decode_srem_to_json(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 10, .. }) => decode_ssem_to_json(&message[bytes_read..], None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 14, .. }) => decode_cpm_to_json(&message[bytes_read..], None, false)?.its,
         Ok(ItsPduHeader { message_i_d, .. }) => return Err(format!(
             "Unsupported ITS message type: Found message id {message_i_d}."
         )),
@@ -54,8 +54,8 @@ pub fn decode(
 /// Decodes a DENM message with the default decoding options.
 /// The default options expect a message with headers and version 2.2.1
 /// Throws string error on decoding errors.
-pub fn decode_denm_default(denm: &[u8]) -> Result<EtsiJson, String> {
-    decode_denm(denm, None, true)
+pub fn decode_denm_default_to_json(denm: &[u8]) -> Result<EtsiJson, String> {
+    decode_denm_to_json(denm, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeDenmVersion)]
@@ -63,7 +63,7 @@ pub fn decode_denm_default(denm: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports DENM versions v2.1.1 (211) and v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_denm(
+pub fn decode_denm_to_json(
     denm: &[u8],
     version: Option<u32>,
     includesHeaders: bool,
@@ -91,8 +91,8 @@ pub fn decode_denm(
 /// Decodes a CAM message with the default decoding options.
 /// The default options expect a message with headers and version 1.4.1
 /// Throws string error on decoding errors.
-pub fn decode_cam_default(cam: &[u8]) -> Result<EtsiJson, String> {
-    decode_cam(cam, None, true)
+pub fn decode_cam_default_to_json(cam: &[u8]) -> Result<EtsiJson, String> {
+    decode_cam_to_json(cam, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeCamVersion)]
@@ -100,7 +100,7 @@ pub fn decode_cam_default(cam: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports CAM version v1.4.1 (141)
 /// Set `includesHeaders` to `false` if the given binary CAM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_cam(
+pub fn decode_cam_to_json(
     cam: &[u8],
     version: Option<u32>,
     includesHeaders: bool,
@@ -124,8 +124,8 @@ pub fn decode_cam(
 /// Decodes a MAPEM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
-pub fn decode_mapem_default(mapem: &[u8]) -> Result<EtsiJson, String> {
-    decode_mapem(mapem, None, true)
+pub fn decode_mapem_default_to_json(mapem: &[u8]) -> Result<EtsiJson, String> {
+    decode_mapem_to_json(mapem, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeMapemVersion)]
@@ -133,7 +133,7 @@ pub fn decode_mapem_default(mapem: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports MAPEM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary MAPEM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_mapem(
+pub fn decode_mapem_to_json(
     mapem: &[u8],
     version: Option<u32>,
     includesHeaders: bool,
@@ -157,8 +157,8 @@ pub fn decode_mapem(
 /// Decodes a SPATEM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
-pub fn decode_spatem_default(spatem: &[u8]) -> Result<EtsiJson, String> {
-    decode_spatem(spatem, None, true)
+pub fn decode_spatem_default_to_json(spatem: &[u8]) -> Result<EtsiJson, String> {
+    decode_spatem_to_json(spatem, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeSpatemVersion)]
@@ -166,7 +166,7 @@ pub fn decode_spatem_default(spatem: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports SPATEM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary SPATEM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_spatem(
+pub fn decode_spatem_to_json(
     spatem: &[u8],
     version: Option<u32>,
     includesHeaders: bool,
@@ -190,8 +190,8 @@ pub fn decode_spatem(
 /// Decodes a IVIM message with the default decoding options.
 /// The default options expect a message with headers and version 2.2.1
 /// Throws string error on decoding errors.
-pub fn decode_ivim_default(ivim: &[u8]) -> Result<EtsiJson, String> {
-    decode_ivim(ivim, None, true)
+pub fn decode_ivim_default_to_json(ivim: &[u8]) -> Result<EtsiJson, String> {
+    decode_ivim_to_json(ivim, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeIvimVersion)]
@@ -199,7 +199,7 @@ pub fn decode_ivim_default(ivim: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports IVIM versions v2.2.1 (221)
 /// Set `includesHeaders` to `false` if the given binary IVIM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_ivim(
+pub fn decode_ivim_to_json(
     ivim: &[u8],
     version: Option<u32>,
     includesHeaders: bool,
@@ -223,8 +223,8 @@ pub fn decode_ivim(
 /// Decodes a DENM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
-pub fn decode_srem_default(srem: &[u8]) -> Result<EtsiJson, String> {
-    decode_srem(srem, None, true)
+pub fn decode_srem_default_to_json(srem: &[u8]) -> Result<EtsiJson, String> {
+    decode_srem_to_json(srem, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeSremVersion)]
@@ -232,7 +232,7 @@ pub fn decode_srem_default(srem: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports DENM versions v1.3.1 (211) and v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_srem(
+pub fn decode_srem_to_json(
     srem: &[u8],
     version: Option<u32>,
     includesHeaders: bool,
@@ -256,8 +256,8 @@ pub fn decode_srem(
 /// Decodes a CPM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
-pub fn decode_cpm_default(cpm: &[u8]) -> Result<EtsiJson, String> {
-    decode_cpm(cpm, None, true)
+pub fn decode_cpm_default_to_json(cpm: &[u8]) -> Result<EtsiJson, String> {
+    decode_cpm_to_json(cpm, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeCpmVersion)]
@@ -265,7 +265,7 @@ pub fn decode_cpm_default(cpm: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports CPM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary CPM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_cpm(
+pub fn decode_cpm_to_json(
     cpm: &[u8],
     version: Option<u32>,
     includesHeaders: bool,
@@ -289,8 +289,8 @@ pub fn decode_cpm(
 /// Decodes a SSEM message with the default decoding options.
 /// The default options expect a message with headers and version 1.3.1
 /// Throws string error on decoding errors.
-pub fn decode_ssem_default(ssem: &[u8]) -> Result<EtsiJson, String> {
-    decode_ssem(ssem, None, true)
+pub fn decode_ssem_default_to_json(ssem: &[u8]) -> Result<EtsiJson, String> {
+    decode_ssem_to_json(ssem, None, true)
 }
 
 #[wasm_bindgen(js_name = decodeSsemVersion)]
@@ -298,7 +298,7 @@ pub fn decode_ssem_default(ssem: &[u8]) -> Result<EtsiJson, String> {
 /// Currently, the library supports SSEM versions v1.3.1 (131)
 /// Set `includesHeaders` to `false` if the given binary SSEM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_ssem(
+pub fn decode_ssem_to_json(
     ssem: &[u8],
     version: Option<u32>,
     includesHeaders: bool,
