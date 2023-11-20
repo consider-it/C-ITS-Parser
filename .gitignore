@@ -2,3 +2,4 @@
 /Cargo.lock
 .npmrc
 /pkg
+.DS_Store
