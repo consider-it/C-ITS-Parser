@@ -14,15 +14,15 @@ crate-type = ["lib", "cdylib"]
 lto = true
 
 [features]
-default = ["wasm"]
-wasm = ["wasm-bindgen", "js-sys"]
 
 [dependencies]
-etsi-geonetworking = { git = "https://github.com/consider-it/V2X-Geonetworking", tag = "v0.1.0" }
+etsi-geonetworking = { git = "https://github.com/consider-it/V2X-Geonetworking" , tag = "v0.1.1" }
 etsi-transports = { git = "https://github.com/consider-it/V2X-Transport_protocols", tag = "v0.1.0" }
-js-sys = { version = "0.3.65", optional = true }
 rasn = { version = "0.12"  }
-wasm-bindgen = { version = "0.2.87", optional = true }
+
+[target.wasm32-unknown-unknown.dependencies]
+js-sys = { version = "0.3.65" }
+wasm-bindgen = { version = "0.2.87" }
 
 [dev-dependencies]
 hex = { version = "0.4" }

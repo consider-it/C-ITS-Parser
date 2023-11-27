@@ -1,12 +1,11 @@
 pub mod de;
-#[cfg(feature = "wasm")]
 pub mod en;
 #[cfg(not(doctest))]
 pub mod standards;
-#[cfg(feature = "wasm")]
+#[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-#[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen(getter_with_clone))]
 #[derive(Debug, Clone, PartialEq)]
 /// Wrapper for the stringified JSON of headers and ITS ETSI message
 pub struct EtsiJson {
