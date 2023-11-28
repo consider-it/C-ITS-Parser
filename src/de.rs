@@ -352,19 +352,13 @@ fn decode_geonetworking_header(input: &[u8]) -> Result<(&[u8], String, NextAfter
     let result = Packet::decode(input).map_err(map_err_to_string)?;
     let gn_json = result.decoded.encode_to_json().map_err(map_err_to_string)?;
     match result.decoded {
-        Packet::Secured {
-            secured,
-            common,
-            ..
-        } => secured
-            .data_payload()
-            .ok_or("Secured GeoNetworking Packet carrties not data!".into())
-            .map(|payload| (payload, gn_json, common.next_header)),
         Packet::Unsecured {
-            common,
-            payload,
-            ..
+            common, payload, ..
         } => Ok((payload, gn_json, common.next_header)),
+        p => p
+        .secured_payload_after_gn()
+        .ok_or("Secured GeoNetworking Packet carries no data!".into())
+        .map(|payload| (payload, gn_json, p.common().next_header)),
     }
 }
 
