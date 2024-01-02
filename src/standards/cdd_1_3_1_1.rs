@@ -22,14 +22,14 @@ pub struct AccidentSubCauseCode(pub u8);
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct ActionID {
-    pub originating_station_i_d: StationID,
+    pub originating_station_id: StationID,
     pub sequence_number: SequenceNumber,
 }
 
 impl ActionID {
-    pub fn new(originating_station_i_d: StationID, sequence_number: SequenceNumber) -> Self {
+    pub fn new(originating_station_id: StationID, sequence_number: SequenceNumber) -> Self {
         Self {
-            originating_station_i_d,
+            originating_station_id,
             sequence_number,
         }
     }
@@ -120,19 +120,19 @@ pub struct CauseCodeType(pub u8);
 pub struct CenDsrcTollingZone {
     pub protected_zone_latitude: Latitude,
     pub protected_zone_longitude: Longitude,
-    pub cen_dsrc_tolling_zone_i_d: Option<CenDsrcTollingZoneID>,
+    pub cen_dsrc_tolling_zone_id: Option<CenDsrcTollingZoneID>,
 }
 
 impl CenDsrcTollingZone {
     pub fn new(
         protected_zone_latitude: Latitude,
         protected_zone_longitude: Longitude,
-        cen_dsrc_tolling_zone_i_d: Option<CenDsrcTollingZoneID>,
+        cen_dsrc_tolling_zone_id: Option<CenDsrcTollingZoneID>,
     ) -> Self {
         Self {
             protected_zone_latitude,
             protected_zone_longitude,
-            cen_dsrc_tolling_zone_i_d,
+            cen_dsrc_tolling_zone_id,
         }
     }
 }
@@ -458,16 +458,16 @@ pub struct ItsPduHeader {
     #[rasn(value("0..=255"))]
     pub protocol_version: u8,
     #[rasn(value("0..=255"))]
-    pub message_i_d: u8,
-    pub station_i_d: StationID,
+    pub message_id: u8,
+    pub station_id: StationID,
 }
 
 impl ItsPduHeader {
-    pub fn new(protocol_version: u8, message_i_d: u8, station_i_d: StationID) -> Self {
+    pub fn new(protocol_version: u8, message_id: u8, station_id: StationID) -> Self {
         Self {
             protocol_version,
-            message_i_d,
-            station_i_d,
+            message_id,
+            station_id,
         }
     }
 }
@@ -648,7 +648,7 @@ pub struct ProtectedCommunicationZone {
     pub protected_zone_latitude: Latitude,
     pub protected_zone_longitude: Longitude,
     pub protected_zone_radius: Option<ProtectedZoneRadius>,
-    pub protected_zone_i_d: Option<ProtectedZoneID>,
+    pub protected_zone_id: Option<ProtectedZoneID>,
 }
 
 impl ProtectedCommunicationZone {
@@ -658,7 +658,7 @@ impl ProtectedCommunicationZone {
         protected_zone_latitude: Latitude,
         protected_zone_longitude: Longitude,
         protected_zone_radius: Option<ProtectedZoneRadius>,
-        protected_zone_i_d: Option<ProtectedZoneID>,
+        protected_zone_id: Option<ProtectedZoneID>,
     ) -> Self {
         Self {
             protected_zone_type,
@@ -666,7 +666,7 @@ impl ProtectedCommunicationZone {
             protected_zone_latitude,
             protected_zone_longitude,
             protected_zone_radius,
-            protected_zone_i_d,
+            protected_zone_id,
         }
     }
 }

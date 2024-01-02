@@ -157,7 +157,7 @@ impl LocationContainer {
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct ManagementContainer {
-    pub action_i_d: ActionID,
+    pub action_id: ActionID,
     pub detection_time: TimestampIts,
     pub reference_time: TimestampIts,
     pub termination: Option<Termination>,
@@ -172,7 +172,7 @@ pub struct ManagementContainer {
 
 impl ManagementContainer {
     pub fn new(
-        action_i_d: ActionID,
+        action_id: ActionID,
         detection_time: TimestampIts,
         reference_time: TimestampIts,
         termination: Option<Termination>,
@@ -184,7 +184,7 @@ impl ManagementContainer {
         station_type: StationType,
     ) -> Self {
         Self {
-            action_i_d,
+            action_id,
             detection_time,
             reference_time,
             termination,

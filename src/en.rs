@@ -1,5 +1,5 @@
 use crate::{map_err_to_string, EtsiJson};
-use etsi_geonetworking::{Encode, UnsecuredHeader};
+use geonetworking::{Encode, UnsecuredHeader};
 use etsi_transports::{BasicTransportAHeader, BasicTransportBHeader, Encode as TpEncode};
 
 #[cfg(target_arch = "wasm32")]
@@ -219,13 +219,13 @@ fn optionally_encode_headers(
         (Some(gn), Some(tp)) => {
             let geonetworking = UnsecuredHeader::from_json(gn).map_err(map_err_to_string)?;
             let mut transport = match geonetworking.common.next_header {
-                etsi_geonetworking::NextAfterCommon::BTPA => {
+                geonetworking::NextAfterCommon::BTPA => {
                     BasicTransportAHeader::decode_from_json(tp)
                         .map_err(map_err_to_string)?
                         .encode()
                         .map_err(map_err_to_string)?
                 }
-                etsi_geonetworking::NextAfterCommon::BTPB => {
+                geonetworking::NextAfterCommon::BTPB => {
                     BasicTransportBHeader::decode_from_json(tp)
                         .map_err(map_err_to_string)?
                         .encode()

@@ -1,6 +1,5 @@
 pub mod de;
 pub mod en;
-#[cfg(not(doctest))]
 pub mod standards;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -15,6 +14,19 @@ pub struct EtsiJson {
     pub transport: Option<String>,
     /// Optional ITS ETSI message, encoded as stringified JSON
     pub its: Option<String>,
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+impl EtsiJson {
+    #[wasm_bindgen(constructor)]
+    pub fn from(its: Option<String>, geonetworking: Option<String>, transport: Option<String>) -> EtsiJson {
+        EtsiJson {
+            its,
+            geonetworking,
+            transport,
+        }
+    }
 }
 
 pub(crate) fn map_err_to_string<E: core::fmt::Debug>(error: E) -> String {

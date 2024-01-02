@@ -119,14 +119,14 @@ pub struct ActionDeltaTime(pub u8);
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct ActionID {
-    pub originating_station_i_d: StationID,
+    pub originating_station_id: StationID,
     pub sequence_number: SequenceNumber,
 }
 
 impl ActionID {
-    pub fn new(originating_station_i_d: StationID, sequence_number: SequenceNumber) -> Self {
+    pub fn new(originating_station_id: StationID, sequence_number: SequenceNumber) -> Self {
         Self {
-            originating_station_i_d,
+            originating_station_id,
             sequence_number,
         }
     }
@@ -825,19 +825,19 @@ pub struct CauseCodeType(pub u8);
 pub struct CenDsrcTollingZone {
     pub protected_zone_latitude: Latitude,
     pub protected_zone_longitude: Longitude,
-    pub cen_dsrc_tolling_zone_i_d: Option<CenDsrcTollingZoneID>,
+    pub cen_dsrc_tolling_zone_id: Option<CenDsrcTollingZoneID>,
 }
 
 impl CenDsrcTollingZone {
     pub fn new(
         protected_zone_latitude: Latitude,
         protected_zone_longitude: Longitude,
-        cen_dsrc_tolling_zone_i_d: Option<CenDsrcTollingZoneID>,
+        cen_dsrc_tolling_zone_id: Option<CenDsrcTollingZoneID>,
     ) -> Self {
         Self {
             protected_zone_latitude,
             protected_zone_longitude,
-            cen_dsrc_tolling_zone_i_d,
+            cen_dsrc_tolling_zone_id,
         }
     }
 }
@@ -1294,7 +1294,7 @@ pub struct Connection {
     pub remote_intersection: Option<IntersectionReferenceID>,
     pub signal_group: Option<SignalGroupID>,
     pub user_class: Option<RestrictionClassID>,
-    pub connection_i_d: Option<LaneConnectionID>,
+    pub connection_id: Option<LaneConnectionID>,
 }
 
 impl Connection {
@@ -1303,14 +1303,14 @@ impl Connection {
         remote_intersection: Option<IntersectionReferenceID>,
         signal_group: Option<SignalGroupID>,
         user_class: Option<RestrictionClassID>,
-        connection_i_d: Option<LaneConnectionID>,
+        connection_id: Option<LaneConnectionID>,
     ) -> Self {
         Self {
             connecting_lane,
             remote_intersection,
             signal_group,
             user_class,
-            connection_i_d,
+            connection_id,
         }
     }
 }
@@ -1325,7 +1325,7 @@ pub struct ConnectionManeuverAssistRegional(pub SequenceOf<RegionalExtension>);
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct ConnectionManeuverAssist {
-    pub connection_i_d: LaneConnectionID,
+    pub connection_id: LaneConnectionID,
     pub queue_length: Option<ZoneLength>,
     pub available_storage_length: Option<ZoneLength>,
     pub wait_on_stop: Option<WaitOnStopline>,
@@ -1335,7 +1335,7 @@ pub struct ConnectionManeuverAssist {
 
 impl ConnectionManeuverAssist {
     pub fn new(
-        connection_i_d: LaneConnectionID,
+        connection_id: LaneConnectionID,
         queue_length: Option<ZoneLength>,
         available_storage_length: Option<ZoneLength>,
         wait_on_stop: Option<WaitOnStopline>,
@@ -1343,7 +1343,7 @@ impl ConnectionManeuverAssist {
         regional: Option<ConnectionManeuverAssistRegional>,
     ) -> Self {
         Self {
-            connection_i_d,
+            connection_id,
             queue_length,
             available_storage_length,
             wait_on_stop,
@@ -1373,14 +1373,14 @@ impl ConnectionManeuverAssistAddGrpC {
 #[non_exhaustive]
 pub struct ConnectionTrajectoryAddGrpC {
     pub nodes: NodeSetXY,
-    pub connection_i_d: LaneConnectionID,
+    pub connection_id: LaneConnectionID,
 }
 
 impl ConnectionTrajectoryAddGrpC {
-    pub fn new(nodes: NodeSetXY, connection_i_d: LaneConnectionID) -> Self {
+    pub fn new(nodes: NodeSetXY, connection_id: LaneConnectionID) -> Self {
         Self {
             nodes,
-            connection_i_d,
+            connection_id,
         }
     }
 }
@@ -2857,7 +2857,7 @@ impl FirstSpat {
 pub struct FreeSpaceAddendum {
     pub free_space_confidence: FreeSpaceConfidence,
     pub free_space_area: FreeSpaceArea,
-    pub sensor_i_d_list: Option<SensorIdList>,
+    pub sensor_id_list: Option<SensorIdList>,
     #[rasn(default = "free_space_addendum_shadowing_applies_default")]
     pub shadowing_applies: ShadowingApplies,
 }
@@ -2866,13 +2866,13 @@ impl FreeSpaceAddendum {
     pub fn new(
         free_space_confidence: FreeSpaceConfidence,
         free_space_area: FreeSpaceArea,
-        sensor_i_d_list: Option<SensorIdList>,
+        sensor_id_list: Option<SensorIdList>,
         shadowing_applies: ShadowingApplies,
     ) -> Self {
         Self {
             free_space_confidence,
             free_space_area,
-            sensor_i_d_list,
+            sensor_id_list,
             shadowing_applies,
         }
     }
@@ -2978,7 +2978,7 @@ pub struct GenericLaneRegional(pub SequenceOf<RegionalExtension>);
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct GenericLane {
-    pub lane_i_d: LaneID,
+    pub lane_id: LaneID,
     pub name: Option<DescriptiveName>,
     pub ingress_approach: Option<ApproachID>,
     pub egress_approach: Option<ApproachID>,
@@ -2992,7 +2992,7 @@ pub struct GenericLane {
 
 impl GenericLane {
     pub fn new(
-        lane_i_d: LaneID,
+        lane_id: LaneID,
         name: Option<DescriptiveName>,
         ingress_approach: Option<ApproachID>,
         egress_approach: Option<ApproachID>,
@@ -3004,7 +3004,7 @@ impl GenericLane {
         regional: Option<GenericLaneRegional>,
     ) -> Self {
         Self {
-            lane_i_d,
+            lane_id,
             name,
             ingress_approach,
             egress_approach,
@@ -3752,7 +3752,7 @@ impl ItsAidCtxRef {
 #[rasn(automatic_tags)]
 pub struct ItsChargingSpotDataElements {
     pub r_type: ChargingSpotType,
-    pub ev_equipment_i_d: Option<Utf8String>,
+    pub ev_equipment_id: Option<Utf8String>,
     pub type_of_receptacle: TypeOfReceptacle,
     pub energy_availability: Utf8String,
     pub parking_places_data: Option<ParkingPlacesData>,
@@ -3761,14 +3761,14 @@ pub struct ItsChargingSpotDataElements {
 impl ItsChargingSpotDataElements {
     pub fn new(
         r_type: ChargingSpotType,
-        ev_equipment_i_d: Option<Utf8String>,
+        ev_equipment_id: Option<Utf8String>,
         type_of_receptacle: TypeOfReceptacle,
         energy_availability: Utf8String,
         parking_places_data: Option<ParkingPlacesData>,
     ) -> Self {
         Self {
             r_type,
-            ev_equipment_i_d,
+            ev_equipment_id,
             type_of_receptacle,
             energy_availability,
             parking_places_data,
@@ -3784,11 +3784,11 @@ pub struct ItsChargingSpots(pub SequenceOf<ItsChargingSpotDataElements>);
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct ItsChargingStationData {
-    pub charging_station_i_d: StationID,
+    pub charging_station_id: StationID,
     #[rasn(size("1..=32"))]
     pub utility_distributor_id: Option<Utf8String>,
     #[rasn(size("1..=32"))]
-    pub provider_i_d: Option<Utf8String>,
+    pub provider_id: Option<Utf8String>,
     pub charging_station_location: ReferencePosition,
     pub address: Option<Utf8String>,
     #[rasn(size("1..=16"))]
@@ -3805,9 +3805,9 @@ pub struct ItsChargingStationData {
 
 impl ItsChargingStationData {
     pub fn new(
-        charging_station_i_d: StationID,
+        charging_station_id: StationID,
         utility_distributor_id: Option<Utf8String>,
-        provider_i_d: Option<Utf8String>,
+        provider_id: Option<Utf8String>,
         charging_station_location: ReferencePosition,
         address: Option<Utf8String>,
         phone_number: Option<NumericString>,
@@ -3820,9 +3820,9 @@ impl ItsChargingStationData {
         charging_spots_available: ItsChargingSpots,
     ) -> Self {
         Self {
-            charging_station_i_d,
+            charging_station_id,
             utility_distributor_id,
-            provider_i_d,
+            provider_id,
             charging_station_location,
             address,
             phone_number,
@@ -3886,16 +3886,16 @@ pub struct ItsPduHeader {
     #[rasn(value("0..=255"))]
     pub protocol_version: u8,
     #[rasn(value("0..=255"))]
-    pub message_i_d: u8,
-    pub station_i_d: StationID,
+    pub message_id: u8,
+    pub station_id: StationID,
 }
 
 impl ItsPduHeader {
-    pub fn new(protocol_version: u8, message_i_d: u8, station_i_d: StationID) -> Self {
+    pub fn new(protocol_version: u8, message_id: u8, station_id: StationID) -> Self {
         Self {
             protocol_version,
-            message_i_d,
-            station_i_d,
+            message_id,
+            station_id,
         }
     }
 }
@@ -3904,22 +3904,22 @@ impl ItsPduHeader {
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct ItsStationPosition {
-    pub station_i_d: StationID,
-    pub lane_i_d: Option<LaneID>,
+    pub station_id: StationID,
+    pub lane_id: Option<LaneID>,
     pub node_x_y: Option<NodeOffsetPointXY>,
     pub time_reference: Option<TimeReference>,
 }
 
 impl ItsStationPosition {
     pub fn new(
-        station_i_d: StationID,
-        lane_i_d: Option<LaneID>,
+        station_id: StationID,
+        lane_id: Option<LaneID>,
         node_x_y: Option<NodeOffsetPointXY>,
         time_reference: Option<TimeReference>,
     ) -> Self {
         Self {
-            station_i_d,
-            lane_i_d,
+            station_id,
+            lane_id,
             node_x_y,
             time_reference,
         }
@@ -4486,7 +4486,7 @@ pub struct MCDMManagementContainerUrls(pub SequenceOf<URLOfMDUs>);
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct MCDMManagementContainer {
-    pub action_i_d: ActionID,
+    pub action_id: ActionID,
     pub request: Option<RequestResponseIndication>,
     pub ack: Option<AckNackIndication>,
     pub detection_time: Option<TimestampIts>,
@@ -4519,7 +4519,7 @@ pub struct MCDMManagementContainer {
 
 impl MCDMManagementContainer {
     pub fn new(
-        action_i_d: ActionID,
+        action_id: ActionID,
         request: Option<RequestResponseIndication>,
         ack: Option<AckNackIndication>,
         detection_time: Option<TimestampIts>,
@@ -4536,7 +4536,7 @@ impl MCDMManagementContainer {
         size: Option<u32>,
     ) -> Self {
         Self {
-            action_i_d,
+            action_id,
             request,
             ack,
             detection_time,
@@ -4606,7 +4606,7 @@ impl MCDMSituationContainer {
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct ManagementContainer {
-    pub action_i_d: ActionID,
+    pub action_id: ActionID,
     pub detection_time: TimestampIts,
     pub reference_time: TimestampIts,
     pub termination: Option<Termination>,
@@ -4621,7 +4621,7 @@ pub struct ManagementContainer {
 
 impl ManagementContainer {
     pub fn new(
-        action_i_d: ActionID,
+        action_id: ActionID,
         detection_time: TimestampIts,
         reference_time: TimestampIts,
         termination: Option<Termination>,
@@ -4633,7 +4633,7 @@ impl ManagementContainer {
         station_type: StationType,
     ) -> Self {
         Self {
-            action_i_d,
+            action_id,
             detection_time,
             reference_time,
             termination,
@@ -4672,7 +4672,7 @@ pub struct MapData {
     pub time_stamp: Option<MinuteOfTheYear>,
     pub msg_issue_revision: MsgCount,
     pub layer_type: Option<LayerType>,
-    pub layer_i_d: Option<LayerID>,
+    pub layer_id: Option<LayerID>,
     pub intersections: Option<IntersectionGeometryList>,
     pub road_segments: Option<RoadSegmentList>,
     pub data_parameters: Option<DataParameters>,
@@ -4685,7 +4685,7 @@ impl MapData {
         time_stamp: Option<MinuteOfTheYear>,
         msg_issue_revision: MsgCount,
         layer_type: Option<LayerType>,
-        layer_i_d: Option<LayerID>,
+        layer_id: Option<LayerID>,
         intersections: Option<IntersectionGeometryList>,
         road_segments: Option<RoadSegmentList>,
         data_parameters: Option<DataParameters>,
@@ -4696,7 +4696,7 @@ impl MapData {
             time_stamp,
             msg_issue_revision,
             layer_type,
-            layer_i_d,
+            layer_id,
             intersections,
             road_segments,
             data_parameters,
@@ -4741,17 +4741,17 @@ impl MapPosition {
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct MatchedPosition {
-    pub lane_i_d: Option<LaneID>,
+    pub lane_id: Option<LaneID>,
     pub longitudinal_lane_position: Option<LongitudinalLanePosition>,
 }
 
 impl MatchedPosition {
     pub fn new(
-        lane_i_d: Option<LaneID>,
+        lane_id: Option<LaneID>,
         longitudinal_lane_position: Option<LongitudinalLanePosition>,
     ) -> Self {
         Self {
-            lane_i_d,
+            lane_id,
             longitudinal_lane_position,
         }
     }
@@ -5009,22 +5009,22 @@ pub struct NinetyDegreeInt(pub i32);
 pub struct Node {
     pub id: Integer,
     pub lane: Option<LaneID>,
-    pub connection_i_d: Option<LaneConnectionID>,
-    pub intersection_i_d: Option<IntersectionID>,
+    pub connection_id: Option<LaneConnectionID>,
+    pub intersection_id: Option<IntersectionID>,
 }
 
 impl Node {
     pub fn new(
         id: Integer,
         lane: Option<LaneID>,
-        connection_i_d: Option<LaneConnectionID>,
-        intersection_i_d: Option<IntersectionID>,
+        connection_id: Option<LaneConnectionID>,
+        intersection_id: Option<IntersectionID>,
     ) -> Self {
         Self {
             id,
             lane,
-            connection_i_d,
-            intersection_i_d,
+            connection_id,
+            intersection_id,
         }
     }
 }
@@ -5589,7 +5589,7 @@ pub struct PartialMapData {
     pub time_stamp: Option<MinuteOfTheYear>,
     pub msg_issue_revision: MsgCount,
     pub layer_type: Option<LayerType>,
-    pub layer_i_d: Option<LayerID>,
+    pub layer_id: Option<LayerID>,
     pub first_intersection: Option<FirstIntersection>,
     pub dummy1: Option<()>,
     pub dummy2: Option<()>,
@@ -5602,7 +5602,7 @@ impl PartialMapData {
         time_stamp: Option<MinuteOfTheYear>,
         msg_issue_revision: MsgCount,
         layer_type: Option<LayerType>,
-        layer_i_d: Option<LayerID>,
+        layer_id: Option<LayerID>,
         first_intersection: Option<FirstIntersection>,
         dummy1: Option<()>,
         dummy2: Option<()>,
@@ -5613,7 +5613,7 @@ impl PartialMapData {
             time_stamp,
             msg_issue_revision,
             layer_type,
-            layer_i_d,
+            layer_id,
             first_intersection,
             dummy1,
             dummy2,
@@ -5768,8 +5768,8 @@ pub struct PedestrianBicycleDetect(pub bool);
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct PerceivedObject {
-    pub object_i_d: Identifier,
-    pub sensor_i_d_list: Option<SensorIdList>,
+    pub object_id: Identifier,
+    pub sensor_id_list: Option<SensorIdList>,
     pub time_of_measurement: TimeOfMeasurement,
     pub object_age: Option<ObjectAge>,
     #[rasn(default = "perceived_object_object_confidence_default")]
@@ -5796,8 +5796,8 @@ pub struct PerceivedObject {
 
 impl PerceivedObject {
     pub fn new(
-        object_i_d: Identifier,
-        sensor_i_d_list: Option<SensorIdList>,
+        object_id: Identifier,
+        sensor_id_list: Option<SensorIdList>,
         time_of_measurement: TimeOfMeasurement,
         object_age: Option<ObjectAge>,
         object_confidence: ObjectConfidence,
@@ -5820,8 +5820,8 @@ impl PerceivedObject {
         matched_position: Option<MatchedPosition>,
     ) -> Self {
         Self {
-            object_i_d,
-            sensor_i_d_list,
+            object_id,
+            sensor_id_list,
             time_of_measurement,
             object_age,
             object_confidence,
@@ -6173,19 +6173,19 @@ pub struct PreemptPriorityList(pub SequenceOf<SignalControlZone>);
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct PrioritizationResponse {
-    pub station_i_d: StationID,
+    pub station_id: StationID,
     pub prior_state: PrioritizationResponseStatus,
     pub signal_group: SignalGroupID,
 }
 
 impl PrioritizationResponse {
     pub fn new(
-        station_i_d: StationID,
+        station_id: StationID,
         prior_state: PrioritizationResponseStatus,
         signal_group: SignalGroupID,
     ) -> Self {
         Self {
-            station_i_d,
+            station_id,
             prior_state,
             signal_group,
         }
@@ -6229,7 +6229,7 @@ pub struct ProtectedCommunicationZone {
     pub protected_zone_latitude: Latitude,
     pub protected_zone_longitude: Longitude,
     pub protected_zone_radius: Option<ProtectedZoneRadius>,
-    pub protected_zone_i_d: Option<ProtectedZoneID>,
+    pub protected_zone_id: Option<ProtectedZoneID>,
 }
 
 impl ProtectedCommunicationZone {
@@ -6239,7 +6239,7 @@ impl ProtectedCommunicationZone {
         protected_zone_latitude: Latitude,
         protected_zone_longitude: Longitude,
         protected_zone_radius: Option<ProtectedZoneRadius>,
-        protected_zone_i_d: Option<ProtectedZoneID>,
+        protected_zone_id: Option<ProtectedZoneID>,
     ) -> Self {
         Self {
             protected_zone_type,
@@ -6247,7 +6247,7 @@ impl ProtectedCommunicationZone {
             protected_zone_latitude,
             protected_zone_longitude,
             protected_zone_radius,
-            protected_zone_i_d,
+            protected_zone_id,
         }
     }
 }
@@ -7583,7 +7583,7 @@ pub struct SensorIdList(pub SequenceOf<Identifier>);
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct SensorInformation {
-    pub sensor_i_d: Identifier,
+    pub sensor_id: Identifier,
     pub r_type: SensorType,
     pub detection_area: DetectionArea,
     pub free_space_confidence: Option<FreeSpaceConfidence>,
@@ -7591,13 +7591,13 @@ pub struct SensorInformation {
 
 impl SensorInformation {
     pub fn new(
-        sensor_i_d: Identifier,
+        sensor_id: Identifier,
         r_type: SensorType,
         detection_area: DetectionArea,
         free_space_confidence: Option<FreeSpaceConfidence>,
     ) -> Self {
         Self {
-            sensor_i_d,
+            sensor_id,
             r_type,
             detection_area,
             free_space_confidence,
@@ -7689,19 +7689,19 @@ pub enum ServiceCategoryCode {
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct ServiceInfo {
-    pub service_i_d: ITSaid,
+    pub service_id: ITSaid,
     pub channel_index: ChannelIndex,
     pub ch_options: ChannelOptions,
 }
 
 impl ServiceInfo {
     pub fn new(
-        service_i_d: ITSaid,
+        service_id: ITSaid,
         channel_index: ChannelIndex,
         ch_options: ChannelOptions,
     ) -> Self {
         Self {
-            service_i_d,
+            service_id,
             channel_index,
             ch_options,
         }
@@ -7761,19 +7761,19 @@ pub struct SignalGroupID(pub u8);
 pub struct SignalHeadLocation {
     pub node_x_y: NodeOffsetPointXY,
     pub node_z: DeltaAltitude,
-    pub signal_group_i_d: SignalGroupID,
+    pub signal_group_id: SignalGroupID,
 }
 
 impl SignalHeadLocation {
     pub fn new(
         node_x_y: NodeOffsetPointXY,
         node_z: DeltaAltitude,
-        signal_group_i_d: SignalGroupID,
+        signal_group_id: SignalGroupID,
     ) -> Self {
         Self {
             node_x_y,
             node_z,
-            signal_group_i_d,
+            signal_group_id,
         }
     }
 }
@@ -7793,7 +7793,7 @@ pub struct SignalRequestRegional(pub SequenceOf<RegionalExtension>);
 #[non_exhaustive]
 pub struct SignalRequest {
     pub id: IntersectionReferenceID,
-    pub request_i_d: RequestID,
+    pub request_id: RequestID,
     pub request_type: PriorityRequestType,
     pub in_bound_lane: IntersectionAccessPoint,
     pub out_bound_lane: Option<IntersectionAccessPoint>,
@@ -7803,7 +7803,7 @@ pub struct SignalRequest {
 impl SignalRequest {
     pub fn new(
         id: IntersectionReferenceID,
-        request_i_d: RequestID,
+        request_id: RequestID,
         request_type: PriorityRequestType,
         in_bound_lane: IntersectionAccessPoint,
         out_bound_lane: Option<IntersectionAccessPoint>,
@@ -7811,7 +7811,7 @@ impl SignalRequest {
     ) -> Self {
         Self {
             id,
-            request_i_d,
+            request_id,
             request_type,
             in_bound_lane,
             out_bound_lane,
@@ -8357,14 +8357,14 @@ pub struct SrmPrvChAllocReq(pub SequenceOf<ITSaid>);
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct SrvAdvChangeCount {
-    pub sa_i_d: SrvAdvID,
+    pub sa_id: SrvAdvID,
     pub content_count: SrvAdvContentCount,
 }
 
 impl SrvAdvChangeCount {
-    pub fn new(sa_i_d: SrvAdvID, content_count: SrvAdvContentCount) -> Self {
+    pub fn new(sa_id: SrvAdvID, content_count: SrvAdvContentCount) -> Self {
         Self {
-            sa_i_d,
+            sa_id,
             content_count,
         }
     }
@@ -10145,7 +10145,7 @@ pub const C__I_PV6ADDRESS: RefExt = RefExt(9);
 
 pub const C__L_MCHANNEL_BUSY_RATIO: RefExt = RefExt(82);
 
-pub const C__L_MPACKET_I_D: RefExt = RefExt(83);
+pub const C__L_MPACKET_id: RefExt = RefExt(83);
 
 pub const C__L_MRX_CIP: RefExt = RefExt(81);
 
@@ -10173,7 +10173,7 @@ pub const C__W_S_ACOUNT_THRES_INT: RefExt = RefExt(22);
 
 pub const C__W_S_ACOUNT_THRESHOLD: RefExt = RefExt(20);
 
-pub const C_ADVERTISER_I_D: RefExt = RefExt(7);
+pub const C_ADVERTISER_id: RefExt = RefExt(7);
 
 pub const C_CTX_REF_MAND_APP: CtxRef = CtxRef(1);
 
