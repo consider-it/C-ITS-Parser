@@ -1,5 +1,5 @@
 use etsi_web::{
-    de::decode_to_json,
+    de::{decode_denm_to_json, decode_to_json},
     en::{
         encode_cam, encode_cpm, encode_denm, encode_ivim, encode_mapem, encode_spatem, encode_srem,
     },

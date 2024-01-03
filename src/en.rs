@@ -1,6 +1,6 @@
 use crate::{map_err_to_string, EtsiJson};
-use geonetworking::{Encode, UnsecuredHeader};
 use etsi_transports::{BasicTransportAHeader, BasicTransportBHeader, Encode as TpEncode};
+use geonetworking::{Encode, UnsecuredHeader};
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -219,18 +219,14 @@ fn optionally_encode_headers(
         (Some(gn), Some(tp)) => {
             let geonetworking = UnsecuredHeader::from_json(gn).map_err(map_err_to_string)?;
             let mut transport = match geonetworking.common.next_header {
-                geonetworking::NextAfterCommon::BTPA => {
-                    BasicTransportAHeader::decode_from_json(tp)
-                        .map_err(map_err_to_string)?
-                        .encode()
-                        .map_err(map_err_to_string)?
-                }
-                geonetworking::NextAfterCommon::BTPB => {
-                    BasicTransportBHeader::decode_from_json(tp)
-                        .map_err(map_err_to_string)?
-                        .encode()
-                        .map_err(map_err_to_string)?
-                }
+                geonetworking::NextAfterCommon::BTPA => BasicTransportAHeader::decode_from_json(tp)
+                    .map_err(map_err_to_string)?
+                    .encode()
+                    .map_err(map_err_to_string)?,
+                geonetworking::NextAfterCommon::BTPB => BasicTransportBHeader::decode_from_json(tp)
+                    .map_err(map_err_to_string)?
+                    .encode()
+                    .map_err(map_err_to_string)?,
                 h => {
                     return Err(format!(
                         "Currently only BTP-A and BTP-B headers can be encoded: Encountered {h:?}"

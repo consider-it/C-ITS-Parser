@@ -1,8 +1,8 @@
 #![allow(non_snake_case)]
-use geonetworking::{Decode, Encode, NextAfterCommon, Packet};
 use etsi_transports::{
     BasicTransportAHeader, BasicTransportBHeader, Decode as TransportDecode, IPv6Header,
 };
+use geonetworking::{Decode, Encode, NextAfterCommon, Packet};
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
@@ -35,12 +35,8 @@ pub fn decode_to_json(message: &[u8], includesHeaders: bool) -> Result<EtsiJson,
         Ok(ItsPduHeader { message_id: 5, .. }) => decode_mapem_to_json(input, None, false)?.its,
         Ok(ItsPduHeader { message_id: 6, .. }) => decode_ivim_to_json(input, None, false)?.its,
         Ok(ItsPduHeader { message_id: 9, .. }) => decode_srem_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader {
-            message_id: 10, ..
-        }) => decode_ssem_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader {
-            message_id: 14, ..
-        }) => decode_cpm_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_id: 10, .. }) => decode_ssem_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_id: 14, .. }) => decode_cpm_to_json(input, None, false)?.its,
         Ok(ItsPduHeader { message_id, .. }) => {
             return Err(format!(
                 "Unsupported ITS message type: Found message id {message_id}."
@@ -356,9 +352,9 @@ fn decode_geonetworking_header(input: &[u8]) -> Result<(&[u8], String, NextAfter
             common, payload, ..
         } => Ok((payload, gn_json, common.next_header)),
         p => p
-        .secured_payload_after_gn()
-        .ok_or("Secured GeoNetworking Packet carries no data!".into())
-        .map(|payload| (payload, gn_json, p.common().next_header)),
+            .secured_payload_after_gn()
+            .ok_or("Secured GeoNetworking Packet carries no data!".into())
+            .map(|payload| (payload, gn_json, p.common().next_header)),
     }
 }
 

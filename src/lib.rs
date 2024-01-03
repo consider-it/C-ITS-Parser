@@ -20,7 +20,11 @@ pub struct EtsiJson {
 #[wasm_bindgen]
 impl EtsiJson {
     #[wasm_bindgen(constructor)]
-    pub fn from(its: Option<String>, geonetworking: Option<String>, transport: Option<String>) -> EtsiJson {
+    pub fn from(
+        its: Option<String>,
+        geonetworking: Option<String>,
+        transport: Option<String>,
+    ) -> EtsiJson {
         EtsiJson {
             its,
             geonetworking,
