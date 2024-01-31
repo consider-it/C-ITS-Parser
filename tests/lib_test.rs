@@ -1,5 +1,5 @@
 use etsi_web::{
-    de::decode_to_json,
+    de::{decode_to_json, decode_cpm_to_json},
     en::{
         encode_cam, encode_cpm, encode_denm, encode_ivim, encode_mapem, encode_spatem, encode_srem,
     },
@@ -271,7 +271,7 @@ fn round_trip_cpm_impl() {
         ).unwrap())
     };
     let encoded = encode_cpm(&json, 131).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();
+    let decoded = decode_cpm_to_json(&encoded.to_vec(), Some(131), true).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
