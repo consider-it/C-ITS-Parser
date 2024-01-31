@@ -1,6 +1,6 @@
 use crate::{map_err_to_string, EtsiJson};
 use etsi_transports::{BasicTransportAHeader, BasicTransportBHeader, Encode as TpEncode};
-use geonetworking::{Encode, UnsecuredHeader};
+use geonetworking::{Encode, UnsecuredHeader, ExtendedHeader, HeaderType};
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -18,7 +18,7 @@ pub type Encoded = Vec<u8>;
 pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&denm.its, version) {
-        (None, 131) | (None, 211) => return Err(format!("No DENM JSON provided.")),
+        (None, 131) | (None, 211) => return Err("No DENM JSON provided.".to_string()),
         (Some(denm_json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::denm_1_3_1::DENM,
@@ -30,9 +30,7 @@ pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<Encoded, String> {
             >(denm_json)?);
         }
         _ => {
-            return Err(format!(
-                "Unsupported DENM version: Supported DENM versions are 131 and 211."
-            ))
+            return Err("Unsupported DENM version: Supported DENM versions are 131 and 211.".to_string())
         }
     };
     let encoded = optionally_encode_headers(&denm.geonetworking, &denm.transport, payload)?;
@@ -47,16 +45,14 @@ pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<Encoded, String> {
 pub fn encode_cam(cam: &EtsiJson, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&cam.its, version) {
-        (None, 141) => return Err(format!("No CAM JSON provided.")),
+        (None, 141) => return Err("No CAM JSON provided.".to_string()),
         (Some(json), 141) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::cam_1_4_1::CAM,
             >(json)?);
         }
         _ => {
-            return Err(format!(
-                "Unsupported CAM version: Supported CAM version is 141."
-            ))
+            return Err("Unsupported CAM version: Supported CAM version is 141.".to_string())
         }
     };
     let encoded = optionally_encode_headers(&cam.geonetworking, &cam.transport, payload)?;
@@ -71,16 +67,14 @@ pub fn encode_cam(cam: &EtsiJson, version: u32) -> Result<Encoded, String> {
 pub fn encode_mapem(mapem: &EtsiJson, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&mapem.its, version) {
-        (None, 131) => return Err(format!("No MAPEM JSON provided.")),
+        (None, 131) => return Err("No MAPEM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::is_1_3_1::MAPEM,
             >(json)?);
         }
         _ => {
-            return Err(format!(
-                "Unsupported MAPEM version: Supported MAPEM version is 131."
-            ))
+            return Err("Unsupported MAPEM version: Supported MAPEM version is 131.".to_string())
         }
     };
     let encoded = optionally_encode_headers(&mapem.geonetworking, &mapem.transport, payload)?;
@@ -95,16 +89,14 @@ pub fn encode_mapem(mapem: &EtsiJson, version: u32) -> Result<Encoded, String> {
 pub fn encode_spatem(spatem: &EtsiJson, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&spatem.its, version) {
-        (None, 131) => return Err(format!("No SPATEM JSON provided.")),
+        (None, 131) => return Err("No SPATEM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::is_1_3_1::SPATEM,
             >(json)?);
         }
         _ => {
-            return Err(format!(
-                "Unsupported SPATEM version: Supported SPATEM version is 131."
-            ))
+            return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string())
         }
     };
     let encoded = optionally_encode_headers(&spatem.geonetworking, &spatem.transport, payload)?;
@@ -119,16 +111,14 @@ pub fn encode_spatem(spatem: &EtsiJson, version: u32) -> Result<Encoded, String>
 pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&ivim.its, version) {
-        (None, 221) => return Err(format!("No IVIM JSON provided.")),
+        (None, 221) => return Err("No IVIM JSON provided.".to_string()),
         (Some(json), 221) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::ivim_2_2_1::IVIM,
             >(json)?);
         }
         _ => {
-            return Err(format!(
-                "Unsupported IVIM version: Supported IVIM version is 221."
-            ))
+            return Err("Unsupported IVIM version: Supported IVIM version is 221.".to_string())
         }
     };
     let encoded = optionally_encode_headers(&ivim.geonetworking, &ivim.transport, payload)?;
@@ -143,16 +133,14 @@ pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<Encoded, String> {
 pub fn encode_srem(srem: &EtsiJson, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&srem.its, version) {
-        (None, 131) => return Err(format!("No SREM JSON provided.")),
+        (None, 131) => return Err("No SREM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::is_1_3_1::SREM,
             >(json)?);
         }
         _ => {
-            return Err(format!(
-                "Unsupported SREM version: Supported SREM version is 131."
-            ))
+            return Err("Unsupported SREM version: Supported SREM version is 131.".to_string())
         }
     };
     let encoded = optionally_encode_headers(&srem.geonetworking, &srem.transport, payload)?;
@@ -167,14 +155,12 @@ pub fn encode_srem(srem: &EtsiJson, version: u32) -> Result<Encoded, String> {
 pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&cpm.its, version) {
-        (None, 131) => return Err(format!("No CPM JSON provided.")),
+        (None, 131) => return Err("No CPM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::CPM>(json)?);
         }
         _ => {
-            return Err(format!(
-                "Unsupported CPM version: Supported CPM version is 131."
-            ))
+            return Err("Unsupported CPM version: Supported CPM version is 131.".to_string())
         }
     };
     let encoded = optionally_encode_headers(&cpm.geonetworking, &cpm.transport, payload)?;
@@ -189,16 +175,14 @@ pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<Encoded, String> {
 pub fn encode_ssem(ssem: &EtsiJson, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&ssem.its, version) {
-        (None, 131) => return Err(format!("No SSEM JSON provided.")),
+        (None, 131) => return Err("No SSEM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::is_1_3_1::SSEM,
             >(json)?);
         }
         _ => {
-            return Err(format!(
-                "Unsupported SSEM version: Supported SSEM version is 131."
-            ))
+            return Err("Unsupported SSEM version: Supported SSEM version is 131.".to_string())
         }
     };
     let encoded = optionally_encode_headers(&ssem.geonetworking, &ssem.transport, payload)?;
@@ -212,12 +196,10 @@ fn optionally_encode_headers(
 ) -> Result<Vec<u8>, String> {
     match (gn_json, tp_json) {
         (Some(_), None) | (None, Some(_)) => {
-            return Err(format!(
-            "Expecting either both or neither GeoNetworking and Transport headers to be present!"
-        ))
+            Err("Expecting either both or neither GeoNetworking and Transport headers to be present!".to_string())
         }
         (Some(gn), Some(tp)) => {
-            let geonetworking = UnsecuredHeader::from_json(gn).map_err(map_err_to_string)?;
+            let mut geonetworking = UnsecuredHeader::from_json(gn).map_err(map_err_to_string)?;
             let mut transport = match geonetworking.common.next_header {
                 geonetworking::NextAfterCommon::BTPA => BasicTransportAHeader::decode_from_json(tp)
                     .map_err(map_err_to_string)?
@@ -234,6 +216,18 @@ fn optionally_encode_headers(
                 }
             };
             transport.append(&mut its);
+            geonetworking.common.payload_length = transport.len() as u16;
+            geonetworking.common.header_type_and_subtype = match geonetworking.extended {
+                Some(ExtendedHeader::Beacon(_)) => HeaderType::Beacon,
+                Some(ExtendedHeader::GAC(_)) => HeaderType::GeoAnycast(geonetworking::AreaType::Circular),
+                Some(ExtendedHeader::GBC(_)) => HeaderType::GeoBroadcast(geonetworking::AreaType::Circular),
+                Some(ExtendedHeader::GUC(_)) => HeaderType::GeoUnicast,
+                Some(ExtendedHeader::TSB(_)) => HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::MultiHop),
+                Some(ExtendedHeader::SHB(_)) => HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::SingleHop),
+                Some(ExtendedHeader::LSRequest(_)) => HeaderType::LocationService(geonetworking::LocationServiceType::Request),
+                Some(ExtendedHeader::LSReply(_)) => HeaderType::LocationService(geonetworking::LocationServiceType::Reply),
+                None => HeaderType::Any,
+            };
             geonetworking
                 .with_payload(&transport)
                 .map_err(map_err_to_string)?

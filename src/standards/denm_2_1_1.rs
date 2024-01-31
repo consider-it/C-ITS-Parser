@@ -200,7 +200,7 @@ impl ManagementContainer {
 }
 
 fn management_container_validity_duration_default() -> DeltaTimeSecond {
-    DeltaTimeSecond(600).into()
+    DeltaTimeSecond(600)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]

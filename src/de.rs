@@ -42,7 +42,7 @@ pub fn decode_to_json(message: &[u8], includesHeaders: bool) -> Result<EtsiJson,
                 "Unsupported ITS message type: Found message id {message_id}."
             ))
         }
-        _ => return Err(format!("Failed to detect message ID of ITS PDU header.")),
+        _ => return Err("Failed to detect message ID of ITS PDU header.".to_string()),
     };
     Ok(etsi_json)
 }
@@ -76,9 +76,7 @@ pub fn decode_denm_to_json(
         ))
         .transpose(),
         _ => {
-            return Err(format!(
-                "Unsupported DENM version: Supported DENM versions are 131 and 211."
-            ))
+            return Err("Unsupported DENM version: Supported DENM versions are 131 and 211.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -109,9 +107,7 @@ pub fn decode_cam_to_json(
         ))
         .transpose(),
         _ => {
-            return Err(format!(
-                "Unsupported DENM version: Supported CAM version is 141."
-            ))
+            return Err("Unsupported DENM version: Supported CAM version is 141.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -142,9 +138,7 @@ pub fn decode_mapem_to_json(
         ))
         .transpose(),
         _ => {
-            return Err(format!(
-                "Unsupported MAPEM version: Supported MAPEM version is 131."
-            ))
+            return Err("Unsupported MAPEM version: Supported MAPEM version is 131.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -175,9 +169,7 @@ pub fn decode_spatem_to_json(
         ))
         .transpose(),
         _ => {
-            return Err(format!(
-                "Unsupported SPATEM version: Supported SPATEM version is 131."
-            ))
+            return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -208,9 +200,7 @@ pub fn decode_ivim_to_json(
         ))
         .transpose(),
         _ => {
-            return Err(format!(
-                "Unsupported IVIM version: Supported IVIM version is 221."
-            ))
+            return Err("Unsupported IVIM version: Supported IVIM version is 221.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -241,9 +231,7 @@ pub fn decode_srem_to_json(
         ))
         .transpose(),
         _ => {
-            return Err(format!(
-                "Unsupported SREM version: Supported SREM version is 131."
-            ))
+            return Err("Unsupported SREM version: Supported SREM version is 131.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -259,7 +247,7 @@ pub fn decode_cpm_default_to_json(cpm: &[u8]) -> Result<EtsiJson, String> {
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeCpmVersion))]
 /// Decodes a CPM message with custom decoding options.
-/// Currently, the library supports CPM versions v1.3.1 (131)
+/// Currently, the library supports CPM versions v1.3.1 (131) and v2.1.1 (211)
 /// Set `includesHeaders` to `false` if the given binary CPM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
 pub fn decode_cpm_to_json(
@@ -269,14 +257,16 @@ pub fn decode_cpm_to_json(
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cpm, includesHeaders)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::CPM>(
+        None | Some(211) => Some(transcode_uper_to_jer::<crate::standards::cpm_2_1_1::c_p_m__p_d_u__descriptions::CollectivePerceptionMessage>(
+            input,
+        ))
+        .transpose(),
+        Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::CPM>(
             input,
         ))
         .transpose(),
         _ => {
-            return Err(format!(
-                "Unsupported CPM version: Supported CPM version is 131."
-            ))
+            return Err("Unsupported CPM version: Supported CPM versions are 131 and 211.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -307,9 +297,7 @@ pub fn decode_ssem_to_json(
         ))
         .transpose(),
         _ => {
-            return Err(format!(
-                "Unsupported SSEM version: Supported SSEM version is 131."
-            ))
+            return Err("Unsupported SSEM version: Supported SSEM version is 131.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -363,9 +351,7 @@ fn decode_transport_header(
     header_type: NextAfterCommon,
 ) -> Result<(&[u8], String), String> {
     match header_type {
-        NextAfterCommon::Any => Err(format!(
-            "Currently, only BTP and IPv6 Headers can be decoded!"
-        )),
+        NextAfterCommon::Any => Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string()),
         NextAfterCommon::BTPA => btp![BasicTransportAHeader, input],
         NextAfterCommon::BTPB => btp![BasicTransportBHeader, input],
         NextAfterCommon::IPv6 => {

@@ -322,11 +322,11 @@ impl AnimalSubclass {
 }
 
 fn animal_subclass_r_type_default() -> AnimalSubclassType {
-    AnimalSubclassType(0).into()
+    AnimalSubclassType(0)
 }
 
 fn animal_subclass_confidence_default() -> ClassConfidence {
-    ClassConfidence(0).into()
+    ClassConfidence(0)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
@@ -2879,7 +2879,7 @@ impl FreeSpaceAddendum {
 }
 
 fn free_space_addendum_shadowing_applies_default() -> ShadowingApplies {
-    ShadowingApplies(true).into()
+    ShadowingApplies(true)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -4648,7 +4648,7 @@ impl ManagementContainer {
 }
 
 fn management_container_validity_duration_default() -> ValidityDuration {
-    ValidityDuration(600).into()
+    ValidityDuration(600)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -5512,7 +5512,7 @@ impl OriginatingVehicleContainer {
 }
 
 fn originating_vehicle_container_drive_direction_default() -> DriveDirection {
-    DriveDirection::Forward.into()
+    DriveDirection::Forward
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -5531,11 +5531,11 @@ impl OtherSubclass {
 }
 
 fn other_subclass_r_type_default() -> OtherSublassType {
-    OtherSublassType(0).into()
+    OtherSublassType(0)
 }
 
 fn other_subclass_confidence_default() -> ClassConfidence {
-    ClassConfidence(0).into()
+    ClassConfidence(0)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
@@ -5847,11 +5847,11 @@ impl PerceivedObject {
 }
 
 fn perceived_object_object_confidence_default() -> ObjectConfidence {
-    ObjectConfidence(0).into()
+    ObjectConfidence(0)
 }
 
 fn perceived_object_object_ref_point_default() -> ObjectRefPoint {
-    ObjectRefPoint(0).into()
+    ObjectRefPoint(0)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -5894,11 +5894,11 @@ impl PersonSubclass {
 }
 
 fn person_subclass_r_type_default() -> PersonSubclassType {
-    PersonSubclassType(0).into()
+    PersonSubclassType(0)
 }
 
 fn person_subclass_confidence_default() -> ClassConfidence {
-    ClassConfidence(0).into()
+    ClassConfidence(0)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
@@ -9448,7 +9448,7 @@ impl VehicleSensor {
 }
 
 fn vehicle_sensor_ref_point_id_default() -> RefPointId {
-    RefPointId(0).into()
+    RefPointId(0)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -9500,11 +9500,11 @@ impl VehicleSubclass {
 }
 
 fn vehicle_subclass_r_type_default() -> VehicleSubclassType {
-    VehicleSubclassType(0).into()
+    VehicleSubclassType(0)
 }
 
 fn vehicle_subclass_confidence_default() -> ClassConfidence {
-    ClassConfidence(0).into()
+    ClassConfidence(0)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]

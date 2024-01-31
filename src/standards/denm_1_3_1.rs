@@ -199,7 +199,7 @@ impl ManagementContainer {
 }
 
 fn management_container_validity_duration_default() -> ValidityDuration {
-    ValidityDuration(600).into()
+    ValidityDuration(600)
 }
 
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]

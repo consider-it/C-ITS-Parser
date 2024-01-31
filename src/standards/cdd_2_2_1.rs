@@ -2917,7 +2917,7 @@ impl GeoPosition {
 }
 
 fn geo_position_altitude_default() -> AltitudeValue {
-    AltitudeValue(800001).into()
+    AltitudeValue(800001)
 }
 
 ///*
@@ -3768,11 +3768,11 @@ impl LanePositionAndType {
 }
 
 fn lane_position_and_type_lane_type_default() -> LaneType {
-    LaneType(0).into()
+    LaneType(0)
 }
 
 fn lane_position_and_type_direction_default() -> Direction {
-    Direction(0).into()
+    Direction(0)
 }
 
 ///*
@@ -3852,11 +3852,11 @@ impl LanePositionWithLateralDetails {
 }
 
 fn lane_position_with_lateral_details_lane_type_default() -> LaneType {
-    LaneType(0).into()
+    LaneType(0)
 }
 
 fn lane_position_with_lateral_details_direction_default() -> Direction {
-    Direction(0).into()
+    Direction(0)
 }
 
 ///*
@@ -5109,11 +5109,11 @@ impl PathPointPredicted {
 }
 
 fn path_point_predicted_delta_altitude_default() -> DeltaAltitude {
-    DeltaAltitude(12800).into()
+    DeltaAltitude(12800)
 }
 
 fn path_point_predicted_altitude_confidence_default() -> AltitudeConfidence {
-    AltitudeConfidence::Unavailable.into()
+    AltitudeConfidence::Unavailable
 }
 
 ///*

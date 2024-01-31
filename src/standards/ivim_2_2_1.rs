@@ -1252,10 +1252,10 @@ pub struct ConnectedDenms(pub SequenceOf<ActionID>);
 pub struct ConstraintTextLines1(pub SequenceOf<Text>);
 
 impl rasn::Decode for ConstraintTextLines1 {
-    fn decode_with_tag_and_constraints<'constraints, D: rasn::Decoder>(
+    fn decode_with_tag_and_constraints<D: rasn::Decoder>(
         decoder: &mut D,
         tag: rasn::Tag,
-        constraints: rasn::types::Constraints<'constraints>,
+        constraints: rasn::types::Constraints<'_>,
     ) -> core::result::Result<Self, D::Error> {
         match tag {
             rasn::Tag::EOC => Ok(Self(<SequenceOf<Text>>::decode(decoder)?)),
