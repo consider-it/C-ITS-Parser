@@ -8,10 +8,10 @@ V2X Etsi Web provides an npm package for de- and encoding the most common ETSI m
 * DENM v1.3.1 and v2.2.1
 * SPATEM v1.3.1
 * MAPEM v1.3.1
-* IVIM v1.3.1
+* IVIM v1.3.1 and v2.1.1
 * SREM v1.3.1
 * SSEM v1.3.1
-* CPM v1.3.1
+* CPM v1.3.1 and v2.1.1
 
 ### Installation
 Install using npm:
