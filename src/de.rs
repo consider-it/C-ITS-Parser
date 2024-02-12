@@ -6,7 +6,7 @@ use geonetworking::{Decode, Encode, NextAfterCommon, Packet};
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-use crate::{map_err_to_string, standards::is_1_3_1::ItsPduHeader, EtsiJson};
+use crate::{map_err_to_string, standards::is_1_3_1::{self, ItsPduHeader}, EtsiJson};
 
 macro_rules! btp {
     ($btp_ty:ty, $input:ident) => {
@@ -62,10 +62,17 @@ pub fn decode_denm_default_to_json(denm: &[u8]) -> Result<EtsiJson, String> {
 /// Throws string error on decoding errors.
 pub fn decode_denm_to_json(
     denm: &[u8],
-    version: Option<u32>,
+    mut version: Option<u32>,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(denm, includesHeaders)?;
+    if version.is_none() {
+        version = match input.first() {
+            Some(1) => Some(131),
+            Some(2) => Some(211),
+            _ => None
+        };
+    }
     etsi_json.its = match version {
         Some(131) => Some(transcode_uper_to_jer::<crate::standards::denm_1_3_1::DENM>(
             input,
@@ -185,22 +192,30 @@ pub fn decode_ivim_default_to_json(ivim: &[u8]) -> Result<EtsiJson, String> {
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeIvimVersion))]
 /// Decodes a IVIM message with custom decoding options.
-/// Currently, the library supports IVIM versions v2.2.1 (221)
+/// Currently, the library supports IVIM versions v1.3.1 (131) and v2.2.1 (221)
 /// Set `includesHeaders` to `false` if the given binary IVIM does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
 pub fn decode_ivim_to_json(
     ivim: &[u8],
-    version: Option<u32>,
+    mut version: Option<u32>,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ivim, includesHeaders)?;
+    if version.is_none() {
+        version = match input.first() {
+            Some(1) => Some(131),
+            Some(2) => Some(221),
+            _ => None
+        };
+    }
     etsi_json.its = match version {
+        Some(131) => Some(transcode_uper_to_jer::<is_1_3_1::IVIM>(input)).transpose(),
         None | Some(221) => Some(transcode_uper_to_jer::<crate::standards::ivim_2_2_1::IVIM>(
             input,
         ))
         .transpose(),
         _ => {
-            return Err("Unsupported IVIM version: Supported IVIM version is 221.".to_string())
+            return Err("Unsupported IVIM version: Supported IVIM versions are 131 and 221.".to_string())
         }
     }?;
     Ok(etsi_json)
@@ -252,10 +267,17 @@ pub fn decode_cpm_default_to_json(cpm: &[u8]) -> Result<EtsiJson, String> {
 /// Throws string error on decoding errors.
 pub fn decode_cpm_to_json(
     cpm: &[u8],
-    version: Option<u32>,
+    mut version: Option<u32>,
     includesHeaders: bool,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cpm, includesHeaders)?;
+    if version.is_none() {
+        version = match input.first() {
+            Some(1) => Some(131),
+            Some(2) => Some(211),
+            _ => None
+        };
+    }
     etsi_json.its = match version {
         None | Some(211) => Some(transcode_uper_to_jer::<crate::standards::cpm_2_1_1::c_p_m__p_d_u__descriptions::CollectivePerceptionMessage>(
             input,
