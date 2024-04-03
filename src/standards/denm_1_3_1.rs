@@ -1,25 +1,35 @@
-#![allow(unused, non_upper_case_globals, non_snake_case)]
+#![allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
 extern crate alloc;
-
-use super::cdd_1_3_1_1::*;
+use super::cdd_1_3_1_1::{
+    ActionID, CauseCode, ClosedLanes, DangerousGoodsExtended, DeltaReferencePosition,
+    EnergyStorageType, EventHistory, Heading, HeightLonCarr, InformationQuality, ItineraryPath,
+    ItsPduHeader, LanePosition, LightBarSirenInUse, NumberOfOccupants, PosCentMass, PosFrontAx,
+    PosLonCarr, PositionOfOccupants, PositionOfPillars, PositioningSolutionType, ReferencePosition,
+    RelevanceDistance, RelevanceTrafficDirection, RequestResponseIndication, RestrictedTypes,
+    RoadType, Speed, SpeedLimit, StationType, StationarySince, Temperature, TimestampIts, Traces,
+    TrafficRule, TransmissionInterval, TurningRadius, VehicleIdentification, VehicleMass,
+    WheelBaseVehicle,
+};
+use core::borrow::Borrow;
+use lazy_static::lazy_static;
 use rasn::prelude::*;
-// =====================================================
-// DENM-PDU-Descriptions
-// { itu-t(0) identified-organization(4) etsi(0) itsDomain(5) wg1(1) en(302637) denm(1) version(2) }
-// =====================================================
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct AlacarteContainer {
+    #[rasn(identifier = "lanePosition")]
     pub lane_position: Option<LanePosition>,
+    #[rasn(identifier = "impactReduction")]
     pub impact_reduction: Option<ImpactReductionContainer>,
+    #[rasn(identifier = "externalTemperature")]
     pub external_temperature: Option<Temperature>,
+    #[rasn(identifier = "roadWorks")]
     pub road_works: Option<RoadWorksContainerExtended>,
+    #[rasn(identifier = "positioningSolution")]
     pub positioning_solution: Option<PositioningSolutionType>,
+    #[rasn(identifier = "stationaryVehicle")]
     pub stationary_vehicle: Option<StationaryVehicleContainer>,
 }
-
 impl AlacarteContainer {
     pub fn new(
         lane_position: Option<LanePosition>,
@@ -39,20 +49,17 @@ impl AlacarteContainer {
         }
     }
 }
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct DENM {
     pub header: ItsPduHeader,
     pub denm: DecentralizedEnvironmentalNotificationMessage,
 }
-
 impl DENM {
     pub fn new(header: ItsPduHeader, denm: DecentralizedEnvironmentalNotificationMessage) -> Self {
         Self { header, denm }
     }
 }
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct DecentralizedEnvironmentalNotificationMessage {
@@ -61,7 +68,6 @@ pub struct DecentralizedEnvironmentalNotificationMessage {
     pub location: Option<LocationContainer>,
     pub alacarte: Option<AlacarteContainer>,
 }
-
 impl DecentralizedEnvironmentalNotificationMessage {
     pub fn new(
         management: ManagementContainer,
@@ -77,24 +83,34 @@ impl DecentralizedEnvironmentalNotificationMessage {
         }
     }
 }
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct ImpactReductionContainer {
+    #[rasn(identifier = "heightLonCarrLeft")]
     pub height_lon_carr_left: HeightLonCarr,
+    #[rasn(identifier = "heightLonCarrRight")]
     pub height_lon_carr_right: HeightLonCarr,
+    #[rasn(identifier = "posLonCarrLeft")]
     pub pos_lon_carr_left: PosLonCarr,
+    #[rasn(identifier = "posLonCarrRight")]
     pub pos_lon_carr_right: PosLonCarr,
+    #[rasn(identifier = "positionOfPillars")]
     pub position_of_pillars: PositionOfPillars,
+    #[rasn(identifier = "posCentMass")]
     pub pos_cent_mass: PosCentMass,
+    #[rasn(identifier = "wheelBaseVehicle")]
     pub wheel_base_vehicle: WheelBaseVehicle,
+    #[rasn(identifier = "turningRadius")]
     pub turning_radius: TurningRadius,
+    #[rasn(identifier = "posFrontAx")]
     pub pos_front_ax: PosFrontAx,
+    #[rasn(identifier = "positionOfOccupants")]
     pub position_of_occupants: PositionOfOccupants,
+    #[rasn(identifier = "vehicleMass")]
     pub vehicle_mass: VehicleMass,
+    #[rasn(identifier = "requestResponseIndication")]
     pub request_response_indication: RequestResponseIndication,
 }
-
 impl ImpactReductionContainer {
     pub fn new(
         height_lon_carr_left: HeightLonCarr,
@@ -126,17 +142,18 @@ impl ImpactReductionContainer {
         }
     }
 }
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct LocationContainer {
+    #[rasn(identifier = "eventSpeed")]
     pub event_speed: Option<Speed>,
+    #[rasn(identifier = "eventPositionHeading")]
     pub event_position_heading: Option<Heading>,
     pub traces: Traces,
+    #[rasn(identifier = "roadType")]
     pub road_type: Option<RoadType>,
 }
-
 impl LocationContainer {
     pub fn new(
         event_speed: Option<Speed>,
@@ -152,27 +169,36 @@ impl LocationContainer {
         }
     }
 }
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct ManagementContainer {
-    pub action_id: ActionID,
+    #[rasn(identifier = "actionID")]
+    pub action_i_d: ActionID,
+    #[rasn(identifier = "detectionTime")]
     pub detection_time: TimestampIts,
+    #[rasn(identifier = "referenceTime")]
     pub reference_time: TimestampIts,
     pub termination: Option<Termination>,
+    #[rasn(identifier = "eventPosition")]
     pub event_position: ReferencePosition,
+    #[rasn(identifier = "relevanceDistance")]
     pub relevance_distance: Option<RelevanceDistance>,
+    #[rasn(identifier = "relevanceTrafficDirection")]
     pub relevance_traffic_direction: Option<RelevanceTrafficDirection>,
-    #[rasn(default = "management_container_validity_duration_default")]
+    #[rasn(
+        default = "management_container_validity_duration_default",
+        identifier = "validityDuration"
+    )]
     pub validity_duration: ValidityDuration,
+    #[rasn(identifier = "transmissionInterval")]
     pub transmission_interval: Option<TransmissionInterval>,
+    #[rasn(identifier = "stationType")]
     pub station_type: StationType,
 }
-
 impl ManagementContainer {
     pub fn new(
-        action_id: ActionID,
+        action_i_d: ActionID,
         detection_time: TimestampIts,
         reference_time: TimestampIts,
         termination: Option<Termination>,
@@ -184,7 +210,7 @@ impl ManagementContainer {
         station_type: StationType,
     ) -> Self {
         Self {
-            action_id,
+            action_i_d,
             detection_time,
             reference_time,
             termination,
@@ -197,29 +223,33 @@ impl ManagementContainer {
         }
     }
 }
-
 fn management_container_validity_duration_default() -> ValidityDuration {
-    ValidityDuration(600)
+    (*DEFAULT_VALIDITY).clone()
 }
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(delegate, size("1..=8", extensible))]
 pub struct ReferenceDenms(pub SequenceOf<ActionID>);
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct RoadWorksContainerExtended {
+    #[rasn(identifier = "lightBarSirenInUse")]
     pub light_bar_siren_in_use: Option<LightBarSirenInUse>,
+    #[rasn(identifier = "closedLanes")]
     pub closed_lanes: Option<ClosedLanes>,
     pub restriction: Option<RestrictedTypes>,
+    #[rasn(identifier = "speedLimit")]
     pub speed_limit: Option<SpeedLimit>,
+    #[rasn(identifier = "incidentIndication")]
     pub incident_indication: Option<CauseCode>,
+    #[rasn(identifier = "recommendedPath")]
     pub recommended_path: Option<ItineraryPath>,
+    #[rasn(identifier = "startingPointSpeedLimit")]
     pub starting_point_speed_limit: Option<DeltaReferencePosition>,
+    #[rasn(identifier = "trafficFlowRule")]
     pub traffic_flow_rule: Option<TrafficRule>,
+    #[rasn(identifier = "referenceDenms")]
     pub reference_denms: Option<ReferenceDenms>,
 }
-
 impl RoadWorksContainerExtended {
     pub fn new(
         light_bar_siren_in_use: Option<LightBarSirenInUse>,
@@ -245,17 +275,19 @@ impl RoadWorksContainerExtended {
         }
     }
 }
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 #[non_exhaustive]
 pub struct SituationContainer {
+    #[rasn(identifier = "informationQuality")]
     pub information_quality: InformationQuality,
+    #[rasn(identifier = "eventType")]
     pub event_type: CauseCode,
+    #[rasn(identifier = "linkedCause")]
     pub linked_cause: Option<CauseCode>,
+    #[rasn(identifier = "eventHistory")]
     pub event_history: Option<EventHistory>,
 }
-
 impl SituationContainer {
     pub fn new(
         information_quality: InformationQuality,
@@ -271,18 +303,22 @@ impl SituationContainer {
         }
     }
 }
-
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct StationaryVehicleContainer {
+    #[rasn(identifier = "stationarySince")]
     pub stationary_since: Option<StationarySince>,
+    #[rasn(identifier = "stationaryCause")]
     pub stationary_cause: Option<CauseCode>,
+    #[rasn(identifier = "carryingDangerousGoods")]
     pub carrying_dangerous_goods: Option<DangerousGoodsExtended>,
+    #[rasn(identifier = "numberOfOccupants")]
     pub number_of_occupants: Option<NumberOfOccupants>,
+    #[rasn(identifier = "vehicleIdentification")]
     pub vehicle_identification: Option<VehicleIdentification>,
+    #[rasn(identifier = "energyStorageType")]
     pub energy_storage_type: Option<EnergyStorageType>,
 }
-
 impl StationaryVehicleContainer {
     pub fn new(
         stationary_since: Option<StationarySince>,
@@ -302,13 +338,15 @@ impl StationaryVehicleContainer {
         }
     }
 }
-
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
-
 pub enum Termination {
-    IsCancellation = 0,
-    IsNegation = 1,
+    isCancellation = 0,
+    isNegation = 1,
 }
-
-pub const DEFAULT_VALIDITY: u16 = 600;
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+#[rasn(delegate, value("0..=86400"))]
+pub struct ValidityDuration(pub u32);
+lazy_static! {
+    pub static ref DEFAULT_VALIDITY: ValidityDuration = ValidityDuration(600);
+}

@@ -1,15 +1,11 @@
-#[allow(
-    non_camel_case_types,
-    non_snake_case,
-    non_upper_case_globals,
-    unused
-)]
+#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
 pub mod c_p_m__originating_station_containers {
     extern crate alloc;
     use crate::standards::cdd_2_2_1::{
         CartesianAngle, MapReference, Speed, StationType, TrailerData, Wgs84Angle,
     };
     use core::borrow::Borrow;
+    use lazy_static::lazy_static;
     use rasn::prelude::*;
     #[doc = "*"]
     #[doc = " * This DF  represents the Originating RSU Container."]
@@ -23,6 +19,7 @@ pub mod c_p_m__originating_station_containers {
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct OriginatingRsuContainer {
+        #[rasn(identifier = "mapReference")]
         pub map_reference: Option<MapReference>,
     }
     impl OriginatingRsuContainer {
@@ -48,9 +45,13 @@ pub mod c_p_m__originating_station_containers {
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct OriginatingVehicleContainer {
+        #[rasn(identifier = "orientationAngle")]
         pub orientation_angle: Wgs84Angle,
+        #[rasn(identifier = "pitchAngle")]
         pub pitch_angle: Option<CartesianAngle>,
+        #[rasn(identifier = "rollAngle")]
         pub roll_angle: Option<CartesianAngle>,
+        #[rasn(identifier = "trailerDataSet")]
         pub trailer_data_set: Option<TrailerDataSet>,
     }
     impl OriginatingVehicleContainer {
@@ -76,12 +77,7 @@ pub mod c_p_m__originating_station_containers {
     #[rasn(delegate, size("1..=8", extensible))]
     pub struct TrailerDataSet(pub SequenceOf<TrailerData>);
 }
-#[allow(
-    non_camel_case_types,
-    non_snake_case,
-    non_upper_case_globals,
-    unused
-)]
+#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
 pub mod c_p_m__p_d_u__descriptions {
     extern crate alloc;
     use super::c_p_m__originating_station_containers::{
@@ -95,6 +91,7 @@ pub mod c_p_m__p_d_u__descriptions {
         StationType, TimestampIts,
     };
     use core::borrow::Borrow;
+    use lazy_static::lazy_static;
     use rasn::prelude::*;
     #[doc = "*"]
     #[doc = " * This DF  represents the Collective Perception Message (CPM) and is the top level Protocol Data Unit. "]
@@ -157,9 +154,12 @@ pub mod c_p_m__p_d_u__descriptions {
                                             .into(),
                                     },
                                     decoder.codec(),
-                                ).into()
-                            })?.as_bytes(),
-                    ).map(Self::OriginatingVehicleContainer)?),
+                                )
+                                .into()
+                            })?
+                            .as_bytes(),
+                    )
+                    .map(Self::OriginatingVehicleContainer)?),
                 i if i == &ORIGINATING_RSU_CONTAINER => Ok(decoder
                     .codec()
                     .decode_from_binary(
@@ -171,9 +171,12 @@ pub mod c_p_m__p_d_u__descriptions {
                                             .into(),
                                     },
                                     decoder.codec(),
-                                ).into()
-                            })?.as_bytes(),
-                    ).map(Self::OriginatingRsuContainer)?),
+                                )
+                                .into()
+                            })?
+                            .as_bytes(),
+                    )
+                    .map(Self::OriginatingRsuContainer)?),
                 i if i == &SENSOR_INFORMATION_CONTAINER => Ok(decoder
                     .codec()
                     .decode_from_binary(
@@ -185,9 +188,12 @@ pub mod c_p_m__p_d_u__descriptions {
                                             .into(),
                                     },
                                     decoder.codec(),
-                                ).into()
-                            })?.as_bytes(),
-                    ).map(Self::SensorInformationContainer)?),
+                                )
+                                .into()
+                            })?
+                            .as_bytes(),
+                    )
+                    .map(Self::SensorInformationContainer)?),
                 i if i == &PERCEPTION_REGION_CONTAINER => Ok(decoder
                     .codec()
                     .decode_from_binary(
@@ -199,9 +205,12 @@ pub mod c_p_m__p_d_u__descriptions {
                                             .into(),
                                     },
                                     decoder.codec(),
-                                ).into()
-                            })?.as_bytes(),
-                    ).map(Self::PerceptionRegionContainer)?),
+                                )
+                                .into()
+                            })?
+                            .as_bytes(),
+                    )
+                    .map(Self::PerceptionRegionContainer)?),
                 i if i == &PERCEIVED_OBJECT_CONTAINER => Ok(decoder
                     .codec()
                     .decode_from_binary(
@@ -213,9 +222,12 @@ pub mod c_p_m__p_d_u__descriptions {
                                             .into(),
                                     },
                                     decoder.codec(),
-                                ).into()
-                            })?.as_bytes(),
-                    ).map(Self::PerceivedObjectContainer)?),
+                                )
+                                .into()
+                            })?
+                            .as_bytes(),
+                    )
+                    .map(Self::PerceivedObjectContainer)?),
                 _ => Err(rasn::error::DecodeError::from_kind(
                     rasn::error::DecodeErrorKind::Custom {
                         msg: alloc::format!(
@@ -223,7 +235,8 @@ pub mod c_p_m__p_d_u__descriptions {
                         ),
                     },
                     decoder.codec(),
-                ).into()),
+                )
+                .into()),
             }
         }
         pub fn encode<E: Encoder>(
@@ -260,7 +273,8 @@ pub mod c_p_m__p_d_u__descriptions {
                         ),
                     },
                     encoder.codec(),
-                ).into()),
+                )
+                .into()),
             }
         }
     }
@@ -278,7 +292,9 @@ pub mod c_p_m__p_d_u__descriptions {
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct CpmPayload {
+        #[rasn(identifier = "managementContainer")]
         pub management_container: ManagementContainer,
+        #[rasn(identifier = "cpmContainers")]
         pub cpm_containers: ConstraintWrappedCpmContainers,
     }
     impl CpmPayload {
@@ -311,9 +327,13 @@ pub mod c_p_m__p_d_u__descriptions {
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct ManagementContainer {
+        #[rasn(identifier = "referenceTime")]
         pub reference_time: TimestampIts,
+        #[rasn(identifier = "referencePosition")]
         pub reference_position: ReferencePosition,
+        #[rasn(identifier = "segmentationInfo")]
         pub segmentation_info: Option<MessageSegmentationInfo>,
+        #[rasn(identifier = "messageRateRange")]
         pub message_rate_range: Option<MessageRateRange>,
     }
     impl ManagementContainer {
@@ -344,7 +364,9 @@ pub mod c_p_m__p_d_u__descriptions {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
     #[rasn(automatic_tags)]
     pub struct MessageRateRange {
+        #[rasn(identifier = "messageRateMin")]
         pub message_rate_min: MessageRateHz,
+        #[rasn(identifier = "messageRateMax")]
         pub message_rate_max: MessageRateHz,
     }
     impl MessageRateRange {
@@ -368,7 +390,9 @@ pub mod c_p_m__p_d_u__descriptions {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
     #[rasn(automatic_tags)]
     pub struct WrappedCpmContainer {
+        #[rasn(identifier = "containerId")]
         pub container_id: CpmContainerId,
+        #[rasn(identifier = "containerData")]
         pub container_data: Any,
     }
     impl WrappedCpmContainer {
@@ -402,16 +426,12 @@ pub mod c_p_m__p_d_u__descriptions {
     pub const PERCEPTION_REGION_CONTAINER: CpmContainerId = CpmContainerId(4);
     pub const SENSOR_INFORMATION_CONTAINER: CpmContainerId = CpmContainerId(3);
 }
-#[allow(
-    non_camel_case_types,
-    non_snake_case,
-    non_upper_case_globals,
-    unused
-)]
+#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
 pub mod c_p_m__perceived_object_container {
     extern crate alloc;
     use crate::standards::cdd_2_2_1::{CardinalNumber1B, PerceivedObject};
     use core::borrow::Borrow;
+    use lazy_static::lazy_static;
     use rasn::prelude::*;
     #[doc = "*"]
     #[doc = " * This DF  represents the Perceived Object Container "]
@@ -427,7 +447,9 @@ pub mod c_p_m__perceived_object_container {
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct PerceivedObjectContainer {
+        #[rasn(identifier = "numberOfPerceivedObjects")]
         pub number_of_perceived_objects: CardinalNumber1B,
+        #[rasn(identifier = "perceivedObjects")]
         pub perceived_objects: PerceivedObjects,
     }
     impl PerceivedObjectContainer {
@@ -448,12 +470,7 @@ pub mod c_p_m__perceived_object_container {
     #[rasn(delegate, size("0..=255", extensible))]
     pub struct PerceivedObjects(pub SequenceOf<PerceivedObject>);
 }
-#[allow(
-    non_camel_case_types,
-    non_snake_case,
-    non_upper_case_globals,
-    unused
-)]
+#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
 pub mod c_p_m__perception_region_container {
     extern crate alloc;
     use crate::standards::cdd_2_2_1::{
@@ -461,6 +478,7 @@ pub mod c_p_m__perception_region_container {
         SequenceOfIdentifier1B, Shape,
     };
     use core::borrow::Borrow;
+    use lazy_static::lazy_static;
     use rasn::prelude::*;
     #[doc = "*"]
     #[doc = " * This DF  represents a list of identifiers of perceived objects. "]
@@ -492,12 +510,19 @@ pub mod c_p_m__perception_region_container {
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct PerceptionRegion {
+        #[rasn(identifier = "measurementDeltaTime")]
         pub measurement_delta_time: DeltaTimeMilliSecondSigned,
+        #[rasn(identifier = "perceptionRegionConfidence")]
         pub perception_region_confidence: ConfidenceLevel,
+        #[rasn(identifier = "perceptionRegionShape")]
         pub perception_region_shape: Shape,
+        #[rasn(identifier = "shadowingApplies")]
         pub shadowing_applies: bool,
+        #[rasn(identifier = "sensorIdList")]
         pub sensor_id_list: Option<SequenceOfIdentifier1B>,
+        #[rasn(identifier = "numberOfPerceivedObjects")]
         pub number_of_perceived_objects: Option<CardinalNumber1B>,
+        #[rasn(identifier = "perceivedObjectIds")]
         pub perceived_object_ids: Option<PerceivedObjectIds>,
     }
     impl PerceptionRegion {
@@ -528,16 +553,12 @@ pub mod c_p_m__perception_region_container {
     #[rasn(delegate, size("1..=256", extensible))]
     pub struct PerceptionRegionContainer(pub SequenceOf<PerceptionRegion>);
 }
-#[allow(
-    non_camel_case_types,
-    non_snake_case,
-    non_upper_case_globals,
-    unused
-)]
+#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
 pub mod c_p_m__sensor_information_container {
     extern crate alloc;
     use crate::standards::cdd_2_2_1::{ConfidenceLevel, Identifier1B, SensorType, Shape};
     use core::borrow::Borrow;
+    use lazy_static::lazy_static;
     use rasn::prelude::*;
     #[doc = "*"]
     #[doc = " * This DF  represents the characteristics of a single sensor or data fusion system."]
@@ -560,10 +581,15 @@ pub mod c_p_m__sensor_information_container {
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct SensorInformation {
+        #[rasn(identifier = "sensorId")]
         pub sensor_id: Identifier1B,
+        #[rasn(identifier = "sensorType")]
         pub sensor_type: SensorType,
+        #[rasn(identifier = "perceptionRegionShape")]
         pub perception_region_shape: Option<Shape>,
+        #[rasn(identifier = "perceptionRegionConfidence")]
         pub perception_region_confidence: Option<ConfidenceLevel>,
+        #[rasn(identifier = "shadowingApplies")]
         pub shadowing_applies: bool,
     }
     impl SensorInformation {

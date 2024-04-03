@@ -26,7 +26,7 @@ pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<Encoded, String> {
         }
         (Some(denm_json), 211) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::denm_2_1_1::DENM,
+                crate::standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
             >(denm_json)?);
         }
         _ => {

@@ -5,7 +5,7 @@ use etsi_web::{
     },
     standards::{
         cam_1_4_1::CAM,
-        denm_2_1_1::DENM,
+        denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
         is_1_3_1::{CPM, IVIM, MAPEM, SPATEM},
     },
     EtsiJson,
@@ -242,7 +242,7 @@ fn round_trip_srem_impl() {
     let json = EtsiJson {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":43,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
-        its: Some("{\"header\":{\"protocol_version\":2,\"message_id\":9,\"station_id\":760129084},\"srm\":{\"time_stamp\":98917,\"second\":23692,\"sequence_number\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"request_id\":0,\"request_type\":2,\"in_bound_lane\":{\"Approach\":0},\"out_bound_lane\":{\"Approach\":0}}}],\"requester\":{\"id\":{\"StationID\":3919},\"r_type\":{\"role\":1},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":7,\"speed\":232}},\"transit_status\":\"00000000\",\"transit_occupancy\":4,\"transit_schedule\":4}}}".into())
+        its: Some("{\"header\":{\"protocolVersion\":2,\"messageID\":9,\"stationID\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":2,\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requester\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":1},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":7,\"speed\":232}},\"transitStatus\":\"00000000\",\"transitOccupancy\":4,\"transitSchedule\":4}}}".into())
     };
     let encoded = encode_srem(&json, 131).unwrap();
     let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();

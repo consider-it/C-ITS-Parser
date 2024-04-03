@@ -29,17 +29,17 @@ pub fn decode_to_json(message: &[u8], includesHeaders: bool) -> Result<EtsiJson,
     let (input, mut etsi_json) = optionally_decode_headers(message, includesHeaders)?;
     let message_type = rasn::uper::decode::<ItsPduHeader>(input);
     etsi_json.its = match message_type {
-        Ok(ItsPduHeader { message_id: 1, .. }) => decode_denm_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader { message_id: 2, .. }) => decode_cam_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader { message_id: 4, .. }) => decode_spatem_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader { message_id: 5, .. }) => decode_mapem_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader { message_id: 6, .. }) => decode_ivim_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader { message_id: 9, .. }) => decode_srem_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader { message_id: 10, .. }) => decode_ssem_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader { message_id: 14, .. }) => decode_cpm_to_json(input, None, false)?.its,
-        Ok(ItsPduHeader { message_id, .. }) => {
+        Ok(ItsPduHeader { message_i_d: 1, .. }) => decode_denm_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 2, .. }) => decode_cam_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 4, .. }) => decode_spatem_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 5, .. }) => decode_mapem_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 6, .. }) => decode_ivim_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 9, .. }) => decode_srem_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 10, .. }) => decode_ssem_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_i_d: 14, .. }) => decode_cpm_to_json(input, None, false)?.its,
+        Ok(ItsPduHeader { message_i_d, .. }) => {
             return Err(format!(
-                "Unsupported ITS message type: Found message id {message_id}."
+                "Unsupported ITS message type: Found message id {message_i_d}."
             ))
         }
         _ => return Err("Failed to detect message ID of ITS PDU header.".to_string()),
@@ -78,7 +78,7 @@ pub fn decode_denm_to_json(
             input,
         ))
         .transpose(),
-        None | Some(211) => Some(transcode_uper_to_jer::<crate::standards::denm_2_1_1::DENM>(
+        None | Some(211) => Some(transcode_uper_to_jer::<crate::standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM>(
             input,
         ))
         .transpose(),
