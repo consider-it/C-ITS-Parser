@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
-use etsi_transports::{
-    BasicTransportAHeader, BasicTransportBHeader, Decode as TransportDecode, IPv6Header,
+use crate::transport::{
+    BasicTransportAHeader, BasicTransportBHeader, decode::Decode as TransportDecode, IPv6Header,
 };
 use geonetworking::{Decode, Encode, NextAfterCommon, Packet};
 #[cfg(target_arch = "wasm32")]

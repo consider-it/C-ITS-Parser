@@ -1,5 +1,5 @@
 use crate::{map_err_to_string, EtsiJson};
-use etsi_transports::{BasicTransportAHeader, BasicTransportBHeader, Encode as TpEncode};
+use crate::transport::{BasicTransportAHeader, BasicTransportBHeader, encode::Encode as TpEncode};
 use geonetworking::{Encode, UnsecuredHeader, ExtendedHeader, HeaderType};
 
 #[cfg(target_arch = "wasm32")]

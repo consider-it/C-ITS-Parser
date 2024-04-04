@@ -1,6 +1,8 @@
 pub mod de;
 pub mod en;
 pub mod standards;
+
+pub(crate) mod transport;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
