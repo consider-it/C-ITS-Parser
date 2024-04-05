@@ -2,6 +2,7 @@ pub mod de;
 pub mod en;
 pub mod standards;
 
+pub(crate) mod pcap;
 pub(crate) mod transport;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -16,6 +17,14 @@ pub struct EtsiJson {
     pub transport: Option<String>,
     /// Optional ITS ETSI message, encoded as stringified JSON
     pub its: Option<String>,
+}
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum Headers {
+    None,
+    GnBtp,
+    RadioTap802LlcGnBtp,
 }
 
 #[cfg(target_arch = "wasm32")]

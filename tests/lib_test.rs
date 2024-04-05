@@ -1,5 +1,5 @@
 use etsi_web::{
-    de::{decode_to_json, decode_cpm_to_json},
+    de::{decode_cpm_to_json, decode_to_json},
     en::{
         encode_cam, encode_cpm, encode_denm, encode_ivim, encode_mapem, encode_spatem, encode_srem,
     },
@@ -8,7 +8,7 @@ use etsi_web::{
         denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
         is_1_3_1::{CPM, IVIM, MAPEM, SPATEM},
     },
-    EtsiJson,
+    EtsiJson, Headers,
 };
 use wasm_bindgen_test::wasm_bindgen_test;
 
@@ -63,7 +63,7 @@ fn round_trip_impl() {
         ).unwrap())
     };
     let encoded = encode_denm(&json, 211).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();
+    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
     assert_eq!(expected_gn, decoded.geonetworking.unwrap().as_str())
@@ -119,7 +119,7 @@ fn round_trip_denm_impl() {
         ).unwrap())
     };
     let encoded = encode_denm(&json, 211).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();
+    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -144,7 +144,7 @@ fn round_trip_cam_impl() {
         ).unwrap())
     };
     let encoded = encode_cam(&json, 141).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();
+    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -171,7 +171,7 @@ fn round_trip_mapem_impl() {
         ).unwrap())
     };
     let encoded = encode_mapem(&json, 131).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();
+    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -198,7 +198,7 @@ fn round_trip_spatem_impl() {
         ).unwrap())
     };
     let encoded = encode_spatem(&json, 131).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();
+    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -223,7 +223,7 @@ fn round_trip_ivim_impl() {
         ).unwrap())
     };
     let encoded = encode_ivim(&json, 221).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();
+    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -242,10 +242,10 @@ fn round_trip_srem_impl() {
     let json = EtsiJson {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":43,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
-        its: Some("{\"header\":{\"protocolVersion\":2,\"messageID\":9,\"stationID\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":2,\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requester\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":1},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":7,\"speed\":232}},\"transitStatus\":\"00000000\",\"transitOccupancy\":4,\"transitSchedule\":4}}}".into())
+        its: Some("{\"header\":{\"protocolVersion\":2,\"messageID\":9,\"stationID\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requester\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}".into())
     };
     let encoded = encode_srem(&json, 131).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), true).unwrap();
+    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -271,7 +271,7 @@ fn round_trip_cpm_impl() {
         ).unwrap())
     };
     let encoded = encode_cpm(&json, 131).unwrap();
-    let decoded = decode_cpm_to_json(&encoded.to_vec(), Some(131), true).unwrap();
+    let decoded = decode_cpm_to_json(&encoded.to_vec(), Some(131), Headers::GnBtp).unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
