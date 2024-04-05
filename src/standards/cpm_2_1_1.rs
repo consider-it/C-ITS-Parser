@@ -155,7 +155,6 @@ pub mod c_p_m__p_d_u__descriptions {
                                     },
                                     decoder.codec(),
                                 )
-                                .into()
                             })?
                             .as_bytes(),
                     )
@@ -172,7 +171,6 @@ pub mod c_p_m__p_d_u__descriptions {
                                     },
                                     decoder.codec(),
                                 )
-                                .into()
                             })?
                             .as_bytes(),
                     )
@@ -189,7 +187,6 @@ pub mod c_p_m__p_d_u__descriptions {
                                     },
                                     decoder.codec(),
                                 )
-                                .into()
                             })?
                             .as_bytes(),
                     )
@@ -206,7 +203,6 @@ pub mod c_p_m__p_d_u__descriptions {
                                     },
                                     decoder.codec(),
                                 )
-                                .into()
                             })?
                             .as_bytes(),
                     )
@@ -223,16 +219,13 @@ pub mod c_p_m__p_d_u__descriptions {
                                     },
                                     decoder.codec(),
                                 )
-                                .into()
                             })?
                             .as_bytes(),
                     )
                     .map(Self::PerceivedObjectContainer)?),
                 _ => Err(rasn::error::DecodeError::from_kind(
                     rasn::error::DecodeErrorKind::Custom {
-                        msg: alloc::format!(
-                            "Unknown unique identifier for information object class instance."
-                        ),
+                        msg: "Unknown unique identifier for information object class instance.".to_string(),
                     },
                     decoder.codec(),
                 )
@@ -268,9 +261,7 @@ pub mod c_p_m__p_d_u__descriptions {
                 }
                 _ => Err(rasn::error::EncodeError::from_kind(
                     rasn::error::EncodeErrorKind::Custom {
-                        msg: alloc::format!(
-                            "Unknown unique identifier for information object class instance."
-                        ),
+                        msg: "Unknown unique identifier for information object class instance.".to_string(),
                     },
                     encoder.codec(),
                 )

@@ -707,11 +707,11 @@ pub mod d_e_n_m__p_d_u__description {
         isCancellation = 0,
         isNegation = 1,
     }
-    lazy_static! { 
-        #[doc = "* "] 
-        #[doc = " * This type specifies the default value for DENM validity duration used for DENM protocol operation."] 
-        #[doc = ""] 
-        pub static ref DEFAULT_VALIDITY: DeltaTimeSecond = DeltaTimeSecond(600); 
+    lazy_static! {
+        #[doc = "* "]
+        #[doc = " * This type specifies the default value for DENM validity duration used for DENM protocol operation."]
+        #[doc = ""]
+        pub static ref DEFAULT_VALIDITY: DeltaTimeSecond = DeltaTimeSecond(600);
     }
 }
 #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]

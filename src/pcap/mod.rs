@@ -1,5 +1,7 @@
 pub(crate) fn remove_pcap_headers(data: &[u8]) -> Result<&[u8], String> {
-    remove_radiotap_hdr(data).and_then(remove_80211_hdr).and_then(remove_llc_hdr)
+    remove_radiotap_hdr(data)
+        .and_then(remove_80211_hdr)
+        .and_then(remove_llc_hdr)
 }
 
 fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], String> {
@@ -16,7 +18,7 @@ fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], String> {
         return Err(format!("Unknown header version {:#x}", radiotap_version));
     }
 
-    let hdr_len: usize = data[2].into();
+    let hdr_len: usize = u16::from_le_bytes([data[2], data[3]]).into();
     let (_, remaining) = data.split_at(hdr_len);
 
     Ok(remaining)

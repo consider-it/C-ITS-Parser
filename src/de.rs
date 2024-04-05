@@ -37,12 +37,24 @@ pub fn decode_to_json(message: &[u8], headersPresent: Headers) -> Result<EtsiJso
     let (input, mut etsi_json) = optionally_decode_headers(message, headersPresent)?;
     let message_type = rasn::uper::decode::<ItsPduHeader>(input);
     etsi_json.its = match message_type {
-        Ok(ItsPduHeader { message_i_d: 1, .. }) => decode_denm_to_json(input, None, Headers::None)?.its,
-        Ok(ItsPduHeader { message_i_d: 2, .. }) => decode_cam_to_json(input, None, Headers::None)?.its,
-        Ok(ItsPduHeader { message_i_d: 4, .. }) => decode_spatem_to_json(input, None, Headers::None)?.its,
-        Ok(ItsPduHeader { message_i_d: 5, .. }) => decode_mapem_to_json(input, None, Headers::None)?.its,
-        Ok(ItsPduHeader { message_i_d: 6, .. }) => decode_ivim_to_json(input, None, Headers::None)?.its,
-        Ok(ItsPduHeader { message_i_d: 9, .. }) => decode_srem_to_json(input, None, Headers::None)?.its,
+        Ok(ItsPduHeader { message_i_d: 1, .. }) => {
+            decode_denm_to_json(input, None, Headers::None)?.its
+        }
+        Ok(ItsPduHeader { message_i_d: 2, .. }) => {
+            decode_cam_to_json(input, None, Headers::None)?.its
+        }
+        Ok(ItsPduHeader { message_i_d: 4, .. }) => {
+            decode_spatem_to_json(input, None, Headers::None)?.its
+        }
+        Ok(ItsPduHeader { message_i_d: 5, .. }) => {
+            decode_mapem_to_json(input, None, Headers::None)?.its
+        }
+        Ok(ItsPduHeader { message_i_d: 6, .. }) => {
+            decode_ivim_to_json(input, None, Headers::None)?.its
+        }
+        Ok(ItsPduHeader { message_i_d: 9, .. }) => {
+            decode_srem_to_json(input, None, Headers::None)?.its
+        }
         Ok(ItsPduHeader {
             message_i_d: 10, ..
         }) => decode_ssem_to_json(input, None, Headers::None)?.its,
@@ -75,7 +87,7 @@ pub fn decode_denm_default_to_json(denm: &[u8]) -> Result<EtsiJson, String> {
 pub fn decode_denm_to_json(
     denm: &[u8],
     mut version: Option<u32>,
-    headersPresent: Headers
+    headersPresent: Headers,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(denm, headersPresent)?;
     if version.is_none() {
@@ -119,7 +131,7 @@ pub fn decode_cam_default_to_json(cam: &[u8]) -> Result<EtsiJson, String> {
 pub fn decode_cam_to_json(
     cam: &[u8],
     version: Option<u32>,
-    headersPresent: Headers
+    headersPresent: Headers,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cam, headersPresent)?;
     etsi_json.its = match version {
@@ -148,7 +160,7 @@ pub fn decode_mapem_default_to_json(mapem: &[u8]) -> Result<EtsiJson, String> {
 pub fn decode_mapem_to_json(
     mapem: &[u8],
     version: Option<u32>,
-    headersPresent: Headers
+    headersPresent: Headers,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(mapem, headersPresent)?;
     etsi_json.its = match version {
@@ -177,7 +189,7 @@ pub fn decode_spatem_default_to_json(spatem: &[u8]) -> Result<EtsiJson, String> 
 pub fn decode_spatem_to_json(
     spatem: &[u8],
     version: Option<u32>,
-    headersPresent: Headers
+    headersPresent: Headers,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(spatem, headersPresent)?;
     etsi_json.its = match version {
@@ -208,7 +220,7 @@ pub fn decode_ivim_default_to_json(ivim: &[u8]) -> Result<EtsiJson, String> {
 pub fn decode_ivim_to_json(
     ivim: &[u8],
     mut version: Option<u32>,
-    headersPresent: Headers
+    headersPresent: Headers,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ivim, headersPresent)?;
     if version.is_none() {
@@ -249,7 +261,7 @@ pub fn decode_srem_default_to_json(srem: &[u8]) -> Result<EtsiJson, String> {
 pub fn decode_srem_to_json(
     srem: &[u8],
     version: Option<u32>,
-    headersPresent: Headers
+    headersPresent: Headers,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(srem, headersPresent)?;
     etsi_json.its = match version {
@@ -278,7 +290,7 @@ pub fn decode_cpm_default_to_json(cpm: &[u8]) -> Result<EtsiJson, String> {
 pub fn decode_cpm_to_json(
     cpm: &[u8],
     mut version: Option<u32>,
-    headersPresent: Headers
+    headersPresent: Headers,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cpm, headersPresent)?;
     if version.is_none() {
@@ -322,7 +334,7 @@ pub fn decode_ssem_default_to_json(ssem: &[u8]) -> Result<EtsiJson, String> {
 pub fn decode_ssem_to_json(
     ssem: &[u8],
     version: Option<u32>,
-    headersPresent: Headers
+    headersPresent: Headers,
 ) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ssem, headersPresent)?;
     etsi_json.its = match version {

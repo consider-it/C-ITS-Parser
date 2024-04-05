@@ -1,10 +1,9 @@
 use core::fmt::Debug;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 pub(crate) mod decode;
 pub(crate) mod encode;
-
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BasicTransportAHeader {

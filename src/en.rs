@@ -1,6 +1,6 @@
+use crate::transport::{encode::Encode as TpEncode, BasicTransportAHeader, BasicTransportBHeader};
 use crate::{map_err_to_string, EtsiJson};
-use crate::transport::{BasicTransportAHeader, BasicTransportBHeader, encode::Encode as TpEncode};
-use geonetworking::{Encode, UnsecuredHeader, ExtendedHeader, HeaderType};
+use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -30,7 +30,9 @@ pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<Encoded, String> {
             >(denm_json)?);
         }
         _ => {
-            return Err("Unsupported DENM version: Supported DENM versions are 131 and 211.".to_string())
+            return Err(
+                "Unsupported DENM version: Supported DENM versions are 131 and 211.".to_string(),
+            )
         }
     };
     let encoded = optionally_encode_headers(&denm.geonetworking, &denm.transport, payload)?;
@@ -51,9 +53,7 @@ pub fn encode_cam(cam: &EtsiJson, version: u32) -> Result<Encoded, String> {
                 crate::standards::cam_1_4_1::CAM,
             >(json)?);
         }
-        _ => {
-            return Err("Unsupported CAM version: Supported CAM version is 141.".to_string())
-        }
+        _ => return Err("Unsupported CAM version: Supported CAM version is 141.".to_string()),
     };
     let encoded = optionally_encode_headers(&cam.geonetworking, &cam.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -73,9 +73,7 @@ pub fn encode_mapem(mapem: &EtsiJson, version: u32) -> Result<Encoded, String> {
                 crate::standards::is_1_3_1::MAPEM,
             >(json)?);
         }
-        _ => {
-            return Err("Unsupported MAPEM version: Supported MAPEM version is 131.".to_string())
-        }
+        _ => return Err("Unsupported MAPEM version: Supported MAPEM version is 131.".to_string()),
     };
     let encoded = optionally_encode_headers(&mapem.geonetworking, &mapem.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -117,9 +115,7 @@ pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<Encoded, String> {
                 crate::standards::ivim_2_2_1::IVIM,
             >(json)?);
         }
-        _ => {
-            return Err("Unsupported IVIM version: Supported IVIM version is 221.".to_string())
-        }
+        _ => return Err("Unsupported IVIM version: Supported IVIM version is 221.".to_string()),
     };
     let encoded = optionally_encode_headers(&ivim.geonetworking, &ivim.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -139,9 +135,7 @@ pub fn encode_srem(srem: &EtsiJson, version: u32) -> Result<Encoded, String> {
                 crate::standards::is_1_3_1::SREM,
             >(json)?);
         }
-        _ => {
-            return Err("Unsupported SREM version: Supported SREM version is 131.".to_string())
-        }
+        _ => return Err("Unsupported SREM version: Supported SREM version is 131.".to_string()),
     };
     let encoded = optionally_encode_headers(&srem.geonetworking, &srem.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -159,9 +153,7 @@ pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<Encoded, String> {
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::CPM>(json)?);
         }
-        _ => {
-            return Err("Unsupported CPM version: Supported CPM version is 131.".to_string())
-        }
+        _ => return Err("Unsupported CPM version: Supported CPM version is 131.".to_string()),
     };
     let encoded = optionally_encode_headers(&cpm.geonetworking, &cpm.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -181,9 +173,7 @@ pub fn encode_ssem(ssem: &EtsiJson, version: u32) -> Result<Encoded, String> {
                 crate::standards::is_1_3_1::SSEM,
             >(json)?);
         }
-        _ => {
-            return Err("Unsupported SSEM version: Supported SSEM version is 131.".to_string())
-        }
+        _ => return Err("Unsupported SSEM version: Supported SSEM version is 131.".to_string()),
     };
     let encoded = optionally_encode_headers(&ssem.geonetworking, &ssem.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -195,9 +185,10 @@ fn optionally_encode_headers(
     mut its: Vec<u8>,
 ) -> Result<Vec<u8>, String> {
     match (gn_json, tp_json) {
-        (Some(_), None) | (None, Some(_)) => {
-            Err("Expecting either both or neither GeoNetworking and Transport headers to be present!".to_string())
-        }
+        (Some(_), None) | (None, Some(_)) => Err(
+            "Expecting either both or neither GeoNetworking and Transport headers to be present!"
+                .to_string(),
+        ),
         (Some(gn), Some(tp)) => {
             let mut geonetworking = UnsecuredHeader::from_json(gn).map_err(map_err_to_string)?;
             let mut transport = match geonetworking.common.next_header {
@@ -219,13 +210,25 @@ fn optionally_encode_headers(
             geonetworking.common.payload_length = transport.len() as u16;
             geonetworking.common.header_type_and_subtype = match geonetworking.extended {
                 Some(ExtendedHeader::Beacon(_)) => HeaderType::Beacon,
-                Some(ExtendedHeader::GAC(_)) => HeaderType::GeoAnycast(geonetworking::AreaType::Circular),
-                Some(ExtendedHeader::GBC(_)) => HeaderType::GeoBroadcast(geonetworking::AreaType::Circular),
+                Some(ExtendedHeader::GAC(_)) => {
+                    HeaderType::GeoAnycast(geonetworking::AreaType::Circular)
+                }
+                Some(ExtendedHeader::GBC(_)) => {
+                    HeaderType::GeoBroadcast(geonetworking::AreaType::Circular)
+                }
                 Some(ExtendedHeader::GUC(_)) => HeaderType::GeoUnicast,
-                Some(ExtendedHeader::TSB(_)) => HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::MultiHop),
-                Some(ExtendedHeader::SHB(_)) => HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::SingleHop),
-                Some(ExtendedHeader::LSRequest(_)) => HeaderType::LocationService(geonetworking::LocationServiceType::Request),
-                Some(ExtendedHeader::LSReply(_)) => HeaderType::LocationService(geonetworking::LocationServiceType::Reply),
+                Some(ExtendedHeader::TSB(_)) => {
+                    HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::MultiHop)
+                }
+                Some(ExtendedHeader::SHB(_)) => HeaderType::TopologicallyScopedBroadcast(
+                    geonetworking::BroadcastType::SingleHop,
+                ),
+                Some(ExtendedHeader::LSRequest(_)) => {
+                    HeaderType::LocationService(geonetworking::LocationServiceType::Request)
+                }
+                Some(ExtendedHeader::LSReply(_)) => {
+                    HeaderType::LocationService(geonetworking::LocationServiceType::Reply)
+                }
                 None => HeaderType::Any,
             };
             geonetworking

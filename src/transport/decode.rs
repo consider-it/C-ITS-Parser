@@ -1,3 +1,4 @@
+use crate::transport::{BasicTransportAHeader, BasicTransportBHeader, IPv6Header};
 use etherparse::PacketHeaders;
 use nom::{
     bytes::streaming::take,
@@ -5,7 +6,6 @@ use nom::{
     error::{ErrorKind, FromExternalError, ParseError},
     sequence::pair,
 };
-use crate::transport::{BasicTransportAHeader, BasicTransportBHeader, IPv6Header};
 
 #[derive(Debug, PartialEq)]
 pub enum DecodeError<I> {
@@ -49,12 +49,12 @@ pub trait Decode: Sized {
     ///     }
     /// );
     /// ```
-    fn decode<'input>(input: &'input [u8]) -> IResult<&'input [u8], Self>;
+    fn decode(input: &[u8]) -> IResult<&[u8], Self>;
 }
 
 impl Decode for BasicTransportAHeader {
-    fn decode<'input>(input: &'input [u8]) -> IResult<&'input [u8], Self> {
-        into(pair(u16_from_be_bytes, u16_from_be_bytes))(input.into())
+    fn decode(input: &[u8]) -> IResult<&[u8], Self> {
+        into(pair(u16_from_be_bytes, u16_from_be_bytes))(input)
     }
 }
 
@@ -68,15 +68,15 @@ impl From<(u16, u16)> for BasicTransportAHeader {
 }
 
 impl BasicTransportAHeader {
-    pub fn decode_from_json<'input>(input: &'input str) -> Result<Self, DecodeError<&'input str>> {
+    pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
             .map_err(|e| DecodeError::Json(format!("Error encoding to JSON: {e:?}")))
     }
 }
 
 impl Decode for BasicTransportBHeader {
-    fn decode<'input>(input: &'input [u8]) -> IResult<&'input [u8], Self> {
-        into(pair(u16_from_be_bytes, u16_from_be_bytes))(input.into())
+    fn decode(input: &[u8]) -> IResult<&[u8], Self> {
+        into(pair(u16_from_be_bytes, u16_from_be_bytes))(input)
     }
 }
 
@@ -90,13 +90,13 @@ impl From<(u16, u16)> for BasicTransportBHeader {
 }
 
 impl BasicTransportBHeader {
-    pub fn decode_from_json<'input>(input: &'input str) -> Result<Self, DecodeError<&'input str>> {
+    pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
             .map_err(|e| DecodeError::Json(format!("Error encoding to JSON: {e:?}")))
     }
 }
 
-fn u16_from_be_bytes<'input>(input: &'input [u8]) -> IResult<&'input [u8], u16> {
+fn u16_from_be_bytes(input: &[u8]) -> IResult<&[u8], u16> {
     map_res(take(2usize), |slice: &[u8]| {
         slice.try_into().map(u16::from_be_bytes).map_err(|e| {
             DecodeError::IntegerError::<&[u8]>(format!(
@@ -107,7 +107,7 @@ fn u16_from_be_bytes<'input>(input: &'input [u8]) -> IResult<&'input [u8], u16> 
 }
 
 impl Decode for IPv6Header {
-    fn decode<'input>(input: &'input [u8]) -> IResult<&'input [u8], Self> {
+    fn decode(input: &[u8]) -> IResult<&[u8], Self> {
         etherparse::PacketHeaders::from_ip_slice(input)
             .map(|headers| {
                 let first_after_headers = headers.ip.as_ref().map_or(0, |ip| ip.header_len())

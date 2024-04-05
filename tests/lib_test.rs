@@ -275,3 +275,35 @@ fn round_trip_cpm_impl() {
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
+
+#[test]
+fn decode_pcap_frame() {
+    decode_pcap_frame_impl()
+}
+
+#[wasm_bindgen_test]
+fn decode_pcap_frame_wasm() {
+    decode_pcap_frame_impl()
+}
+
+fn decode_pcap_frame_impl() {
+    let expected = EtsiJson {
+        geonetworking: Some(
+            r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":5,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[true,false,false,false,false,false,false,false],"payload_length":67,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"PassengerCar","reserved":[false,false,false,false,false,false,false,false,false,false],"address":[138,176,248,168,162,37]},"timestamp":1151018751,"latitude":535505166,"longitude":99353789,"position_accuracy":true,"speed":14,"heading":724},"media_dependent_data":[0,0,0,0]}},"payload":[7,209,0,0,2,2,156,107,199,147,38,255,64,90,178,2,65,206,38,186,215,161,134,24,96,0,54,204,208,72,45,79,160,5,168,130,152,138,127,51,255,1,255,250,0,40,51,0,0,44,2,121,2,217,173,240,3,121,96,26,104,51,205,99,240,67,44]}}"#.into(),
+        ),
+        transport: Some(
+            r#"{"destination_port":2001,"destination_port_info":0}"#.into(),
+        ),
+        its: Some(
+            r#"{"header":{"protocolVersion":2,"messageID":2,"stationID":2624309139},"cam":{"generationDeltaTime":9983,"camParameters":{"basicContainer":{"stationType":5,"referencePosition":{"latitude":535505166,"longitude":99353789,"positionConfidenceEllipse":{"semiMajorConfidence":195,"semiMinorConfidence":195,"semiMajorOrientation":0},"altitude":{"altitudeValue":12230,"altitudeConfidence":"alt_005_00"}}},"highFrequencyContainer":{"basicVehicleContainerHighFrequency":{"heading":{"headingValue":724,"headingConfidence":126},"speed":{"speedValue":11,"speedConfidence":41},"driveDirection":"unavailable","vehicleLength":{"vehicleLengthValue":42,"vehicleLengthConfidenceIndication":"unavailable"},"vehicleWidth":18,"longitudinalAcceleration":{"longitudinalAccelerationValue":-1,"longitudinalAccelerationConfidence":102},"curvature":{"curvatureValue":0,"curvatureConfidence":"onePerMeter_0_00002"},"curvatureCalculationMode":"yawRateUsed","yawRate":{"yawRateValue":0,"yawRateConfidence":"unavailable"},"accelerationControl":"00","lateralAcceleration":{"lateralAccelerationValue":0,"lateralAccelerationConfidence":102}}},"lowFrequencyContainer":{"basicVehicleContainerLowFrequency":{"vehicleRole":"default","exteriorLights":"00","pathHistory":[{"pathPosition":{"deltaLatitude":317,"deltaLongitude":1460,"deltaAltitude":-940},"pathDeltaTime":1779},{"pathPosition":{"deltaLatitude":423,"deltaLongitude":3316,"deltaAltitude":-1310},"pathDeltaTime":4300}]}}}}}"#.into(),
+        ),
+    };
+    let hex = "0000480002000040000004e5480038000200c900f40200000000000000000a014cff42ff34ff34ff7f390000f7c52687ebeb050091000c177c3d3c95fa000000000000000000000088000000ffffffffffff8ab0f8a8a225ffffffffffff00882300aaaa03000000894711000501205002800043010014008ab0f8a8a225449b26ff1feb290e05ec04bd800e02d40000000007d1000002029c6bc79326ff405ab20241ce26bad7a18618600036ccd0482d4fa005a882988a7f33ff01fffa00283300002c027902d9adf00379601a6833cd63f0432ce5dc898b";
+    let raw = (0..hex.len())
+        .step_by(2)
+        .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
+        .collect::<Result<Vec<u8>, _>>()
+        .unwrap();
+    let decoded = decode_to_json(&raw, Headers::RadioTap802LlcGnBtp).unwrap();
+    assert_eq!(expected, decoded)
+}
