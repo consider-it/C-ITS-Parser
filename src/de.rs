@@ -36,31 +36,40 @@ macro_rules! btp {
 pub fn decode_to_json(message: &[u8], headersPresent: Headers) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(message, headersPresent)?;
     let message_type = rasn::uper::decode::<ItsPduHeader>(input);
-    etsi_json.its = match message_type {
+    let (msg_ty, decoded) = match message_type {
+        Ok(ItsPduHeader { message_i_d: 1, protocol_version: 2, .. }) => {
+            (Some(1), decode_denm_to_json(input, Some(211), Headers::None)?.its)
+        }
         Ok(ItsPduHeader { message_i_d: 1, .. }) => {
-            decode_denm_to_json(input, None, Headers::None)?.its
+            (Some(1), decode_denm_to_json(input, Some(131), Headers::None)?.its)
         }
         Ok(ItsPduHeader { message_i_d: 2, .. }) => {
-            decode_cam_to_json(input, None, Headers::None)?.its
+            (Some(2), decode_cam_to_json(input, None, Headers::None)?.its)
         }
         Ok(ItsPduHeader { message_i_d: 4, .. }) => {
-            decode_spatem_to_json(input, None, Headers::None)?.its
+            (Some(4), decode_spatem_to_json(input, None, Headers::None)?.its)
         }
         Ok(ItsPduHeader { message_i_d: 5, .. }) => {
-            decode_mapem_to_json(input, None, Headers::None)?.its
+            (Some(5), decode_mapem_to_json(input, None, Headers::None)?.its)
+        }
+        Ok(ItsPduHeader { message_i_d: 6, protocol_version: 2, .. }) => {
+            (Some(6), decode_ivim_to_json(input, Some(221), Headers::None)?.its)
         }
         Ok(ItsPduHeader { message_i_d: 6, .. }) => {
-            decode_ivim_to_json(input, None, Headers::None)?.its
+            (Some(6), decode_ivim_to_json(input, Some(131), Headers::None)?.its)
         }
         Ok(ItsPduHeader { message_i_d: 9, .. }) => {
-            decode_srem_to_json(input, None, Headers::None)?.its
+            (Some(9), decode_srem_to_json(input, None, Headers::None)?.its)
         }
         Ok(ItsPduHeader {
             message_i_d: 10, ..
-        }) => decode_ssem_to_json(input, None, Headers::None)?.its,
+        }) => (Some(10), decode_ssem_to_json(input, None, Headers::None)?.its),
+        Ok(ItsPduHeader {
+            message_i_d: 14, protocol_version: 2, ..
+        }) => (Some(14), decode_cpm_to_json(input, Some(211), Headers::None)?.its),
         Ok(ItsPduHeader {
             message_i_d: 14, ..
-        }) => decode_cpm_to_json(input, None, Headers::None)?.its,
+        }) => (Some(14), decode_cpm_to_json(input, Some(131), Headers::None)?.its),
         Ok(ItsPduHeader { message_i_d, .. }) => {
             return Err(format!(
                 "Unsupported ITS message type: Found message id {message_i_d}."
@@ -68,6 +77,8 @@ pub fn decode_to_json(message: &[u8], headersPresent: Headers) -> Result<EtsiJso
         }
         _ => return Err("Failed to detect message ID of ITS PDU header.".to_string()),
     };
+    etsi_json.its = decoded;
+    etsi_json.message_type = msg_ty;
     Ok(etsi_json)
 }
 
@@ -351,11 +362,7 @@ fn optionally_decode_headers(input: &[u8], headers: Headers) -> Result<(&[u8], E
     match headers {
         Headers::None => Ok((
             input,
-            EtsiJson {
-                geonetworking: None,
-                transport: None,
-                its: None,
-            },
+            EtsiJson::default(),
         )),
         Headers::GnBtp => decode_gn_and_btp(input),
         Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input).and_then(decode_gn_and_btp),
@@ -370,7 +377,7 @@ fn decode_gn_and_btp(input: &[u8]) -> Result<(&[u8], EtsiJson), String> {
                 EtsiJson {
                     geonetworking: Some(gn_json),
                     transport: Some(tp),
-                    its: None,
+                    ..Default::default()
                 },
             )
         })
