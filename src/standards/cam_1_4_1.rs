@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
 extern crate alloc;
-use super::cdd_1_3_1_1::{
+use crate::standards::cdd_1_3_1_1::{
     AccelerationControl, CauseCode, CenDsrcTollingZone, ClosedLanes, Curvature,
     CurvatureCalculationMode, DangerousGoodsBasic, DriveDirection, EmbarkationStatus,
     EmergencyPriority, ExteriorLights, Heading, ItsPduHeader, LanePosition, LateralAcceleration,

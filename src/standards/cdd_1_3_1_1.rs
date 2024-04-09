@@ -75,19 +75,33 @@ impl Altitude {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum AltitudeConfidence {
+    #[rasn(identifier = "alt-000-01")]
     alt_000_01 = 0,
+    #[rasn(identifier = "alt-000-02")]
     alt_000_02 = 1,
+    #[rasn(identifier = "alt-000-05")]
     alt_000_05 = 2,
+    #[rasn(identifier = "alt-000-10")]
     alt_000_10 = 3,
+    #[rasn(identifier = "alt-000-20")]
     alt_000_20 = 4,
+    #[rasn(identifier = "alt-000-50")]
     alt_000_50 = 5,
+    #[rasn(identifier = "alt-001-00")]
     alt_001_00 = 6,
+    #[rasn(identifier = "alt-002-00")]
     alt_002_00 = 7,
+    #[rasn(identifier = "alt-005-00")]
     alt_005_00 = 8,
+    #[rasn(identifier = "alt-010-00")]
     alt_010_00 = 9,
+    #[rasn(identifier = "alt-020-00")]
     alt_020_00 = 10,
+    #[rasn(identifier = "alt-050-00")]
     alt_050_00 = 11,
+    #[rasn(identifier = "alt-100-00")]
     alt_100_00 = 12,
+    #[rasn(identifier = "alt-200-00")]
     alt_200_00 = 13,
     outOfRange = 14,
     unavailable = 15,
@@ -196,11 +210,17 @@ pub enum CurvatureCalculationMode {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum CurvatureConfidence {
+    #[rasn(identifier = "onePerMeter-0-00002")]
     onePerMeter_0_00002 = 0,
+    #[rasn(identifier = "onePerMeter-0-0001")]
     onePerMeter_0_0001 = 1,
+    #[rasn(identifier = "onePerMeter-0-0005")]
     onePerMeter_0_0005 = 2,
+    #[rasn(identifier = "onePerMeter-0-002")]
     onePerMeter_0_002 = 3,
+    #[rasn(identifier = "onePerMeter-0-01")]
     onePerMeter_0_01 = 4,
+    #[rasn(identifier = "onePerMeter-0-1")]
     onePerMeter_0_1 = 5,
     outOfRange = 6,
     unavailable = 7,
@@ -741,9 +761,13 @@ pub struct RestrictedTypes(pub SequenceOf<StationType>);
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum RoadType {
+    #[rasn(identifier = "urban-NoStructuralSeparationToOppositeLanes")]
     urban_NoStructuralSeparationToOppositeLanes = 0,
+    #[rasn(identifier = "urban-WithStructuralSeparationToOppositeLanes")]
     urban_WithStructuralSeparationToOppositeLanes = 1,
+    #[rasn(identifier = "nonUrban-NoStructuralSeparationToOppositeLanes")]
     nonUrban_NoStructuralSeparationToOppositeLanes = 2,
+    #[rasn(identifier = "nonUrban-WithStructuralSeparationToOppositeLanes")]
     nonUrban_WithStructuralSeparationToOppositeLanes = 3,
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
@@ -991,12 +1015,19 @@ impl YawRate {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum YawRateConfidence {
+    #[rasn(identifier = "degSec-000-01")]
     degSec_000_01 = 0,
+    #[rasn(identifier = "degSec-000-05")]
     degSec_000_05 = 1,
+    #[rasn(identifier = "degSec-000-10")]
     degSec_000_10 = 2,
+    #[rasn(identifier = "degSec-001-00")]
     degSec_001_00 = 3,
+    #[rasn(identifier = "degSec-005-00")]
     degSec_005_00 = 4,
+    #[rasn(identifier = "degSec-010-00")]
     degSec_010_00 = 5,
+    #[rasn(identifier = "degSec-100-00")]
     degSec_100_00 = 6,
     outOfRange = 7,
     unavailable = 8,

@@ -77,19 +77,33 @@ impl Altitude {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum AltitudeConfidence {
+    #[rasn(identifier = "alt-000-01")]
     alt_000_01 = 0,
+    #[rasn(identifier = "alt-000-02")]
     alt_000_02 = 1,
+    #[rasn(identifier = "alt-000-05")]
     alt_000_05 = 2,
+    #[rasn(identifier = "alt-000-10")]
     alt_000_10 = 3,
+    #[rasn(identifier = "alt-000-20")]
     alt_000_20 = 4,
+    #[rasn(identifier = "alt-000-50")]
     alt_000_50 = 5,
+    #[rasn(identifier = "alt-001-00")]
     alt_001_00 = 6,
+    #[rasn(identifier = "alt-002-00")]
     alt_002_00 = 7,
+    #[rasn(identifier = "alt-005-00")]
     alt_005_00 = 8,
+    #[rasn(identifier = "alt-010-00")]
     alt_010_00 = 9,
+    #[rasn(identifier = "alt-020-00")]
     alt_020_00 = 10,
+    #[rasn(identifier = "alt-050-00")]
     alt_050_00 = 11,
+    #[rasn(identifier = "alt-100-00")]
     alt_100_00 = 12,
+    #[rasn(identifier = "alt-200-00")]
     alt_200_00 = 13,
     outOfRange = 14,
     unavailable = 15,
@@ -678,11 +692,17 @@ pub enum EuVehicleCategoryO {
 #[rasn(enumerated)]
 pub enum EuroValue {
     noEntry = 0,
+    #[rasn(identifier = "euro-1")]
     euro_1 = 1,
+    #[rasn(identifier = "euro-2")]
     euro_2 = 2,
+    #[rasn(identifier = "euro-3")]
     euro_3 = 3,
+    #[rasn(identifier = "euro-4")]
     euro_4 = 4,
+    #[rasn(identifier = "euro-5")]
     euro_5 = 5,
+    #[rasn(identifier = "euro-6")]
     euro_6 = 6,
     reservedForUse1 = 7,
     reservedForUse2 = 8,
@@ -2103,9 +2123,13 @@ impl RoadSurfaceStaticCharacteristics {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum RoadType {
+    #[rasn(identifier = "urban-NoStructuralSeparationToOppositeLanes")]
     urban_NoStructuralSeparationToOppositeLanes = 0,
+    #[rasn(identifier = "urban-WithStructuralSeparationToOppositeLanes")]
     urban_WithStructuralSeparationToOppositeLanes = 1,
+    #[rasn(identifier = "nonUrban-NoStructuralSeparationToOppositeLanes")]
     nonUrban_NoStructuralSeparationToOppositeLanes = 2,
+    #[rasn(identifier = "nonUrban-WithStructuralSeparationToOppositeLanes")]
     nonUrban_WithStructuralSeparationToOppositeLanes = 3,
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -2382,7 +2406,9 @@ pub struct TreatmentType(pub u8);
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum UnitType {
+    #[rasn(identifier = "mg-km")]
     mg_km = 0,
+    #[rasn(identifier = "mg-kWh")]
     mg_kWh = 1,
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]

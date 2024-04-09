@@ -7,8 +7,8 @@ use super::cdd_1_3_1_1::{
     PosLonCarr, PositionOfOccupants, PositionOfPillars, PositioningSolutionType, ReferencePosition,
     RelevanceDistance, RelevanceTrafficDirection, RequestResponseIndication, RestrictedTypes,
     RoadType, Speed, SpeedLimit, StationType, StationarySince, Temperature, TimestampIts, Traces,
-    TrafficRule, TransmissionInterval, TurningRadius, VehicleIdentification, VehicleMass,
-    WheelBaseVehicle,
+    TrafficRule, TransmissionInterval, TurningRadius, ValidityDuration, VehicleIdentification,
+    VehicleMass, WheelBaseVehicle,
 };
 use core::borrow::Borrow;
 use lazy_static::lazy_static;
@@ -224,7 +224,7 @@ impl ManagementContainer {
     }
 }
 fn management_container_validity_duration_default() -> ValidityDuration {
-    (*DEFAULT_VALIDITY).clone()
+    ValidityDuration(600)
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(delegate, size("1..=8", extensible))]
@@ -344,9 +344,6 @@ pub enum Termination {
     isCancellation = 0,
     isNegation = 1,
 }
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
-#[rasn(delegate, value("0..=86400"))]
-pub struct ValidityDuration(pub u32);
 lazy_static! {
-    pub static ref DEFAULT_VALIDITY: ValidityDuration = ValidityDuration(600);
+    pub static ref DEFAULT_VALIDITY: Integer = Integer::from(600);
 }

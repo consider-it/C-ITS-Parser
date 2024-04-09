@@ -422,7 +422,7 @@ pub mod d_e_n_m__p_d_u__description {
         }
     }
     fn management_container_validity_duration_default() -> DeltaTimeSecond {
-        (*DEFAULT_VALIDITY).clone()
+        DeltaTimeSecond(600)
     }
     #[doc = "* "]
     #[doc = " * This type contains detailed information about an object with which a vehicle and/or the traffic is likely to collide."]
@@ -707,12 +707,7 @@ pub mod d_e_n_m__p_d_u__description {
         isCancellation = 0,
         isNegation = 1,
     }
-    lazy_static! {
-        #[doc = "* "]
-        #[doc = " * This type specifies the default value for DENM validity duration used for DENM protocol operation."]
-        #[doc = ""]
-        pub static ref DEFAULT_VALIDITY: DeltaTimeSecond = DeltaTimeSecond(600);
-    }
+    lazy_static! { # [doc = "* "] # [doc = " * This type specifies the default value for DENM validity duration used for DENM protocol operation."] # [doc = ""] pub static ref DEFAULT_VALIDITY : Integer = Integer :: from (600) ; }
 }
 #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
 pub mod e_t_s_i__i_t_s__c_d_d {
@@ -1330,19 +1325,33 @@ pub mod e_t_s_i__i_t_s__c_d_d {
     #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
     #[rasn(enumerated)]
     pub enum AltitudeConfidence {
+        #[rasn(identifier = "alt-000-01")]
         alt_000_01 = 0,
+        #[rasn(identifier = "alt-000-02")]
         alt_000_02 = 1,
+        #[rasn(identifier = "alt-000-05")]
         alt_000_05 = 2,
+        #[rasn(identifier = "alt-000-10")]
         alt_000_10 = 3,
+        #[rasn(identifier = "alt-000-20")]
         alt_000_20 = 4,
+        #[rasn(identifier = "alt-000-50")]
         alt_000_50 = 5,
+        #[rasn(identifier = "alt-001-00")]
         alt_001_00 = 6,
+        #[rasn(identifier = "alt-002-00")]
         alt_002_00 = 7,
+        #[rasn(identifier = "alt-005-00")]
         alt_005_00 = 8,
+        #[rasn(identifier = "alt-010-00")]
         alt_010_00 = 9,
+        #[rasn(identifier = "alt-020-00")]
         alt_020_00 = 10,
+        #[rasn(identifier = "alt-050-00")]
         alt_050_00 = 11,
+        #[rasn(identifier = "alt-100-00")]
         alt_100_00 = 12,
+        #[rasn(identifier = "alt-200-00")]
         alt_200_00 = 13,
         outOfRange = 14,
         unavailable = 15,
@@ -1402,11 +1411,17 @@ pub mod e_t_s_i__i_t_s__c_d_d {
     #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
     #[rasn(enumerated)]
     pub enum AngularAccelerationConfidence {
+        #[rasn(identifier = "degSecSquared-01")]
         degSecSquared_01 = 0,
+        #[rasn(identifier = "degSecSquared-02")]
         degSecSquared_02 = 1,
+        #[rasn(identifier = "degSecSquared-05")]
         degSecSquared_05 = 2,
+        #[rasn(identifier = "degSecSquared-10")]
         degSecSquared_10 = 3,
+        #[rasn(identifier = "degSecSquared-20")]
         degSecSquared_20 = 4,
+        #[rasn(identifier = "degSecSquared-50")]
         degSecSquared_50 = 5,
         outOfRange = 6,
         unavailable = 7,
@@ -1432,11 +1447,17 @@ pub mod e_t_s_i__i_t_s__c_d_d {
     #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
     #[rasn(enumerated)]
     pub enum AngularSpeedConfidence {
+        #[rasn(identifier = "degSec-01")]
         degSec_01 = 0,
+        #[rasn(identifier = "degSec-02")]
         degSec_02 = 1,
+        #[rasn(identifier = "degSec-05")]
         degSec_05 = 2,
+        #[rasn(identifier = "degSec-10")]
         degSec_10 = 3,
+        #[rasn(identifier = "degSec-20")]
         degSec_20 = 4,
+        #[rasn(identifier = "degSec-50")]
         degSec_50 = 5,
         outOfRange = 6,
         unavailable = 7,
@@ -2595,11 +2616,17 @@ pub mod e_t_s_i__i_t_s__c_d_d {
     #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
     #[rasn(enumerated)]
     pub enum CurvatureConfidence {
+        #[rasn(identifier = "onePerMeter-0-00002")]
         onePerMeter_0_00002 = 0,
+        #[rasn(identifier = "onePerMeter-0-0001")]
         onePerMeter_0_0001 = 1,
+        #[rasn(identifier = "onePerMeter-0-0005")]
         onePerMeter_0_0005 = 2,
+        #[rasn(identifier = "onePerMeter-0-002")]
         onePerMeter_0_002 = 3,
+        #[rasn(identifier = "onePerMeter-0-01")]
         onePerMeter_0_01 = 4,
+        #[rasn(identifier = "onePerMeter-0-1")]
         onePerMeter_0_1 = 5,
         outOfRange = 6,
         unavailable = 7,
@@ -5072,7 +5099,7 @@ pub mod e_t_s_i__i_t_s__c_d_d {
     #[rasn(choice, automatic_tags)]
     #[non_exhaustive]
     pub enum ObjectClass {
-        #[rasn(value("0..=31"))]
+        #[rasn(value("0..=14"))]
         vehicleSubClass(TrafficParticipantType),
         vruSubClass(VruProfileAndSubprofile),
         #[rasn(value("0.."))]
@@ -6865,9 +6892,13 @@ pub mod e_t_s_i__i_t_s__c_d_d {
     #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
     #[rasn(enumerated)]
     pub enum RoadType {
+        #[rasn(identifier = "urban-NoStructuralSeparationToOppositeLanes")]
         urban_NoStructuralSeparationToOppositeLanes = 0,
+        #[rasn(identifier = "urban-WithStructuralSeparationToOppositeLanes")]
         urban_WithStructuralSeparationToOppositeLanes = 1,
+        #[rasn(identifier = "nonUrban-NoStructuralSeparationToOppositeLanes")]
         nonUrban_NoStructuralSeparationToOppositeLanes = 2,
+        #[rasn(identifier = "nonUrban-WithStructuralSeparationToOppositeLanes")]
         nonUrban_WithStructuralSeparationToOppositeLanes = 3,
     }
     #[doc = "*"]
@@ -8841,12 +8872,19 @@ pub mod e_t_s_i__i_t_s__c_d_d {
     #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
     #[rasn(enumerated)]
     pub enum YawRateConfidence {
+        #[rasn(identifier = "degSec-000-01")]
         degSec_000_01 = 0,
+        #[rasn(identifier = "degSec-000-05")]
         degSec_000_05 = 1,
+        #[rasn(identifier = "degSec-000-10")]
         degSec_000_10 = 2,
+        #[rasn(identifier = "degSec-001-00")]
         degSec_001_00 = 3,
+        #[rasn(identifier = "degSec-005-00")]
         degSec_005_00 = 4,
+        #[rasn(identifier = "degSec-010-00")]
         degSec_010_00 = 5,
+        #[rasn(identifier = "degSec-100-00")]
         degSec_100_00 = 6,
         outOfRange = 7,
         unavailable = 8,

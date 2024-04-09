@@ -278,19 +278,33 @@ impl Altitude {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum AltitudeConfidence {
+    #[rasn(identifier = "alt-000-01")]
     alt_000_01 = 0,
+    #[rasn(identifier = "alt-000-02")]
     alt_000_02 = 1,
+    #[rasn(identifier = "alt-000-05")]
     alt_000_05 = 2,
+    #[rasn(identifier = "alt-000-10")]
     alt_000_10 = 3,
+    #[rasn(identifier = "alt-000-20")]
     alt_000_20 = 4,
+    #[rasn(identifier = "alt-000-50")]
     alt_000_50 = 5,
+    #[rasn(identifier = "alt-001-00")]
     alt_001_00 = 6,
+    #[rasn(identifier = "alt-002-00")]
     alt_002_00 = 7,
+    #[rasn(identifier = "alt-005-00")]
     alt_005_00 = 8,
+    #[rasn(identifier = "alt-010-00")]
     alt_010_00 = 9,
+    #[rasn(identifier = "alt-020-00")]
     alt_020_00 = 10,
+    #[rasn(identifier = "alt-050-00")]
     alt_050_00 = 11,
+    #[rasn(identifier = "alt-100-00")]
     alt_100_00 = 12,
+    #[rasn(identifier = "alt-200-00")]
     alt_200_00 = 13,
     outOfRange = 14,
     unavailable = 15,
@@ -683,6 +697,7 @@ pub enum BasicVehicleRole {
     roadRescue = 5,
     emergency = 6,
     safetyCar = 7,
+    #[rasn(identifier = "none-unknown")]
     none_unknown = 8,
     truck = 9,
     motorcycle = 10,
@@ -909,6 +924,7 @@ impl ChInfoTypes_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -924,6 +940,7 @@ impl ChInfoTypes_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -939,13 +956,16 @@ impl ChInfoTypes_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::ChInfoTypeM5)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -965,7 +985,9 @@ impl ChInfoTypes_Type {
             (Self::ChInfoTypeM5(inner), i) if i == &CH_INFO_TYPE__M5 => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -1066,6 +1088,7 @@ impl ChannelInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -1081,13 +1104,16 @@ impl ChannelInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::CChannelAccess)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -1102,7 +1128,9 @@ impl ChannelInfoExtTypes_ExtValue {
             (Self::CChannelAccess(inner), i) if i == &C__CHANNEL_ACCESS => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -1735,11 +1763,17 @@ pub enum CurvatureCalculationMode {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum CurvatureConfidence {
+    #[rasn(identifier = "onePerMeter-0-00002")]
     onePerMeter_0_00002 = 0,
+    #[rasn(identifier = "onePerMeter-0-0001")]
     onePerMeter_0_0001 = 1,
+    #[rasn(identifier = "onePerMeter-0-0005")]
     onePerMeter_0_0005 = 2,
+    #[rasn(identifier = "onePerMeter-0-002")]
     onePerMeter_0_002 = 3,
+    #[rasn(identifier = "onePerMeter-0-01")]
     onePerMeter_0_01 = 4,
+    #[rasn(identifier = "onePerMeter-0-1")]
     onePerMeter_0_1 = 5,
     outOfRange = 6,
     unavailable = 7,
@@ -2548,20 +2582,35 @@ pub struct Elevation(pub i32);
 #[rasn(enumerated)]
 pub enum ElevationConfidence {
     unavailable = 0,
+    #[rasn(identifier = "elev-500-00")]
     elev_500_00 = 1,
+    #[rasn(identifier = "elev-200-00")]
     elev_200_00 = 2,
+    #[rasn(identifier = "elev-100-00")]
     elev_100_00 = 3,
+    #[rasn(identifier = "elev-050-00")]
     elev_050_00 = 4,
+    #[rasn(identifier = "elev-020-00")]
     elev_020_00 = 5,
+    #[rasn(identifier = "elev-010-00")]
     elev_010_00 = 6,
+    #[rasn(identifier = "elev-005-00")]
     elev_005_00 = 7,
+    #[rasn(identifier = "elev-002-00")]
     elev_002_00 = 8,
+    #[rasn(identifier = "elev-001-00")]
     elev_001_00 = 9,
+    #[rasn(identifier = "elev-000-50")]
     elev_000_50 = 10,
+    #[rasn(identifier = "elev-000-20")]
     elev_000_20 = 11,
+    #[rasn(identifier = "elev-000-10")]
     elev_000_10 = 12,
+    #[rasn(identifier = "elev-000-05")]
     elev_000_05 = 13,
+    #[rasn(identifier = "elev-000-02")]
     elev_000_02 = 14,
+    #[rasn(identifier = "elev-000-01")]
     elev_000_01 = 15,
 }
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq)]
@@ -2626,6 +2675,7 @@ pub struct EngineCharacteristics(pub u8);
 #[rasn(enumerated)]
 #[non_exhaustive]
 pub enum EnumeratedEdcaIdentifier {
+    #[rasn(identifier = "us-j2945-bsm")]
     us_j2945_bsm = 0,
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -2691,11 +2741,17 @@ pub enum EuVehicleCategoryO {
 #[rasn(enumerated)]
 pub enum EuroValue {
     noEntry = 0,
+    #[rasn(identifier = "euro-1")]
     euro_1 = 1,
+    #[rasn(identifier = "euro-2")]
     euro_2 = 2,
+    #[rasn(identifier = "euro-3")]
     euro_3 = 3,
+    #[rasn(identifier = "euro-4")]
     euro_4 = 4,
+    #[rasn(identifier = "euro-5")]
     euro_5 = 5,
+    #[rasn(identifier = "euro-6")]
     euro_6 = 6,
     reservedForUse1 = 7,
     reservedForUse2 = 8,
@@ -3118,6 +3174,7 @@ impl GeographicLocationContainer {
         }
     }
 }
+#[doc = ""]
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(choice, automatic_tags)]
 #[non_exhaustive]
@@ -3491,6 +3548,7 @@ impl IVIManagementContainer {
         }
     }
 }
+#[doc = ""]
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(delegate)]
 pub struct IValue(pub Uint16);
@@ -4469,12 +4527,6 @@ impl MAPEM {
 #[rasn(automatic_tags, identifier = "MCDM-ApplicationContainer")]
 #[non_exhaustive]
 pub struct MCDMApplicationContainer {}
-impl Default for MCDMApplicationContainer {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl MCDMApplicationContainer {
     pub fn new() -> Self {
         Self {}
@@ -4674,7 +4726,7 @@ impl ManagementContainer {
     }
 }
 fn management_container_validity_duration_default() -> ValidityDuration {
-    (*DEFAULT_VALIDITY).clone()
+    ValidityDuration(600)
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(delegate)]
@@ -4994,13 +5046,21 @@ pub struct MovementList(pub SequenceOf<MovementState>);
 pub enum MovementPhaseState {
     unavailable = 0,
     dark = 1,
+    #[rasn(identifier = "stop-Then-Proceed")]
     stop_Then_Proceed = 2,
+    #[rasn(identifier = "stop-And-Remain")]
     stop_And_Remain = 3,
+    #[rasn(identifier = "pre-Movement")]
     pre_Movement = 4,
+    #[rasn(identifier = "permissive-Movement-Allowed")]
     permissive_Movement_Allowed = 5,
+    #[rasn(identifier = "protected-Movement-Allowed")]
     protected_Movement_Allowed = 6,
+    #[rasn(identifier = "permissive-clearance")]
     permissive_clearance = 7,
+    #[rasn(identifier = "protected-clearance")]
     protected_clearance = 8,
+    #[rasn(identifier = "caution-Conflicting-Traffic")]
     caution_Conflicting_Traffic = 9,
 }
 #[doc = " Anonymous SEQUENCE OF member "]
@@ -6368,6 +6428,7 @@ impl ProviderServiceContext {
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(delegate, value("0.."))]
 pub struct Psid(pub Integer);
+#[doc = ""]
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(automatic_tags)]
 pub struct PsidSsp {
@@ -6697,26 +6758,34 @@ impl RegAdvisorySpeed_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -6727,26 +6796,34 @@ impl RegAdvisorySpeed_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -6757,26 +6834,34 @@ impl RegComputedLane_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -6787,26 +6872,34 @@ impl RegComputedLane_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -6831,13 +6924,16 @@ impl RegConnectionManeuverAssist_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -6853,7 +6949,9 @@ impl RegConnectionManeuverAssist_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -6883,13 +6981,16 @@ impl RegGenericLane_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -6905,7 +7006,9 @@ impl RegGenericLane_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -6921,26 +7024,34 @@ impl RegIntersectionGeometry_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -6951,26 +7062,34 @@ impl RegIntersectionGeometry_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -6995,13 +7114,16 @@ impl RegIntersectionState_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -7017,7 +7139,9 @@ impl RegIntersectionState_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -7047,13 +7171,16 @@ impl RegLaneAttributes_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -7069,7 +7196,9 @@ impl RegLaneAttributes_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -7085,26 +7214,34 @@ impl RegLaneDataAttribute_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7115,26 +7252,34 @@ impl RegLaneDataAttribute_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7159,13 +7304,16 @@ impl RegMapData_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -7181,7 +7329,9 @@ impl RegMapData_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -7211,13 +7361,16 @@ impl RegMovementEvent_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -7233,7 +7386,9 @@ impl RegMovementEvent_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -7249,26 +7404,34 @@ impl RegMovementState_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7279,26 +7442,34 @@ impl RegMovementState_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7323,13 +7494,16 @@ impl RegNodeAttributeSetXY_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -7345,7 +7519,9 @@ impl RegNodeAttributeSetXY_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -7361,26 +7537,34 @@ impl RegNodeOffsetPointXY_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7391,26 +7575,34 @@ impl RegNodeOffsetPointXY_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7435,13 +7627,16 @@ impl RegPosition3D_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -7457,7 +7652,9 @@ impl RegPosition3D_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -7473,26 +7670,34 @@ impl RegRTCMcorrections_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7503,26 +7708,34 @@ impl RegRTCMcorrections_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7547,13 +7760,16 @@ impl RegRestrictionUserType_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -7569,7 +7785,9 @@ impl RegRestrictionUserType_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -7585,26 +7803,34 @@ impl RegRoadSegment_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7615,26 +7841,34 @@ impl RegRoadSegment_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7645,26 +7879,34 @@ impl RegSPAT_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7675,26 +7917,34 @@ impl RegSPAT_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7705,26 +7955,34 @@ impl RegSignalControlZone_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7735,26 +7993,34 @@ impl RegSignalControlZone_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7765,26 +8031,34 @@ impl RegSignalRequest_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7795,26 +8069,34 @@ impl RegSignalRequest_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7825,26 +8107,34 @@ impl RegSignalRequestMessage_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7855,26 +8145,34 @@ impl RegSignalRequestMessage_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7885,26 +8183,34 @@ impl RegSignalRequestPackage_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7915,26 +8221,34 @@ impl RegSignalRequestPackage_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7945,26 +8259,34 @@ impl RegSignalStatus_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -7975,26 +8297,34 @@ impl RegSignalStatus_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -8005,26 +8335,34 @@ impl RegSignalStatusMessage_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -8035,26 +8373,34 @@ impl RegSignalStatusMessage_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -8079,13 +8425,16 @@ impl RegSignalStatusPackage_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -8101,7 +8450,9 @@ impl RegSignalStatusPackage_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -8131,13 +8482,16 @@ impl RegRequesterDescription_Type {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::AddGrpC)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -8153,7 +8507,9 @@ impl RegRequesterDescription_Type {
             (Self::AddGrpC(inner), i) if i == &ADD_GRP_C => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -8169,26 +8525,34 @@ impl RegRequesterType_Type {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -8199,26 +8563,34 @@ impl RegRequesterType_id {
         open_type_payload: Option<&Any>,
         identifier: &RegionId,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(
         &self,
         encoder: &mut E,
         identifier: &RegionId,
     ) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -8677,9 +9049,13 @@ impl RoadSegmentReferenceID {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum RoadType {
+    #[rasn(identifier = "urban-NoStructuralSeparationToOppositeLanes")]
     urban_NoStructuralSeparationToOppositeLanes = 0,
+    #[rasn(identifier = "urban-WithStructuralSeparationToOppositeLanes")]
     urban_WithStructuralSeparationToOppositeLanes = 1,
+    #[rasn(identifier = "nonUrban-NoStructuralSeparationToOppositeLanes")]
     nonUrban_NoStructuralSeparationToOppositeLanes = 2,
+    #[rasn(identifier = "nonUrban-WithStructuralSeparationToOppositeLanes")]
     nonUrban_WithStructuralSeparationToOppositeLanes = 3,
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -8795,6 +9171,7 @@ impl RoutAdvertExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -8810,13 +9187,16 @@ impl RoutAdvertExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::CGatewayMACaddress)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -8831,7 +9211,9 @@ impl RoutAdvertExtTypes_ExtValue {
             }
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -8891,9 +9273,13 @@ pub enum SAEHeadingConfidence {
     prec10deg = 1,
     prec05deg = 2,
     prec01deg = 3,
+    #[rasn(identifier = "prec0-1deg")]
     prec0_1deg = 4,
+    #[rasn(identifier = "prec0-05deg")]
     prec0_05deg = 5,
+    #[rasn(identifier = "prec0-01deg")]
     prec0_01deg = 6,
+    #[rasn(identifier = "prec0-0125deg")]
     prec0_0125deg = 7,
 }
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
@@ -8904,8 +9290,11 @@ pub enum SAESpeedConfidence {
     prec10ms = 2,
     prec5ms = 3,
     prec1ms = 4,
+    #[rasn(identifier = "prec0-1ms")]
     prec0_1ms = 5,
+    #[rasn(identifier = "prec0-05ms")]
     prec0_05ms = 6,
+    #[rasn(identifier = "prec0-01ms")]
     prec0_01ms = 7,
 }
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
@@ -8914,6 +9303,7 @@ pub enum SAEThrottleConfidence {
     unavailable = 0,
     prec10percent = 1,
     prec1percent = 2,
+    #[rasn(identifier = "prec0-5percent")]
     prec0_5percent = 3,
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
@@ -9047,22 +9437,30 @@ impl SRMexts_ExtValue {
         open_type_payload: Option<&Any>,
         identifier: &RefExt,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(&self, encoder: &mut E, identifier: &RefExt) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -9073,22 +9471,30 @@ impl SRMexts_extRef {
         open_type_payload: Option<&Any>,
         identifier: &RefExt,
     ) -> Result<Self, D::Error> {
-        Err(rasn::error::DecodeError::from_kind(
-            rasn::error::DecodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            decoder.codec(),
-        )
-        .into())
+        match identifier {
+            _ => Err(rasn::error::DecodeError::from_kind(
+                rasn::error::DecodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                decoder.codec(),
+            )
+            .into()),
+        }
     }
     pub fn encode<E: Encoder>(&self, encoder: &mut E, identifier: &RefExt) -> Result<(), E::Error> {
-        Err(rasn::error::EncodeError::from_kind(
-            rasn::error::EncodeErrorKind::Custom {
-                msg: "Unknown unique identifier for information object class instance.".to_string(),
-            },
-            encoder.codec(),
-        )
-        .into())
+        match (self, identifier) {
+            _ => Err(rasn::error::EncodeError::from_kind(
+                rasn::error::EncodeErrorKind::Custom {
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
+                },
+                encoder.codec(),
+            )
+            .into()),
+        }
     }
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -9431,6 +9837,7 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -9446,6 +9853,7 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -9461,6 +9869,7 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -9476,6 +9885,7 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -9491,6 +9901,7 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -9506,6 +9917,7 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -9521,6 +9933,7 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -9536,6 +9949,7 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -9551,13 +9965,16 @@ impl ServiceInfoExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::CProtocolType)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -9587,7 +10004,9 @@ impl ServiceInfoExtTypes_ExtValue {
             (Self::CProtocolType(inner), i) if i == &C__PROTOCOL_TYPE => inner.encode(encoder),
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -10052,6 +10471,7 @@ pub struct SignalStatusPackageList(pub SequenceOf<SignalStatusPackage>);
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(delegate, value("0..=255"))]
 pub struct SignalViolationSubCauseCode(pub u8);
+#[doc = ""]
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(choice, automatic_tags)]
 #[non_exhaustive]
@@ -10377,6 +10797,7 @@ impl SrvAdvMsgHeaderExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -10392,6 +10813,7 @@ impl SrvAdvMsgHeaderExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -10407,6 +10829,7 @@ impl SrvAdvMsgHeaderExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -10422,6 +10845,7 @@ impl SrvAdvMsgHeaderExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
@@ -10437,13 +10861,16 @@ impl SrvAdvMsgHeaderExtTypes_ExtValue {
                                 },
                                 decoder.codec(),
                             )
+                            .into()
                         })?
                         .as_bytes(),
                 )
                 .map(Self::CExtendedChannelInfos)?),
             _ => Err(rasn::error::DecodeError::from_kind(
                 rasn::error::DecodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 decoder.codec(),
             )
@@ -10461,7 +10888,9 @@ impl SrvAdvMsgHeaderExtTypes_ExtValue {
             }
             _ => Err(rasn::error::EncodeError::from_kind(
                 rasn::error::EncodeErrorKind::Custom {
-                    msg: "Unknown unique identifier for information object class instance.".to_string(),
+                    msg: alloc::format!(
+                        "Unknown unique identifier for information object class instance."
+                    ),
                 },
                 encoder.codec(),
             )
@@ -10590,6 +11019,7 @@ pub struct SteeringWheelAngleValue(pub i16);
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(delegate, value("0..=255"))]
 pub struct SubCauseCodeType(pub u8);
+#[doc = ""]
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(delegate, size("1"))]
 pub struct SubjectAssurance(pub OctetString);
@@ -10752,6 +11182,7 @@ impl ThreeDLocation {
         }
     }
 }
+#[doc = ""]
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
 #[rasn(delegate)]
 pub struct Time32(pub Uint32);
@@ -10796,44 +11227,83 @@ impl TimeChangeDetails {
 #[rasn(enumerated)]
 pub enum TimeConfidence {
     unavailable = 0,
+    #[rasn(identifier = "time-100-000")]
     time_100_000 = 1,
+    #[rasn(identifier = "time-050-000")]
     time_050_000 = 2,
+    #[rasn(identifier = "time-020-000")]
     time_020_000 = 3,
+    #[rasn(identifier = "time-010-000")]
     time_010_000 = 4,
+    #[rasn(identifier = "time-002-000")]
     time_002_000 = 5,
+    #[rasn(identifier = "time-001-000")]
     time_001_000 = 6,
+    #[rasn(identifier = "time-000-500")]
     time_000_500 = 7,
+    #[rasn(identifier = "time-000-200")]
     time_000_200 = 8,
+    #[rasn(identifier = "time-000-100")]
     time_000_100 = 9,
+    #[rasn(identifier = "time-000-050")]
     time_000_050 = 10,
+    #[rasn(identifier = "time-000-020")]
     time_000_020 = 11,
+    #[rasn(identifier = "time-000-010")]
     time_000_010 = 12,
+    #[rasn(identifier = "time-000-005")]
     time_000_005 = 13,
+    #[rasn(identifier = "time-000-002")]
     time_000_002 = 14,
+    #[rasn(identifier = "time-000-001")]
     time_000_001 = 15,
+    #[rasn(identifier = "time-000-000-5")]
     time_000_000_5 = 16,
+    #[rasn(identifier = "time-000-000-2")]
     time_000_000_2 = 17,
+    #[rasn(identifier = "time-000-000-1")]
     time_000_000_1 = 18,
+    #[rasn(identifier = "time-000-000-05")]
     time_000_000_05 = 19,
+    #[rasn(identifier = "time-000-000-02")]
     time_000_000_02 = 20,
+    #[rasn(identifier = "time-000-000-01")]
     time_000_000_01 = 21,
+    #[rasn(identifier = "time-000-000-005")]
     time_000_000_005 = 22,
+    #[rasn(identifier = "time-000-000-002")]
     time_000_000_002 = 23,
+    #[rasn(identifier = "time-000-000-001")]
     time_000_000_001 = 24,
+    #[rasn(identifier = "time-000-000-000-5")]
     time_000_000_000_5 = 25,
+    #[rasn(identifier = "time-000-000-000-2")]
     time_000_000_000_2 = 26,
+    #[rasn(identifier = "time-000-000-000-1")]
     time_000_000_000_1 = 27,
+    #[rasn(identifier = "time-000-000-000-05")]
     time_000_000_000_05 = 28,
+    #[rasn(identifier = "time-000-000-000-02")]
     time_000_000_000_02 = 29,
+    #[rasn(identifier = "time-000-000-000-01")]
     time_000_000_000_01 = 30,
+    #[rasn(identifier = "time-000-000-000-005")]
     time_000_000_000_005 = 31,
+    #[rasn(identifier = "time-000-000-000-002")]
     time_000_000_000_002 = 32,
+    #[rasn(identifier = "time-000-000-000-001")]
     time_000_000_000_001 = 33,
+    #[rasn(identifier = "time-000-000-000-000-5")]
     time_000_000_000_000_5 = 34,
+    #[rasn(identifier = "time-000-000-000-000-2")]
     time_000_000_000_000_2 = 35,
+    #[rasn(identifier = "time-000-000-000-000-1")]
     time_000_000_000_000_1 = 36,
+    #[rasn(identifier = "time-000-000-000-000-05")]
     time_000_000_000_000_05 = 37,
+    #[rasn(identifier = "time-000-000-000-000-02")]
     time_000_000_000_000_02 = 38,
+    #[rasn(identifier = "time-000-000-000-000-01")]
     time_000_000_000_000_01 = 39,
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
@@ -11098,7 +11568,9 @@ pub struct Uint8(pub u8);
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum UnitType {
+    #[rasn(identifier = "mg-km")]
     mg_km = 0,
+    #[rasn(identifier = "mg-kWh")]
     mg_kWh = 1,
 }
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
@@ -11882,12 +12354,17 @@ pub enum VruSubProfileAnimal {
 pub enum VruSubProfileBicyclist {
     unavailable = 0,
     bicyclist = 1,
+    #[rasn(identifier = "wheelchair-user")]
     wheelchair_user = 2,
+    #[rasn(identifier = "horse-and-rider")]
     horse_and_rider = 3,
     rollerskater = 4,
+    #[rasn(identifier = "e-scooter")]
     e_scooter = 5,
+    #[rasn(identifier = "personal-transporter")]
     personal_transporter = 6,
     pedelec = 7,
+    #[rasn(identifier = "speed-pedelec")]
     speed_pedelec = 8,
     max = 15,
 }
@@ -11897,7 +12374,9 @@ pub enum VruSubProfileMotorcyclist {
     unavailable = 0,
     moped = 1,
     motorcycle = 2,
+    #[rasn(identifier = "motorcycle-and-sidecar-right")]
     motorcycle_and_sidecar_right = 3,
+    #[rasn(identifier = "motorcycle-and-sidecar-left")]
     motorcycle_and_sidecar_left = 4,
     max = 15,
 }
@@ -11905,8 +12384,11 @@ pub enum VruSubProfileMotorcyclist {
 #[rasn(enumerated)]
 pub enum VruSubProfilePedestrian {
     unavailable = 0,
+    #[rasn(identifier = "ordinary-pedestrian")]
     ordinary_pedestrian = 1,
+    #[rasn(identifier = "road-worker")]
     road_worker = 2,
+    #[rasn(identifier = "first-responder")]
     first_responder = 3,
     max = 15,
 }
@@ -12018,12 +12500,19 @@ impl YawRate {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum YawRateConfidence {
+    #[rasn(identifier = "degSec-000-01")]
     degSec_000_01 = 0,
+    #[rasn(identifier = "degSec-000-05")]
     degSec_000_05 = 1,
+    #[rasn(identifier = "degSec-000-10")]
     degSec_000_10 = 2,
+    #[rasn(identifier = "degSec-001-00")]
     degSec_001_00 = 3,
+    #[rasn(identifier = "degSec-005-00")]
     degSec_005_00 = 4,
+    #[rasn(identifier = "degSec-010-00")]
     degSec_010_00 = 5,
+    #[rasn(identifier = "degSec-100-00")]
     degSec_100_00 = 6,
     outOfRange = 7,
     unavailable = 8,
@@ -12097,7 +12586,7 @@ pub const CH_INFO_TYPE__M_M: MedType = MedType(6);
 pub const CH_INFO_TYPE_ANY: MedType = MedType(1);
 pub const CH_INFO_TYPE_UNKNOWN: MedType = MedType(0);
 lazy_static! {
-    pub static ref DEFAULT_VALIDITY: ValidityDuration = ValidityDuration(600);
+    pub static ref DEFAULT_VALIDITY: Integer = Integer::from(600);
 }
 pub const DIESEL: FuelType = FuelType(3);
 pub const ELECTRIC: FuelType = FuelType(4);

@@ -46,6 +46,8 @@ impl BasicTransportBHeader {
 
 impl Encode for IPv6Header {
     fn encode(&self) -> Result<Vec<u8>, EncodeError> {
-        Err(EncodeError::Unsupported("Encoding IPv6 headers is currently unsupported.".to_string()))
+        Err(EncodeError::Unsupported(
+            "Encoding IPv6 headers is currently unsupported.".to_string(),
+        ))
     }
 }

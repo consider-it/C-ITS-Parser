@@ -613,19 +613,33 @@ impl Altitude {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum AltitudeConfidence {
+    #[rasn(identifier = "alt-000-01")]
     alt_000_01 = 0,
+    #[rasn(identifier = "alt-000-02")]
     alt_000_02 = 1,
+    #[rasn(identifier = "alt-000-05")]
     alt_000_05 = 2,
+    #[rasn(identifier = "alt-000-10")]
     alt_000_10 = 3,
+    #[rasn(identifier = "alt-000-20")]
     alt_000_20 = 4,
+    #[rasn(identifier = "alt-000-50")]
     alt_000_50 = 5,
+    #[rasn(identifier = "alt-001-00")]
     alt_001_00 = 6,
+    #[rasn(identifier = "alt-002-00")]
     alt_002_00 = 7,
+    #[rasn(identifier = "alt-005-00")]
     alt_005_00 = 8,
+    #[rasn(identifier = "alt-010-00")]
     alt_010_00 = 9,
+    #[rasn(identifier = "alt-020-00")]
     alt_020_00 = 10,
+    #[rasn(identifier = "alt-050-00")]
     alt_050_00 = 11,
+    #[rasn(identifier = "alt-100-00")]
     alt_100_00 = 12,
+    #[rasn(identifier = "alt-200-00")]
     alt_200_00 = 13,
     outOfRange = 14,
     unavailable = 15,
@@ -685,11 +699,17 @@ pub struct AngleConfidence(pub u8);
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum AngularAccelerationConfidence {
+    #[rasn(identifier = "degSecSquared-01")]
     degSecSquared_01 = 0,
+    #[rasn(identifier = "degSecSquared-02")]
     degSecSquared_02 = 1,
+    #[rasn(identifier = "degSecSquared-05")]
     degSecSquared_05 = 2,
+    #[rasn(identifier = "degSecSquared-10")]
     degSecSquared_10 = 3,
+    #[rasn(identifier = "degSecSquared-20")]
     degSecSquared_20 = 4,
+    #[rasn(identifier = "degSecSquared-50")]
     degSecSquared_50 = 5,
     outOfRange = 6,
     unavailable = 7,
@@ -715,11 +735,17 @@ pub enum AngularAccelerationConfidence {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum AngularSpeedConfidence {
+    #[rasn(identifier = "degSec-01")]
     degSec_01 = 0,
+    #[rasn(identifier = "degSec-02")]
     degSec_02 = 1,
+    #[rasn(identifier = "degSec-05")]
     degSec_05 = 2,
+    #[rasn(identifier = "degSec-10")]
     degSec_10 = 3,
+    #[rasn(identifier = "degSec-20")]
     degSec_20 = 4,
+    #[rasn(identifier = "degSec-50")]
     degSec_50 = 5,
     outOfRange = 6,
     unavailable = 7,
@@ -1782,11 +1808,17 @@ pub enum CurvatureCalculationMode {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum CurvatureConfidence {
+    #[rasn(identifier = "onePerMeter-0-00002")]
     onePerMeter_0_00002 = 0,
+    #[rasn(identifier = "onePerMeter-0-0001")]
     onePerMeter_0_0001 = 1,
+    #[rasn(identifier = "onePerMeter-0-0005")]
     onePerMeter_0_0005 = 2,
+    #[rasn(identifier = "onePerMeter-0-002")]
     onePerMeter_0_002 = 3,
+    #[rasn(identifier = "onePerMeter-0-01")]
     onePerMeter_0_01 = 4,
+    #[rasn(identifier = "onePerMeter-0-1")]
     onePerMeter_0_1 = 5,
     outOfRange = 6,
     unavailable = 7,
@@ -3856,7 +3888,7 @@ pub struct NumberOfOccupants(pub u8);
 #[rasn(choice, automatic_tags)]
 #[non_exhaustive]
 pub enum ObjectClass {
-    #[rasn(value("0..=31"))]
+    #[rasn(value("0..=14"))]
     vehicleSubClass(TrafficParticipantType),
     vruSubClass(VruProfileAndSubprofile),
     #[rasn(value("0.."))]
@@ -5276,9 +5308,13 @@ impl RoadSegmentReferenceId {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum RoadType {
+    #[rasn(identifier = "urban-NoStructuralSeparationToOppositeLanes")]
     urban_NoStructuralSeparationToOppositeLanes = 0,
+    #[rasn(identifier = "urban-WithStructuralSeparationToOppositeLanes")]
     urban_WithStructuralSeparationToOppositeLanes = 1,
+    #[rasn(identifier = "nonUrban-NoStructuralSeparationToOppositeLanes")]
     nonUrban_NoStructuralSeparationToOppositeLanes = 2,
+    #[rasn(identifier = "nonUrban-WithStructuralSeparationToOppositeLanes")]
     nonUrban_WithStructuralSeparationToOppositeLanes = 3,
 }
 #[doc = "*"]
@@ -7000,8 +7036,11 @@ pub struct VruSpecificExteriorLights(pub BitString);
 #[rasn(enumerated)]
 pub enum VruSubProfileAnimal {
     unavailable = 0,
+    #[rasn(identifier = "wild-animal")]
     wild_animal = 1,
+    #[rasn(identifier = "farm-animal")]
     farm_animal = 2,
+    #[rasn(identifier = "service-animal")]
     service_animal = 3,
     max = 15,
 }
@@ -7028,12 +7067,17 @@ pub enum VruSubProfileAnimal {
 pub enum VruSubProfileBicyclist {
     unavailable = 0,
     bicyclist = 1,
+    #[rasn(identifier = "wheelchair-user")]
     wheelchair_user = 2,
+    #[rasn(identifier = "horse-and-rider")]
     horse_and_rider = 3,
     rollerskater = 4,
+    #[rasn(identifier = "e-scooter")]
     e_scooter = 5,
+    #[rasn(identifier = "personal-transporter")]
     personal_transporter = 6,
     pedelec = 7,
+    #[rasn(identifier = "speed-pedelec")]
     speed_pedelec = 8,
     max = 15,
 }
@@ -7057,7 +7101,9 @@ pub enum VruSubProfileMotorcyclist {
     unavailable = 0,
     moped = 1,
     motorcycle = 2,
+    #[rasn(identifier = "motorcycle-and-sidecar-right")]
     motorcycle_and_sidecar_right = 3,
+    #[rasn(identifier = "motorcycle-and-sidecar-left")]
     motorcycle_and_sidecar_left = 4,
     max = 15,
 }
@@ -7078,8 +7124,11 @@ pub enum VruSubProfileMotorcyclist {
 #[rasn(enumerated)]
 pub enum VruSubProfilePedestrian {
     unavailable = 0,
+    #[rasn(identifier = "ordinary-pedestrian")]
     ordinary_pedestrian = 1,
+    #[rasn(identifier = "road-worker")]
     road_worker = 2,
+    #[rasn(identifier = "first-responder")]
     first_responder = 3,
     max = 15,
 }
@@ -7235,12 +7284,19 @@ impl YawRate {
 #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
 #[rasn(enumerated)]
 pub enum YawRateConfidence {
+    #[rasn(identifier = "degSec-000-01")]
     degSec_000_01 = 0,
+    #[rasn(identifier = "degSec-000-05")]
     degSec_000_05 = 1,
+    #[rasn(identifier = "degSec-000-10")]
     degSec_000_10 = 2,
+    #[rasn(identifier = "degSec-001-00")]
     degSec_001_00 = 3,
+    #[rasn(identifier = "degSec-005-00")]
     degSec_005_00 = 4,
+    #[rasn(identifier = "degSec-010-00")]
     degSec_010_00 = 5,
+    #[rasn(identifier = "degSec-100-00")]
     degSec_100_00 = 6,
     outOfRange = 7,
     unavailable = 8,
