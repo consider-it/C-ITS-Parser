@@ -13,7 +13,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     map_err_to_string,
     standards::is_1_3_1::{self, ItsPduHeader},
-    EtsiJson,
+    ItsMessage,
 };
 
 macro_rules! btp {
@@ -31,14 +31,18 @@ macro_rules! btp {
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decode))]
 /// Decodes an ITS message of undefined type.
 /// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
-/// Set `includesHeaders` to `false` if the given binary message does not contain GeoNetworking or Transport headers.
+/// ### Params
+///  - `message`: binary input containing the ITS message
+///  - `headersPresent`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
+///  - `inputEncodingRules`: ASN.1 encoding rules used to encode the ITS message in the input
+///  - `outputEncodingRules`: ASN.1 encoding rules that will be used for re-encoding the message in the `ItsMessage`'s `its` field. (UPER output will be rendered as a UTF-8 hex string)
 /// Throws string error on decoding errors.
 pub fn decode(
     message: &[u8],
     headersPresent: Headers,
     inputEncodingRules: EncodingRules,
     outputEncodingRules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(message, headersPresent)?;
     let message_type = inputEncodingRules.codec().decode_from_binary(input);
     let (msg_ty, decoded) = match message_type {
@@ -47,7 +51,7 @@ pub fn decode(
             protocol_version: 2,
             ..
         }) => (
-            Some(1),
+            1,
             decode_denm(
                 input,
                 Some(211),
@@ -58,7 +62,7 @@ pub fn decode(
             .its,
         ),
         Ok(ItsPduHeader { message_i_d: 1, .. }) => (
-            Some(1),
+            1,
             decode_denm(
                 input,
                 Some(131),
@@ -69,7 +73,7 @@ pub fn decode(
             .its,
         ),
         Ok(ItsPduHeader { message_i_d: 2, .. }) => (
-            Some(2),
+            2,
             decode_cam(
                 input,
                 None,
@@ -80,7 +84,7 @@ pub fn decode(
             .its,
         ),
         Ok(ItsPduHeader { message_i_d: 4, .. }) => (
-            Some(4),
+            4,
             decode_spatem(
                 input,
                 None,
@@ -91,7 +95,7 @@ pub fn decode(
             .its,
         ),
         Ok(ItsPduHeader { message_i_d: 5, .. }) => (
-            Some(5),
+            5,
             decode_mapem(
                 input,
                 None,
@@ -106,7 +110,7 @@ pub fn decode(
             protocol_version: 2,
             ..
         }) => (
-            Some(6),
+            6,
             decode_ivim(
                 input,
                 Some(221),
@@ -117,7 +121,7 @@ pub fn decode(
             .its,
         ),
         Ok(ItsPduHeader { message_i_d: 6, .. }) => (
-            Some(6),
+            6,
             decode_ivim(
                 input,
                 Some(131),
@@ -128,7 +132,7 @@ pub fn decode(
             .its,
         ),
         Ok(ItsPduHeader { message_i_d: 9, .. }) => (
-            Some(9),
+            9,
             decode_srem(
                 input,
                 None,
@@ -141,7 +145,7 @@ pub fn decode(
         Ok(ItsPduHeader {
             message_i_d: 10, ..
         }) => (
-            Some(10),
+            10,
             decode_ssem(
                 input,
                 None,
@@ -156,7 +160,7 @@ pub fn decode(
             protocol_version: 2,
             ..
         }) => (
-            Some(14),
+            14,
             decode_cpm(
                 input,
                 Some(211),
@@ -169,7 +173,7 @@ pub fn decode(
         Ok(ItsPduHeader {
             message_i_d: 14, ..
         }) => (
-            Some(14),
+            14,
             decode_cpm(
                 input,
                 Some(131),
@@ -197,7 +201,7 @@ fn decode_denm(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(denm, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -232,7 +236,7 @@ fn decode_cam(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cam, headers_present)?;
     etsi_json.its = match version {
         None | Some(141) => Some(transcode::<crate::standards::cam_1_4_1::CAM>(
@@ -252,7 +256,7 @@ fn decode_mapem(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(mapem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::MAPEM>(
@@ -272,7 +276,7 @@ fn decode_spatem(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(spatem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SPATEM>(
@@ -294,7 +298,7 @@ fn decode_ivim(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ivim, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -331,7 +335,7 @@ fn decode_srem(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(srem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SREM>(
@@ -351,7 +355,7 @@ fn decode_cpm(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cpm, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -386,7 +390,7 @@ fn decode_ssem(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<EtsiJson, String> {
+) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ssem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SSEM>(
@@ -400,20 +404,23 @@ fn decode_ssem(
     Ok(etsi_json)
 }
 
-fn optionally_decode_headers(input: &[u8], headers: Headers) -> Result<(&[u8], EtsiJson), String> {
+fn optionally_decode_headers(
+    input: &[u8],
+    headers: Headers,
+) -> Result<(&[u8], ItsMessage), String> {
     match headers {
-        Headers::None => Ok((input, EtsiJson::default())),
+        Headers::None => Ok((input, ItsMessage::default())),
         Headers::GnBtp => decode_gn_and_btp(input),
         Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input).and_then(decode_gn_and_btp),
     }
 }
 
-fn decode_gn_and_btp(input: &[u8]) -> Result<(&[u8], EtsiJson), String> {
+fn decode_gn_and_btp(input: &[u8]) -> Result<(&[u8], ItsMessage), String> {
     decode_geonetworking_header(input).and_then(|(remaining, gn_json, next_header)| {
         decode_transport_header(remaining, next_header).map(|(rem, tp)| {
             (
                 rem,
-                EtsiJson {
+                ItsMessage {
                     geonetworking: Some(gn_json),
                     transport: Some(tp),
                     ..Default::default()

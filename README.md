@@ -1,5 +1,5 @@
 # V2X ETSI Web
-WebAssembly tools for encoding and decoding ETSI messages (GN + Transport + CAM/DENM/IVIM/SSEM/SREM/MAPEM/SPATEM).
+WebAssembly tools for encoding and decoding ITS messages (GN + Transport + CAM/DENM/IVIM/SSEM/SREM/MAPEM/SPATEM/CPM).
 
 ### Features
 V2X Etsi Web provides an npm package for de- and encoding the most common ETSI messages. Currently, the following messages are supported:
@@ -20,54 +20,42 @@ npm install @consider-it/etsi-web
  ```
 
 ### API
-The `decode` function is a catch-all method for decoding ITS messages of undefined type.
+The `decode` function is a catch-all method for ITS messages of undefined type.
 ```typescript
+/**
 * Decodes an ITS message of undefined type.
 * Tries to parse the ITS PDU header to read the message ID that identifies the message type.
-* Set `includesHeaders` to `false` if the given binary message does not contain GeoNetworking or Transport headers.
+* ### Params
+*  - `message`: binary input containing the ITS message
+*  - `headersPresent`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
+*  - `inputEncodingRules`: ASN.1 encoding rules used to encode the ITS message in the input
+*  - `outputEncodingRules`: ASN.1 encoding rules that will be used for re-encoding the message in the `ItsMessage`'s `its` field. (UPER output will be rendered as a UTF-8 hex string) 
 * Throws string error on decoding errors.
 * @param {Uint8Array} message
-* @param {boolean} includesHeaders
-* @returns {EtsiJson}
+* @param {Headers} headersPresent
+* @param {EncodingRules} inputEncodingRules
+* @param {EncodingRules} outputEncodingRules
+* @returns {ItsMessage}
 */
-export function decode(message: Uint8Array, includesHeaders: boolean): EtsiJson;
+export function decode(message: Uint8Array, headersPresent: Headers, inputEncodingRules: EncodingRules, outputEncodingRules: EncodingRules): ItsMessage;
 ```
-For each of the messages (see above), the library exposes two functions for decoding and one for encoding.
+For each of the messages (see above), the library exposes a function for encoding.
 For example, for DENM messages:
 ```typescript
-/**
-* Decodes a DENM message with the default decoding options.
-* The default options expect a message with headers and version 2.2.1
-* Throws string error on decoding errors.
-* @param {Uint8Array} denm
-* @returns {EtsiJson}
-*/
-export function decodeDenm(denm: Uint8Array): EtsiJson;
-/**
-* Decodes a DENM message with custom decoding options.
-* Currently, the library supports DENM versions v2.1.1 (211) and v1.3.1 (131)
-* Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
-* Throws string error on decoding errors.
-* @param {Uint8Array} denm
-* @param {number | undefined} version
-* @param {boolean} includesHeaders
-* @returns {EtsiJson}
-*/
-export function decodeDenmVersion(denm: Uint8Array, version: number | undefined, includesHeaders: boolean): EtsiJson;
 /**
 * Encodes a DENM message into binary UPER with optional headers 
 * The encoder expects either both (GeoNetworking and Transport) headers or none
 * Currently, denms of the following versions are supported: v2.1.1 (211) and v1.3.1 (131)
 * Throws string error on encoding error
-* @param {EtsiJson} denm
+* @param {ItsMessage} denm
 * @param {number} version
 * @returns {Uint8Array}
 */
-export function encodeDenm(denm: EtsiJson, version: number): Uint8Array;
+export function encodeDenm(denm: ItsMessage, version: number): Uint8Array;
 ```
 Data is passed to and from the library in form of the following struct/object.
 ```typescript
-export class EtsiJson {
+export class ItsMessage {
 /**
 * Optional GeoNetworking header, encoded as stringified JSON
 */

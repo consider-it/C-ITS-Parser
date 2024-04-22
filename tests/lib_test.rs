@@ -8,7 +8,7 @@ use etsi_web::{
         denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
         is_1_3_1::{CPM, IVIM, MAPEM, SPATEM},
     },
-    EncodingRules, EtsiJson, Headers,
+    EncodingRules, Headers, ItsMessage,
 };
 use wasm_bindgen_test::wasm_bindgen_test;
 
@@ -24,7 +24,7 @@ fn round_trip_wasm() {
 
 fn round_trip_impl() {
     let expected_gn = r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}},"payload":[7,209,0,0,2,1,224,253,29,55,231,70,90,168,188,128,6,145,13,100,201,4,4,67,89,50,69,157,89,1,146,7,19,95,33,66,190,43,224,0,24,106,9,136,0,80,20,64,24,3,0,20,251,132,63,10,47,221,107,251,0,197,10,6,2,45,41,127,245,159,255,230,6,128,95,156,0,255,0,13,49,36,4,155,224,6,72,2,173,137,32,19,135,0,27,192,57,76,50,129,18,248,1,165,254,213,97,68,9,95,192,13,47,252,147,17,0,21,222,0,87,127,70,88,6,2,200,111,253,27,252,206,199,216,11,183,127,213,159,205,183,14,66,137,251,255,123,0,143,51,204,5,119,224,4,24,1,13,134,240,23,111,0,25,191,238,236,168,3,163,55,252,102,4,30,101,104,16,253,192,2,240,2,19,23,64,109,94,0,74,127,241,216,191,1,81,112,3,123,248,98,205,240,19,215,128,7,160,2,22,74,0,31,219,255,210,255,248,178,170,2,112,223,251,152,0,181,142,112,15,158,255,179,63,255,236,75,129,61,119,255,45,255,179,98,232,10,249,192,0,144,12,27,18,64,120,77,255,18,128,129,25,240,3,129,111,247,244,1,204,200,40,66,63,127,250,223,255,230,2,192,83,28,2,120,255,10,177,16,6,113,223,252,231,255,153,159,160,29,174,255,244,64,23,44,200,128,199,248,0,26,0,238,99,216,13,10,191,254,15,253,202,236,32,147,213,255,75,127,255,216,151,13,26,176,5,51,253,100,201,184,12,29,128,20,95,227,182,70,64,84,92,2,60,255,146,47,238,8,131,224,8,24,1,69,142,32,19,135,0,82,192,106,203,114,1,93,248,0,161,255,247,99,136,6,113,192,29,112,21,211,25,32,87,125,255,245,128,96,215,192,1,6,66,4,128,96,12]}}"#;
-    let json = EtsiJson {
+    let json = ItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
@@ -87,7 +87,7 @@ fn round_trip_denm_wasm() {
 }
 
 fn round_trip_denm_impl() {
-    let json = EtsiJson {
+    let json = ItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
@@ -150,7 +150,7 @@ fn round_trip_cam_wasm() {
 }
 
 fn round_trip_cam_impl() {
-    let json = EtsiJson {
+    let json = ItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":164,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
@@ -182,7 +182,7 @@ fn round_trip_mapem_wasm() {
 }
 
 fn round_trip_mapem_impl() {
-    let json = EtsiJson {
+    let json = ItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":540,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
@@ -216,7 +216,7 @@ fn round_trip_spatem_wasm() {
 }
 
 fn round_trip_spatem_impl() {
-    let json = EtsiJson {
+    let json = ItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":207,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
@@ -250,7 +250,7 @@ fn round_trip_ivim_wasm() {
 }
 
 fn round_trip_ivim_impl() {
-    let json = EtsiJson {
+    let json = ItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":77,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
@@ -282,7 +282,7 @@ fn round_trip_srem_wasm() {
 }
 
 fn round_trip_srem_impl() {
-    let json = EtsiJson {
+    let json = ItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":43,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some("{\"header\":{\"protocolVersion\":2,\"messageID\":9,\"stationID\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requester\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}".into()),
@@ -311,7 +311,7 @@ fn round_trip_cpm_wasm() {
 }
 
 fn round_trip_cpm_impl() {
-    let json = EtsiJson {
+    let json = ItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":628,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
@@ -344,7 +344,7 @@ fn decode_pcap_frame_wasm() {
 }
 
 fn decode_pcap_frame_impl() {
-    let expected = EtsiJson {
+    let expected = ItsMessage {
         geonetworking: Some(
             r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":5,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[true,false,false,false,false,false,false,false],"payload_length":67,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"PassengerCar","reserved":[false,false,false,false,false,false,false,false,false,false],"address":[138,176,248,168,162,37]},"timestamp":1151018751,"latitude":535505166,"longitude":99353789,"position_accuracy":true,"speed":14,"heading":724},"media_dependent_data":[0,0,0,0]}},"payload":[7,209,0,0,2,2,156,107,199,147,38,255,64,90,178,2,65,206,38,186,215,161,134,24,96,0,54,204,208,72,45,79,160,5,168,130,152,138,127,51,255,1,255,250,0,40,51,0,0,44,2,121,2,217,173,240,3,121,96,26,104,51,205,99,240,67,44]}}"#.into(),
         ),
@@ -354,7 +354,7 @@ fn decode_pcap_frame_impl() {
         its: Some(
             r#"{"header":{"protocolVersion":2,"messageID":2,"stationID":2624309139},"cam":{"generationDeltaTime":9983,"camParameters":{"basicContainer":{"stationType":5,"referencePosition":{"latitude":535505166,"longitude":99353789,"positionConfidenceEllipse":{"semiMajorConfidence":195,"semiMinorConfidence":195,"semiMajorOrientation":0},"altitude":{"altitudeValue":12230,"altitudeConfidence":"alt-005-00"}}},"highFrequencyContainer":{"basicVehicleContainerHighFrequency":{"heading":{"headingValue":724,"headingConfidence":126},"speed":{"speedValue":11,"speedConfidence":41},"driveDirection":"unavailable","vehicleLength":{"vehicleLengthValue":42,"vehicleLengthConfidenceIndication":"unavailable"},"vehicleWidth":18,"longitudinalAcceleration":{"longitudinalAccelerationValue":-1,"longitudinalAccelerationConfidence":102},"curvature":{"curvatureValue":0,"curvatureConfidence":"onePerMeter-0-00002"},"curvatureCalculationMode":"yawRateUsed","yawRate":{"yawRateValue":0,"yawRateConfidence":"unavailable"},"accelerationControl":"00","lateralAcceleration":{"lateralAccelerationValue":0,"lateralAccelerationConfidence":102}}},"lowFrequencyContainer":{"basicVehicleContainerLowFrequency":{"vehicleRole":"default","exteriorLights":"00","pathHistory":[{"pathPosition":{"deltaLatitude":317,"deltaLongitude":1460,"deltaAltitude":-940},"pathDeltaTime":1779},{"pathPosition":{"deltaLatitude":423,"deltaLongitude":3316,"deltaAltitude":-1310},"pathDeltaTime":4300}]}}}}}"#.into(),
         ),
-        message_type: Some(2),
+        message_type: 2,
     };
     let hex = "0000480002000040000004e5480038000200c900f40200000000000000000a014cff42ff34ff34ff7f390000f7c52687ebeb050091000c177c3d3c95fa000000000000000000000088000000ffffffffffff8ab0f8a8a225ffffffffffff00882300aaaa03000000894711000501205002800043010014008ab0f8a8a225449b26ff1feb290e05ec04bd800e02d40000000007d1000002029c6bc79326ff405ab20241ce26bad7a18618600036ccd0482d4fa005a882988a7f33ff01fffa00283300002c027902d9adf00379601a6833cd63f0432ce5dc898b";
     let raw = (0..hex.len())
@@ -383,7 +383,7 @@ fn strip_headers_frame_wasm() {
 }
 
 fn strip_headers_impl() {
-    let expected = EtsiJson {
+    let expected = ItsMessage {
         geonetworking: Some(
             r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":5,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[true,false,false,false,false,false,false,false],"payload_length":67,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"PassengerCar","reserved":[false,false,false,false,false,false,false,false,false,false],"address":[138,176,248,168,162,37]},"timestamp":1151018751,"latitude":535505166,"longitude":99353789,"position_accuracy":true,"speed":14,"heading":724},"media_dependent_data":[0,0,0,0]}},"payload":[7,209,0,0,2,2,156,107,199,147,38,255,64,90,178,2,65,206,38,186,215,161,134,24,96,0,54,204,208,72,45,79,160,5,168,130,152,138,127,51,255,1,255,250,0,40,51,0,0,44,2,121,2,217,173,240,3,121,96,26,104,51,205,99,240,67,44]}}"#.into(),
         ),
@@ -393,7 +393,7 @@ fn strip_headers_impl() {
         its: Some(
             r#"02029C6BC79326FF405AB20241CE26BAD7A18618600036CCD0482D4FA005A882988A7F33FF01FFFA00283300002C027902D9ADF00379601A6833CD63F0432C"#.into(),
         ),
-        message_type: Some(2),
+        message_type: 2,
     };
     let hex = "0000480002000040000004e5480038000200c900f40200000000000000000a014cff42ff34ff34ff7f390000f7c52687ebeb050091000c177c3d3c95fa000000000000000000000088000000ffffffffffff8ab0f8a8a225ffffffffffff00882300aaaa03000000894711000501205002800043010014008ab0f8a8a225449b26ff1feb290e05ec04bd800e02d40000000007d1000002029c6bc79326ff405ab20241ce26bad7a18618600036ccd0482d4fa005a882988a7f33ff01fffa00283300002c027902d9adf00379601a6833cd63f0432ce5dc898b";
     let raw = (0..hex.len())

@@ -1,5 +1,5 @@
 use crate::transport::{encode::Encode as TpEncode, BasicTransportAHeader, BasicTransportBHeader};
-use crate::{map_err_to_string, EtsiJson};
+use crate::{map_err_to_string, EncodingRules, ItsMessage};
 use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
 
 #[cfg(target_arch = "wasm32")]
@@ -15,7 +15,7 @@ pub type Encoded = Vec<u8>;
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, denms of the following versions are supported: v2.1.1 (211) and v1.3.1 (131)
 /// Throws string error on encoding error
-pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<Encoded, String> {
+pub fn encode_denm(denm: &ItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&denm.its, version) {
         (None, 131) | (None, 211) => return Err("No DENM JSON provided.".to_string()),
@@ -44,7 +44,7 @@ pub fn encode_denm(denm: &EtsiJson, version: u32) -> Result<Encoded, String> {
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cams of the following versions are supported: v1.4.1 (141)
 /// Throws string error on encoding error
-pub fn encode_cam(cam: &EtsiJson, version: u32) -> Result<Encoded, String> {
+pub fn encode_cam(cam: &ItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&cam.its, version) {
         (None, 141) => return Err("No CAM JSON provided.".to_string()),
@@ -64,7 +64,7 @@ pub fn encode_cam(cam: &EtsiJson, version: u32) -> Result<Encoded, String> {
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, mapems of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
-pub fn encode_mapem(mapem: &EtsiJson, version: u32) -> Result<Encoded, String> {
+pub fn encode_mapem(mapem: &ItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&mapem.its, version) {
         (None, 131) => return Err("No MAPEM JSON provided.".to_string()),
@@ -84,7 +84,7 @@ pub fn encode_mapem(mapem: &EtsiJson, version: u32) -> Result<Encoded, String> {
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, spatems of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
-pub fn encode_spatem(spatem: &EtsiJson, version: u32) -> Result<Encoded, String> {
+pub fn encode_spatem(spatem: &ItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&spatem.its, version) {
         (None, 131) => return Err("No SPATEM JSON provided.".to_string()),
@@ -106,7 +106,7 @@ pub fn encode_spatem(spatem: &EtsiJson, version: u32) -> Result<Encoded, String>
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ivims of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
-pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<Encoded, String> {
+pub fn encode_ivim(ivim: &ItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&ivim.its, version) {
         (None, 221) => return Err("No IVIM JSON provided.".to_string()),
@@ -126,7 +126,7 @@ pub fn encode_ivim(ivim: &EtsiJson, version: u32) -> Result<Encoded, String> {
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, srems of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
-pub fn encode_srem(srem: &EtsiJson, version: u32) -> Result<Encoded, String> {
+pub fn encode_srem(srem: &ItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&srem.its, version) {
         (None, 131) => return Err("No SREM JSON provided.".to_string()),
@@ -146,7 +146,7 @@ pub fn encode_srem(srem: &EtsiJson, version: u32) -> Result<Encoded, String> {
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cpms of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
-pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<Encoded, String> {
+pub fn encode_cpm(cpm: &ItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&cpm.its, version) {
         (None, 131) => return Err("No CPM JSON provided.".to_string()),
@@ -164,7 +164,7 @@ pub fn encode_cpm(cpm: &EtsiJson, version: u32) -> Result<Encoded, String> {
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ssems of the following versions are supported: v1.3.1 (131)
 /// Throws string error on encoding error
-pub fn encode_ssem(ssem: &EtsiJson, version: u32) -> Result<Encoded, String> {
+pub fn encode_ssem(ssem: &ItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&ssem.its, version) {
         (None, 131) => return Err("No SSEM JSON provided.".to_string()),
