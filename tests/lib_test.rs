@@ -1,5 +1,5 @@
 use etsi_web::{
-    de::{decode_cpm_to_json, decode_to_json},
+    de::decode,
     en::{
         encode_cam, encode_cpm, encode_denm, encode_ivim, encode_mapem, encode_spatem, encode_srem,
     },
@@ -8,7 +8,7 @@ use etsi_web::{
         denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
         is_1_3_1::{CPM, IVIM, MAPEM, SPATEM},
     },
-    EtsiJson, Headers,
+    EncodingRules, EtsiJson, Headers,
 };
 use wasm_bindgen_test::wasm_bindgen_test;
 
@@ -64,7 +64,13 @@ fn round_trip_impl() {
         ..Default::default()
     };
     let encoded = encode_denm(&json, 211).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
+    let decoded = decode(
+        &encoded.to_vec(),
+        Headers::GnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
     assert_eq!(expected_gn, decoded.geonetworking.unwrap().as_str())
@@ -121,7 +127,14 @@ fn round_trip_denm_impl() {
         ..Default::default()
     };
     let encoded = encode_denm(&json, 211).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
+    let decoded = decode(
+        &encoded.to_vec(),
+        Headers::GnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
+    println!("{}", decoded.its.as_ref().unwrap());
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -147,7 +160,13 @@ fn round_trip_cam_impl() {
         ..Default::default()
     };
     let encoded = encode_cam(&json, 141).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
+    let decoded = decode(
+        &encoded.to_vec(),
+        Headers::GnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -175,7 +194,13 @@ fn round_trip_mapem_impl() {
         ..Default::default()
     };
     let encoded = encode_mapem(&json, 131).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
+    let decoded = decode(
+        &encoded.to_vec(),
+        Headers::GnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -203,7 +228,13 @@ fn round_trip_spatem_impl() {
         ..Default::default()
     };
     let encoded = encode_spatem(&json, 131).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
+    let decoded = decode(
+        &encoded.to_vec(),
+        Headers::GnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -229,7 +260,13 @@ fn round_trip_ivim_impl() {
         ..Default::default()
     };
     let encoded = encode_ivim(&json, 221).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
+    let decoded = decode(
+        &encoded.to_vec(),
+        Headers::GnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -252,7 +289,13 @@ fn round_trip_srem_impl() {
         ..Default::default()
     };
     let encoded = encode_srem(&json, 131).unwrap();
-    let decoded = decode_to_json(&encoded.to_vec(), Headers::GnBtp).unwrap();
+    let decoded = decode(
+        &encoded.to_vec(),
+        Headers::GnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -279,7 +322,13 @@ fn round_trip_cpm_impl() {
         ..Default::default()
     };
     let encoded = encode_cpm(&json, 131).unwrap();
-    let decoded = decode_cpm_to_json(&encoded.to_vec(), Some(131), Headers::GnBtp).unwrap();
+    let decoded = decode(
+        &encoded.to_vec(),
+        Headers::GnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
     assert_eq!(json.its, decoded.its);
     assert_eq!(json.transport, decoded.transport);
 }
@@ -313,6 +362,74 @@ fn decode_pcap_frame_impl() {
         .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
         .collect::<Result<Vec<u8>, _>>()
         .unwrap();
-    let decoded = decode_to_json(&raw, Headers::RadioTap802LlcGnBtp).unwrap();
+    let decoded = decode(
+        &raw,
+        Headers::RadioTap802LlcGnBtp,
+        EncodingRules::UPER,
+        EncodingRules::JER,
+    )
+    .unwrap();
     assert_eq!(expected, decoded)
+}
+
+#[test]
+fn strip_headers_frame() {
+    strip_headers_impl()
+}
+
+#[wasm_bindgen_test]
+fn strip_headers_frame_wasm() {
+    strip_headers_impl()
+}
+
+fn strip_headers_impl() {
+    let expected = EtsiJson {
+        geonetworking: Some(
+            r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":5,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[true,false,false,false,false,false,false,false],"payload_length":67,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"PassengerCar","reserved":[false,false,false,false,false,false,false,false,false,false],"address":[138,176,248,168,162,37]},"timestamp":1151018751,"latitude":535505166,"longitude":99353789,"position_accuracy":true,"speed":14,"heading":724},"media_dependent_data":[0,0,0,0]}},"payload":[7,209,0,0,2,2,156,107,199,147,38,255,64,90,178,2,65,206,38,186,215,161,134,24,96,0,54,204,208,72,45,79,160,5,168,130,152,138,127,51,255,1,255,250,0,40,51,0,0,44,2,121,2,217,173,240,3,121,96,26,104,51,205,99,240,67,44]}}"#.into(),
+        ),
+        transport: Some(
+            r#"{"destination_port":2001,"destination_port_info":0}"#.into(),
+        ),
+        its: Some(
+            r#"02029C6BC79326FF405AB20241CE26BAD7A18618600036CCD0482D4FA005A882988A7F33FF01FFFA00283300002C027902D9ADF00379601A6833CD63F0432C"#.into(),
+        ),
+        message_type: Some(2),
+    };
+    let hex = "0000480002000040000004e5480038000200c900f40200000000000000000a014cff42ff34ff34ff7f390000f7c52687ebeb050091000c177c3d3c95fa000000000000000000000088000000ffffffffffff8ab0f8a8a225ffffffffffff00882300aaaa03000000894711000501205002800043010014008ab0f8a8a225449b26ff1feb290e05ec04bd800e02d40000000007d1000002029c6bc79326ff405ab20241ce26bad7a18618600036ccd0482d4fa005a882988a7f33ff01fffa00283300002c027902d9adf00379601a6833cd63f0432ce5dc898b";
+    let raw = (0..hex.len())
+        .step_by(2)
+        .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
+        .collect::<Result<Vec<u8>, _>>()
+        .unwrap();
+    let decoded = decode(
+        &raw,
+        Headers::RadioTap802LlcGnBtp,
+        EncodingRules::UPER,
+        EncodingRules::UPER,
+    )
+    .unwrap();
+    assert_eq!(expected, decoded)
+}
+
+#[test]
+fn ivim_xer_impl() {
+    assert_eq!(
+        "<IVIM><header><protocolVersion>2</protocolVersion><messageID>6</messageID><stationID>1183964</stationID></header><ivi><mandatory><serviceProviderId><countryCode>1001010000</countryCode><providerIdentifier>0</providerIdentifier></serviceProviderId><iviIdentificationNumber>1</iviIdentificationNumber><iviStatus>1</iviStatus></mandatory><optional><IviContainer><glc><GeographicLocationContainer><referencePosition><latitude>535413205</latitude><longitude>99854436</longitude><positionConfidenceEllipse><semiMajorConfidence>4095</semiMajorConfidence><semiMinorConfidence>4095</semiMinorConfidence><semiMajorOrientation>3601</semiMajorOrientation></positionConfidenceEllipse><altitude><altitudeValue>800001</altitudeValue><altitudeConfidence><unavailable /></altitudeConfidence></altitude></referencePosition><parts><GlcPart><zoneId>1</zoneId><zoneHeading>3601</zoneHeading><zone><segment><Segment><line><deltaPositions><laneWidth><DeltaPosition><deltaLatitude>937</deltaLatitude><deltaLongitude>-917</deltaLongitude></DeltaPosition><DeltaPosition><deltaLatitude>933</deltaLatitude><deltaLongitude>-458</deltaLongitude></DeltaPosition><DeltaPosition><deltaLatitude>1375</deltaLatitude><deltaLongitude>-323</deltaLongitude></DeltaPosition></laneWidth></deltaPositions></line><IviLaneWidth>350</IviLaneWidth></Segment></segment></zone></GlcPart><GlcPart><zoneId>2</zoneId><zoneHeading>3601</zoneHeading><zone><segment><Segment><line><deltaPositions><laneWidth><DeltaPosition><deltaLatitude>-27</deltaLatitude><deltaLongitude>2200</deltaLongitude></DeltaPosition><DeltaPosition><deltaLatitude>595</deltaLatitude><deltaLongitude>11144</deltaLongitude></DeltaPosition></laneWidth></deltaPositions></line><IviLaneWidth>350</IviLaneWidth></Segment></segment></zone></GlcPart></parts></GeographicLocationContainer></glc></IviContainer><IviContainer><giv><GeneralIviContainer><GicPart><detectionZoneIds><its-Rrid>2</its-Rrid></detectionZoneIds><direction><driverAwarenessZoneIds>1</driverAwarenessZoneIds></direction><minimumAwarenessTime>0</minimumAwarenessTime><laneStatus>1</laneStatus><RoadSignCodes><RSCode><code><iso14823><ISO14823Code><pictogramCode><serviceCategoryCode><trafficSignPictogram><pictogramCategoryCode><dangerWarning /></pictogramCategoryCode></trafficSignPictogram></serviceCategoryCode><attributes><nature>3</nature><serialNumber>78</serialNumber></attributes></pictogramCode></ISO14823Code></iso14823></code></RSCode></RoadSignCodes></GicPart></GeneralIviContainer></giv></IviContainer></optional></ivi></IVIM>",
+        decode(
+            &[
+                0x02, 0x06, 0x00, 0x12, 0x10, 0xdc, 0x82, 0x50, 0x00, 0x00, 0x00, 0x00, 0x88, 0x05,
+                0x58, 0xea, 0xad, 0x57, 0x13, 0xd7, 0xa6, 0x4f, 0xff, 0xff, 0xfe, 0x11, 0xdb, 0xba,
+                0x1f, 0x08, 0xc0, 0xe1, 0x11, 0x01, 0x40, 0x75, 0x0f, 0xe3, 0x54, 0x07, 0x48, 0xff,
+                0x1a, 0xc0, 0xab, 0xcf, 0xf5, 0xe2, 0xbc, 0x30, 0x78, 0x44, 0x40, 0x2f, 0xff, 0x24,
+                0x11, 0x2f, 0x01, 0x29, 0x45, 0x70, 0xea, 0xf0, 0x81, 0x60, 0x00, 0x02, 0x00, 0x04,
+                0x08, 0x01, 0x4e
+            ],
+            Headers::None,
+            EncodingRules::UPER,
+            EncodingRules::XER
+        )
+        .unwrap()
+        .its
+        .unwrap()
+    )
 }

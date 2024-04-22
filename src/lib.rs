@@ -15,7 +15,7 @@ pub struct EtsiJson {
     pub geonetworking: Option<String>,
     /// Optional transport header, encoded as stringified JSON
     pub transport: Option<String>,
-    /// Optional ITS ETSI message, encoded as stringified JSON
+    /// Optional ITS ETSI message, encoded as a UTF-8 String for JER and XER, as a hex string for UPER
     pub its: Option<String>,
     /// Optional ITS ETSI message type
     pub message_type: Option<u8>,
@@ -27,6 +27,24 @@ pub enum Headers {
     None,
     GnBtp,
     RadioTap802LlcGnBtp,
+}
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum EncodingRules {
+    UPER,
+    XER,
+    JER,
+}
+
+impl EncodingRules {
+    pub(crate) fn codec(&self) -> rasn::Codec {
+        match self {
+            EncodingRules::UPER => rasn::Codec::Uper,
+            EncodingRules::XER => rasn::Codec::Xer,
+            EncodingRules::JER => rasn::Codec::Jer,
+        }
+    }
 }
 
 #[cfg(target_arch = "wasm32")]

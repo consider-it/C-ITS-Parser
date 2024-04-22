@@ -4,7 +4,7 @@ use crate::{
     transport::{
         decode::Decode as TransportDecode, BasicTransportAHeader, BasicTransportBHeader, IPv6Header,
     },
-    Headers,
+    EncodingRules, Headers,
 };
 use geonetworking::{Decode, Encode, NextAfterCommon, Packet};
 #[cfg(target_arch = "wasm32")]
@@ -33,43 +33,152 @@ macro_rules! btp {
 /// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
 /// Set `includesHeaders` to `false` if the given binary message does not contain GeoNetworking or Transport headers.
 /// Throws string error on decoding errors.
-pub fn decode_to_json(message: &[u8], headersPresent: Headers) -> Result<EtsiJson, String> {
+pub fn decode(
+    message: &[u8],
+    headersPresent: Headers,
+    inputEncodingRules: EncodingRules,
+    outputEncodingRules: EncodingRules,
+) -> Result<EtsiJson, String> {
     let (input, mut etsi_json) = optionally_decode_headers(message, headersPresent)?;
-    let message_type = rasn::uper::decode::<ItsPduHeader>(input);
+    let message_type = inputEncodingRules.codec().decode_from_binary(input);
     let (msg_ty, decoded) = match message_type {
-        Ok(ItsPduHeader { message_i_d: 1, protocol_version: 2, .. }) => {
-            (Some(1), decode_denm_to_json(input, Some(211), Headers::None)?.its)
-        }
-        Ok(ItsPduHeader { message_i_d: 1, .. }) => {
-            (Some(1), decode_denm_to_json(input, Some(131), Headers::None)?.its)
-        }
-        Ok(ItsPduHeader { message_i_d: 2, .. }) => {
-            (Some(2), decode_cam_to_json(input, None, Headers::None)?.its)
-        }
-        Ok(ItsPduHeader { message_i_d: 4, .. }) => {
-            (Some(4), decode_spatem_to_json(input, None, Headers::None)?.its)
-        }
-        Ok(ItsPduHeader { message_i_d: 5, .. }) => {
-            (Some(5), decode_mapem_to_json(input, None, Headers::None)?.its)
-        }
-        Ok(ItsPduHeader { message_i_d: 6, protocol_version: 2, .. }) => {
-            (Some(6), decode_ivim_to_json(input, Some(221), Headers::None)?.its)
-        }
-        Ok(ItsPduHeader { message_i_d: 6, .. }) => {
-            (Some(6), decode_ivim_to_json(input, Some(131), Headers::None)?.its)
-        }
-        Ok(ItsPduHeader { message_i_d: 9, .. }) => {
-            (Some(9), decode_srem_to_json(input, None, Headers::None)?.its)
-        }
+        Ok(ItsPduHeader {
+            message_i_d: 1,
+            protocol_version: 2,
+            ..
+        }) => (
+            Some(1),
+            decode_denm(
+                input,
+                Some(211),
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
+        Ok(ItsPduHeader { message_i_d: 1, .. }) => (
+            Some(1),
+            decode_denm(
+                input,
+                Some(131),
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
+        Ok(ItsPduHeader { message_i_d: 2, .. }) => (
+            Some(2),
+            decode_cam(
+                input,
+                None,
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
+        Ok(ItsPduHeader { message_i_d: 4, .. }) => (
+            Some(4),
+            decode_spatem(
+                input,
+                None,
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
+        Ok(ItsPduHeader { message_i_d: 5, .. }) => (
+            Some(5),
+            decode_mapem(
+                input,
+                None,
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
+        Ok(ItsPduHeader {
+            message_i_d: 6,
+            protocol_version: 2,
+            ..
+        }) => (
+            Some(6),
+            decode_ivim(
+                input,
+                Some(221),
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
+        Ok(ItsPduHeader { message_i_d: 6, .. }) => (
+            Some(6),
+            decode_ivim(
+                input,
+                Some(131),
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
+        Ok(ItsPduHeader { message_i_d: 9, .. }) => (
+            Some(9),
+            decode_srem(
+                input,
+                None,
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
         Ok(ItsPduHeader {
             message_i_d: 10, ..
-        }) => (Some(10), decode_ssem_to_json(input, None, Headers::None)?.its),
+        }) => (
+            Some(10),
+            decode_ssem(
+                input,
+                None,
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
         Ok(ItsPduHeader {
-            message_i_d: 14, protocol_version: 2, ..
-        }) => (Some(14), decode_cpm_to_json(input, Some(211), Headers::None)?.its),
+            message_i_d: 14,
+            protocol_version: 2,
+            ..
+        }) => (
+            Some(14),
+            decode_cpm(
+                input,
+                Some(211),
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
         Ok(ItsPduHeader {
             message_i_d: 14, ..
-        }) => (Some(14), decode_cpm_to_json(input, Some(131), Headers::None)?.its),
+        }) => (
+            Some(14),
+            decode_cpm(
+                input,
+                Some(131),
+                Headers::None,
+                inputEncodingRules,
+                outputEncodingRules,
+            )?
+            .its,
+        ),
         Ok(ItsPduHeader { message_i_d, .. }) => {
             return Err(format!(
                 "Unsupported ITS message type: Found message id {message_i_d}."
@@ -82,25 +191,14 @@ pub fn decode_to_json(message: &[u8], headersPresent: Headers) -> Result<EtsiJso
     Ok(etsi_json)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeDenm))]
-/// Decodes a DENM message with the default decoding options.
-/// The default options expect a message with GN and BTP headers and version 2.2.1
-/// Throws string error on decoding errors.
-pub fn decode_denm_default_to_json(denm: &[u8]) -> Result<EtsiJson, String> {
-    decode_denm_to_json(denm, None, Headers::GnBtp)
-}
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeDenmVersion))]
-/// Decodes a DENM message with custom decoding options.
-/// Currently, the library supports DENM versions v2.1.1 (211) and v1.3.1 (131)
-/// Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
-/// Throws string error on decoding errors.
-pub fn decode_denm_to_json(
+fn decode_denm(
     denm: &[u8],
     mut version: Option<u32>,
-    headersPresent: Headers,
+    headers_present: Headers,
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
 ) -> Result<EtsiJson, String> {
-    let (input, mut etsi_json) = optionally_decode_headers(denm, headersPresent)?;
+    let (input, mut etsi_json) = optionally_decode_headers(denm, headers_present)?;
     if version.is_none() {
         version = match input.first() {
             Some(1) => Some(131),
@@ -109,13 +207,15 @@ pub fn decode_denm_to_json(
         };
     }
     etsi_json.its = match version {
-        Some(131) => Some(transcode_uper_to_jer::<crate::standards::denm_1_3_1::DENM>(
+        Some(131) => Some(transcode::<crate::standards::denm_1_3_1::DENM>(
             input,
+            input_encoding_rules,
+            output_encoding_rules,
         ))
         .transpose(),
-        None | Some(211) => Some(transcode_uper_to_jer::<
+        None | Some(211) => Some(transcode::<
             crate::standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
-        >(input))
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
             return Err(
@@ -126,28 +226,19 @@ pub fn decode_denm_to_json(
     Ok(etsi_json)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeCam))]
-/// Decodes a CAM message with the default decoding options.
-/// The default options expect a message with GN and BTP headers and version 1.4.1
-/// Throws string error on decoding errors.
-pub fn decode_cam_default_to_json(cam: &[u8]) -> Result<EtsiJson, String> {
-    decode_cam_to_json(cam, None, Headers::GnBtp)
-}
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeCamVersion))]
-/// Decodes a CAM message with custom decoding options.
-/// Currently, the library supports CAM version v1.4.1 (141)
-/// Set `includesHeaders` to `false` if the given binary CAM does not contain GeoNetworking or Transport headers.
-/// Throws string error on decoding errors.
-pub fn decode_cam_to_json(
+fn decode_cam(
     cam: &[u8],
     version: Option<u32>,
-    headersPresent: Headers,
+    headers_present: Headers,
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
 ) -> Result<EtsiJson, String> {
-    let (input, mut etsi_json) = optionally_decode_headers(cam, headersPresent)?;
+    let (input, mut etsi_json) = optionally_decode_headers(cam, headers_present)?;
     etsi_json.its = match version {
-        None | Some(141) => Some(transcode_uper_to_jer::<crate::standards::cam_1_4_1::CAM>(
+        None | Some(141) => Some(transcode::<crate::standards::cam_1_4_1::CAM>(
             input,
+            input_encoding_rules,
+            output_encoding_rules,
         ))
         .transpose(),
         _ => return Err("Unsupported DENM version: Supported CAM version is 141.".to_string()),
@@ -155,28 +246,19 @@ pub fn decode_cam_to_json(
     Ok(etsi_json)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeMapem))]
-/// Decodes a MAPEM message with the default decoding options.
-/// The default options expect a message with GN and BTP headers and version 1.3.1
-/// Throws string error on decoding errors.
-pub fn decode_mapem_default_to_json(mapem: &[u8]) -> Result<EtsiJson, String> {
-    decode_mapem_to_json(mapem, None, Headers::GnBtp)
-}
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeMapemVersion))]
-/// Decodes a MAPEM message with custom decoding options.
-/// Currently, the library supports MAPEM versions v1.3.1 (131)
-/// Set `includesHeaders` to `false` if the given binary MAPEM does not contain GeoNetworking or Transport headers.
-/// Throws string error on decoding errors.
-pub fn decode_mapem_to_json(
+fn decode_mapem(
     mapem: &[u8],
     version: Option<u32>,
-    headersPresent: Headers,
+    headers_present: Headers,
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
 ) -> Result<EtsiJson, String> {
-    let (input, mut etsi_json) = optionally_decode_headers(mapem, headersPresent)?;
+    let (input, mut etsi_json) = optionally_decode_headers(mapem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::MAPEM>(
+        None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::MAPEM>(
             input,
+            input_encoding_rules,
+            output_encoding_rules,
         ))
         .transpose(),
         _ => return Err("Unsupported MAPEM version: Supported MAPEM version is 131.".to_string()),
@@ -184,28 +266,19 @@ pub fn decode_mapem_to_json(
     Ok(etsi_json)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeSpatem))]
-/// Decodes a SPATEM message with the default decoding options.
-/// The default options expect a message with GN and BTP headers and version 1.3.1
-/// Throws string error on decoding errors.
-pub fn decode_spatem_default_to_json(spatem: &[u8]) -> Result<EtsiJson, String> {
-    decode_spatem_to_json(spatem, None, Headers::GnBtp)
-}
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeSpatemVersion))]
-/// Decodes a SPATEM message with custom decoding options.
-/// Currently, the library supports SPATEM versions v1.3.1 (131)
-/// Set `includesHeaders` to `false` if the given binary SPATEM does not contain GeoNetworking or Transport headers.
-/// Throws string error on decoding errors.
-pub fn decode_spatem_to_json(
+fn decode_spatem(
     spatem: &[u8],
     version: Option<u32>,
-    headersPresent: Headers,
+    headers_present: Headers,
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
 ) -> Result<EtsiJson, String> {
-    let (input, mut etsi_json) = optionally_decode_headers(spatem, headersPresent)?;
+    let (input, mut etsi_json) = optionally_decode_headers(spatem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::SPATEM>(
+        None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SPATEM>(
             input,
+            input_encoding_rules,
+            output_encoding_rules,
         ))
         .transpose(),
         _ => {
@@ -215,25 +288,14 @@ pub fn decode_spatem_to_json(
     Ok(etsi_json)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeIvim))]
-/// Decodes a IVIM message with the default decoding options.
-/// The default options expect a message with GN and BTP headers and version 2.2.1
-/// Throws string error on decoding errors.
-pub fn decode_ivim_default_to_json(ivim: &[u8]) -> Result<EtsiJson, String> {
-    decode_ivim_to_json(ivim, None, Headers::GnBtp)
-}
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeIvimVersion))]
-/// Decodes a IVIM message with custom decoding options.
-/// Currently, the library supports IVIM versions v1.3.1 (131) and v2.2.1 (221)
-/// Set `includesHeaders` to `false` if the given binary IVIM does not contain GeoNetworking or Transport headers.
-/// Throws string error on decoding errors.
-pub fn decode_ivim_to_json(
+fn decode_ivim(
     ivim: &[u8],
     mut version: Option<u32>,
-    headersPresent: Headers,
+    headers_present: Headers,
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
 ) -> Result<EtsiJson, String> {
-    let (input, mut etsi_json) = optionally_decode_headers(ivim, headersPresent)?;
+    let (input, mut etsi_json) = optionally_decode_headers(ivim, headers_present)?;
     if version.is_none() {
         version = match input.first() {
             Some(1) => Some(131),
@@ -242,9 +304,16 @@ pub fn decode_ivim_to_json(
         };
     }
     etsi_json.its = match version {
-        Some(131) => Some(transcode_uper_to_jer::<is_1_3_1::IVIM>(input)).transpose(),
-        None | Some(221) => Some(transcode_uper_to_jer::<crate::standards::ivim_2_2_1::IVIM>(
+        Some(131) => Some(transcode::<is_1_3_1::IVIM>(
             input,
+            input_encoding_rules,
+            output_encoding_rules,
+        ))
+        .transpose(),
+        None | Some(221) => Some(transcode::<crate::standards::ivim_2_2_1::IVIM>(
+            input,
+            input_encoding_rules,
+            output_encoding_rules,
         ))
         .transpose(),
         _ => {
@@ -256,28 +325,19 @@ pub fn decode_ivim_to_json(
     Ok(etsi_json)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeSrem))]
-/// Decodes a DENM message with the default decoding options.
-/// The default options expect a message with GN and BTP headers and version 1.3.1
-/// Throws string error on decoding errors.
-pub fn decode_srem_default_to_json(srem: &[u8]) -> Result<EtsiJson, String> {
-    decode_srem_to_json(srem, None, Headers::GnBtp)
-}
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeSremVersion))]
-/// Decodes a DENM message with custom decoding options.
-/// Currently, the library supports DENM versions v1.3.1 (211) and v1.3.1 (131)
-/// Set `includesHeaders` to `false` if the given binary denm does not contain GeoNetworking or Transport headers.
-/// Throws string error on decoding errors.
-pub fn decode_srem_to_json(
+fn decode_srem(
     srem: &[u8],
     version: Option<u32>,
-    headersPresent: Headers,
+    headers_present: Headers,
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
 ) -> Result<EtsiJson, String> {
-    let (input, mut etsi_json) = optionally_decode_headers(srem, headersPresent)?;
+    let (input, mut etsi_json) = optionally_decode_headers(srem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::SREM>(
+        None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SREM>(
             input,
+            input_encoding_rules,
+            output_encoding_rules,
         ))
         .transpose(),
         _ => return Err("Unsupported SREM version: Supported SREM version is 131.".to_string()),
@@ -285,25 +345,14 @@ pub fn decode_srem_to_json(
     Ok(etsi_json)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeCpm))]
-/// Decodes a CPM message with the default decoding options.
-/// The default options expect a message with GN and BTP headers and version 1.3.1
-/// Throws string error on decoding errors.
-pub fn decode_cpm_default_to_json(cpm: &[u8]) -> Result<EtsiJson, String> {
-    decode_cpm_to_json(cpm, None, Headers::GnBtp)
-}
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeCpmVersion))]
-/// Decodes a CPM message with custom decoding options.
-/// Currently, the library supports CPM versions v1.3.1 (131) and v2.1.1 (211)
-/// Set `includesHeaders` to `false` if the given binary CPM does not contain GeoNetworking or Transport headers.
-/// Throws string error on decoding errors.
-pub fn decode_cpm_to_json(
+fn decode_cpm(
     cpm: &[u8],
     mut version: Option<u32>,
-    headersPresent: Headers,
+    headers_present: Headers,
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
 ) -> Result<EtsiJson, String> {
-    let (input, mut etsi_json) = optionally_decode_headers(cpm, headersPresent)?;
+    let (input, mut etsi_json) = optionally_decode_headers(cpm, headers_present)?;
     if version.is_none() {
         version = match input.first() {
             Some(1) => Some(131),
@@ -312,12 +361,14 @@ pub fn decode_cpm_to_json(
         };
     }
     etsi_json.its = match version {
-        None | Some(211) => Some(transcode_uper_to_jer::<
+        None | Some(211) => Some(transcode::<
             crate::standards::cpm_2_1_1::c_p_m__p_d_u__descriptions::CollectivePerceptionMessage,
-        >(input))
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::CPM>(
+        Some(131) => Some(transcode::<crate::standards::is_1_3_1::CPM>(
             input,
+            input_encoding_rules,
+            output_encoding_rules,
         ))
         .transpose(),
         _ => {
@@ -329,28 +380,19 @@ pub fn decode_cpm_to_json(
     Ok(etsi_json)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeSsem))]
-/// Decodes a SSEM message with the default decoding options.
-/// The default options expect a message with GN and BTP headers and version 1.3.1
-/// Throws string error on decoding errors.
-pub fn decode_ssem_default_to_json(ssem: &[u8]) -> Result<EtsiJson, String> {
-    decode_ssem_to_json(ssem, None, Headers::GnBtp)
-}
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decodeSsemVersion))]
-/// Decodes a SSEM message with custom decoding options.
-/// Currently, the library supports SSEM versions v1.3.1 (131)
-/// Set `includesHeaders` to `false` if the given binary SSEM does not contain GeoNetworking or Transport headers.
-/// Throws string error on decoding errors.
-pub fn decode_ssem_to_json(
+fn decode_ssem(
     ssem: &[u8],
     version: Option<u32>,
-    headersPresent: Headers,
+    headers_present: Headers,
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
 ) -> Result<EtsiJson, String> {
-    let (input, mut etsi_json) = optionally_decode_headers(ssem, headersPresent)?;
+    let (input, mut etsi_json) = optionally_decode_headers(ssem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode_uper_to_jer::<crate::standards::is_1_3_1::SSEM>(
+        None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SSEM>(
             input,
+            input_encoding_rules,
+            output_encoding_rules,
         ))
         .transpose(),
         _ => return Err("Unsupported SSEM version: Supported SSEM version is 131.".to_string()),
@@ -360,10 +402,7 @@ pub fn decode_ssem_to_json(
 
 fn optionally_decode_headers(input: &[u8], headers: Headers) -> Result<(&[u8], EtsiJson), String> {
     match headers {
-        Headers::None => Ok((
-            input,
-            EtsiJson::default(),
-        )),
+        Headers::None => Ok((input, EtsiJson::default())),
         Headers::GnBtp => decode_gn_and_btp(input),
         Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input).and_then(decode_gn_and_btp),
     }
@@ -415,8 +454,23 @@ fn decode_transport_header(
     }
 }
 
-fn transcode_uper_to_jer<T: rasn::Decode + rasn::Encode>(input: &[u8]) -> Result<String, String> {
-    rasn::jer::encode(&rasn::uper::decode::<T>(input).map_err(map_err_to_string)?)
+fn transcode<T: rasn::Decode + rasn::Encode>(
+    input: &[u8],
+    input_encoding_rules: EncodingRules,
+    output_encoding_rules: EncodingRules,
+) -> Result<String, String> {
+    if let (EncodingRules::UPER, EncodingRules::UPER) =
+        (input_encoding_rules, output_encoding_rules)
+    {
+        return Ok(input.iter().map(|byte| format!("{byte:02X?}")).collect());
+    }
+    let decoded: T = input_encoding_rules
+        .codec()
+        .decode_from_binary(input)
+        .map_err(map_err_to_string)?;
+    output_encoding_rules
+        .codec()
+        .encode_to_string(&decoded)
         .map_err(map_err_to_string)
 }
 
