@@ -1,5 +1,5 @@
 use crate::transport::{encode::Encode as TpEncode, BasicTransportAHeader, BasicTransportBHeader};
-use crate::{map_err_to_string, EncodingRules, ItsMessage};
+use crate::{map_err_to_string, ItsMessage};
 use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
 
 #[cfg(target_arch = "wasm32")]

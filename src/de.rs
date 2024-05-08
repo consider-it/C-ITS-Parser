@@ -7,6 +7,7 @@ use crate::{
     EncodingRules, Headers,
 };
 use geonetworking::{Decode, Encode, NextAfterCommon, Packet};
+use nom::FindSubstring;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
@@ -44,13 +45,9 @@ pub fn decode(
     outputEncodingRules: EncodingRules,
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(message, headersPresent)?;
-    let message_type = inputEncodingRules.codec().decode_from_binary(input);
-    let (msg_ty, decoded) = match message_type {
-        Ok(ItsPduHeader {
-            message_i_d: 1,
-            protocol_version: 2,
-            ..
-        }) => (
+    let (protocol_version, message_type) = message_type(inputEncodingRules, input)?;
+    let (msg_ty, decoded) = match (message_type, protocol_version) {
+        (1, 2) => (
             1,
             decode_denm(
                 input,
@@ -61,7 +58,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader { message_i_d: 1, .. }) => (
+        (1, _) => (
             1,
             decode_denm(
                 input,
@@ -72,7 +69,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader { message_i_d: 2, .. }) => (
+        (2, _) => (
             2,
             decode_cam(
                 input,
@@ -83,7 +80,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader { message_i_d: 4, .. }) => (
+        (4, _) => (
             4,
             decode_spatem(
                 input,
@@ -94,7 +91,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader { message_i_d: 5, .. }) => (
+        (5, _) => (
             5,
             decode_mapem(
                 input,
@@ -105,11 +102,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader {
-            message_i_d: 6,
-            protocol_version: 2,
-            ..
-        }) => (
+        (6, 2) => (
             6,
             decode_ivim(
                 input,
@@ -120,7 +113,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader { message_i_d: 6, .. }) => (
+        (6, _) => (
             6,
             decode_ivim(
                 input,
@@ -131,7 +124,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader { message_i_d: 9, .. }) => (
+        (9, _) => (
             9,
             decode_srem(
                 input,
@@ -142,9 +135,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader {
-            message_i_d: 10, ..
-        }) => (
+        (10, _) => (
             10,
             decode_ssem(
                 input,
@@ -155,11 +146,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader {
-            message_i_d: 14,
-            protocol_version: 2,
-            ..
-        }) => (
+        (14, 2) => (
             14,
             decode_cpm(
                 input,
@@ -170,9 +157,7 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader {
-            message_i_d: 14, ..
-        }) => (
+        (14, _) => (
             14,
             decode_cpm(
                 input,
@@ -183,16 +168,85 @@ pub fn decode(
             )?
             .its,
         ),
-        Ok(ItsPduHeader { message_i_d, .. }) => {
+        (message_i_d, _) => {
             return Err(format!(
                 "Unsupported ITS message type: Found message id {message_i_d}."
             ))
         }
-        _ => return Err("Failed to detect message ID of ITS PDU header.".to_string()),
     };
     etsi_json.its = decoded;
     etsi_json.message_type = msg_ty;
     Ok(etsi_json)
+}
+
+fn message_type(inputEncodingRules: EncodingRules, input: &[u8]) -> Result<(u8, u8), String> {
+    match inputEncodingRules {
+        EncodingRules::XER => {
+            let message_id_start = input
+                .find_substring("<messageID>")
+                .or(input.find_substring("<messageId>"))
+                .ok_or("Failed to determine message ID.")?;
+            let message_id_end = input
+                .find_substring("</messageID>")
+                .or(input.find_substring("</messageId>"))
+                .ok_or("Failed to determine message ID.")?;
+            let message_id = std::str::from_utf8(&input[(message_id_start + 11)..message_id_end])
+                .map_err(map_err_to_string)?
+                .trim()
+                .parse()
+                .map_err(map_err_to_string)?;
+            let protocol_version_start = input
+                .find_substring("<protocolVersion>")
+                .ok_or("Failed to determine protocol version.")?;
+            let protocol_version_end = input
+                .find_substring("</protocolVersion>")
+                .ok_or("Failed to determine protocol version.")?;
+            let protocol_version =
+                std::str::from_utf8(&input[(protocol_version_start + 17)..protocol_version_end])
+                    .map_err(map_err_to_string)?
+                    .trim()
+                    .parse()
+                    .map_err(map_err_to_string)?;
+            Ok((protocol_version, message_id))
+        }
+        EncodingRules::JER => {
+            let message_id = input
+                .find_substring("messageID\":")
+                .or(input.find_substring("messageId\":"))
+                .ok_or(String::from("Failed to determine message ID."))
+                .and_then(|start| {
+                    let mut end = start + 11;
+                    let mut value = input[end] as char;
+                    while end < input.len() - 1 && (value.is_whitespace() || value.is_numeric()) {
+                        end += 1;
+                        value = input[end] as char;
+                    }
+                    std::str::from_utf8(&input[(start + 11)..end])
+                        .map_err(map_err_to_string)
+                        .and_then(|s| s.trim().parse::<u8>().map_err(map_err_to_string))
+                })?;
+            let protocol_version = input
+                .find_substring("protocolVersion\":")
+                .ok_or(String::from("Failed to determine message ID."))
+                .and_then(|start| {
+                    let mut end = start + 17;
+                    let mut value = input[end] as char;
+                    while end < input.len() - 1 && (value.is_whitespace() || value.is_numeric()) {
+                        end += 1;
+                        value = input[end] as char;
+                    }
+                    std::str::from_utf8(&input[(start + 17)..end])
+                        .map_err(map_err_to_string)
+                        .and_then(|s| s.trim().parse::<u8>().map_err(map_err_to_string))
+                })?;
+            Ok((protocol_version, message_id))
+        }
+        EncodingRules::UPER => inputEncodingRules
+            .codec()
+            .decode_from_binary::<ItsPduHeader>(input)
+            .map(|header| (header.protocol_version, header.message_i_d))
+            .map_err(map_err_to_string),
+    }
 }
 
 fn decode_denm(
@@ -483,4 +537,48 @@ fn transcode<T: rasn::Decode + rasn::Encode>(
 
 fn to_ipv6_debug(ipv6: IPv6Header) -> String {
     format!(r#"{{"ipv6Debug":"{ipv6:?}"}}"#)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::de::message_type;
+
+    #[test]
+    fn recognizes_message_type_and_version() {
+        assert_eq!((2,14), message_type(crate::EncodingRules::XER, "<CPM><header><protocolVersion>2</protocolVersion><messageID>14</messageID><stationID>".as_bytes()).unwrap());
+        assert_eq!(
+            (1, 5),
+            message_type(
+                crate::EncodingRules::XER,
+                r#"<?xml version="1.0"?><MAPEM><header><protocolVersion>  1  </protocolVersion><messageID>
+        5
+        </messageID><stationID>"#
+                    .as_bytes()
+            )
+            .unwrap()
+        );
+        assert_eq!(
+            (2, 2),
+            message_type(
+                crate::EncodingRules::JER,
+                r#"{"header":{"protocolVersion":2,"messageID":2,"stationID":2624309139}"#
+                    .as_bytes()
+            )
+            .unwrap()
+        );
+        assert_eq!(
+            (1, 9),
+            message_type(
+                crate::EncodingRules::JER,
+                r#"{
+                    "header": {
+                            "protocolVersion": 1,
+                            "messageID": 9,
+                            "stationID": 2624309139
+                    }"#
+                .as_bytes()
+            )
+            .unwrap()
+        );
+    }
 }
