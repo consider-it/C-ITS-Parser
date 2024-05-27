@@ -4,6 +4,9 @@ pub mod standards;
 
 pub(crate) mod pcap;
 pub(crate) mod transport;
+
+pub use pcap::remove_pcap_headers;
+
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 

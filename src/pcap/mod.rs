@@ -1,4 +1,4 @@
-pub(crate) fn remove_pcap_headers(data: &[u8]) -> Result<&[u8], String> {
+pub fn remove_pcap_headers(data: &[u8]) -> Result<&[u8], String> {
     remove_radiotap_hdr(data)
         .and_then(remove_80211_hdr)
         .and_then(remove_llc_hdr)

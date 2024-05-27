@@ -525,10 +525,11 @@ fn transcode<T: rasn::Decode + rasn::Encode>(
     if let (EncodingRules::UPER, EncodingRules::UPER) =
         (input_encoding_rules, output_encoding_rules)
     {
-        return Ok(input.iter().fold(String::new(), |mut acc, byte| {
-            write!(&mut acc, "{byte:02X?}");
-            acc
-        }));
+        return input.iter().try_fold(String::new(), |mut acc, byte| {
+            write!(&mut acc, "{byte:02X?}")
+                .map_err(map_err_to_string)
+                .map(|_| acc)
+        });
     }
     let decoded: T = input_encoding_rules
         .codec()
