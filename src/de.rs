@@ -1,4 +1,6 @@
 #![allow(non_snake_case)]
+use std::fmt::Write;
+
 use crate::{
     pcap::remove_pcap_headers,
     transport::{
@@ -458,7 +460,7 @@ fn decode_ssem(
     Ok(etsi_json)
 }
 
-fn optionally_decode_headers(
+pub fn optionally_decode_headers(
     input: &[u8],
     headers: Headers,
 ) -> Result<(&[u8], ItsMessage), String> {
@@ -523,7 +525,10 @@ fn transcode<T: rasn::Decode + rasn::Encode>(
     if let (EncodingRules::UPER, EncodingRules::UPER) =
         (input_encoding_rules, output_encoding_rules)
     {
-        return Ok(input.iter().map(|byte| format!("{byte:02X?}")).collect());
+        return Ok(input.iter().fold(String::new(), |mut acc, byte| {
+            write!(&mut acc, "{byte:02X?}");
+            acc
+        }));
     }
     let decoded: T = input_encoding_rules
         .codec()
