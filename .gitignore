@@ -3,3 +3,4 @@
 .npmrc
 /pkg
 .DS_Store
+ignoreme.rs

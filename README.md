@@ -18,6 +18,10 @@ Install using npm:
 ```sh
 npm install @consider-it/etsi-web
  ```
+or using cargo
+```
+cargo add --tag v0.4.3 --git ssh://git@github.com/consider-it/V2X-Etsi_web.git
+```
 
 ### API
 The `decode` function is a catch-all method for ITS messages of undefined type.
