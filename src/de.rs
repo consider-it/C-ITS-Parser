@@ -185,26 +185,29 @@ fn message_type(inputEncodingRules: EncodingRules, input: &[u8]) -> Result<(u8, 
     match inputEncodingRules {
         EncodingRules::XER => {
             let message_id_start = input
-                .find_substring("<messageID>")
-                .or(input.find_substring("<messageId>"))
-                .ok_or("Failed to determine message ID.")?;
-            let message_id_end = input
-                .find_substring("</messageID>")
-                .or(input.find_substring("</messageId>"))
-                .ok_or("Failed to determine message ID.")?;
-            let message_id = std::str::from_utf8(&input[(message_id_start + 11)..message_id_end])
+                .find_substring("messageID>")
+                .or(input.find_substring("messageId>"))
+                .ok_or("Failed to determine message ID.")?
+                + 10;
+            let message_id_end = (&input[message_id_start..])
+                .find_substring("</")
+                .ok_or("Failed to determine message ID.")?
+                + message_id_start;
+            let message_id = std::str::from_utf8(&input[message_id_start..message_id_end])
                 .map_err(map_err_to_string)?
                 .trim()
                 .parse()
                 .map_err(map_err_to_string)?;
             let protocol_version_start = input
-                .find_substring("<protocolVersion>")
-                .ok_or("Failed to determine protocol version.")?;
-            let protocol_version_end = input
-                .find_substring("</protocolVersion>")
-                .ok_or("Failed to determine protocol version.")?;
+                .find_substring("protocolVersion>")
+                .ok_or("Failed to determine protocol version.")?
+                + 16;
+            let protocol_version_end = (&input[protocol_version_start..])
+                .find_substring("</")
+                .ok_or("Failed to determine protocol version.")?
+                + protocol_version_start;
             let protocol_version =
-                std::str::from_utf8(&input[(protocol_version_start + 17)..protocol_version_end])
+                std::str::from_utf8(&input[protocol_version_start..protocol_version_end])
                     .map_err(map_err_to_string)?
                     .trim()
                     .parse()
