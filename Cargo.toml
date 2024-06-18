@@ -1,6 +1,6 @@
 [package]
 name = "etsi-web"
-version = "0.4.3"
+version = "0.4.4"
 edition = "2021"
 authors = ["Kevin Westphal"]
 description = "Tools for encoding and decoding ETSI messages (GN + Transport + CAM/DENM/IVIM/SSEM/SREM/MAPEM/SPATEM)"
@@ -23,7 +23,7 @@ geonetworking = { version = "0.1", default-features = false, features = ["json"]
 lazy_static = "1.4.0"
 nom = { version = "7.1.3" }
 num = { version = "0.4.1" }
-rasn = { git = "https://github.com/consider-it/rasn.git" }
+rasn = { git = "https://github.com/consider-it/rasn.git", tag = "v0.14.1-cit" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
 
