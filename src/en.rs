@@ -1,7 +1,8 @@
-use crate::transport::{encode::Encode as TpEncode, BasicTransportAHeader, BasicTransportBHeader};
-use crate::{map_err_to_string, ItsMessage};
-use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
+use crate::{map_err_to_string, EncodingRules, ItsMessage};
+use geonetworking::{Encode, ExtendedHeader, HeaderType, Packet, UnsecuredHeader};
 
+#[cfg(target_arch = "wasm32")]
+use crate::transport::encode::Encode as TpEncode;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
@@ -10,7 +11,126 @@ pub type Encoded = js_sys::Uint8Array;
 #[cfg(not(target_arch = "wasm32"))]
 pub type Encoded = Vec<u8>;
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = encodeDenm))]
+#[cfg(not(target_arch = "wasm32"))]
+impl<'a> ItsMessage<'a> {
+    /// Encodes an ITS message with optional headers. Supports XER, JER, and UPER encoding rules. XER and JER values are returned as UTF8 buffers.
+    pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, String> {
+        let (geo, tp, mut etsi_uper) = match self {
+            ItsMessage::DenmV1 {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::DenmV2 {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::Cam {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::Spatem {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::Mapem {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::IvimV1 {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::IvimV2 {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::Srem {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::Ssem {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::CpmV1 {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+            ItsMessage::CpmV2 {
+                geonetworking,
+                transport,
+                etsi,
+            } => encoding_rules
+                .codec()
+                .encode_to_binary(&etsi)
+                .map(|enc| (geonetworking, transport, enc)),
+        }
+        .map_err(map_err_to_string)?;
+        match (tp, geo) {
+            (None, None) => Ok(etsi_uper),
+            (
+                Some(tp),
+                Some(Packet::Unsecured {
+                    basic,
+                    common,
+                    extended,
+                    ..
+                }),
+            ) => {
+                let mut encoded = tp.encode()?;
+                encoded.append(&mut etsi_uper);
+                fill_gn_and_encode(UnsecuredHeader { basic, common, extended }, encoded)
+            }
+            _ => Err(
+                "Expecting either both or neither GeoNetworking and Transport headers to be present!"
+                    .to_string(),
+            ),
+        }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = encodeDenm)]
 /// Encodes a DENM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, denms of the following versions are supported: v2.1.1 (211) and v1.3.1 (131)
@@ -39,7 +159,8 @@ pub fn encode_denm(denm: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = encodeCam))]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = encodeCam)]
 /// Encodes a CAM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cams of the following versions are supported: v1.4.1 (141)
@@ -59,7 +180,8 @@ pub fn encode_cam(cam: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = encodeMapem))]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = encodeMapem)]
 /// Encodes a MAPEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, mapems of the following versions are supported: v1.3.1 (131)
@@ -79,7 +201,8 @@ pub fn encode_mapem(mapem: &ItsMessage, version: u32) -> Result<Encoded, String>
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = encodeSpatem))]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = encodeSpatem)]
 /// Encodes a SPATEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, spatems of the following versions are supported: v1.3.1 (131)
@@ -101,7 +224,8 @@ pub fn encode_spatem(spatem: &ItsMessage, version: u32) -> Result<Encoded, Strin
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = encodeIvim))]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = encodeIvim)]
 /// Encodes a IVIM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ivims of the following versions are supported: v2.2.1 (221)
@@ -121,7 +245,8 @@ pub fn encode_ivim(ivim: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = encodeSrem))]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = encodeSrem)]
 /// Encodes a SREM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, srems of the following versions are supported: v1.3.1 (131)
@@ -141,7 +266,8 @@ pub fn encode_srem(srem: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = encodeCpm))]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = encodeCpm)]
 /// Encodes a CPM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cpms of the following versions are supported: v1.3.1 (131)
@@ -159,7 +285,8 @@ pub fn encode_cpm(cpm: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = encodeSsem))]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = encodeSsem)]
 /// Encodes a SSEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ssems of the following versions are supported: v1.3.1 (131)
@@ -179,6 +306,7 @@ pub fn encode_ssem(ssem: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
+#[cfg(target_arch = "wasm32")]
 fn optionally_encode_headers(
     gn_json: &Option<String>,
     tp_json: &Option<String>,
@@ -207,40 +335,44 @@ fn optionally_encode_headers(
                 }
             };
             transport.append(&mut its);
-            geonetworking.common.payload_length = transport.len() as u16;
-            geonetworking.common.header_type_and_subtype = match geonetworking.extended {
-                Some(ExtendedHeader::Beacon(_)) => HeaderType::Beacon,
-                Some(ExtendedHeader::GAC(_)) => {
-                    HeaderType::GeoAnycast(geonetworking::AreaType::Circular)
-                }
-                Some(ExtendedHeader::GBC(_)) => {
-                    HeaderType::GeoBroadcast(geonetworking::AreaType::Circular)
-                }
-                Some(ExtendedHeader::GUC(_)) => HeaderType::GeoUnicast,
-                Some(ExtendedHeader::TSB(_)) => {
-                    HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::MultiHop)
-                }
-                Some(ExtendedHeader::SHB(_)) => HeaderType::TopologicallyScopedBroadcast(
-                    geonetworking::BroadcastType::SingleHop,
-                ),
-                Some(ExtendedHeader::LSRequest(_)) => {
-                    HeaderType::LocationService(geonetworking::LocationServiceType::Request)
-                }
-                Some(ExtendedHeader::LSReply(_)) => {
-                    HeaderType::LocationService(geonetworking::LocationServiceType::Reply)
-                }
-                None => HeaderType::Any,
-            };
-            geonetworking
-                .with_payload(&transport)
-                .map_err(map_err_to_string)?
-                .encode_to_vec()
-                .map_err(map_err_to_string)
+            fill_gn_and_encode(geonetworking, transport)
         }
         _ => Ok(its),
     }
 }
 
+fn fill_gn_and_encode(
+    mut geonetworking: UnsecuredHeader,
+    payload: Vec<u8>,
+) -> Result<Vec<u8>, String> {
+    geonetworking.common.payload_length = payload.len() as u16;
+    geonetworking.common.header_type_and_subtype = match geonetworking.extended {
+        Some(ExtendedHeader::Beacon(_)) => HeaderType::Beacon,
+        Some(ExtendedHeader::GAC(_)) => HeaderType::GeoAnycast(geonetworking::AreaType::Circular),
+        Some(ExtendedHeader::GBC(_)) => HeaderType::GeoBroadcast(geonetworking::AreaType::Circular),
+        Some(ExtendedHeader::GUC(_)) => HeaderType::GeoUnicast,
+        Some(ExtendedHeader::TSB(_)) => {
+            HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::MultiHop)
+        }
+        Some(ExtendedHeader::SHB(_)) => {
+            HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::SingleHop)
+        }
+        Some(ExtendedHeader::LSRequest(_)) => {
+            HeaderType::LocationService(geonetworking::LocationServiceType::Request)
+        }
+        Some(ExtendedHeader::LSReply(_)) => {
+            HeaderType::LocationService(geonetworking::LocationServiceType::Reply)
+        }
+        None => HeaderType::Any,
+    };
+    geonetworking
+        .with_payload(&payload)
+        .map_err(map_err_to_string)?
+        .encode_to_vec()
+        .map_err(map_err_to_string)
+}
+
+#[cfg(target_arch = "wasm32")]
 fn transcode_jer_to_uper<T: rasn::Decode + rasn::Encode>(
     input: &String,
 ) -> Result<Vec<u8>, String> {

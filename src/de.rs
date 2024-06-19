@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
-use std::fmt::Write;
 
+use crate::transport::TransportHeader;
 use crate::{
     pcap::remove_pcap_headers,
     transport::{
@@ -8,16 +8,16 @@ use crate::{
     },
     EncodingRules, Headers,
 };
-use geonetworking::{Decode, Encode, NextAfterCommon, Packet};
+#[cfg(target_arch = "wasm32")]
+use geonetworking::Encode;
+use geonetworking::{Decode, NextAfterCommon, Packet};
 use nom::FindSubstring;
+#[cfg(target_arch = "wasm32")]
+use std::fmt::Write;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-use crate::{
-    map_err_to_string,
-    standards::is_1_3_1::{self, ItsPduHeader},
-    ItsMessage,
-};
+use crate::{map_err_to_string, standards, standards::is_1_3_1::ItsPduHeader, ItsMessage};
 
 macro_rules! btp {
     ($btp_ty:ty, $input:ident) => {
@@ -31,23 +31,159 @@ macro_rules! btp {
     };
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = decode))]
+#[cfg(not(target_arch = "wasm32"))]
+/// Decodes an ASN.1 message with headers. Supported encoding rules are UPER, JER, and XER. JSON and XML strings are expected as UTF8 slices.
+/// ### Params
+///  - `message`: binary input containing the ITS message
+///  - `headers`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
+/// Throws string error on decoding errors.
+pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
+    let (input, transport, geonetworking) = match headers {
+        Headers::None => Ok((input, None, None)),
+        Headers::GnBtp => decode_gn_tp(input).map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
+        Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input)
+            .and_then(decode_gn_tp)
+            .map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
+    }?;
+    let (encoding_rules, protocol_version, msg_type) = message_type(input)?;
+    match (msg_type, protocol_version) {
+        (1, 2) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM>(input)
+            .map(|etsi| ItsMessage::DenmV2 {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (1, _) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::denm_1_3_1::DENM>(input)
+            .map(|etsi| ItsMessage::DenmV1 {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (2, _) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::cam_1_4_1::CAM>(input)
+            .map(|etsi| ItsMessage::Cam {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (4, _) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::is_1_3_1::SPATEM>(input)
+            .map(|etsi| ItsMessage::Spatem {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (5, _) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::is_1_3_1::MAPEM>(input)
+            .map(|etsi| ItsMessage::Mapem {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (6, 2) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::ivim_2_2_1::IVIM>(input)
+            .map(|etsi| ItsMessage::IvimV2 {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (6, _) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::is_1_3_1::IVIM>(input)
+            .map(|etsi| ItsMessage::IvimV1 {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (9, _) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::is_1_3_1::SREM>(input)
+            .map(|etsi| ItsMessage::Srem {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (10, _) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::is_1_3_1::SSEM>(input)
+            .map(|etsi| ItsMessage::Ssem {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (14, 2) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::cpm_2_1_1::c_p_m__p_d_u__descriptions::CollectivePerceptionMessage>(input)
+            .map(|etsi| ItsMessage::CpmV2 {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (14, _) => encoding_rules
+            .codec()
+            .decode_from_binary::<standards::is_1_3_1::CPM>(input)
+            .map(|etsi| ItsMessage::CpmV1 {
+                geonetworking,
+                transport,
+                etsi,
+            }),
+        (message_i_d, _) => {
+            return Err(format!(
+                "Unsupported ITS message type: Found message id {message_i_d}."
+            ))
+        }
+    }.map_err(map_err_to_string)
+}
+
+fn decode_gn_tp(input: &[u8]) -> Result<(&[u8], TransportHeader, Packet), String> {
+    let result = Packet::decode(input).map_err(map_err_to_string)?;
+    let payload = match &result.decoded {
+        Packet::Unsecured { payload, .. } => *payload,
+        s => s
+            .secured_payload_after_gn()
+            .ok_or("No payload in secured geonetworking header!")?,
+    };
+    let (remaining, tp) = match result.decoded.common().next_header {
+        NextAfterCommon::Any => {
+            Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
+        }
+        NextAfterCommon::BTPA => BasicTransportAHeader::decode(payload)
+            .map(|(rem, btpa)| (rem, TransportHeader::BtpA(btpa)))
+            .map_err(map_err_to_string),
+        NextAfterCommon::BTPB => BasicTransportBHeader::decode(payload)
+            .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
+            .map_err(map_err_to_string),
+        NextAfterCommon::IPv6 => IPv6Header::decode(payload)
+            .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(ipv6)))
+            .map_err(map_err_to_string),
+    }?;
+    Ok((remaining, tp, result.decoded))
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(js_name = decode)]
 /// Decodes an ITS message of undefined type.
 /// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
 /// ### Params
 ///  - `message`: binary input containing the ITS message
 ///  - `headersPresent`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
-///  - `inputEncodingRules`: ASN.1 encoding rules used to encode the ITS message in the input
 ///  - `outputEncodingRules`: ASN.1 encoding rules that will be used for re-encoding the message in the `ItsMessage`'s `its` field. (UPER output will be rendered as a UTF-8 hex string)
 /// Throws string error on decoding errors.
 pub fn decode(
     message: &[u8],
     headersPresent: Headers,
-    inputEncodingRules: EncodingRules,
     outputEncodingRules: EncodingRules,
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(message, headersPresent)?;
-    let (protocol_version, message_type) = message_type(inputEncodingRules, input)?;
+    let (input_encoding_rules, protocol_version, message_type) = message_type(input)?;
     let (msg_ty, decoded) = match (message_type, protocol_version) {
         (1, 2) => (
             1,
@@ -55,7 +191,7 @@ pub fn decode(
                 input,
                 Some(211),
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -66,7 +202,7 @@ pub fn decode(
                 input,
                 Some(131),
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -77,7 +213,7 @@ pub fn decode(
                 input,
                 None,
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -88,7 +224,7 @@ pub fn decode(
                 input,
                 None,
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -99,7 +235,7 @@ pub fn decode(
                 input,
                 None,
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -110,7 +246,7 @@ pub fn decode(
                 input,
                 Some(221),
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -121,7 +257,7 @@ pub fn decode(
                 input,
                 Some(131),
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -132,7 +268,7 @@ pub fn decode(
                 input,
                 None,
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -143,7 +279,7 @@ pub fn decode(
                 input,
                 None,
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -154,7 +290,7 @@ pub fn decode(
                 input,
                 Some(211),
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -165,7 +301,7 @@ pub fn decode(
                 input,
                 Some(131),
                 Headers::None,
-                inputEncodingRules,
+                input_encoding_rules,
                 outputEncodingRules,
             )?
             .its,
@@ -181,8 +317,13 @@ pub fn decode(
     Ok(etsi_json)
 }
 
-fn message_type(inputEncodingRules: EncodingRules, input: &[u8]) -> Result<(u8, u8), String> {
-    match inputEncodingRules {
+fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
+    let encoding_rules = match std::str::from_utf8(input) {
+        Ok(s) if s.trim_start().starts_with('<') => EncodingRules::XER,
+        Ok(s) if s.trim_start().starts_with('{') => EncodingRules::JER,
+        _ => EncodingRules::UPER,
+    };
+    match encoding_rules {
         EncodingRules::XER => {
             let message_id_start = input
                 .find_substring("messageID>")
@@ -212,7 +353,7 @@ fn message_type(inputEncodingRules: EncodingRules, input: &[u8]) -> Result<(u8, 
                     .trim()
                     .parse()
                     .map_err(map_err_to_string)?;
-            Ok((protocol_version, message_id))
+            Ok((encoding_rules, protocol_version, message_id))
         }
         EncodingRules::JER => {
             let message_id = input
@@ -244,16 +385,17 @@ fn message_type(inputEncodingRules: EncodingRules, input: &[u8]) -> Result<(u8, 
                         .map_err(map_err_to_string)
                         .and_then(|s| s.trim().parse::<u8>().map_err(map_err_to_string))
                 })?;
-            Ok((protocol_version, message_id))
+            Ok((encoding_rules, protocol_version, message_id))
         }
-        EncodingRules::UPER => inputEncodingRules
+        EncodingRules::UPER => EncodingRules::UPER
             .codec()
             .decode_from_binary::<ItsPduHeader>(input)
-            .map(|header| (header.protocol_version, header.message_i_d))
+            .map(|header| (encoding_rules, header.protocol_version, header.message_i_d))
             .map_err(map_err_to_string),
     }
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_denm(
     denm: &[u8],
     mut version: Option<u32>,
@@ -289,6 +431,7 @@ fn decode_denm(
     Ok(etsi_json)
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_cam(
     cam: &[u8],
     version: Option<u32>,
@@ -309,6 +452,7 @@ fn decode_cam(
     Ok(etsi_json)
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_mapem(
     mapem: &[u8],
     version: Option<u32>,
@@ -329,6 +473,7 @@ fn decode_mapem(
     Ok(etsi_json)
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_spatem(
     spatem: &[u8],
     version: Option<u32>,
@@ -351,6 +496,7 @@ fn decode_spatem(
     Ok(etsi_json)
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_ivim(
     ivim: &[u8],
     mut version: Option<u32>,
@@ -388,6 +534,7 @@ fn decode_ivim(
     Ok(etsi_json)
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_srem(
     srem: &[u8],
     version: Option<u32>,
@@ -408,6 +555,7 @@ fn decode_srem(
     Ok(etsi_json)
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_cpm(
     cpm: &[u8],
     mut version: Option<u32>,
@@ -443,6 +591,7 @@ fn decode_cpm(
     Ok(etsi_json)
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_ssem(
     ssem: &[u8],
     version: Option<u32>,
@@ -463,18 +612,22 @@ fn decode_ssem(
     Ok(etsi_json)
 }
 
+#[cfg(target_arch = "wasm32")]
 pub fn optionally_decode_headers(
     input: &[u8],
     headers: Headers,
 ) -> Result<(&[u8], ItsMessage), String> {
     match headers {
         Headers::None => Ok((input, ItsMessage::default())),
-        Headers::GnBtp => decode_gn_and_btp(input),
-        Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input).and_then(decode_gn_and_btp),
+        Headers::GnBtp => transcode_gn_tp_to_json(input),
+        Headers::RadioTap802LlcGnBtp => {
+            remove_pcap_headers(input).and_then(transcode_gn_tp_to_json)
+        }
     }
 }
 
-fn decode_gn_and_btp(input: &[u8]) -> Result<(&[u8], ItsMessage), String> {
+#[cfg(target_arch = "wasm32")]
+fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], ItsMessage), String> {
     decode_geonetworking_header(input).and_then(|(remaining, gn_json, next_header)| {
         decode_transport_header(remaining, next_header).map(|(rem, tp)| {
             (
@@ -489,6 +642,7 @@ fn decode_gn_and_btp(input: &[u8]) -> Result<(&[u8], ItsMessage), String> {
     })
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_geonetworking_header(input: &[u8]) -> Result<(&[u8], String, NextAfterCommon), String> {
     let result = Packet::decode(input).map_err(map_err_to_string)?;
     let gn_json = result.decoded.encode_to_json().map_err(map_err_to_string)?;
@@ -503,6 +657,7 @@ fn decode_geonetworking_header(input: &[u8]) -> Result<(&[u8], String, NextAfter
     }
 }
 
+#[cfg(target_arch = "wasm32")]
 fn decode_transport_header(
     input: &[u8],
     header_type: NextAfterCommon,
@@ -520,6 +675,7 @@ fn decode_transport_header(
     }
 }
 
+#[cfg(target_arch = "wasm32")]
 fn transcode<T: rasn::Decode + rasn::Encode>(
     input: &[u8],
     input_encoding_rules: EncodingRules,
@@ -538,12 +694,18 @@ fn transcode<T: rasn::Decode + rasn::Encode>(
         .codec()
         .decode_from_binary(input)
         .map_err(map_err_to_string)?;
-    output_encoding_rules
-        .codec()
-        .encode_to_string(&decoded)
-        .map_err(map_err_to_string)
+    match output_encoding_rules {
+        EncodingRules::UPER => rasn::uper::encode(&decoded)
+            .map(hex::encode)
+            .map_err(map_err_to_string),
+        o => o
+            .codec()
+            .encode_to_string(&decoded)
+            .map_err(map_err_to_string),
+    }
 }
 
+#[cfg(target_arch = "wasm32")]
 fn to_ipv6_debug(ipv6: IPv6Header) -> String {
     format!(r#"{{"ipv6Debug":"{ipv6:?}"}}"#)
 }
@@ -554,11 +716,10 @@ mod tests {
 
     #[test]
     fn recognizes_message_type_and_version() {
-        assert_eq!((2,14), message_type(crate::EncodingRules::XER, "<CPM><header><protocolVersion>2</protocolVersion><messageID>14</messageID><stationID>".as_bytes()).unwrap());
+        assert_eq!((crate::EncodingRules::XER, 2,14), message_type("<CPM><header><protocolVersion>2</protocolVersion><messageID>14</messageID><stationID>".as_bytes()).unwrap());
         assert_eq!(
-            (1, 5),
+            (crate::EncodingRules::XER, 1, 5),
             message_type(
-                crate::EncodingRules::XER,
                 r#"<?xml version="1.0"?><MAPEM><header><protocolVersion>  1  </protocolVersion><messageID>
         5
         </messageID><stationID>"#
@@ -567,18 +728,16 @@ mod tests {
             .unwrap()
         );
         assert_eq!(
-            (2, 2),
+            (crate::EncodingRules::JER, 2, 2),
             message_type(
-                crate::EncodingRules::JER,
                 r#"{"header":{"protocolVersion":2,"messageID":2,"stationID":2624309139}"#
                     .as_bytes()
             )
             .unwrap()
         );
         assert_eq!(
-            (1, 9),
+            (crate::EncodingRules::JER, 1, 9),
             message_type(
-                crate::EncodingRules::JER,
                 r#"{
                     "header": {
                             "protocolVersion": 1,

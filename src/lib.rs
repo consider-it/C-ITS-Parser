@@ -5,12 +5,15 @@ pub mod standards;
 pub(crate) mod pcap;
 pub(crate) mod transport;
 
+use geonetworking::Packet;
 pub use pcap::remove_pcap_headers;
 
+use transport::TransportHeader;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(getter_with_clone))]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(getter_with_clone)]
 #[derive(Debug, Clone, PartialEq, Default)]
 /// Wrapper for the stringified JSON of headers and ITS ETSI message
 pub struct ItsMessage {
@@ -44,6 +47,66 @@ pub struct ItsMessage {
     /// - 21 - `pam`               - reserved for Parking Availability Message,
     /// - 22-255                   - reserved for future usage.
     pub message_type: u8,
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+#[derive(Debug, Clone, PartialEq)]
+pub enum ItsMessage<'a> {
+    DenmV1 {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::denm_1_3_1::DENM,
+    },
+    DenmV2 {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
+    },
+    Cam {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::cam_1_4_1::CAM,
+    },
+    Spatem {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::is_1_3_1::SPATEM,
+    },
+    Mapem {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::is_1_3_1::MAPEM,
+    },
+    IvimV1 {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::is_1_3_1::IVIM,
+    },
+    IvimV2 {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::ivim_2_2_1::IVIM,
+    },
+    Srem {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::is_1_3_1::SREM,
+    },
+    Ssem {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::is_1_3_1::SSEM,
+    },
+    CpmV1 {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::is_1_3_1::CPM,
+    },
+    CpmV2 {
+        geonetworking: Option<Packet<'a>>,
+        transport: Option<TransportHeader>,
+        etsi: standards::cpm_2_1_1::c_p_m__p_d_u__descriptions::CollectivePerceptionMessage,
+    },
 }
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]

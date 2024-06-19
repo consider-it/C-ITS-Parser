@@ -1,9 +1,37 @@
 use core::fmt::Debug;
 
+use encode::Encode;
 use serde::{Deserialize, Serialize};
+
+use crate::map_err_to_string;
 
 pub(crate) mod decode;
 pub(crate) mod encode;
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum TransportHeader {
+    BtpA(BasicTransportAHeader),
+    BtpB(BasicTransportBHeader),
+    IPv6(IPv6Header),
+}
+
+impl TransportHeader {
+    pub fn encode(&self) -> Result<Vec<u8>, String> {
+        match self {
+            TransportHeader::BtpA(a) => a.encode().map_err(map_err_to_string),
+            TransportHeader::BtpB(b) => b.encode().map_err(map_err_to_string),
+            TransportHeader::IPv6(_) => Err(String::from("Encoding IPv6 headers is unsupported!")),
+        }
+    }
+
+    pub fn encode_to_json(&self) -> Result<String, String> {
+        match self {
+            TransportHeader::BtpA(a) => a.encode_to_json().map_err(map_err_to_string),
+            TransportHeader::BtpB(b) => b.encode_to_json().map_err(map_err_to_string),
+            TransportHeader::IPv6(_) => Err(String::from("Encoding IPv6 headers is unsupported!")),
+        }
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BasicTransportAHeader {
