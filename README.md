@@ -28,7 +28,7 @@ npm install @consider-it/etsi-web
 or using cargo
 
 ```
-cargo add --tag v0.5.0 --git ssh://git@github.com/consider-it/V2X-Etsi_web.git
+cargo add --tag v0.5.1 --git ssh://git@github.com/consider-it/V2X-Etsi_web.git
 ```
 
 ### Rust API
