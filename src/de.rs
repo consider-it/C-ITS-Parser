@@ -40,9 +40,9 @@ macro_rules! btp {
 pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
     let (input, transport, geonetworking) = match headers {
         Headers::None => Ok((input, None, None)),
-        Headers::GnBtp => decode_gn_tp(input).map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
+        Headers::GnBtp => decode_gn_btp_headers(input).map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
         Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input)
-            .and_then(decode_gn_tp)
+            .and_then(decode_gn_btp_headers)
             .map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
     }?;
     let (encoding_rules, protocol_version, msg_type) = message_type(input)?;
@@ -143,7 +143,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
     }.map_err(map_err_to_string)
 }
 
-fn decode_gn_tp(input: &[u8]) -> Result<(&[u8], TransportHeader, Packet), String> {
+pub fn decode_gn_btp_headers(input: &[u8]) -> Result<(&[u8], TransportHeader, Packet), String> {
     let result = Packet::decode(input).map_err(map_err_to_string)?;
     let payload = match &result.decoded {
         Packet::Unsecured { payload, .. } => *payload,
