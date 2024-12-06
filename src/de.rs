@@ -52,7 +52,21 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .and_then(decode_gn_btp_headers)
             .map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
     }?;
-    let (encoding_rules, protocol_version, msg_type) = message_type(input)?;
+    let (encoding_rules, mut protocol_version, msg_type) = message_type(input)?;
+
+    // workaround to parse DENM Rel1 XER/ JER properly
+    if msg_type == 1 {
+        if let Ok(data) = std::str::from_utf8(input) {
+            if (data.trim_start().starts_with('<') || data.trim_start().starts_with('{'))
+                && data.contains("messageID")
+            {
+                // XER/ JER was encoded with old CDD and therefore complies to DENM v1.3.1, not 2.1.1
+                // set protocol_version to 1 for the match statement below
+                protocol_version = 1;
+            }
+        }
+    }
+
     match (msg_type, protocol_version) {
         (1, 2) => encoding_rules
             .codec()
