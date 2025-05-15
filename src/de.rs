@@ -6,8 +6,10 @@ use crate::{
     transport::{
         decode::Decode as TransportDecode, BasicTransportAHeader, BasicTransportBHeader, IPv6Header,
     },
-    EncodingRules, Headers,
+    map_err_to_string
 };
+#[cfg(feature = "etsi")]
+use crate::{EncodingRules, Headers, standards, standards::is_1_3_1::ItsPduHeader, ItsMessage};
 #[cfg(target_arch = "wasm32")]
 use geonetworking::Encode;
 use geonetworking::{Decode, NextAfterCommon, Packet};
@@ -16,8 +18,6 @@ use nom::FindSubstring;
 use std::fmt::Write;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
-
-use crate::{map_err_to_string, standards, standards::is_1_3_1::ItsPduHeader, ItsMessage};
 
 macro_rules! btp {
     ($btp_ty:ty, $input:ident) => {
@@ -31,6 +31,7 @@ macro_rules! btp {
     };
 }
 
+#[cfg(feature = "etsi")]
 #[cfg(not(target_arch = "wasm32"))]
 /// Decodes an ASN.1 message with headers. Supported encoding rules are UPER, JER, and XER. JSON and XML strings are expected as UTF8 slices.
 /// ### Params
@@ -40,7 +41,9 @@ macro_rules! btp {
 pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
     let (input, transport, geonetworking) = match headers {
         Headers::None => Ok((input, None, None)),
-        Headers::GnBtp => decode_gn_btp_headers(input).map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
+        Headers::GnBtp => {
+            decode_gn_btp_headers(input).map(|(rem, tp, gn)| (rem, Some(tp), Some(gn)))
+        }
         Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input)
             .and_then(decode_gn_btp_headers)
             .map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
@@ -317,6 +320,7 @@ pub fn decode(
     Ok(etsi_json)
 }
 
+#[cfg(feature = "etsi")]
 fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
     let encoding_rules = match std::str::from_utf8(input) {
         Ok(s) if s.trim_start().starts_with('<') => EncodingRules::XER,
@@ -710,7 +714,7 @@ fn to_ipv6_debug(ipv6: IPv6Header) -> String {
     format!(r#"{{"ipv6Debug":"{ipv6:?}"}}"#)
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "etsi"))]
 mod tests {
     use crate::de::message_type;
 

@@ -1,9 +1,11 @@
 pub mod de;
+#[cfg(feature = "etsi")]
 pub mod en;
+#[cfg(feature = "etsi")]
 pub mod standards;
 
 pub(crate) mod pcap;
-pub(crate) mod transport;
+pub mod transport;
 
 use geonetworking::Packet;
 pub use pcap::remove_pcap_headers;
@@ -49,6 +51,7 @@ pub struct ItsMessage {
     pub message_type: u8,
 }
 
+#[cfg(feature = "etsi")]
 #[cfg(not(target_arch = "wasm32"))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum ItsMessage<'a> {
@@ -109,6 +112,7 @@ pub enum ItsMessage<'a> {
     },
 }
 
+#[cfg(feature = "etsi")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Headers {
@@ -117,6 +121,7 @@ pub enum Headers {
     RadioTap802LlcGnBtp,
 }
 
+#[cfg(feature = "etsi")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum EncodingRules {
@@ -125,6 +130,7 @@ pub enum EncodingRules {
     JER,
 }
 
+#[cfg(feature = "etsi")]
 impl EncodingRules {
     pub(crate) fn codec(&self) -> rasn::Codec {
         match self {
