@@ -1,6 +1,8 @@
 use core::fmt::Debug;
 
+use decode::Decode;
 use encode::Encode;
+use geonetworking::NextAfterCommon;
 use serde::{Deserialize, Serialize};
 
 use crate::map_err_to_string;
@@ -16,6 +18,26 @@ pub enum TransportHeader {
 }
 
 impl TransportHeader {
+    pub fn decode_with_gn_next_header(
+        next_header: NextAfterCommon,
+        bytes: &[u8],
+    ) -> Result<(&[u8], TransportHeader), String> {
+        match next_header {
+            NextAfterCommon::Any => {
+                Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
+            }
+            NextAfterCommon::BTPA => BasicTransportAHeader::decode(bytes)
+                .map(|(rem, btpa)| (rem, TransportHeader::BtpA(btpa)))
+                .map_err(map_err_to_string),
+            NextAfterCommon::BTPB => BasicTransportBHeader::decode(bytes)
+                .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
+                .map_err(map_err_to_string),
+            NextAfterCommon::IPv6 => IPv6Header::decode(bytes)
+                .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(ipv6)))
+                .map_err(map_err_to_string),
+        }
+    }
+
     pub fn encode(&self) -> Result<Vec<u8>, String> {
         match self {
             TransportHeader::BtpA(a) => a.encode().map_err(map_err_to_string),
