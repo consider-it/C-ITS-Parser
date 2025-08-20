@@ -1,0 +1,208 @@
+diff --git a/src/standards/cam_1_4_1.rs b/src/standards/cam_1_4_1.rs
+index abef826..8bebc22 100644
+--- a/src/standards/cam_1_4_1.rs
++++ b/src/standards/cam_1_4_1.rs
+@@ -7,7 +7,7 @@
+ )]
+ pub mod cam_pdu_descriptions {
+     extern crate alloc;
+-    use super::its_container::{
++    use super::super::cdd_1_3_1_1::its_container::{
+         AccelerationControl, CauseCode, CenDsrcTollingZone, ClosedLanes, Curvature,
+         CurvatureCalculationMode, DangerousGoodsBasic, DriveDirection, EmbarkationStatus,
+         EmergencyPriority, ExteriorLights, Heading, ItsPduHeader, LanePosition,
+diff --git a/src/standards/cpm_2_1_1.rs b/src/standards/cpm_2_1_1.rs
+index 26b22de..d9c6ac7 100644
+--- a/src/standards/cpm_2_1_1.rs
++++ b/src/standards/cpm_2_1_1.rs
+@@ -7,7 +7,7 @@
+ )]
+ pub mod cpm_originating_station_containers {
+     extern crate alloc;
+-    use super::etsi_its_cdd::{
++    use super::super::cdd_2_2_1::etsi_its_cdd::{
+         CartesianAngle, MapReference, Speed, StationType, TrailerData, Wgs84Angle,
+     };
+     use core::borrow::Borrow;
+@@ -92,16 +92,16 @@ pub mod cpm_originating_station_containers {
+ )]
+ pub mod cpm_pdu_descriptions {
+     extern crate alloc;
++    use super::super::cdd_2_2_1::etsi_its_cdd::{
++        ItsPduHeader, MessageRateHz, MessageSegmentationInfo, OrdinalNumber1B, ReferencePosition,
++        StationType, TimestampIts,
++    };
+     use super::cpm_originating_station_containers::{
+         OriginatingRsuContainer, OriginatingVehicleContainer,
+     };
+     use super::cpm_perceived_object_container::PerceivedObjectContainer;
+     use super::cpm_perception_region_container::PerceptionRegionContainer;
+     use super::cpm_sensor_information_container::SensorInformationContainer;
+-    use super::etsi_its_cdd::{
+-        ItsPduHeader, MessageRateHz, MessageSegmentationInfo, OrdinalNumber1B, ReferencePosition,
+-        StationType, TimestampIts,
+-    };
+     use core::borrow::Borrow;
+     use rasn::prelude::*;
+     use std::sync::LazyLock;
+@@ -289,7 +289,7 @@ pub mod cpm_pdu_descriptions {
+ )]
+ pub mod cpm_perceived_object_container {
+     extern crate alloc;
+-    use super::etsi_its_cdd::{CardinalNumber1B, PerceivedObject};
++    use super::super::cdd_2_2_1::etsi_its_cdd::{CardinalNumber1B, PerceivedObject};
+     use core::borrow::Borrow;
+     use rasn::prelude::*;
+     use std::sync::LazyLock;
+@@ -339,7 +338,7 @@ pub mod cpm_perceived_object_container {
+ )]
+ pub mod cpm_perception_region_container {
+     extern crate alloc;
+-    use super::etsi_its_cdd::{
++    use super::super::cdd_2_2_1::etsi_its_cdd::{
+         CardinalNumber1B, ConfidenceLevel, DeltaTimeMilliSecondSigned, Identifier2B, SensorType,
+         SequenceOfIdentifier1B, Shape,
+     };
+@@ -428,7 +427,7 @@ pub mod cpm_perception_region_container {
+ )]
+ pub mod cpm_sensor_information_container {
+     extern crate alloc;
+-    use super::etsi_its_cdd::{ConfidenceLevel, Identifier1B, SensorType, Shape};
++    use super::super::cdd_2_2_1::etsi_its_cdd::{ConfidenceLevel, Identifier1B, SensorType, Shape};
+     use core::borrow::Borrow;
+     use rasn::prelude::*;
+     use std::sync::LazyLock;
+diff --git a/src/standards/denm_1_3_1.rs b/src/standards/denm_1_3_1.rs
+index 1f48d44..16e047b 100644
+--- a/src/standards/denm_1_3_1.rs
++++ b/src/standards/denm_1_3_1.rs
+@@ -7,7 +7,7 @@
+ )]
+ pub mod denm_pdu_descriptions {
+     extern crate alloc;
+-    use super::its_container::{
++    use super::super::cdd_1_3_1_1::its_container::{
+         ActionID, CauseCode, ClosedLanes, DangerousGoodsExtended, DeltaReferencePosition,
+         EnergyStorageType, EventHistory, Heading, HeightLonCarr, InformationQuality, ItineraryPath,
+         ItsPduHeader, LanePosition, LightBarSirenInUse, NumberOfOccupants, PosCentMass, PosFrontAx,
+@@ -234,7 +234,7 @@ pub mod denm_pdu_descriptions {
+         }
+     }
+     fn management_container_validity_duration_default() -> ValidityDuration {
+-        DEFAULT_VALIDITY
++        DEFAULT_VALIDITY.clone()
+     }
+     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+     #[rasn(delegate, size("1..=8", extensible))]
+@@ -354,5 +354,5 @@ pub mod denm_pdu_descriptions {
+         isCancellation = 0,
+         isNegation = 1,
+     }
+-    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600));
++    pub static DEFAULT_VALIDITY: ValidityDuration = ValidityDuration(600);
+ }
+diff --git a/src/standards/denm_2_1_1.rs b/src/standards/denm_2_1_1.rs
+index bb5c08e..e89ec6b 100644
+--- a/src/standards/denm_2_1_1.rs
++++ b/src/standards/denm_2_1_1.rs
+@@ -7,18 +7,16 @@
+ )]
+ pub mod denm_pdu_description {
+     extern crate alloc;
+-    use super::etsi_its_cdd::{
++    use super::super::cdd_2_2_1::etsi_its_cdd::{
+         ActionId, ActionIdList, CauseCodeV2, ClosedLanes, DangerousGoodsExtended,
+         DeltaReferencePosition, DeltaTimeMilliSecondPositive, DeltaTimeSecond, EnergyStorageType,
+-        EventZone, GeneralizedLanePositions, HeightLonCarr, InformationQuality, ItineraryPath,
+-        ItsPduHeader, IvimReferences, LanePosition, LightBarSirenInUse, MapReferences,
+-        MetaInformation, NumberOfOccupants, ObjectFace, OccupiedLanesWithConfidence,
+-        PathPredictedList, PerceivedObject, PosCentMass, PosFrontAx, PosLonCarr, Position1d,
+-        PositionOfOccupants, PositionOfPillars, PositioningSolutionType, ReferencePosition,
+-        RequestResponseIndication, RestrictedTypes, RoadConfigurationSectionList, RoadType, Speed,
+-        SpeedLimit, StandardLength12b, StandardLength3b, StationId, StationType, StationarySince,
+-        Temperature, TimestampIts, Traces, TracesExtended, TrafficDirection, TrafficRule,
+-        TurningRadius, VehicleIdentification, VehicleMass, Wgs84Angle, WheelBaseVehicle,
++        EventZone, HeightLonCarr, InformationQuality, ItineraryPath, ItsPduHeader, LanePosition,
++        LightBarSirenInUse, NumberOfOccupants, ObjectFace, PerceivedObject, PosCentMass,
++        PosFrontAx, PosLonCarr, PositionOfOccupants, PositionOfPillars, PositioningSolutionType,
++        ReferencePosition, RequestResponseIndication, RestrictedTypes, RoadType, Speed, SpeedLimit,
++        StandardLength3b, StandardLength12b, StationId, StationType, StationarySince, Temperature,
++        TimestampIts, Traces, TrafficDirection, TrafficRule, TurningRadius, VehicleIdentification,
++        VehicleMass, Wgs84Angle, WheelBaseVehicle,
+     };
+     use core::borrow::Borrow;
+     use rasn::prelude::*;
+@@ -256,26 +254,26 @@ pub mod denm_pdu_description {
+     #[rasn(automatic_tags)]
+     pub struct LocationContainerExtGroupLanePositions {
+         #[rasn(identifier = "lanePositions")]
+-        pub lane_positions: Option<GeneralizedLanePositions>,
++        pub lane_positions: Option<super::etsi_its_cdd::GeneralizedLanePositions>,
+         #[rasn(identifier = "occupiedLanes")]
+-        pub occupied_lanes: Option<OccupiedLanesWithConfidence>,
++        pub occupied_lanes: Option<super::etsi_its_cdd::OccupiedLanesWithConfidence>,
+         #[rasn(identifier = "linkedIvims")]
+-        pub linked_ivims: Option<IvimReferences>,
++        pub linked_ivims: Option<super::etsi_its_cdd::IvimReferences>,
+         #[rasn(identifier = "linkedMapems")]
+-        pub linked_mapems: Option<MapReferences>,
++        pub linked_mapems: Option<super::etsi_its_cdd::MapReferences>,
+         #[rasn(identifier = "detectionZonesToSpecifiedEventPoint")]
+-        pub detection_zones_to_specified_event_point: Option<TracesExtended>,
++        pub detection_zones_to_specified_event_point: Option<super::etsi_its_cdd::TracesExtended>,
+         #[rasn(identifier = "predictedPaths")]
+-        pub predicted_paths: Option<PathPredictedList>,
++        pub predicted_paths: Option<super::etsi_its_cdd::PathPredictedList>,
+     }
+     impl LocationContainerExtGroupLanePositions {
+         pub fn new(
+-            lane_positions: Option<GeneralizedLanePositions>,
+-            occupied_lanes: Option<OccupiedLanesWithConfidence>,
+-            linked_ivims: Option<IvimReferences>,
+-            linked_mapems: Option<MapReferences>,
+-            detection_zones_to_specified_event_point: Option<TracesExtended>,
+-            predicted_paths: Option<PathPredictedList>,
++            lane_positions: Option<super::etsi_its_cdd::GeneralizedLanePositions>,
++            occupied_lanes: Option<super::etsi_its_cdd::OccupiedLanesWithConfidence>,
++            linked_ivims: Option<super::etsi_its_cdd::IvimReferences>,
++            linked_mapems: Option<super::etsi_its_cdd::MapReferences>,
++            detection_zones_to_specified_event_point: Option<super::etsi_its_cdd::TracesExtended>,
++            predicted_paths: Option<super::etsi_its_cdd::PathPredictedList>,
+         ) -> Self {
+             Self {
+                 lane_positions,
+@@ -493,14 +491,14 @@ pub mod denm_pdu_description {
+     #[non_exhaustive]
+     pub struct RoadConfigurationContainer {
+         #[rasn(identifier = "roadConfigurationConfidence")]
+-        pub road_configuration_confidence: MetaInformation,
++        pub road_configuration_confidence: super::etsi_its_cdd::MetaInformation,
+         #[rasn(identifier = "roadConfigurationSectionList")]
+-        pub road_configuration_section_list: RoadConfigurationSectionList,
++        pub road_configuration_section_list: super::etsi_its_cdd::RoadConfigurationSectionList,
+     }
+     impl RoadConfigurationContainer {
+         pub fn new(
+-            road_configuration_confidence: MetaInformation,
+-            road_configuration_section_list: RoadConfigurationSectionList,
++            road_configuration_confidence: super::etsi_its_cdd::MetaInformation,
++            road_configuration_section_list: super::etsi_its_cdd::RoadConfigurationSectionList,
+         ) -> Self {
+             Self {
+                 road_configuration_confidence,
+@@ -588,10 +586,13 @@ pub mod denm_pdu_description {
+         #[rasn(identifier = "linkedDenms")]
+         pub linked_denms: Option<ActionIdList>,
+         #[rasn(identifier = "eventEnd")]
+-        pub event_end: Option<Position1d>,
++        pub event_end: Option<super::etsi_its_cdd::Position1d>,
+     }
+     impl SituationContainerExtGroupLinkedDenms {
+-        pub fn new(linked_denms: Option<ActionIdList>, event_end: Option<Position1d>) -> Self {
++        pub fn new(
++            linked_denms: Option<ActionIdList>,
++            event_end: Option<super::etsi_its_cdd::Position1d>,
++        ) -> Self {
+             Self {
+                 linked_denms,
+                 event_end,

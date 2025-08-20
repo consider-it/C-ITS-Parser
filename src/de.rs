@@ -1,14 +1,16 @@
 #![allow(non_snake_case)]
 
 use crate::transport::TransportHeader;
-#[cfg(feature = "etsi")]
-use crate::{EncodingRules, Headers, ItsMessage, standards, standards::is_1_3_1::ItsPduHeader};
 use crate::{
     map_err_to_string,
     pcap::remove_pcap_headers,
     transport::{
-        BasicTransportAHeader, BasicTransportBHeader, IPv6Header, decode::Decode as TransportDecode,
+        decode::Decode as TransportDecode, BasicTransportAHeader, BasicTransportBHeader, IPv6Header,
     },
+};
+#[cfg(feature = "etsi")]
+use crate::{
+    standards, standards::is_1_3_1::etsi_schema::ItsPduHeader, EncodingRules, Headers, ItsMessage,
 };
 #[cfg(target_arch = "wasm32")]
 use geonetworking::Encode;
@@ -52,7 +54,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
     match (msg_type, protocol_version) {
         (1, 2) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM>(input)
+            .decode_from_binary::<standards::denm_2_1_1::denm_pdu_description::DENM>(input)
             .map(|etsi| ItsMessage::DenmV2 {
                 geonetworking,
                 transport,
@@ -60,7 +62,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (1, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::denm_1_3_1::DENM>(input)
+            .decode_from_binary::<standards::denm_1_3_1::denm_pdu_descriptions::DENM>(input)
             .map(|etsi| ItsMessage::DenmV1 {
                 geonetworking,
                 transport,
@@ -68,7 +70,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (2, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::cam_1_4_1::CAM>(input)
+            .decode_from_binary::<standards::cam_1_4_1::cam_pdu_descriptions::CAM>(input)
             .map(|etsi| ItsMessage::Cam {
                 geonetworking,
                 transport,
@@ -76,7 +78,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (4, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::SPATEM>(input)
+            .decode_from_binary::<standards::is_1_3_1::etsi_schema::SPATEM>(input)
             .map(|etsi| ItsMessage::Spatem {
                 geonetworking,
                 transport,
@@ -84,7 +86,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (5, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::MAPEM>(input)
+            .decode_from_binary::<standards::is_1_3_1::etsi_schema::MAPEM>(input)
             .map(|etsi| ItsMessage::Mapem {
                 geonetworking,
                 transport,
@@ -92,7 +94,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (6, 2) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::ivim_2_2_1::IVIM>(input)
+            .decode_from_binary::<standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>(input)
             .map(|etsi| ItsMessage::IvimV2 {
                 geonetworking,
                 transport,
@@ -100,7 +102,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (6, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::IVIM>(input)
+            .decode_from_binary::<standards::is_1_3_1::etsi_schema::IVIM>(input)
             .map(|etsi| ItsMessage::IvimV1 {
                 geonetworking,
                 transport,
@@ -108,7 +110,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (9, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::SREM>(input)
+            .decode_from_binary::<standards::is_1_3_1::etsi_schema::SREM>(input)
             .map(|etsi| ItsMessage::Srem {
                 geonetworking,
                 transport,
@@ -116,7 +118,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (10, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::SSEM>(input)
+            .decode_from_binary::<standards::is_1_3_1::etsi_schema::SSEM>(input)
             .map(|etsi| ItsMessage::Ssem {
                 geonetworking,
                 transport,
@@ -124,7 +126,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (14, 2) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::cpm_2_1_1::c_p_m__p_d_u__descriptions::CollectivePerceptionMessage>(input)
+            .decode_from_binary::<standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage>(input)
             .map(|etsi| ItsMessage::CpmV2 {
                 geonetworking,
                 transport,
@@ -132,7 +134,7 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
             }),
         (14, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::CPM>(input)
+            .decode_from_binary::<standards::is_1_3_1::etsi_schema::CPM>(input)
             .map(|etsi| ItsMessage::CpmV1 {
                 geonetworking,
                 transport,
@@ -394,7 +396,7 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
         EncodingRules::UPER => EncodingRules::UPER
             .codec()
             .decode_from_binary::<ItsPduHeader>(input)
-            .map(|header| (encoding_rules, header.protocol_version, header.message_i_d))
+            .map(|header| (encoding_rules, header.protocol_version, header.message_id))
             .map_err(map_err_to_string),
     }
 }
@@ -416,14 +418,12 @@ fn decode_denm(
         };
     }
     etsi_json.its = match version {
-        Some(131) => Some(transcode::<crate::standards::denm_1_3_1::DENM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        Some(131) => Some(transcode::<
+            standards::denm_1_3_1::denm_pdu_descriptions::DENM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         None | Some(211) => Some(transcode::<
-            crate::standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
+            standards::denm_2_1_1::denm_pdu_description::DENM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
@@ -445,11 +445,9 @@ fn decode_cam(
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cam, headers_present)?;
     etsi_json.its = match version {
-        None | Some(141) => Some(transcode::<crate::standards::cam_1_4_1::CAM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        None | Some(141) => Some(transcode::<
+            standards::cam_1_4_1::cam_pdu_descriptions::CAM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => return Err("Unsupported DENM version: Supported CAM version is 141.".to_string()),
     }?;
@@ -466,7 +464,7 @@ fn decode_mapem(
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(mapem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::MAPEM>(
+        None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::MAPEM>(
             input,
             input_encoding_rules,
             output_encoding_rules,
@@ -487,11 +485,13 @@ fn decode_spatem(
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(spatem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SPATEM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        None | Some(131) => Some(
+            transcode::<standards::is_1_3_1::etsi_schema::SPATEM>(
+                input,
+                input_encoding_rules,
+                output_encoding_rules,
+            ),
+        )
         .transpose(),
         _ => {
             return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string());
@@ -517,17 +517,15 @@ fn decode_ivim(
         };
     }
     etsi_json.its = match version {
-        Some(131) => Some(transcode::<is_1_3_1::IVIM>(
+        Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::IVIM>(
             input,
             input_encoding_rules,
             output_encoding_rules,
         ))
         .transpose(),
-        None | Some(221) => Some(transcode::<crate::standards::ivim_2_2_1::IVIM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        None | Some(221) => Some(transcode::<
+            standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
             return Err(
@@ -548,7 +546,7 @@ fn decode_srem(
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(srem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SREM>(
+        None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SREM>(
             input,
             input_encoding_rules,
             output_encoding_rules,
@@ -577,10 +575,10 @@ fn decode_cpm(
     }
     etsi_json.its = match version {
         None | Some(211) => Some(transcode::<
-            crate::standards::cpm_2_1_1::c_p_m__p_d_u__descriptions::CollectivePerceptionMessage,
+            standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        Some(131) => Some(transcode::<crate::standards::is_1_3_1::CPM>(
+        Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::CPM>(
             input,
             input_encoding_rules,
             output_encoding_rules,
@@ -605,7 +603,7 @@ fn decode_ssem(
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ssem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode::<crate::standards::is_1_3_1::SSEM>(
+        None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SSEM>(
             input,
             input_encoding_rules,
             output_encoding_rules,

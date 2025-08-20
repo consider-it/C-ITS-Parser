@@ -2,22 +2,22 @@
 
 WebAssembly tools for encoding and decoding ITS messages (GN + Transport + CAM/DENM/IVIM/SSEM/SREM/MAPEM/SPATEM/CPM).
 
-### Features
+## Features
 
 V2X Etsi Web provides an npm package for de- and encoding the most common ETSI messages. Currently, the following
 messages are supported:
 
--   CAM v1.4.1
--   CPM v1.3.1 ans v2.2.1
--   DENM v1.3.1 and v2.2.1
--   SPATEM v1.3.1
--   MAPEM v1.3.1
--   IVIM v1.3.1 and v2.1.1
--   SREM v1.3.1
--   SSEM v1.3.1
--   CPM v1.3.1 and v2.1.1
+- CAM v1.4.1
+- CPM v1.3.1 ans v2.2.1
+- DENM v1.3.1 and v2.2.1
+- SPATEM v1.3.1
+- MAPEM v1.3.1
+- IVIM v1.3.1 and v2.1.1
+- SREM v1.3.1
+- SSEM v1.3.1
+- CPM v1.3.1 and v2.1.1
 
-### Installation
+## Installation
 
 Install using npm:
 
@@ -27,18 +27,18 @@ npm install @consider-it/etsi-web
 
 or using cargo
 
-```
+```bash
 cargo add --tag v0.5.1 --git ssh://git@github.com/consider-it/V2X-Etsi_web.git
 ```
 
-### Rust API
+## Rust API
 
 The `decode` function is a catch-all method for ITS messages encoded using JER, XER, or UPER. The `headers` argument
 specifies which headers are present, RadioTap + 802.11p + LLC + Geonetworking + BTP, only Geonetworking + BTP, or none.
 For XER and JER messages, decoding is only supported for messages without headers.
 Use the `ItsMessage::encode` method for encoding a value. Here, too, XER and JER encodings do not support header values.
 
-### Javascript API
+## Javascript API
 
 The `decode` function is a catch-all method for ITS messages of undefined type.
 
@@ -99,3 +99,13 @@ export class ItsMessage {
     transport?: string;
 }
 ```
+
+## ASN Update
+
+With updates to the `rasn` library it may be needed to refresh the code generated from the ASN.1 definitions.
+
+First install the [rasn-compiler](https://github.com/librasn/compiler) CLI using cargo: `cargo install rasn-compiler --feature="cli"`.
+Then regenerate the code by running `./scripts/recompile-asn1.sh`.
+
+The source files are generated without any formatting, so the script is running `rustfmt` on these file.
+Make sure to have the nightly version installed with rust edition 2024.

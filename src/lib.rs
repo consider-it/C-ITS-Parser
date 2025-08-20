@@ -2,6 +2,7 @@ pub mod de;
 #[cfg(feature = "etsi")]
 pub mod en;
 #[cfg(feature = "etsi")]
+#[allow(clippy::all, clippy::pedantic, clippy::nursery, dead_code)]
 pub mod standards;
 
 pub(crate) mod pcap;
@@ -9,7 +10,7 @@ pub mod transport;
 
 pub use geonetworking::{Decode, Packet};
 pub use pcap::remove_pcap_headers;
-
+#[cfg(not(target_arch = "wasm32"))]
 use transport::TransportHeader;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -58,57 +59,57 @@ pub enum ItsMessage<'a> {
     DenmV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::denm_1_3_1::DENM,
+        etsi: standards::denm_1_3_1::denm_pdu_descriptions::DENM,
     },
     DenmV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
+        etsi: standards::denm_2_1_1::denm_pdu_description::DENM,
     },
     Cam {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::cam_1_4_1::CAM,
+        etsi: standards::cam_1_4_1::cam_pdu_descriptions::CAM,
     },
     Spatem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::is_1_3_1::SPATEM,
+        etsi: standards::is_1_3_1::etsi_schema::SPATEM,
     },
     Mapem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::is_1_3_1::MAPEM,
+        etsi: standards::is_1_3_1::etsi_schema::MAPEM,
     },
     IvimV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::is_1_3_1::IVIM,
+        etsi: standards::is_1_3_1::etsi_schema::IVIM,
     },
     IvimV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::ivim_2_2_1::IVIM,
+        etsi: standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM,
     },
     Srem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::is_1_3_1::SREM,
+        etsi: standards::is_1_3_1::etsi_schema::SREM,
     },
     Ssem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::is_1_3_1::SSEM,
+        etsi: standards::is_1_3_1::etsi_schema::SSEM,
     },
     CpmV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::is_1_3_1::CPM,
+        etsi: standards::is_1_3_1::etsi_schema::CPM,
     },
     CpmV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<TransportHeader>,
-        etsi: standards::cpm_2_1_1::c_p_m__p_d_u__descriptions::CollectivePerceptionMessage,
+        etsi: standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage,
     },
 }
 
@@ -149,13 +150,13 @@ impl ItsMessage {
         its: Option<String>,
         geonetworking: Option<String>,
         transport: Option<String>,
-        messageType: u8,
+        message_type: u8,
     ) -> ItsMessage {
         ItsMessage {
             its,
             geonetworking,
             transport,
-            message_type: messageType,
+            message_type,
         }
     }
 }

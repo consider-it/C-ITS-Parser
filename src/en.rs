@@ -1,5 +1,7 @@
-use crate::{EncodingRules, ItsMessage, map_err_to_string};
-use geonetworking::{Encode, ExtendedHeader, HeaderType, Packet, UnsecuredHeader};
+use crate::{map_err_to_string, ItsMessage};
+#[cfg(not(target_arch = "wasm32"))]
+use crate::{EncodingRules, Packet};
+use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
 
 #[cfg(target_arch = "wasm32")]
 use crate::transport::encode::Encode as TpEncode;
@@ -141,12 +143,12 @@ pub fn encode_denm(denm: &ItsMessage, version: u32) -> Result<Encoded, String> {
         (None, 131) | (None, 211) => return Err("No DENM JSON provided.".to_string()),
         (Some(denm_json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::denm_1_3_1::DENM,
+                crate::standards::denm_1_3_1::denm_pdu_descriptions::DENM,
             >(denm_json)?);
         }
         (Some(denm_json), 211) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::denm_2_1_1::d_e_n_m__p_d_u__description::DENM,
+                crate::standards::denm_2_1_1::denm_pdu_description::DENM,
             >(denm_json)?);
         }
         _ => {
@@ -171,7 +173,7 @@ pub fn encode_cam(cam: &ItsMessage, version: u32) -> Result<Encoded, String> {
         (None, 141) => return Err("No CAM JSON provided.".to_string()),
         (Some(json), 141) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::cam_1_4_1::CAM,
+                crate::standards::cam_1_4_1::cam_pdu_descriptions::CAM,
             >(json)?);
         }
         _ => return Err("Unsupported CAM version: Supported CAM version is 141.".to_string()),
@@ -192,7 +194,7 @@ pub fn encode_mapem(mapem: &ItsMessage, version: u32) -> Result<Encoded, String>
         (None, 131) => return Err("No MAPEM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::MAPEM,
+                crate::standards::is_1_3_1::etsi_schema::MAPEM,
             >(json)?);
         }
         _ => return Err("Unsupported MAPEM version: Supported MAPEM version is 131.".to_string()),
@@ -213,7 +215,7 @@ pub fn encode_spatem(spatem: &ItsMessage, version: u32) -> Result<Encoded, Strin
         (None, 131) => return Err("No SPATEM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::SPATEM,
+                crate::standards::is_1_3_1::etsi_schema::SPATEM,
             >(json)?);
         }
         _ => {
@@ -236,7 +238,7 @@ pub fn encode_ivim(ivim: &ItsMessage, version: u32) -> Result<Encoded, String> {
         (None, 221) => return Err("No IVIM JSON provided.".to_string()),
         (Some(json), 221) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::ivim_2_2_1::IVIM,
+                crate::standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM,
             >(json)?);
         }
         _ => return Err("Unsupported IVIM version: Supported IVIM version is 221.".to_string()),
@@ -257,7 +259,7 @@ pub fn encode_srem(srem: &ItsMessage, version: u32) -> Result<Encoded, String> {
         (None, 131) => return Err("No SREM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::SREM,
+                crate::standards::is_1_3_1::etsi_schema::SREM,
             >(json)?);
         }
         _ => return Err("Unsupported SREM version: Supported SREM version is 131.".to_string()),
@@ -277,7 +279,9 @@ pub fn encode_cpm(cpm: &ItsMessage, version: u32) -> Result<Encoded, String> {
     match (&cpm.its, version) {
         (None, 131) => return Err("No CPM JSON provided.".to_string()),
         (Some(json), 131) => {
-            payload.append(&mut transcode_jer_to_uper::<crate::standards::is_1_3_1::CPM>(json)?);
+            payload.append(&mut transcode_jer_to_uper::<
+                crate::standards::is_1_3_1::etsi_schema::CPM,
+            >(json)?);
         }
         _ => return Err("Unsupported CPM version: Supported CPM version is 131.".to_string()),
     };
@@ -297,7 +301,7 @@ pub fn encode_ssem(ssem: &ItsMessage, version: u32) -> Result<Encoded, String> {
         (None, 131) => return Err("No SSEM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::SSEM,
+                crate::standards::is_1_3_1::etsi_schema::SSEM,
             >(json)?);
         }
         _ => return Err("Unsupported SSEM version: Supported SSEM version is 131.".to_string()),
@@ -318,16 +322,20 @@ fn optionally_encode_headers(
                 .to_string(),
         ),
         (Some(gn), Some(tp)) => {
-            let mut geonetworking = UnsecuredHeader::from_json(gn).map_err(map_err_to_string)?;
+            let geonetworking = UnsecuredHeader::from_json(gn).map_err(map_err_to_string)?;
             let mut transport = match geonetworking.common.next_header {
-                geonetworking::NextAfterCommon::BTPA => BasicTransportAHeader::decode_from_json(tp)
-                    .map_err(map_err_to_string)?
-                    .encode()
-                    .map_err(map_err_to_string)?,
-                geonetworking::NextAfterCommon::BTPB => BasicTransportBHeader::decode_from_json(tp)
-                    .map_err(map_err_to_string)?
-                    .encode()
-                    .map_err(map_err_to_string)?,
+                geonetworking::NextAfterCommon::BTPA => {
+                    crate::transport::BasicTransportAHeader::decode_from_json(tp)
+                        .map_err(map_err_to_string)?
+                        .encode()
+                        .map_err(map_err_to_string)?
+                }
+                geonetworking::NextAfterCommon::BTPB => {
+                    crate::transport::BasicTransportBHeader::decode_from_json(tp)
+                        .map_err(map_err_to_string)?
+                        .encode()
+                        .map_err(map_err_to_string)?
+                }
                 h => {
                     return Err(format!(
                         "Currently only BTP-A and BTP-B headers can be encoded: Encountered {h:?}"
