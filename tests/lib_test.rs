@@ -7,7 +7,9 @@ use etsi_web::{
         },
         cdd_1_3_1_1::*,
         is_1_3_1::{
-            ApproachID, DSecond, IntersectionID, ItsPduHeader, MinuteOfTheYear, MsgCount, RequestID, RequesterDescription, RequesterType, RoadRegulatorID, SignalRequest, SignalRequestList, SignalRequestMessage, SignalRequestPackage, Srm, VehicleID, SREM
+            ApproachID, DSecond, IntersectionID, ItsPduHeader, MinuteOfTheYear, MsgCount,
+            RequestID, RequesterDescription, RequesterType, RoadRegulatorID, SignalRequest,
+            SignalRequestList, SignalRequestMessage, SignalRequestPackage, Srm, VehicleID, SREM,
         },
     },
     transport::BasicTransportBHeader,
@@ -905,10 +907,14 @@ fn meise() {
         let lon_etsi = (lon * 10_000_000.) as i32;
         let speed_etsi = (speed_ms * 10.0) as u16;
 
-        println!(r#"{{"header":{{"protocolVersion":2,"messageID":2}},"cam":{{"camParameters":{{"basicContainer":{{"stationType":10,"referencePosition":{{"latitude":{lat_etsi},"longitude":{lon_etsi}}}}},"highFrequencyContainer":{{"basicVehicleContainerHighFrequency":{{"heading":{{"headingValue":{heading_etsi}}},"speed":{{"speedValue":{speed_etsi}}}}}}}}}}}}},"#);
+        println!(
+            r#"{{"header":{{"protocolVersion":2,"messageID":2}},"cam":{{"camParameters":{{"basicContainer":{{"stationType":10,"referencePosition":{{"latitude":{lat_etsi},"longitude":{lon_etsi}}}}},"highFrequencyContainer":{{"basicVehicleContainerHighFrequency":{{"heading":{{"headingValue":{heading_etsi}}},"speed":{{"speedValue":{speed_etsi}}}}}}}}}}}}},"#
+        );
         if i < 34 {
             let id = i + 1;
-            println!(r#"{{"header":{{"protocolVersion":2,"messageID":9}},"srm":{{"sequenceNumber": {id},"requests":[{{"request":{{"id":{{"region":31132,"id":11}},"requestType":"priorityRequestUpdate",}}}}]}}}},"#);
+            println!(
+                r#"{{"header":{{"protocolVersion":2,"messageID":9}},"srm":{{"sequenceNumber": {id},"requests":[{{"request":{{"id":{{"region":31132,"id":11}},"requestType":"priorityRequestUpdate",}}}}]}}}},"#
+            );
         } else {
             println!("null,")
         }

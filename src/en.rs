@@ -1,4 +1,4 @@
-use crate::{map_err_to_string, EncodingRules, ItsMessage};
+use crate::{EncodingRules, ItsMessage, map_err_to_string};
 use geonetworking::{Encode, ExtendedHeader, HeaderType, Packet, UnsecuredHeader};
 
 #[cfg(target_arch = "wasm32")]
@@ -152,7 +152,7 @@ pub fn encode_denm(denm: &ItsMessage, version: u32) -> Result<Encoded, String> {
         _ => {
             return Err(
                 "Unsupported DENM version: Supported DENM versions are 131 and 211.".to_string(),
-            )
+            );
         }
     };
     let encoded = optionally_encode_headers(&denm.geonetworking, &denm.transport, payload)?;
@@ -217,7 +217,7 @@ pub fn encode_spatem(spatem: &ItsMessage, version: u32) -> Result<Encoded, Strin
             >(json)?);
         }
         _ => {
-            return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string())
+            return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string());
         }
     };
     let encoded = optionally_encode_headers(&spatem.geonetworking, &spatem.transport, payload)?;
@@ -331,7 +331,7 @@ fn optionally_encode_headers(
                 h => {
                     return Err(format!(
                         "Currently only BTP-A and BTP-B headers can be encoded: Encountered {h:?}"
-                    ))
+                    ));
                 }
             };
             transport.append(&mut its);

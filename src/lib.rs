@@ -7,7 +7,7 @@ pub mod standards;
 pub(crate) mod pcap;
 pub mod transport;
 
-pub use geonetworking::{Packet, Decode};
+pub use geonetworking::{Decode, Packet};
 pub use pcap::remove_pcap_headers;
 
 use transport::TransportHeader;
