@@ -99,3 +99,10 @@ export class ItsMessage {
     transport?: string;
 }
 ```
+
+### ASN Update
+
+With updates to the `rasn` library it may be needed to refresh the code generated from the ASN.1 definitions.
+
+First install the [rasn-compiler](https://github.com/librasn/compiler) CLI using cargo: `cargo install rasn-compiler --feature="cli"`.
+Then regenerate the code by running `./scripts/recompile-asn1.sh`.
