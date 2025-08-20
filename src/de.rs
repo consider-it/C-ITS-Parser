@@ -1,15 +1,15 @@
 #![allow(non_snake_case)]
 
 use crate::transport::TransportHeader;
+#[cfg(feature = "etsi")]
+use crate::{EncodingRules, Headers, ItsMessage, standards, standards::is_1_3_1::ItsPduHeader};
 use crate::{
+    map_err_to_string,
     pcap::remove_pcap_headers,
     transport::{
-        decode::Decode as TransportDecode, BasicTransportAHeader, BasicTransportBHeader, IPv6Header,
+        BasicTransportAHeader, BasicTransportBHeader, IPv6Header, decode::Decode as TransportDecode,
     },
-    map_err_to_string
 };
-#[cfg(feature = "etsi")]
-use crate::{EncodingRules, Headers, standards, standards::is_1_3_1::ItsPduHeader, ItsMessage};
 #[cfg(target_arch = "wasm32")]
 use geonetworking::Encode;
 use geonetworking::{Decode, NextAfterCommon, Packet};
@@ -312,7 +312,7 @@ pub fn decode(
         (message_i_d, _) => {
             return Err(format!(
                 "Unsupported ITS message type: Found message id {message_i_d}."
-            ))
+            ));
         }
     };
     etsi_json.its = decoded;
@@ -429,7 +429,7 @@ fn decode_denm(
         _ => {
             return Err(
                 "Unsupported DENM version: Supported DENM versions are 131 and 211.".to_string(),
-            )
+            );
         }
     }?;
     Ok(etsi_json)
@@ -494,7 +494,7 @@ fn decode_spatem(
         ))
         .transpose(),
         _ => {
-            return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string())
+            return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string());
         }
     }?;
     Ok(etsi_json)
@@ -532,7 +532,7 @@ fn decode_ivim(
         _ => {
             return Err(
                 "Unsupported IVIM version: Supported IVIM versions are 131 and 221.".to_string(),
-            )
+            );
         }
     }?;
     Ok(etsi_json)
@@ -589,7 +589,7 @@ fn decode_cpm(
         _ => {
             return Err(
                 "Unsupported CPM version: Supported CPM versions are 131 and 211.".to_string(),
-            )
+            );
         }
     }?;
     Ok(etsi_json)
