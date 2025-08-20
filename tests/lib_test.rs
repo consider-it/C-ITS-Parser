@@ -1,20 +1,16 @@
-use etsi_web::{
-    de::decode,
-    standards::{
-        cam_1_4_1::{
-            BasicContainer, BasicVehicleContainerHighFrequency, CamParameters, CoopAwareness,
-            GenerationDeltaTime, HighFrequencyContainer, LowFrequencyContainer, CAM,
-        },
-        cdd_1_3_1_1::*,
-        is_1_3_1::{
-            ApproachID, DSecond, IntersectionID, ItsPduHeader, MinuteOfTheYear, MsgCount,
-            RequestID, RequesterDescription, RequesterType, RoadRegulatorID, SignalRequest,
-            SignalRequestList, SignalRequestMessage, SignalRequestPackage, Srm, VehicleID, SREM,
-        },
-    },
-    transport::BasicTransportBHeader,
-    EncodingRules, Headers, ItsMessage,
+use etsi_web::de::decode;
+use etsi_web::standards::cam_1_4_1::cam_pdu_descriptions::{
+    BasicContainer, BasicVehicleContainerHighFrequency, CAM, CamParameters, CoopAwareness,
+    GenerationDeltaTime, HighFrequencyContainer, LowFrequencyContainer,
 };
+use etsi_web::standards::cdd_1_3_1_1::*;
+use etsi_web::standards::is_1_3_1::etsi_schema::{
+    ApproachID, DSecond, IntersectionID, ItsPduHeader, MinuteOfTheYear, MsgCount, RequestID,
+    RequesterDescription, RequesterType, RoadRegulatorID, SREM, SignalRequest, SignalRequestList,
+    SignalRequestMessage, SignalRequestPackage, Srm, VehicleID,
+};
+use etsi_web::transport::BasicTransportBHeader;
+use etsi_web::{EncodingRules, Headers, ItsMessage};
 #[cfg(target_arch = "wasm32")]
 use etsi_web::{
     en::{

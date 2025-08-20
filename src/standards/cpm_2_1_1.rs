@@ -1,12 +1,18 @@
-#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
-pub mod c_p_m__originating_station_containers {
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cpm_originating_station_containers {
     extern crate alloc;
-    use crate::standards::cdd_2_2_1::{
+    use super::super::cdd_2_2_1::etsi_its_cdd::{
         CartesianAngle, MapReference, Speed, StationType, TrailerData, Wgs84Angle,
     };
     use core::borrow::Borrow;
-    use lazy_static::lazy_static;
     use rasn::prelude::*;
+    use std::sync::LazyLock;
     #[doc = "*"]
     #[doc = " * This DF  represents the Originating RSU Container."]
     #[doc = " *"]
@@ -15,7 +21,7 @@ pub mod c_p_m__originating_station_containers {
     #[doc = " * @field mapReference: identifies the MAPEM containing the topology information reference in the Perceived Object Container"]
     #[doc = " * "]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct OriginatingRsuContainer {
@@ -41,7 +47,7 @@ pub mod c_p_m__originating_station_containers {
     #[doc = " * @field trailerData: information about the trailer dimensions and orientation in case a trailer is present."]
     #[doc = " * "]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct OriginatingVehicleContainer {
@@ -73,26 +79,32 @@ pub mod c_p_m__originating_station_containers {
     #[doc = " * This DF  represents a list of trailer data."]
     #[doc = " * "]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=8", extensible))]
     pub struct TrailerDataSet(pub SequenceOf<TrailerData>);
 }
-#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
-pub mod c_p_m__p_d_u__descriptions {
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cpm_pdu_descriptions {
     extern crate alloc;
-    use super::c_p_m__originating_station_containers::{
-        OriginatingRsuContainer, OriginatingVehicleContainer,
-    };
-    use super::c_p_m__perceived_object_container::PerceivedObjectContainer;
-    use super::c_p_m__perception_region_container::PerceptionRegionContainer;
-    use super::c_p_m__sensor_information_container::SensorInformationContainer;
-    use crate::standards::cdd_2_2_1::{
+    use super::super::cdd_2_2_1::etsi_its_cdd::{
         ItsPduHeader, MessageRateHz, MessageSegmentationInfo, OrdinalNumber1B, ReferencePosition,
         StationType, TimestampIts,
     };
+    use super::cpm_originating_station_containers::{
+        OriginatingRsuContainer, OriginatingVehicleContainer,
+    };
+    use super::cpm_perceived_object_container::PerceivedObjectContainer;
+    use super::cpm_perception_region_container::PerceptionRegionContainer;
+    use super::cpm_sensor_information_container::SensorInformationContainer;
     use core::borrow::Borrow;
-    use lazy_static::lazy_static;
     use rasn::prelude::*;
+    use std::sync::LazyLock;
     #[doc = "*"]
     #[doc = " * This DF  represents the Collective Perception Message (CPM) and is the top level Protocol Data Unit. "]
     #[doc = " *"]
@@ -103,7 +115,7 @@ pub mod c_p_m__p_d_u__descriptions {
     #[doc = " * @field payload: the payload of the message. "]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct CollectivePerceptionMessage {
         #[rasn(value("0.."))]
@@ -118,24 +130,16 @@ pub mod c_p_m__p_d_u__descriptions {
     #[doc = "*"]
     #[doc = " * This DF represents a list of CPM containers, each with their type identifier with an additional constraint. "]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct ConstraintWrappedCpmContainers(pub WrappedCpmContainers);
     #[doc = "*"]
     #[doc = " * This DE represents the identifier of the container type. "]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=16"))]
     pub struct CpmContainerId(pub u8);
-    #[derive(Debug, Clone, PartialEq)]
-    pub enum CpmContainers_Type {
-        OriginatingVehicleContainer(OriginatingVehicleContainer),
-        OriginatingRsuContainer(OriginatingRsuContainer),
-        SensorInformationContainer(SensorInformationContainer),
-        PerceptionRegionContainer(PerceptionRegionContainer),
-        PerceivedObjectContainer(PerceivedObjectContainer),
-    }
     #[doc = "*"]
     #[doc = " * This DF  represents the payload of the CPM. "]
     #[doc = " *"]
@@ -146,7 +150,7 @@ pub mod c_p_m__p_d_u__descriptions {
     #[doc = " * @field cpmContainers: the list of CPM containers, including its container type identifier and including either one or none of originatingVehicleContainer and/or originatingRsuContainer. "]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct CpmPayload {
@@ -181,7 +185,7 @@ pub mod c_p_m__p_d_u__descriptions {
     #[doc = " * @field referencePosition: the reference position for all position related information in the CPM."]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct ManagementContainer {
@@ -219,7 +223,7 @@ pub mod c_p_m__p_d_u__descriptions {
     #[doc = " * @field messageRateMax: the maximum planned or expected message rate."]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct MessageRateRange {
         #[rasn(identifier = "messageRateMin")]
@@ -245,7 +249,7 @@ pub mod c_p_m__p_d_u__descriptions {
     #[doc = " * @field containerData: the container content consistent with the container type."]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct WrappedCpmContainer {
         #[rasn(identifier = "containerId")]
@@ -264,7 +268,7 @@ pub mod c_p_m__p_d_u__descriptions {
     #[doc = "*"]
     #[doc = " * This DF represents a list of CPM containers, each with their type identifier. "]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=8", extensible))]
     pub struct WrappedCpmContainers(pub SequenceOf<WrappedCpmContainer>);
     pub const ORIGINATING_RSU_CONTAINER: CpmContainerId = CpmContainerId(2);
@@ -276,13 +280,19 @@ pub mod c_p_m__p_d_u__descriptions {
     pub const PERCEPTION_REGION_CONTAINER: CpmContainerId = CpmContainerId(4);
     pub const SENSOR_INFORMATION_CONTAINER: CpmContainerId = CpmContainerId(3);
 }
-#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
-pub mod c_p_m__perceived_object_container {
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cpm_perceived_object_container {
     extern crate alloc;
-    use crate::standards::cdd_2_2_1::{CardinalNumber1B, PerceivedObject};
+    use super::super::cdd_2_2_1::etsi_its_cdd::{CardinalNumber1B, PerceivedObject};
     use core::borrow::Borrow;
-    use lazy_static::lazy_static;
     use rasn::prelude::*;
+    use std::sync::LazyLock;
     #[doc = "*"]
     #[doc = " * This DF  represents the Perceived Object Container "]
     #[doc = " *"]
@@ -293,7 +303,7 @@ pub mod c_p_m__perceived_object_container {
     #[doc = " * @field perceivedObjects: the list of perceived objects."]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct PerceivedObjectContainer {
@@ -316,24 +326,30 @@ pub mod c_p_m__perceived_object_container {
     #[doc = "* @brief Perceived Objects"]
     #[doc = " * This DF provides a list of perceived objects represented in the coordinate system in which the y-axis corresponds to the North direction, the x-axis to the East direction, and the z- axis to the vertical direction."]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("0..=255", extensible))]
     pub struct PerceivedObjects(pub SequenceOf<PerceivedObject>);
 }
-#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
-pub mod c_p_m__perception_region_container {
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cpm_perception_region_container {
     extern crate alloc;
-    use crate::standards::cdd_2_2_1::{
+    use super::super::cdd_2_2_1::etsi_its_cdd::{
         CardinalNumber1B, ConfidenceLevel, DeltaTimeMilliSecondSigned, Identifier2B, SensorType,
         SequenceOfIdentifier1B, Shape,
     };
     use core::borrow::Borrow;
-    use lazy_static::lazy_static;
     use rasn::prelude::*;
+    use std::sync::LazyLock;
     #[doc = "*"]
     #[doc = " * This DF  represents a list of identifiers of perceived objects. "]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("0..=255", extensible))]
     pub struct PerceivedObjectIds(pub SequenceOf<Identifier2B>);
     #[doc = "*"]
@@ -356,7 +372,7 @@ pub mod c_p_m__perception_region_container {
     #[doc = " * @field perceivedObjectIds: the optional list of identifiers of the objects specified in the Perceived Object Container that are contained in the perception region specified in the component perceptionRegionShape."]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct PerceptionRegion {
@@ -399,17 +415,23 @@ pub mod c_p_m__perception_region_container {
     #[doc = "*"]
     #[doc = " * This DF  represents the Perception Region Container as a list of perception region information objects. "]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=256", extensible))]
     pub struct PerceptionRegionContainer(pub SequenceOf<PerceptionRegion>);
 }
-#[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
-pub mod c_p_m__sensor_information_container {
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cpm_sensor_information_container {
     extern crate alloc;
-    use crate::standards::cdd_2_2_1::{ConfidenceLevel, Identifier1B, SensorType, Shape};
+    use super::super::cdd_2_2_1::etsi_its_cdd::{ConfidenceLevel, Identifier1B, SensorType, Shape};
     use core::borrow::Borrow;
-    use lazy_static::lazy_static;
     use rasn::prelude::*;
+    use std::sync::LazyLock;
     #[doc = "*"]
     #[doc = " * This DF  represents the characteristics of a single sensor or data fusion system."]
     #[doc = " *"]
@@ -427,7 +449,7 @@ pub mod c_p_m__sensor_information_container {
     #[doc = " * @field shadowingApplies: indicates if the standard shadowing approach applies to the described perception region."]
     #[doc = " *"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct SensorInformation {
@@ -462,7 +484,7 @@ pub mod c_p_m__sensor_information_container {
     #[doc = "*"]
     #[doc = " * This DF  represents the Sensor Information Container as a list of information objects about the sensors or data fusion systems from which the station provides information about detected objects."]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=128", extensible))]
     pub struct SensorInformationContainer(pub SequenceOf<SensorInformation>);
 }
