@@ -31,6 +31,27 @@ or using cargo
 cargo add --tag v0.5.1 --git ssh://git@github.com/consider-it/V2X-Etsi_web.git
 ```
 
+## Testing
+
+For testing of the Rust API the normal cargo testing is used, with:
+
+```shell
+cargo test --all-features
+```
+
+To test the Javascript API you need to install `wasm-pack` using cargo, with `cargo install wasm-pack`.
+Then the test website can be hosted by running one of these commands:
+
+```shell
+wasm-pack test --chrome
+
+wasm-pack test --firefox
+
+wasm-pack test --safari
+```
+
+To run the test open the local link shown in the console. The results will be shown on the website.
+
 ## Rust API
 
 The `decode` function is a catch-all method for ITS messages encoded using JER, XER, or UPER. The `headers` argument

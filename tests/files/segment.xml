@@ -1,0 +1,19 @@
+<Segment>
+  <line>
+    <deltaPositions>
+      <DeltaPosition>
+        <deltaLatitude>937</deltaLatitude>
+        <deltaLongitude>-917</deltaLongitude>
+      </DeltaPosition>
+      <DeltaPosition>
+        <deltaLatitude>933</deltaLatitude>
+        <deltaLongitude>-458</deltaLongitude>
+      </DeltaPosition>
+      <DeltaPosition>
+        <deltaLatitude>1375</deltaLatitude>
+        <deltaLongitude>-323</deltaLongitude>
+      </DeltaPosition>
+    </deltaPositions>
+  </line>
+  <laneWidth>350</laneWidth>
+</Segment>
