@@ -21,6 +21,7 @@ use std::fmt::Write;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(target_arch = "wasm32")]
 macro_rules! btp {
     ($btp_ty:ty, $input:ident) => {
         <$btp_ty>::decode($input)
@@ -39,8 +40,9 @@ macro_rules! btp {
 /// ### Params
 ///  - `message`: binary input containing the ITS message
 ///  - `headers`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
+///
 /// Throws string error on decoding errors.
-pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
+pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, String> {
     let (input, transport, geonetworking) = match headers {
         Headers::None => Ok((input, None, None)),
         Headers::GnBtp => {
@@ -148,7 +150,9 @@ pub fn decode(input: &[u8], headers: Headers) -> Result<ItsMessage, String> {
     }.map_err(map_err_to_string)
 }
 
-pub fn decode_gn_btp_headers(input: &[u8]) -> Result<(&[u8], TransportHeader, Packet), String> {
+pub fn decode_gn_btp_headers(
+    input: &'_ [u8],
+) -> Result<(&'_ [u8], TransportHeader, Packet<'_>), String> {
     let result = Packet::decode(input).map_err(map_err_to_string)?;
     let payload = match &result.decoded {
         Packet::Unsecured { payload, .. } => *payload,
