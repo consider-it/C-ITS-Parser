@@ -46,7 +46,7 @@ pub struct ItsMessage {
     /// - 17 - `dsm`               - reserved for Diagnosis, logging and Status Message,
     /// - 18 - `pcim`              - reserved for Parking Control Infrastructure Message,
     /// - 19 - `pcvm`              - reserved for Parking Control Vehicle Message,
-    /// - 20 - `mcm`               - reserved for Manoeuvre Coordination Message,
+    /// - 20 - `mcm`               - reserved for Manoeuver Coordination Message,
     /// - 21 - `pam`               - reserved for Parking Availability Message,
     /// - 22-255                   - reserved for future usage.
     pub message_type: u8,
