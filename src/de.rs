@@ -60,7 +60,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::DenmV2 {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (1, _) => encoding_rules
             .codec()
@@ -68,7 +68,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::DenmV1 {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (2, _) => encoding_rules
             .codec()
@@ -76,7 +76,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Cam {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (4, _) => encoding_rules
             .codec()
@@ -84,7 +84,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Spatem {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (5, _) => encoding_rules
             .codec()
@@ -92,7 +92,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Mapem {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (6, 2) => encoding_rules
             .codec()
@@ -100,7 +100,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::IvimV2 {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (6, _) => encoding_rules
             .codec()
@@ -108,7 +108,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::IvimV1 {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (9, _) => encoding_rules
             .codec()
@@ -116,7 +116,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Srem {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (10, _) => encoding_rules
             .codec()
@@ -124,7 +124,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Ssem {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (14, 2) => encoding_rules
             .codec()
@@ -132,7 +132,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::CpmV2 {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (14, _) => encoding_rules
             .codec()
@@ -140,7 +140,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::CpmV1 {
                 geonetworking,
                 transport,
-                etsi,
+                etsi: Box::new(etsi)
             }),
         (message_i_d, _) => {
             return Err(format!(
@@ -152,7 +152,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
 
 pub fn decode_gn_btp_headers(
     input: &'_ [u8],
-) -> Result<(&'_ [u8], TransportHeader, Packet<'_>), String> {
+) -> Result<(&'_ [u8], Box<TransportHeader>, Packet<'_>), String> {
     let result = Packet::decode(input).map_err(map_err_to_string)?;
     let payload = match &result.decoded {
         Packet::Unsecured { payload, .. } => *payload,
@@ -171,10 +171,10 @@ pub fn decode_gn_btp_headers(
             .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
             .map_err(map_err_to_string),
         NextAfterCommon::IPv6 => IPv6Header::decode(payload)
-            .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(ipv6)))
+            .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(Box::new(ipv6))))
             .map_err(map_err_to_string),
     }?;
-    Ok((remaining, tp, result.decoded))
+    Ok((remaining, Box::new(tp), result.decoded))
 }
 
 #[cfg(target_arch = "wasm32")]

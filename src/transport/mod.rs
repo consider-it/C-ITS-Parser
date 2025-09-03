@@ -14,7 +14,7 @@ pub(crate) mod encode;
 pub enum TransportHeader {
     BtpA(BasicTransportAHeader),
     BtpB(BasicTransportBHeader),
-    IPv6(IPv6Header),
+    IPv6(Box<IPv6Header>),
 }
 
 impl TransportHeader {
@@ -33,7 +33,7 @@ impl TransportHeader {
                 .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
                 .map_err(map_err_to_string),
             NextAfterCommon::IPv6 => IPv6Header::decode(bytes)
-                .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(ipv6)))
+                .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(Box::new(ipv6))))
                 .map_err(map_err_to_string),
         }
     }
