@@ -1,0 +1,88 @@
+name: Rust
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_TERM_VERBOSE: true
+
+jobs:
+  check-fmt:
+    name: cargo fmt
+    runs-on:
+      - ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Give GitHub Actions access to private repos
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
+
+      - name: Add nightly rustfmt
+        run: |
+          rustup toolchain install nightly
+          rustup component add --toolchain nightly rustfmt
+      - name: cargo fmt
+        run: cargo +nightly fmt --check
+
+  check-clippy:
+    name: cargo clippy
+    runs-on:
+      - ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Give GitHub Actions access to private repos
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
+
+      - name: cargo clippy
+        run: cargo clippy --all-features --all-targets --verbose -- --deny warnings
+
+  # check-cargo-lock:
+  #   name: Check Cargo.lock
+  #   runs-on:
+  #     - ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         lfs: true
+  #     - name: Give GitHub Actions access to private repos
+  #       uses: webfactory/ssh-agent@v0.9.0
+  #       with:
+  #         ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
+  #
+  #     - name: Check Cargo.lock
+  #       run: cargo update --locked
+
+  test:
+    name: cargo build and test
+    runs-on:
+      - ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Give GitHub Actions access to private repos
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
+
+      - name: Add wasm-pack
+        run: |
+          cargo install wasm-pack
+
+      - name: cargo build
+        run: cargo build --all-features
+      - name: cargo test
+        run: cargo test --all-features --verbose
+      - name: wasm-pack test
+        run: wasm-pack test --node
