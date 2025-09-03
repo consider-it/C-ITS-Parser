@@ -133,7 +133,7 @@ pub enum EncodingRules {
 
 #[cfg(feature = "etsi")]
 impl EncodingRules {
-    pub(crate) fn codec(&self) -> rasn::Codec {
+    pub(crate) fn codec(self) -> rasn::Codec {
         match self {
             EncodingRules::UPER => rasn::Codec::Uper,
             EncodingRules::XER => rasn::Codec::Xer,

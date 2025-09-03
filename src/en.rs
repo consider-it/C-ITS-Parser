@@ -14,8 +14,17 @@ pub type Encoded = js_sys::Uint8Array;
 pub type Encoded = Vec<u8>;
 
 #[cfg(not(target_arch = "wasm32"))]
-impl<'a> ItsMessage<'a> {
-    /// Encodes an ITS message with optional headers. Supports XER, JER, and UPER encoding rules. XER and JER values are returned as UTF8 buffers.
+impl ItsMessage<'_> {
+    #[allow(clippy::too_many_lines)]
+    /// Encodes an ITS message with optional headers.
+    ///
+    /// Supports XER, JER, and UPER encoding rules.
+    /// XER and JER values are returned as UTF8 buffers.
+    ///
+    /// # Errors
+    ///
+    /// Gives a human-readable error description when ASN.1 parsing failed or an
+    /// unexpected set of headers was found.
     pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, String> {
         let (geo, tp, mut etsi_uper) = match self {
             ItsMessage::DenmV1 {
@@ -108,6 +117,7 @@ impl<'a> ItsMessage<'a> {
                 .map(|enc| (geonetworking, transport, enc)),
         }
         .map_err(map_err_to_string)?;
+
         match (tp, geo) {
             (None, None) => Ok(etsi_uper),
             (
@@ -121,7 +131,7 @@ impl<'a> ItsMessage<'a> {
             ) => {
                 let mut encoded = tp.encode()?;
                 encoded.append(&mut etsi_uper);
-                fill_gn_and_encode(UnsecuredHeader { basic, common, extended }, encoded)
+                fill_gn_and_encode(UnsecuredHeader { basic, common, extended }, &encoded)
             }
             _ => Err(
                 "Expecting either both or neither GeoNetworking and Transport headers to be present!"
@@ -343,7 +353,7 @@ fn optionally_encode_headers(
                 }
             };
             transport.append(&mut its);
-            fill_gn_and_encode(geonetworking, transport)
+            fill_gn_and_encode(geonetworking, &transport)
         }
         _ => Ok(its),
     }
@@ -351,7 +361,7 @@ fn optionally_encode_headers(
 
 fn fill_gn_and_encode(
     mut geonetworking: UnsecuredHeader,
-    payload: Vec<u8>,
+    payload: &[u8],
 ) -> Result<Vec<u8>, String> {
     geonetworking.common.payload_length = payload.len() as u16;
     geonetworking.common.header_type_and_subtype = match geonetworking.extended {
@@ -374,7 +384,7 @@ fn fill_gn_and_encode(
         None => HeaderType::Any,
     };
     geonetworking
-        .with_payload(&payload)
+        .with_payload(payload)
         .map_err(map_err_to_string)?
         .encode_to_vec()
         .map_err(map_err_to_string)
