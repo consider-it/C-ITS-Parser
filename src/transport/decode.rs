@@ -68,6 +68,7 @@ impl From<(u16, u16)> for BasicTransportAHeader {
 }
 
 impl BasicTransportAHeader {
+    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
             .map_err(|e| DecodeError::Json(format!("Error encoding to JSON: {e:?}")))
@@ -90,6 +91,7 @@ impl From<(u16, u16)> for BasicTransportBHeader {
 }
 
 impl BasicTransportBHeader {
+    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
             .map_err(|e| DecodeError::Json(format!("Error encoding to JSON: {e:?}")))
@@ -110,10 +112,22 @@ impl Decode for IPv6Header {
     fn decode(input: &[u8]) -> IResult<&[u8], Self> {
         etherparse::PacketHeaders::from_ip_slice(input)
             .map(|headers| {
-                let first_after_headers = headers.ip.as_ref().map_or(0, |ip| ip.header_len())
-                    + headers.link.as_ref().map_or(0, |link| link.header_len())
-                    + headers.transport.as_ref().map_or(0, |tsp| tsp.header_len())
-                    + headers.vlan.as_ref().map_or(0, |vlan| vlan.header_len());
+                let first_after_headers = headers
+                    .ip
+                    .as_ref()
+                    .map_or(0, etherparse::IpHeader::header_len)
+                    + headers
+                        .link
+                        .as_ref()
+                        .map_or(0, etherparse::Ethernet2Header::header_len)
+                    + headers
+                        .transport
+                        .as_ref()
+                        .map_or(0, etherparse::TransportHeader::header_len)
+                    + headers
+                        .vlan
+                        .as_ref()
+                        .map_or(0, etherparse::VlanHeader::header_len);
                 (&input[first_after_headers..], IPv6Header::from(headers))
             })
             .map_err(|e| {

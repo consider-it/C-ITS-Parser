@@ -1,9 +1,11 @@
+#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
 pub fn remove_pcap_headers(data: &[u8]) -> Result<&[u8], String> {
     remove_radiotap_hdr(data)
         .and_then(remove_80211_hdr)
         .and_then(remove_llc_hdr)
 }
 
+#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
 fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], String> {
     /*
      * Radiotap Header has the following format
@@ -15,7 +17,7 @@ fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], String> {
 
     let radiotap_version: u8 = data[0];
     if radiotap_version != 0 {
-        return Err(format!("Unknown header version {:#x}", radiotap_version));
+        return Err(format!("Unknown header version {radiotap_version:#x}"));
     }
 
     let hdr_len: usize = u16::from_le_bytes([data[2], data[3]]).into();
@@ -24,6 +26,7 @@ fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], String> {
     Ok(remaining)
 }
 
+#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
 fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], String> {
     /*
      * IEEE 802.11 Header has the following format (26-32 bytes)
@@ -45,23 +48,21 @@ fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], String> {
 
     let ieee80211_fc_version: u8 = ieee80211_framecontrol & 0x03; // 0000.00xx
     if ieee80211_fc_version != 0 {
-        return Err(format!("Unknown 802.11 header version {}", ieee80211_fc_version).to_string());
+        return Err(format!("Unknown 802.11 header version {ieee80211_fc_version}").to_string());
     }
 
     let ieee80211_fc_type: u8 = (ieee80211_framecontrol & 0x0c) >> 2; // 0000.xx00
     if ieee80211_fc_type != 0b10 {
         // only select data frames
-        return Err(format!("Unsupported 802.11 frame type {}", ieee80211_fc_type).to_string());
+        return Err(format!("Unsupported 802.11 frame type {ieee80211_fc_type}").to_string());
     }
 
     let ieee80211_fc_subtype: u8 = (ieee80211_framecontrol & 0xf0) >> 4; // xxxx.0000
     if ieee80211_fc_subtype != 0b1000 {
         // only select QoS frames
-        return Err(format!(
-            "Unsupported 802.11 frame subtype {:#04x}",
-            ieee80211_fc_type
-        )
-        .to_string());
+        return Err(
+            format!("Unsupported 802.11 frame subtype {ieee80211_fc_type:#04x}",).to_string(),
+        );
     }
 
     let hdr_len: usize = 26; // QoS data frame is usually 26 bytes (sequence control, no addr 4, QoS, no HT)
@@ -70,6 +71,7 @@ fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], String> {
     Ok(remaining)
 }
 
+#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
 fn remove_llc_hdr(data: &[u8]) -> Result<&[u8], String> {
     /*
      * LLC Header has the following format (8 bytes)
@@ -80,10 +82,10 @@ fn remove_llc_hdr(data: &[u8]) -> Result<&[u8], String> {
      * - 2 bytes Type (0x8947 BE is GeoNetworking)
      */
 
-    let llc_type: u16 = ((data[6] as u16) << 8) | (data[7] as u16);
+    let llc_type: u16 = (u16::from(data[6]) << 8) | u16::from(data[7]);
 
     if llc_type != 0x8947 {
-        return Err(format!("Unknown LLC payload type {:#x}", llc_type).to_string());
+        return Err(format!("Unknown LLC payload type {llc_type:#x}").to_string());
     }
 
     let hdr_len: usize = 8; // TODO: Is this the right size?

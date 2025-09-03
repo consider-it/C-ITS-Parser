@@ -18,6 +18,7 @@ pub enum TransportHeader {
 }
 
 impl TransportHeader {
+    #[allow(clippy::missing_errors_doc)]
     pub fn decode_with_gn_next_header(
         next_header: NextAfterCommon,
         bytes: &[u8],
@@ -38,6 +39,7 @@ impl TransportHeader {
         }
     }
 
+    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn encode(&self) -> Result<Vec<u8>, String> {
         match self {
             TransportHeader::BtpA(a) => a.encode().map_err(map_err_to_string),
@@ -46,6 +48,7 @@ impl TransportHeader {
         }
     }
 
+    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn encode_to_json(&self) -> Result<String, String> {
         match self {
             TransportHeader::BtpA(a) => a.encode_to_json().map_err(map_err_to_string),

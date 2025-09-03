@@ -36,10 +36,13 @@ macro_rules! btp {
 
 #[cfg(feature = "etsi")]
 #[cfg(not(target_arch = "wasm32"))]
+#[allow(clippy::too_many_lines)]
 /// Decodes an ASN.1 message with headers. Supported encoding rules are UPER, JER, and XER. JSON and XML strings are expected as UTF8 slices.
 /// ### Params
 ///  - `message`: binary input containing the ITS message
 ///  - `headers`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
+///
+/// # Errors
 ///
 /// Throws string error on decoding errors.
 pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, String> {
@@ -164,13 +167,14 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
     }.map_err(map_err_to_string)
 }
 
+#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
 pub fn decode_gn_btp_headers(
     input: &'_ [u8],
 ) -> Result<(&'_ [u8], Box<TransportHeader>, Packet<'_>), String> {
     let result = Packet::decode(input).map_err(map_err_to_string)?;
     let payload = match &result.decoded {
         Packet::Unsecured { payload, .. } => *payload,
-        s => s
+        s @ Packet::Secured { .. } => s
             .secured_payload_after_gn()
             .ok_or("No payload in secured geonetworking header!")?,
     };
@@ -440,9 +444,13 @@ fn decode_denm(
             standards::denm_1_3_1::denm_pdu_descriptions::DENM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        None | Some(211) => Some(transcode::<
-            standards::denm_2_1_1::denm_pdu_description::DENM,
-        >(input, input_encoding_rules, output_encoding_rules))
+        None | Some(211) => Some(
+            transcode::<standards::denm_2_1_1::denm_pdu_description::DENM>(
+                input,
+                input_encoding_rules,
+                output_encoding_rules,
+            ),
+        )
         .transpose(),
         _ => {
             return Err(
@@ -463,9 +471,13 @@ fn decode_cam(
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cam, headers_present)?;
     etsi_json.its = match version {
-        None | Some(141) => Some(transcode::<
-            standards::cam_1_4_1::cam_pdu_descriptions::CAM,
-        >(input, input_encoding_rules, output_encoding_rules))
+        None | Some(141) => Some(
+            transcode::<standards::cam_1_4_1::cam_pdu_descriptions::CAM>(
+                input,
+                input_encoding_rules,
+                output_encoding_rules,
+            ),
+        )
         .transpose(),
         _ => return Err("Unsupported DENM version: Supported CAM version is 141.".to_string()),
     }?;
@@ -503,13 +515,11 @@ fn decode_spatem(
 ) -> Result<ItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(spatem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(
-            transcode::<standards::is_1_3_1::etsi_schema::SPATEM>(
-                input,
-                input_encoding_rules,
-                output_encoding_rules,
-            ),
-        )
+        None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SPATEM>(
+            input,
+            input_encoding_rules,
+            output_encoding_rules,
+        ))
         .transpose(),
         _ => {
             return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string());

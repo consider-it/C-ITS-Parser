@@ -1,4 +1,4 @@
-use super::*;
+use super::{BasicTransportAHeader, BasicTransportBHeader, Debug, IPv6Header};
 
 #[derive(Debug)]
 pub enum EncodeError {
@@ -21,6 +21,7 @@ impl Encode for BasicTransportAHeader {
 }
 
 impl BasicTransportAHeader {
+    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn encode_to_json(&self) -> Result<String, EncodeError> {
         serde_json::to_string(&self)
             .map_err(|e| EncodeError::Json(format!("Error encoding to JSON: {e:?}")))
@@ -38,6 +39,7 @@ impl Encode for BasicTransportBHeader {
 }
 
 impl BasicTransportBHeader {
+    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn encode_to_json(&self) -> Result<String, EncodeError> {
         serde_json::to_string(&self)
             .map_err(|e| EncodeError::Json(format!("Error encoding to JSON: {e:?}")))
