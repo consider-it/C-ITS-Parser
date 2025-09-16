@@ -20,7 +20,7 @@ default = ["etsi"]
 etsi = ["rasn"]
 
 [dependencies]
-etherparse = "0.15"
+etherparse = "0.19"
 geonetworking = { version = "0.1", default-features = false, features = ["json"] }
 hex = "0.4"
 nom = { version = "7.1.3" }

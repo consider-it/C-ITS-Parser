@@ -125,9 +125,9 @@ impl Decode for IPv6Header {
                         .as_ref()
                         .map_or(0, etherparse::TransportHeader::header_len)
                     + headers
-                        .vlan
-                        .as_ref()
-                        .map_or(0, etherparse::VlanHeader::header_len);
+                        .link_exts
+                        .first()
+                        .map_or(0, etherparse::LinkExtHeader::header_len);
                 (&input[first_after_headers..], IPv6Header::from(headers))
             })
             .map_err(|e| {
@@ -144,7 +144,7 @@ impl From<PacketHeaders<'_>> for IPv6Header {
             ip: value.net,
             link: value.link,
             transport: value.transport,
-            vlan: value.vlan,
+            link_ext: value.link_exts.first().cloned(),
         }
     }
 }
