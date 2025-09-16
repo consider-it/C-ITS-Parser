@@ -113,9 +113,9 @@ impl Decode for IPv6Header {
         etherparse::PacketHeaders::from_ip_slice(input)
             .map(|headers| {
                 let first_after_headers = headers
-                    .ip
+                    .net
                     .as_ref()
-                    .map_or(0, etherparse::IpHeader::header_len)
+                    .map_or(0, etherparse::NetHeaders::header_len)
                     + headers
                         .link
                         .as_ref()
@@ -141,7 +141,7 @@ impl Decode for IPv6Header {
 impl From<PacketHeaders<'_>> for IPv6Header {
     fn from(value: PacketHeaders<'_>) -> Self {
         Self {
-            ip: value.ip,
+            ip: value.net,
             link: value.link,
             transport: value.transport,
             vlan: value.vlan,
