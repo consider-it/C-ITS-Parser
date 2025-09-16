@@ -1,6 +1,6 @@
 [package]
 name = "etsi-web"
-version = "0.6.0"
+version = "0.6.1-dev"
 edition = "2021"
 authors = ["consider it GmbH"]
 description = "Tools for encoding and decoding ETSI messages (GN + Transport + CAM/DENM/IVIM/SSEM/SREM/MAPEM/SPATEM)"
@@ -20,7 +20,7 @@ default = ["etsi"]
 etsi = ["rasn"]
 
 [dependencies]
-etherparse = "0.13"
+etherparse = "0.14"
 geonetworking = { version = "0.1", default-features = false, features = ["json"] }
 hex = "0.4"
 nom = { version = "7.1.3" }
