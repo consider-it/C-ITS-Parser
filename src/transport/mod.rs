@@ -82,7 +82,7 @@ pub struct BasicTransportBHeader {
 #[derive(Debug, Clone, PartialEq)]
 pub struct IPv6Header {
     pub ip: Option<etherparse::NetHeaders>,
-    pub link: Option<etherparse::Ethernet2Header>,
+    pub link: Option<etherparse::LinkHeader>,
     pub transport: Option<etherparse::TransportHeader>,
     pub vlan: Option<etherparse::VlanHeader>,
 }
