@@ -119,7 +119,7 @@ impl Decode for IPv6Header {
                     + headers
                         .link
                         .as_ref()
-                        .map_or(0, etherparse::Ethernet2Header::header_len)
+                        .map_or(0, etherparse::LinkHeader::header_len)
                     + headers
                         .transport
                         .as_ref()
