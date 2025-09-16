@@ -413,10 +413,7 @@ fn strip_headers_frame_wasm() {
         serde_json::from_str::<serde_json::Value>(&expected.geonetworking.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.geonetworking.unwrap()).unwrap()
     );
-    assert_eq!(
-        expected.its,
-        decoded.its
-    );
+    assert_eq!(expected.its, decoded.its);
     assert_eq!(
         serde_json::from_str::<serde_json::Value>(&expected.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
