@@ -84,5 +84,6 @@ pub struct IPv6Header {
     pub ip: Option<etherparse::NetHeaders>,
     pub link: Option<etherparse::LinkHeader>,
     pub transport: Option<etherparse::TransportHeader>,
-    pub vlan: Option<etherparse::VlanHeader>,
+    // note: etherparse supports multiple link header extensions, but we assume 1 or none
+    pub link_ext: Option<etherparse::LinkExtHeader>,
 }
