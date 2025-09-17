@@ -3,6 +3,7 @@ use super::{BasicTransportAHeader, BasicTransportBHeader, Debug, IPv6Header};
 #[derive(Debug)]
 pub enum EncodeError {
     Unsupported(String),
+    #[cfg(feature = "json")]
     Json(String),
 }
 
@@ -21,6 +22,7 @@ impl Encode for BasicTransportAHeader {
 }
 
 impl BasicTransportAHeader {
+    #[cfg(feature = "json")]
     #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn encode_to_json(&self) -> Result<String, EncodeError> {
         serde_json::to_string(&self)
@@ -39,6 +41,7 @@ impl Encode for BasicTransportBHeader {
 }
 
 impl BasicTransportBHeader {
+    #[cfg(feature = "json")]
     #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn encode_to_json(&self) -> Result<String, EncodeError> {
         serde_json::to_string(&self)

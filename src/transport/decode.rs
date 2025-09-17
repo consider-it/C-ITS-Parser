@@ -12,6 +12,7 @@ pub enum DecodeError<I> {
     IntegerError(String),
     IPv6Parsing(String),
     Nom(I, ErrorKind),
+    #[cfg(feature = "json")]
     Json(String),
 }
 
@@ -68,6 +69,7 @@ impl From<(u16, u16)> for BasicTransportAHeader {
 }
 
 impl BasicTransportAHeader {
+    #[cfg(feature = "json")]
     #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
@@ -91,6 +93,7 @@ impl From<(u16, u16)> for BasicTransportBHeader {
 }
 
 impl BasicTransportBHeader {
+    #[cfg(feature = "json")]
     #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)

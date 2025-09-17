@@ -3,6 +3,7 @@ use core::fmt::Debug;
 use decode::Decode;
 use encode::Encode;
 use geonetworking::NextAfterCommon;
+#[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
 
 use crate::map_err_to_string;
@@ -48,6 +49,7 @@ impl TransportHeader {
         }
     }
 
+    #[cfg(feature = "json")]
     #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
     pub fn encode_to_json(&self) -> Result<String, String> {
         match self {
@@ -58,7 +60,8 @@ impl TransportHeader {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
 pub struct BasicTransportAHeader {
     /// identifies the protocol entity at the destination's ITS facilities layer
     pub destination_port: u16,
@@ -66,7 +69,8 @@ pub struct BasicTransportAHeader {
     pub source_port: u16,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
 pub struct BasicTransportBHeader {
     /// It identifies the protocol entity at the ITS facilities layer in the destination.
     /// For well-known ports it shall be set to a value corresponding to the
