@@ -5,7 +5,6 @@ use nom::{
     combinator::{into, map_res},
     error::{ErrorKind, FromExternalError, ParseError},
     sequence::pair,
-    Parser,
 };
 
 #[derive(Debug, PartialEq)]
@@ -55,7 +54,7 @@ pub trait Decode: Sized {
 
 impl Decode for BasicTransportAHeader {
     fn decode(input: &[u8]) -> IResult<&[u8], Self> {
-        into(pair(u16_from_be_bytes, u16_from_be_bytes)).parse(input)
+        into(pair(u16_from_be_bytes, u16_from_be_bytes))(input)
     }
 }
 
@@ -78,7 +77,7 @@ impl BasicTransportAHeader {
 
 impl Decode for BasicTransportBHeader {
     fn decode(input: &[u8]) -> IResult<&[u8], Self> {
-        into(pair(u16_from_be_bytes, u16_from_be_bytes)).parse(input)
+        into(pair(u16_from_be_bytes, u16_from_be_bytes))(input)
     }
 }
 
@@ -106,8 +105,7 @@ fn u16_from_be_bytes(input: &[u8]) -> IResult<&[u8], u16> {
                 "Failed to construct integer from bytes: {e:?}"
             ))
         })
-    })
-    .parse(input)
+    })(input)
 }
 
 impl Decode for IPv6Header {
