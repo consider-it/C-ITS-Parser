@@ -5,6 +5,9 @@ pub mod en;
 #[allow(clippy::all, clippy::pedantic, clippy::nursery, dead_code)]
 pub mod standards;
 
+#[cfg(all(feature = "etsi", feature = "geo"))]
+pub mod geo_utils;
+
 pub(crate) mod pcap;
 pub mod transport;
 
