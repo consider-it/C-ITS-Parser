@@ -1,6 +1,6 @@
 [package]
 name = "etsi-web"
-version = "0.7.1"
+version = "0.7.2-dev"
 edition = "2021"
 authors = ["consider it GmbH"]
 description = "Tools for encoding and decoding ETSI messages (GN + Transport + CAM/DENM/IVIM/SSEM/SREM/MAPEM/SPATEM)"
@@ -19,10 +19,13 @@ lto = true
 default = ["etsi", "json"]
 etsi = ["rasn"]
 json = ["geonetworking/json", "dep:serde", "dep:serde_json"]
+# enable conversions to geo-types
+geo = ["etsi", "dep:geo-types"]
 
 [dependencies]
 etherparse = "0.19"
 geonetworking = { version = "0.2", default-features = false }
+geo-types = { version = "0.7.17", optional = true }
 hex = "0.4"
 nom = { version = "7.1.3" }
 rasn = { version = "0.27.2", optional = true }
@@ -35,5 +38,6 @@ wasm-bindgen = { version = "0.2.102" }
 
 [dev-dependencies]
 pretty_assertions = "1.4.1"
+assert_float_eq = "1.2.0"
 wasm-bindgen-test = "0.3.52"
 xmltree = "0.11.0"
