@@ -363,7 +363,10 @@ fn fill_gn_and_encode(
     mut geonetworking: UnsecuredHeader,
     payload: &[u8],
 ) -> Result<Vec<u8>, String> {
-    geonetworking.common.payload_length = payload.len() as u16;
+    #[allow(clippy::cast_possible_truncation)]
+    let gn_payload_length = payload.len() as u16;
+
+    geonetworking.common.payload_length = gn_payload_length;
     geonetworking.common.header_type_and_subtype = match geonetworking.extended {
         Some(ExtendedHeader::Beacon(_)) => HeaderType::Beacon,
         Some(ExtendedHeader::GAC(_)) => HeaderType::GeoAnycast(geonetworking::AreaType::Circular),
