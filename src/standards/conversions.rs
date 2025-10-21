@@ -12,6 +12,12 @@ macro_rules! latlon_to_deg {
             pub fn as_deg(&self) -> f64 {
                 f64::from(self.0) / 10_000_000.
             }
+
+            /// convert ETSI Latitude/ Longitude to degrees
+            #[must_use]
+            pub fn from_deg(other: f64) -> Self {
+                Self((other * 10_000_000.) as i32)
+            }
         }
     };
 }
