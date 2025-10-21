@@ -356,13 +356,40 @@ pub mod denm_2_1_1 {
 
 pub mod is_1_3_1 {
     use crate::standards::is_1_3_1::etsi_schema::{
-        AllowedManeuvers, DayOfWeek, IntersectionStatusObject, LaneAttributesBarrier,
-        LaneAttributesBike, LaneAttributesCrosswalk, LaneAttributesParking, LaneAttributesSidewalk,
-        LaneAttributesStriping, LaneAttributesTrackedVehicle, LaneAttributesVehicle, LaneDirection,
-        LaneSharing, TransitVehicleStatus, PMD,
+        AllowedManeuvers, DayOfWeek, IntersectionStatusObject, LaneAttributes,
+        LaneAttributesBarrier, LaneAttributesBike, LaneAttributesCrosswalk, LaneAttributesParking,
+        LaneAttributesSidewalk, LaneAttributesStriping, LaneAttributesTrackedVehicle,
+        LaneAttributesVehicle, LaneDirection, LaneSharing, LaneTypeAttributes,
+        TransitVehicleStatus, PMD,
     };
 
     // MAPEM/ SPATEM
+
+    impl std::fmt::Display for LaneAttributes {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "LaneTypeAttributes{{{}}}, LaneDirection{{{}}}, LaneSharing{{{}}}",
+                self.lane_type, self.directional_use, self.shared_with
+            )
+            // regional value left out for now
+        }
+    }
+
+    impl std::fmt::Display for LaneTypeAttributes {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            match self {
+                LaneTypeAttributes::vehicle(attrs) => write!(f, "vehicle({attrs})"),
+                LaneTypeAttributes::crosswalk(attrs) => write!(f, "crosswalk({attrs})"),
+                LaneTypeAttributes::bikeLane(attrs) => write!(f, "bikeLane({attrs})"),
+                LaneTypeAttributes::sidewalk(attrs) => write!(f, "sidewalk({attrs})"),
+                LaneTypeAttributes::median(attrs) => write!(f, "median({attrs})"),
+                LaneTypeAttributes::striping(attrs) => write!(f, "striping({attrs})"),
+                LaneTypeAttributes::trackedVehicle(attrs) => write!(f, "trackedVehicle({attrs})"),
+                LaneTypeAttributes::parking(attrs) => write!(f, "parking({attrs})"),
+            }
+        }
+    }
 
     impl LaneSharing {
         pub fn get_overlapping_lane_description_provided(&self) -> bool {
