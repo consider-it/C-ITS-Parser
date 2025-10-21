@@ -1,1 +1,1 @@
-doc-valid-idents = ["CiT", "ReferencePosition", "PathHistory", ".."]
+doc-valid-idents = ["CiT", "ReferencePosition", "PathHistory", "OffsetB*", "OffsetB", ".."]
