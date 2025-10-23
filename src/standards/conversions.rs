@@ -38,6 +38,25 @@ macro_rules! offset_to_meters {
             pub fn as_meters(&self) -> f32 {
                 f32::from(self.0) / 100.
             }
+
+            /// create ETSI OffsetB* from meters
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_meters(value: f32) -> Result<Self, String> {
+                use rasn::AsnType;
+
+                #[allow(clippy::cast_possible_truncation)]
+                let etsi_val = (value * 100.) as i16;
+
+                if let Some(constraints) = Self::CONSTRAINTS.value() {
+                    if !constraints.constraint.in_bound(&etsi_val) {
+                        return Err(format!("Value out of bounds"));
+                    }
+                }
+
+                Ok(Self(etsi_val))
+            }
         }
 
         impl From<&$t> for f32 {
@@ -48,6 +67,14 @@ macro_rules! offset_to_meters {
         impl From<$t> for f32 {
             fn from(other: $t) -> f32 {
                 other.as_meters()
+            }
+        }
+
+        impl TryFrom<f32> for $t {
+            type Error = String;
+
+            fn try_from(value: f32) -> Result<Self, Self::Error> {
+                Self::from_meters(value)
             }
         }
     };
