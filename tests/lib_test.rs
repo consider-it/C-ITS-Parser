@@ -570,5 +570,5 @@ fn xer_to_uper() {
     .unwrap();
     let re_encoded = decoded.encode(EncodingRules::UPER).unwrap();
 
-    assert_eq!(expected, re_encoded.as_slice())
+    assert_eq!(expected, re_encoded.as_slice());
 }
