@@ -2,6 +2,16 @@
 
 const EARTH_CIRCUMFERENCE: f32 = 39_940_653.; // Earth's circumference in meters
 
+// generic conversion helpers
+
+/// Convert ETSI XY deltas to absolute lon/lat position (in degrees)
+///
+/// X points east (longitude), Y points north (latitude)!
+#[must_use]
+pub fn point_from_dxy(dx: f32, dy: f32, ref_pos: &geo_types::Point) -> geo_types::Point {
+    dxy_to_geo(dx, dy, ref_pos).into()
+}
+
 // used by IS 1.3.1
 impl From<crate::standards::is_1_3_1::etsi_schema::Position3D> for geo_types::Point {
     fn from(other: crate::standards::is_1_3_1::etsi_schema::Position3D) -> Self {
@@ -110,22 +120,22 @@ impl crate::standards::is_1_3_1::etsi_schema::NodeOffsetPointXY {
 
         let (lon, lat) = match self {
             NodeOffsetPointXY::node_XY1(etsi) => {
-                Self::dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
+                dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
             }
             NodeOffsetPointXY::node_XY2(etsi) => {
-                Self::dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
+                dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
             }
             NodeOffsetPointXY::node_XY3(etsi) => {
-                Self::dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
+                dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
             }
             NodeOffsetPointXY::node_XY4(etsi) => {
-                Self::dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
+                dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
             }
             NodeOffsetPointXY::node_XY5(etsi) => {
-                Self::dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
+                dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
             }
             NodeOffsetPointXY::node_XY6(etsi) => {
-                Self::dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
+                dxy_to_geo((&etsi.x).into(), (&etsi.y).into(), ref_pos)
             }
             NodeOffsetPointXY::node_LatLon(etsi) => (etsi.lon.as_deg(), etsi.lat.as_deg()),
             NodeOffsetPointXY::regional(_) => (0., 0.),
@@ -151,48 +161,48 @@ impl crate::standards::is_1_3_1::etsi_schema::NodeOffsetPointXY {
             NodeOffsetPointXY::node_XY4(etsi) => ((&etsi.x).into(), (&etsi.y).into()),
             NodeOffsetPointXY::node_XY5(etsi) => ((&etsi.x).into(), (&etsi.y).into()),
             NodeOffsetPointXY::node_XY6(etsi) => ((&etsi.x).into(), (&etsi.y).into()),
-            NodeOffsetPointXY::node_LatLon(etsi) => Self::latlon_to_dcart(etsi, ref_pos),
+            NodeOffsetPointXY::node_LatLon(etsi) => latlon_to_dcart(etsi, ref_pos),
             NodeOffsetPointXY::regional(_) => (0., 0.),
         };
 
         geo_types::Point::new(x.into(), y.into())
     }
+}
 
-    /// Convert ETSI XY deltas to absolute lon/lat position (in degrees)
-    ///
-    /// X points east (longitude), Y points north (latitude)!
-    fn dxy_to_geo(dx: f32, dy: f32, ref_pos: &geo_types::Point) -> (f64, f64) {
-        // latitude degree per meter is independent from longitude
-        let dlat = f64::from(dy) / f64::from(EARTH_CIRCUMFERENCE) * 360.;
+/// Convert ETSI XY deltas to absolute lon/lat position (in degrees)
+///
+/// X points east (longitude), Y points north (latitude)!
+fn dxy_to_geo(dx: f32, dy: f32, ref_pos: &geo_types::Point) -> (f64, f64) {
+    // latitude degree per meter is independent from longitude
+    let dlat = f64::from(dy) / f64::from(EARTH_CIRCUMFERENCE) * 360.;
 
-        // longitude degree per meter has a different value depending on the latitude
-        let ref_lat_rad = ref_pos.to_radians().y();
-        let dlon = f64::from(dx) / (f64::from(EARTH_CIRCUMFERENCE) * ref_lat_rad.cos()) * 360.;
+    // longitude degree per meter has a different value depending on the latitude
+    let ref_lat_rad = ref_pos.to_radians().y();
+    let dlon = f64::from(dx) / (f64::from(EARTH_CIRCUMFERENCE) * ref_lat_rad.cos()) * 360.;
 
-        (ref_pos.x() + dlon, ref_pos.y() + dlat)
-    }
+    (ref_pos.x() + dlon, ref_pos.y() + dlat)
+}
 
-    /// Convert absolute lon/lat position to ETSI XY position (in meters)
-    ///
-    /// X points east (longitude), Y points north (latitude)!
-    fn latlon_to_dcart(
-        dpos: &crate::standards::is_1_3_1::etsi_schema::NodeLLmD64b,
-        ref_pos: &geo_types::Point,
-    ) -> (f32, f32) {
-        // latitude degree per meter is independent from longitude
-        #[allow(clippy::cast_possible_truncation)]
-        let dlat_deg = dpos.lat.as_deg() as f32 - ref_pos.y() as f32;
-        let dy = dlat_deg / 360. * EARTH_CIRCUMFERENCE;
+/// Convert absolute lon/lat position to ETSI XY position (in meters)
+///
+/// X points east (longitude), Y points north (latitude)!
+fn latlon_to_dcart(
+    dpos: &crate::standards::is_1_3_1::etsi_schema::NodeLLmD64b,
+    ref_pos: &geo_types::Point,
+) -> (f32, f32) {
+    // latitude degree per meter is independent from longitude
+    #[allow(clippy::cast_possible_truncation)]
+    let dlat_deg = dpos.lat.as_deg() as f32 - ref_pos.y() as f32;
+    let dy = dlat_deg / 360. * EARTH_CIRCUMFERENCE;
 
-        // longitude degree per meter has a different value depending on the latitude
-        #[allow(clippy::cast_possible_truncation)]
-        let ref_lat_rad = ref_pos.to_radians().y() as f32;
-        #[allow(clippy::cast_possible_truncation)]
-        let dlon_deg = dpos.lon.as_deg() as f32 - ref_pos.x() as f32;
-        let dx = dlon_deg / 360. * (EARTH_CIRCUMFERENCE * ref_lat_rad.cos());
+    // longitude degree per meter has a different value depending on the latitude
+    #[allow(clippy::cast_possible_truncation)]
+    let ref_lat_rad = ref_pos.to_radians().y() as f32;
+    #[allow(clippy::cast_possible_truncation)]
+    let dlon_deg = dpos.lon.as_deg() as f32 - ref_pos.x() as f32;
+    let dx = dlon_deg / 360. * (EARTH_CIRCUMFERENCE * ref_lat_rad.cos());
 
-        (dx, dy)
-    }
+    (dx, dy)
 }
 
 impl crate::standards::is_1_3_1::etsi_schema::NodeOffsetPointZ {
@@ -215,32 +225,29 @@ impl crate::standards::is_1_3_1::etsi_schema::NodeOffsetPointZ {
 mod tests {
     #[test]
     fn dxy_to_geo_test() {
-        use crate::standards::is_1_3_1::etsi_schema::NodeOffsetPointXY;
+        use crate::geo_utils::dxy_to_geo;
 
         let ref_pos = geo_types::point! {x: 9.936_521, y: 53.550_728};
 
         // trivial test
-        assert_eq!(
-            (ref_pos.x(), ref_pos.y()),
-            NodeOffsetPointXY::dxy_to_geo(0., 0., &ref_pos)
-        );
+        assert_eq!((ref_pos.x(), ref_pos.y()), dxy_to_geo(0., 0., &ref_pos));
 
         // 1/10th nautical mile north/ south
-        let (dlon, dlat) = NodeOffsetPointXY::dxy_to_geo(0., 185., &ref_pos);
+        let (dlon, dlat) = dxy_to_geo(0., 185., &ref_pos);
         assert_float_eq::assert_float_absolute_eq!(ref_pos.x() + 0., dlon);
         assert_float_eq::assert_float_absolute_eq!(ref_pos.y() + 0.001_667, dlat);
 
-        let (dlon, dlat) = NodeOffsetPointXY::dxy_to_geo(0., -185., &ref_pos);
+        let (dlon, dlat) = dxy_to_geo(0., -185., &ref_pos);
         assert_float_eq::assert_float_absolute_eq!(ref_pos.x() + 0., dlon);
         assert_float_eq::assert_float_absolute_eq!(ref_pos.y() + -0.001_667, dlat);
 
         // east/west from online calculation tool
-        let (dlon, dlat) = NodeOffsetPointXY::dxy_to_geo(66., 0., &ref_pos);
+        let (dlon, dlat) = dxy_to_geo(66., 0., &ref_pos);
         assert_float_eq::assert_float_absolute_eq!(ref_pos.x() + 0.001_001, dlon);
         assert_float_eq::assert_float_absolute_eq!(ref_pos.y() + 0., dlat);
 
         // combine both
-        let (dlon, dlat) = NodeOffsetPointXY::dxy_to_geo(66., 185., &ref_pos);
+        let (dlon, dlat) = dxy_to_geo(66., 185., &ref_pos);
         assert_float_eq::assert_float_absolute_eq!(ref_pos.x() + 0.001_001, dlon);
         assert_float_eq::assert_float_absolute_eq!(ref_pos.y() + 0.001_667, dlat);
     }
