@@ -4,8 +4,13 @@
 //!
 //! ETSI types to common (SI) units
 
+use crate::standards::cdd_1_3_1_1;
+use crate::standards::cdd_2_2_1;
+use crate::standards::is_1_3_1;
+
+/// Create conversions for ETSI type `t` and some "unavailable" value
 macro_rules! latlon_to_deg {
-    ($t:ty) => {
+    ($t:ty, $unavailable:expr) => {
         impl $t {
             /// convert ETSI Latitude/ Longitude to degrees
             #[must_use]
@@ -18,34 +23,45 @@ macro_rules! latlon_to_deg {
             pub fn from_deg(other: f64) -> Self {
                 Self((other * 10_000_000.) as i32)
             }
+
+            /// create ETSI Latitude/ Longitude with "unavailable" value
+            pub fn unavailable() -> Self {
+                Self($unavailable)
+            }
+
+            /// determines if the ETSI value is special "unavailable" value
+            pub fn is_unavailable(&self) -> bool {
+                self.0 == $unavailable
+            }
         }
     };
 }
 
-latlon_to_deg!(crate::standards::is_1_3_1::etsi_schema::Longitude);
-latlon_to_deg!(crate::standards::is_1_3_1::etsi_schema::Latitude);
-latlon_to_deg!(crate::standards::cdd_1_3_1_1::its_container::Longitude);
-latlon_to_deg!(crate::standards::cdd_1_3_1_1::its_container::Latitude);
-latlon_to_deg!(crate::standards::cdd_2_2_1::etsi_its_cdd::Longitude);
-latlon_to_deg!(crate::standards::cdd_2_2_1::etsi_its_cdd::Latitude);
+latlon_to_deg!(is_1_3_1::etsi_schema::Longitude, 1_800_000_001);
+latlon_to_deg!(is_1_3_1::etsi_schema::Latitude, 900_000_001);
+latlon_to_deg!(cdd_1_3_1_1::its_container::Longitude, 1_800_000_001);
+latlon_to_deg!(cdd_1_3_1_1::its_container::Latitude, 900_000_001);
+latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::Longitude, 1_800_000_001);
+latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::Latitude, 900_000_001);
 
-// latlon_to_deg!(crate::standards::is_1_3_1::etsi_schema::DeltaLongitude);
-// latlon_to_deg!(crate::standards::is_1_3_1::etsi_schema::DeltaLatitude);
-latlon_to_deg!(crate::standards::cdd_1_3_1_1::its_container::DeltaLongitude);
-latlon_to_deg!(crate::standards::cdd_1_3_1_1::its_container::DeltaLatitude);
-latlon_to_deg!(crate::standards::cdd_2_2_1::etsi_its_cdd::DeltaLongitude);
-latlon_to_deg!(crate::standards::cdd_2_2_1::etsi_its_cdd::DeltaLatitude);
+// latlon_to_deg!(is_1_3_1::etsi_schema::DeltaLongitude, 131_072);
+// latlon_to_deg!(is_1_3_1::etsi_schema::DeltaLatitude, 131_072);
+latlon_to_deg!(cdd_1_3_1_1::its_container::DeltaLongitude, 131_072);
+latlon_to_deg!(cdd_1_3_1_1::its_container::DeltaLatitude, 131_072);
+latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::DeltaLongitude, 131_072);
+latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::DeltaLatitude, 131_072);
 
-macro_rules! offset_to_meters {
-    ($t:ty) => {
+/// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv`
+macro_rules! etsi_to_meters {
+    ($t:ty, $tt:ty, $conv:expr) => {
         impl $t {
-            /// convert ETSI OffsetB* to meters
+            /// convert ETSI data to meters
             #[must_use]
             pub fn as_meters(&self) -> f32 {
-                f32::from(self.0) / 100.
+                self.0 as f32 / $conv
             }
 
-            /// create ETSI OffsetB* from meters
+            /// create ETSI data from meters
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
@@ -53,7 +69,7 @@ macro_rules! offset_to_meters {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
-                let etsi_val = (value * 100.) as i16;
+                let etsi_val = (value * $conv) as $tt;
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
@@ -86,10 +102,143 @@ macro_rules! offset_to_meters {
     };
 }
 
-offset_to_meters!(crate::standards::is_1_3_1::etsi_schema::OffsetB09);
-offset_to_meters!(crate::standards::is_1_3_1::etsi_schema::OffsetB10);
-offset_to_meters!(crate::standards::is_1_3_1::etsi_schema::OffsetB11);
-offset_to_meters!(crate::standards::is_1_3_1::etsi_schema::OffsetB12);
-offset_to_meters!(crate::standards::is_1_3_1::etsi_schema::OffsetB13);
-offset_to_meters!(crate::standards::is_1_3_1::etsi_schema::OffsetB14);
-offset_to_meters!(crate::standards::is_1_3_1::etsi_schema::OffsetB16);
+etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB09, i16, 100.);
+etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB10, i16, 100.);
+etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB11, i16, 100.);
+etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB12, i16, 100.);
+etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB13, i16, 100.);
+etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB14, i16, 100.);
+etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB16, i16, 100.);
+
+etsi_to_meters!(is_1_3_1::etsi_schema::DistanceValue, i32, 100.);
+etsi_to_meters!(is_1_3_1::etsi_schema::ObjectDimensionValue, u16, 10.);
+etsi_to_meters!(is_1_3_1::etsi_schema::Radius, u16, 10.);
+etsi_to_meters!(is_1_3_1::etsi_schema::Range, u16, 10.);
+etsi_to_meters!(is_1_3_1::etsi_schema::SemiRangeLength, u16, 10.);
+
+/// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv` and some "unavailable" value
+macro_rules! etsi_to_mps {
+    ($t:ty, $tt:ty, $conv:expr, $unavailable:expr) => {
+        impl $t {
+            /// convert ETSI speed to m/s
+            pub fn as_mps(&self) -> f32 {
+                f32::from(self.0) / 100.
+            }
+
+            /// create ETSI speed from m/s
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_mps(value: f32) -> Result<Self, String> {
+                use rasn::AsnType;
+
+                #[allow(clippy::cast_possible_truncation)]
+                let etsi_val = (value * 100.) as $tt;
+
+                if let Some(constraints) = Self::CONSTRAINTS.value() {
+                    if !constraints.constraint.in_bound(&etsi_val) {
+                        return Err(format!("Value out of bounds"));
+                    }
+                }
+
+                Ok(Self(etsi_val))
+            }
+
+            /// create ETSI speed with "unavailable" value
+            pub fn unavailable() -> Self {
+                Self($unavailable)
+            }
+
+            /// determines if the ETSI value is special "unavailable" value
+            pub fn is_unavailable(&self) -> bool {
+                self.0 == $unavailable
+            }
+        }
+
+        impl From<&$t> for f32 {
+            fn from(other: &$t) -> f32 {
+                other.as_mps()
+            }
+        }
+        impl From<$t> for f32 {
+            fn from(other: $t) -> f32 {
+                other.as_mps()
+            }
+        }
+
+        impl TryFrom<f32> for $t {
+            type Error = String;
+
+            fn try_from(value: f32) -> Result<Self, Self::Error> {
+                Self::from_mps(value)
+            }
+        }
+    };
+}
+
+etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValueExtended, i16, 100., 16_383);
+etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValue, u16, 100., 16_383);
+
+/// Create conversions for ETSI type `t` with some "unavailable" value
+macro_rules! angle_to_deg {
+    ($t:ty, $unavailable:expr) => {
+        impl $t {
+            /// convert ETSI WGS84AngleValue/ CartesianAngleValue to degrees
+            #[must_use]
+            pub fn as_deg(&self) -> f32 {
+                f32::from(self.0) / 10.
+            }
+
+            /// create ETSI WGS84AngleValue/ CartesianAngleValue from degrees
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_deg(value: f32) -> Result<Self, String> {
+                use rasn::AsnType;
+
+                #[allow(clippy::cast_possible_truncation)]
+                let etsi_val = (value * 10.) as u16;
+
+                if let Some(constraints) = Self::CONSTRAINTS.value() {
+                    if !constraints.constraint.in_bound(&etsi_val) {
+                        return Err(format!("Value out of bounds"));
+                    }
+                }
+
+                Ok(Self(etsi_val))
+            }
+
+            /// create ETSI WGS84AngleValue/ CartesianAngleValue with "unavailable" value
+            pub fn unavailable() -> Self {
+                Self($unavailable)
+            }
+
+            /// determines if the ETSI value is special "unavailable" value
+            pub fn is_unavailable(&self) -> bool {
+                self.0 == $unavailable
+            }
+        }
+
+        impl From<&$t> for f32 {
+            fn from(other: &$t) -> f32 {
+                other.as_deg()
+            }
+        }
+        impl From<$t> for f32 {
+            fn from(other: $t) -> f32 {
+                other.as_deg()
+            }
+        }
+
+        impl TryFrom<f32> for $t {
+            type Error = String;
+
+            fn try_from(value: f32) -> Result<Self, Self::Error> {
+                Self::from_deg(value)
+            }
+        }
+    };
+}
+
+angle_to_deg!(is_1_3_1::etsi_schema::CartesianAngleValue, 3601);
+angle_to_deg!(is_1_3_1::etsi_schema::WGS84AngleValue, 3601);
