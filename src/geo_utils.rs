@@ -13,6 +13,7 @@ pub fn point_from_dxy(dx: f32, dy: f32, ref_pos: &geo_types::Point) -> geo_types
 }
 
 // used by IS 1.3.1
+#[cfg(feature = "etsi")]
 impl From<crate::standards::is_1_3_1::etsi_schema::Position3D> for geo_types::Point {
     fn from(other: crate::standards::is_1_3_1::etsi_schema::Position3D) -> Self {
         geo_types::Point::new(other.long.as_deg(), other.lat.as_deg())
@@ -31,16 +32,20 @@ macro_rules! refpos_to_point {
 }
 
 // used by DENM 1.3.1 and CAM
+#[cfg(feature = "etsi")]
 refpos_to_point!(crate::standards::cdd_1_3_1_1::its_container::ReferencePosition);
 
 // used by DENM 2.2.1
+#[cfg(feature = "etsi")]
 refpos_to_point!(crate::standards::cdd_2_2_1::etsi_its_cdd::ReferencePosition);
 
 // used by CPM from IS 1.3.1
+#[cfg(feature = "etsi")]
 refpos_to_point!(crate::standards::is_1_3_1::etsi_schema::ReferencePosition);
 
 // ETSI PathHistory
 
+#[cfg(feature = "etsi")]
 macro_rules! ph_to_line_string {
     ($t:ty) => {
         impl $t {
@@ -76,12 +81,15 @@ macro_rules! ph_to_line_string {
 }
 
 // used by CDD 1.3.1 (CAM 1.4.1 and DENM 1.3.1)
+#[cfg(feature = "etsi")]
 ph_to_line_string!(crate::standards::cdd_1_3_1_1::its_container::PathHistory);
 
 // used by CDD 2.2.1 (DENM 2.1.1)
+#[cfg(feature = "etsi")]
 ph_to_line_string!(crate::standards::cdd_2_2_1::etsi_its_cdd::Path);
 
 // Used by IS 1.3.1 (MAPEM lanes)
+#[cfg(feature = "etsi")]
 impl crate::standards::is_1_3_1::etsi_schema::NodeSetXY {
     /// Resolve delta positions to absolute geo positions
     ///
@@ -109,6 +117,7 @@ impl crate::standards::is_1_3_1::etsi_schema::NodeSetXY {
     }
 }
 
+#[cfg(feature = "etsi")]
 impl crate::standards::is_1_3_1::etsi_schema::NodeOffsetPointXY {
     /// Convert to absolte lon/lat (in degrees)
     ///
@@ -186,6 +195,7 @@ fn dxy_to_geo(dx: f32, dy: f32, ref_pos: &geo_types::Point) -> (f64, f64) {
 /// Convert absolute lon/lat position to ETSI XY position (in meters)
 ///
 /// X points east (longitude), Y points north (latitude)!
+#[cfg(feature = "etsi")]
 fn latlon_to_dcart(
     dpos: &crate::standards::is_1_3_1::etsi_schema::NodeLLmD64b,
     ref_pos: &geo_types::Point,
@@ -205,6 +215,7 @@ fn latlon_to_dcart(
     (dx, dy)
 }
 
+#[cfg(feature = "etsi")]
 impl crate::standards::is_1_3_1::etsi_schema::NodeOffsetPointZ {
     #[must_use]
     pub fn to_meters(&self) -> f32 {
@@ -253,6 +264,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "etsi")]
     fn nodeset_to_line_string() {
         use crate::standards::is_1_3_1::etsi_schema::{
             Latitude, Longitude, NodeLLmD64b, NodeOffsetPointXY, NodeSetXY, NodeXY, NodeXY32b,
