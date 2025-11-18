@@ -18,11 +18,11 @@ lto = true
 [features]
 default = ["etsi", "json"]
 # enable ETSI ASN.1 parser
-etsi = ["dep:nom", "rasn", "transport"]
+etsi = ["dep:nom", "rasn", "transport", "dep:hex"]
 # enable GN (and other transport header) parser
 transport = ["dep:geonetworking", "dep:nom", "dep:etherparse"]
 # enable conversions to and from JSON
-json = ["geonetworking/json", "dep:serde", "dep:serde_json"]
+json = ["geonetworking/json", "dep:serde", "dep:serde_json", "dep:js-sys"]
 # enable conversions to geo-types
 geo = ["dep:geo-types"]
 
@@ -36,8 +36,8 @@ serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
 
 [target.wasm32-unknown-unknown.dependencies]
-hex = { version = "0.4" }
-js-sys = { version = "0.3.79" }
+hex = { version = "0.4", optional = true }
+js-sys = { version = "0.3.79", optional = true }
 wasm-bindgen = { version = "0.2.102" }
 
 [dev-dependencies]
