@@ -1,27 +1,45 @@
 #![allow(non_snake_case)]
 
+#[cfg(any(feature = "transport", feature = "etsi"))]
+use crate::map_err_to_string;
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
+use crate::pcap::remove_pcap_headers;
+#[cfg(feature = "transport")]
 use crate::transport::TransportHeader;
-use crate::{
-    map_err_to_string,
-    pcap::remove_pcap_headers,
-    transport::{
-        decode::Decode as TransportDecode, BasicTransportAHeader, BasicTransportBHeader, IPv6Header,
-    },
+#[cfg(feature = "transport")]
+use crate::transport::{
+    decode::Decode as TransportDecode, BasicTransportAHeader, BasicTransportBHeader, IPv6Header,
 };
-#[cfg(feature = "etsi")]
-use crate::{
-    standards, standards::is_1_3_1::etsi_schema::ItsPduHeader, EncodingRules, Headers, ItsMessage,
-};
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json"),
+))]
+use crate::{standards, Headers, ItsMessage};
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json"),
+    all(test, feature = "etsi")
+))]
+use crate::{standards::is_1_3_1::etsi_schema::ItsPduHeader, EncodingRules};
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 use geonetworking::Encode;
+#[cfg(feature = "transport")]
 use geonetworking::{Decode, NextAfterCommon, Packet};
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json"),
+    all(test, feature = "etsi")
+))]
 use nom::FindSubstring;
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 use std::fmt::Write;
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 use wasm_bindgen::prelude::*;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 macro_rules! btp {
     ($btp_ty:ty, $input:ident) => {
         <$btp_ty>::decode($input)
@@ -167,6 +185,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
     }.map_err(map_err_to_string)
 }
 
+#[cfg(feature = "transport")]
 #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
 pub fn decode_gn_btp_headers(
     input: &'_ [u8],
@@ -195,7 +214,7 @@ pub fn decode_gn_btp_headers(
     Ok((remaining, Box::new(tp), result.decoded))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen(js_name = decode)]
 /// Decodes an ITS message of undefined type.
 /// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
@@ -344,7 +363,11 @@ pub fn decode(
     Ok(etsi_json)
 }
 
-#[cfg(feature = "etsi")]
+#[cfg(any(
+    all(target_arch = "wasm32", feature = "etsi", feature = "json"),
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(test, feature = "etsi")
+))]
 fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
     let encoding_rules = match std::str::from_utf8(input) {
         Ok(s) if s.trim_start().starts_with('<') => EncodingRules::XER,
@@ -423,7 +446,7 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_denm(
     denm: &[u8],
     mut version: Option<u32>,
@@ -461,7 +484,7 @@ fn decode_denm(
     Ok(etsi_json)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_cam(
     cam: &[u8],
     version: Option<u32>,
@@ -484,7 +507,7 @@ fn decode_cam(
     Ok(etsi_json)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_mapem(
     mapem: &[u8],
     version: Option<u32>,
@@ -505,7 +528,7 @@ fn decode_mapem(
     Ok(etsi_json)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_spatem(
     spatem: &[u8],
     version: Option<u32>,
@@ -528,7 +551,7 @@ fn decode_spatem(
     Ok(etsi_json)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_ivim(
     ivim: &[u8],
     mut version: Option<u32>,
@@ -564,7 +587,7 @@ fn decode_ivim(
     Ok(etsi_json)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_srem(
     srem: &[u8],
     version: Option<u32>,
@@ -585,7 +608,7 @@ fn decode_srem(
     Ok(etsi_json)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_cpm(
     cpm: &[u8],
     mut version: Option<u32>,
@@ -621,7 +644,7 @@ fn decode_cpm(
     Ok(etsi_json)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_ssem(
     ssem: &[u8],
     version: Option<u32>,
@@ -642,7 +665,7 @@ fn decode_ssem(
     Ok(etsi_json)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 pub fn optionally_decode_headers(
     input: &[u8],
     headers: Headers,
@@ -656,7 +679,7 @@ pub fn optionally_decode_headers(
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], ItsMessage), String> {
     decode_geonetworking_header(input).and_then(|(remaining, gn_json, next_header)| {
         decode_transport_header(remaining, next_header).map(|(rem, tp)| {
@@ -672,7 +695,7 @@ fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], ItsMessage), String> 
     })
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_geonetworking_header(input: &[u8]) -> Result<(&[u8], String, NextAfterCommon), String> {
     let result = Packet::decode(input).map_err(map_err_to_string)?;
     let gn_json = result.decoded.encode_to_json().map_err(map_err_to_string)?;
@@ -687,7 +710,7 @@ fn decode_geonetworking_header(input: &[u8]) -> Result<(&[u8], String, NextAfter
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn decode_transport_header(
     input: &[u8],
     header_type: NextAfterCommon,
@@ -705,7 +728,7 @@ fn decode_transport_header(
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn transcode<T: rasn::Decode + rasn::Encode>(
     input: &[u8],
     input_encoding_rules: EncodingRules,
@@ -735,7 +758,7 @@ fn transcode<T: rasn::Decode + rasn::Encode>(
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 fn to_ipv6_debug(ipv6: IPv6Header) -> String {
     format!(r#"{{"ipv6Debug":"{ipv6:?}"}}"#)
 }

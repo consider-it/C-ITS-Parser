@@ -1,14 +1,22 @@
+#[cfg(any(
+    all(target_arch = "wasm32", feature = "json"),
+    not(target_arch = "wasm32")
+))]
 use crate::{map_err_to_string, ItsMessage};
 #[cfg(not(target_arch = "wasm32"))]
 use crate::{EncodingRules, Packet};
+#[cfg(any(
+    all(target_arch = "wasm32", feature = "json"),
+    not(target_arch = "wasm32")
+))]
 use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 use crate::transport::encode::Encode as TpEncode;
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 use wasm_bindgen::prelude::*;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 pub type Encoded = js_sys::Uint8Array;
 #[cfg(not(target_arch = "wasm32"))]
 pub type Encoded = Vec<u8>;
@@ -141,7 +149,7 @@ impl ItsMessage<'_> {
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeDenm)]
 /// Encodes a DENM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -171,7 +179,7 @@ pub fn encode_denm(denm: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeCam)]
 /// Encodes a CAM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -192,7 +200,7 @@ pub fn encode_cam(cam: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeMapem)]
 /// Encodes a MAPEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -213,7 +221,7 @@ pub fn encode_mapem(mapem: &ItsMessage, version: u32) -> Result<Encoded, String>
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeSpatem)]
 /// Encodes a SPATEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -236,7 +244,7 @@ pub fn encode_spatem(spatem: &ItsMessage, version: u32) -> Result<Encoded, Strin
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeIvim)]
 /// Encodes a IVIM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -257,7 +265,7 @@ pub fn encode_ivim(ivim: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeSrem)]
 /// Encodes a SREM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -278,7 +286,7 @@ pub fn encode_srem(srem: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeCpm)]
 /// Encodes a CPM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -299,7 +307,7 @@ pub fn encode_cpm(cpm: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeSsem)]
 /// Encodes a SSEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
@@ -320,7 +328,7 @@ pub fn encode_ssem(ssem: &ItsMessage, version: u32) -> Result<Encoded, String> {
     Ok(Encoded::from(encoded.as_slice()))
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 fn optionally_encode_headers(
     gn_json: &Option<String>,
     tp_json: &Option<String>,
@@ -359,6 +367,10 @@ fn optionally_encode_headers(
     }
 }
 
+#[cfg(any(
+    all(target_arch = "wasm32", feature = "json"),
+    not(target_arch = "wasm32")
+))]
 fn fill_gn_and_encode(
     mut geonetworking: UnsecuredHeader,
     payload: &[u8],
@@ -393,7 +405,7 @@ fn fill_gn_and_encode(
         .map_err(map_err_to_string)
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 fn transcode_jer_to_uper<T: rasn::Decode + rasn::Encode>(
     input: &String,
 ) -> Result<Vec<u8>, String> {

@@ -8,12 +8,16 @@ pub mod standards;
 #[cfg(feature = "geo")]
 pub mod geo_utils;
 
+#[cfg(feature = "transport")]
 pub(crate) mod pcap;
+#[cfg(feature = "transport")]
 pub mod transport;
 
+#[cfg(feature = "transport")]
 pub use geonetworking::{Decode, Packet};
+#[cfg(feature = "transport")]
 pub use pcap::remove_pcap_headers;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 use transport::TransportHeader;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -134,7 +138,11 @@ pub enum EncodingRules {
     JER,
 }
 
-#[cfg(feature = "etsi")]
+#[cfg(any(
+    all(target_arch = "wasm32", feature = "etsi", feature = "json"),
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(test, feature = "etsi")
+))]
 impl EncodingRules {
     pub(crate) fn codec(self) -> rasn::Codec {
         match self {
@@ -145,7 +153,7 @@ impl EncodingRules {
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi"))]
 #[wasm_bindgen]
 impl ItsMessage {
     #[wasm_bindgen(constructor)]
@@ -164,6 +172,7 @@ impl ItsMessage {
     }
 }
 
+#[cfg(any(feature = "transport", feature = "etsi"))]
 pub(crate) fn map_err_to_string<E: core::fmt::Debug>(error: E) -> String {
     format!("{error:?}")
 }

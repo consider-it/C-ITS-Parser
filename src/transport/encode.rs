@@ -1,5 +1,6 @@
 use super::{BasicTransportAHeader, BasicTransportBHeader, Debug, IPv6Header};
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub enum EncodeError {
     Unsupported(String),
