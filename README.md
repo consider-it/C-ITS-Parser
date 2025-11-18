@@ -43,7 +43,7 @@ To test the Javascript API you need to install `wasm-pack` using cargo, with `ca
 Then the test website can be hosted by running one of these commands:
 
 ```shell
-wasm-pack test --chrome
+wasm-pack test --chrome --headless
 
 wasm-pack test --firefox
 

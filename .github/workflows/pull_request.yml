@@ -86,3 +86,43 @@ jobs:
         run: cargo test --all-features --verbose
       - name: wasm-pack test
         run: wasm-pack test --chrome --headless
+
+      - name: free some disk space
+        run: |
+          # Remove Java (JDKs)
+          sudo rm -rf /usr/lib/jvm
+
+          # Remove .NET SDKs
+          sudo rm -rf /usr/share/dotnet
+
+          # Remove Swift toolchain
+          sudo rm -rf /usr/share/swift
+
+          # Remove Haskell (GHC)
+          sudo rm -rf /usr/local/.ghcup
+
+          # Remove Julia
+          sudo rm -rf /usr/local/julia*
+
+          # Remove Android SDKs
+          sudo rm -rf /usr/local/lib/android
+
+          # Remove Azure CLI
+          sudo rm -rf /opt/az
+
+          # Remove PowerShell
+          sudo rm -rf /usr/local/share/powershell
+
+          # Remove CodeQL and other toolcaches
+          sudo rm -rf /opt/hostedtoolcache
+
+          docker system prune -af || true
+          docker builder prune -af || true
+          df -h
+
+      - name: cargo build important feature permutations
+        run: ./feat-permut.sh build
+      - name: cargo test important feature permutations
+        run: ./feat-permut.sh test
+      - name: wasm-pack test important feature permutations
+        run: ./feat-permut.sh wasm-test
