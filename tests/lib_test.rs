@@ -1,25 +1,46 @@
-use etsi_web::{de::decode, EncodingRules, Headers, ItsMessage};
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
+use etsi_web::de::decode;
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
+use etsi_web::ItsMessage;
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
+use etsi_web::{EncodingRules, Headers};
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 use wasm_bindgen_test::wasm_bindgen_test;
 #[cfg(target_arch = "wasm32")]
 wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
 use geonetworking::Encode;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
 use pretty_assertions::assert_eq;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 use xmltree::Element;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 use etsi_web::en::{
     encode_cam, encode_cpm, encode_denm, encode_ivim, encode_mapem, encode_spatem, encode_srem,
 };
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 use etsi_web::standards::ivim_2_2_1::ivim_pdu_descriptions::{
     DeltaLatitude, DeltaLongitude, DeltaPosition, DeltaPositions, IviLaneWidth, PolygonalLine,
     Segment,
 };
 
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
 const DENM: &[u8] = &[
     0x02, 0x01, 0xe0, 0xfd, 0x1d, 0x37, 0xe7, 0x46, 0x5a, 0xa8, 0xbc, 0x80, 0x06, 0x91, 0x0d, 0x64,
     0xc9, 0x04, 0x04, 0x43, 0x59, 0x32, 0x45, 0x9d, 0x59, 0x01, 0x92, 0x07, 0x13, 0x5f, 0x21, 0x42,
@@ -48,6 +69,11 @@ const DENM: &[u8] = &[
     0x70, 0x15, 0xd3, 0x19, 0x20, 0x57, 0x7d, 0xff, 0xf5, 0x80, 0x60, 0xd7, 0xc0, 0x01, 0x06, 0x42,
     0x04, 0x80, 0x60, 0x0c,
 ];
+
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
 const CAM: &[u8] = &[
     0x02, 0x02, 0xde, 0x14, 0x0c, 0xe5, 0xc7, 0xc0, 0x40, 0x5a, 0xb2, 0x3d, 0x82, 0xce, 0x27, 0x81,
     0xe9, 0xa2, 0x78, 0x27, 0x4b, 0xc6, 0x33, 0xfa, 0x54, 0x58, 0x7c, 0xa0, 0xa2, 0x7e, 0x83, 0x02,
@@ -60,6 +86,11 @@ const CAM: &[u8] = &[
     0x00, 0x06, 0xc6, 0x70, 0x00, 0xdf, 0x80, 0x8d, 0x5f, 0xde, 0x66, 0x27, 0x00, 0x07, 0x3c, 0x04,
     0x76, 0xfd, 0x67, 0x31, 0x9c, 0x00, 0x58, 0x60, 0x41, 0x37, 0xd3, 0x15, 0x89, 0xc0, 0x06, 0xdc,
 ];
+
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
 const MAPEM: &[u8] = &[
     0x02, 0x05, 0x00, 0x00, 0x30, 0x16, 0x08, 0x00, 0x03, 0x09, 0x4d, 0x83, 0x42, 0xfc, 0x9a, 0x94,
     0xef, 0xb2, 0x6b, 0x71, 0x93, 0x56, 0x0c, 0x6e, 0x32, 0x5c, 0xca, 0x00, 0x06, 0x13, 0x8a, 0x08,
@@ -96,6 +127,11 @@ const MAPEM: &[u8] = &[
     0x40, 0x50, 0xd0, 0x41, 0x46, 0x04, 0x08, 0x00, 0x00, 0x03, 0x68, 0x84, 0xde, 0x07, 0x50, 0x00,
     0x41, 0x32, 0x40, 0xc0, 0xa1, 0x30, 0x60, 0xe0,
 ];
+
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
 const SPATEM: &[u8] = &[
     0x02, 0x04, 0x00, 0x00, 0x30, 0x16, 0x00, 0x38, 0x4a, 0x6c, 0x1a, 0x17, 0xe4, 0xd4, 0xa7, 0x7d,
     0x93, 0x5b, 0x8c, 0x9a, 0xb0, 0x63, 0x71, 0x92, 0xe6, 0x50, 0x00, 0x30, 0x9c, 0x50, 0x40, 0x00,
@@ -111,6 +147,11 @@ const SPATEM: &[u8] = &[
     0x15, 0xc6, 0xd3, 0x86, 0xe3, 0xc6, 0xe1, 0x46, 0x01, 0x22, 0x80, 0xe2, 0xdf, 0xa5, 0xcd, 0x03,
     0x5b, 0x63, 0x45, 0x71, 0xad, 0xb1, 0xb1, 0xc1, 0xb0, 0xd1, 0x80,
 ];
+
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
 const IVIM: &[u8] = &[
     0x02, 0x06, 0x00, 0x12, 0x10, 0xdc, 0x82, 0x50, 0x00, 0x00, 0x00, 0x00, 0x88, 0x05, 0x58, 0xea,
     0xad, 0x57, 0x13, 0xd7, 0xa6, 0x4f, 0xff, 0xff, 0xfe, 0x11, 0xdb, 0xba, 0x1f, 0x08, 0xc0, 0xe1,
@@ -118,6 +159,11 @@ const IVIM: &[u8] = &[
     0xbc, 0x30, 0x78, 0x44, 0x40, 0x2f, 0xff, 0x24, 0x11, 0x2f, 0x01, 0x29, 0x45, 0x70, 0xea, 0xf0,
     0x81, 0x60, 0x00, 0x02, 0x00, 0x04, 0x08, 0x01, 0x4e,
 ];
+
+#[cfg(any(
+    all(not(target_arch = "wasm32"), feature = "etsi"),
+    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+))]
 const CPM: &[u8] = &[
     0x01, 0x0e, 0xa6, 0xc0, 0x52, 0x47, 0x7a, 0x3f, 0x70, 0x0b, 0x56, 0x40, 0x27, 0x01, 0xc4, 0xd7,
     0x81, 0x62, 0xb9, 0xeb, 0x9c, 0x00, 0x06, 0xce, 0xd2, 0x83, 0xa6, 0x3e, 0xd7, 0xd0, 0x0b, 0xfe,
@@ -160,7 +206,7 @@ const CPM: &[u8] = &[
     0xa7, 0xf0, 0xaf, 0x2c, 0x1a, 0x2f, 0xaf, 0x61, 0x3e, 0xe5, 0x0b, 0x12, 0x00, 0x37, 0x28, 0xd0,
 ];
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_wasm() {
     let expected_gn = r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}},"payload":[7,209,0,0,2,1,224,253,29,55,231,70,90,168,188,128,6,145,13,100,201,4,4,67,89,50,69,157,89,1,146,7,19,95,33,66,190,43,224,0,24,106,9,136,0,80,20,64,24,3,0,20,251,132,63,10,47,221,107,251,0,197,10,6,2,45,41,127,245,159,255,230,6,128,95,156,0,255,0,13,49,36,4,155,224,6,72,2,173,137,32,19,135,0,27,192,57,76,50,129,18,248,1,165,254,213,97,68,9,95,192,13,47,252,147,17,0,21,222,0,87,127,70,88,6,2,200,111,253,27,252,206,199,216,11,183,127,213,159,205,183,14,66,137,251,255,123,0,143,51,204,5,119,224,4,24,1,13,134,240,23,111,0,25,191,238,236,168,3,163,55,252,102,4,30,101,104,16,253,192,2,240,2,19,23,64,109,94,0,74,127,241,216,191,1,81,112,3,123,248,98,205,240,19,215,128,7,160,2,22,74,0,31,219,255,210,255,248,178,170,2,112,223,251,152,0,181,142,112,15,158,255,179,63,255,236,75,129,61,119,255,45,255,179,98,232,10,249,192,0,144,12,27,18,64,120,77,255,18,128,129,25,240,3,129,111,247,244,1,204,200,40,66,63,127,250,223,255,230,2,192,83,28,2,120,255,10,177,16,6,113,223,252,231,255,153,159,160,29,174,255,244,64,23,44,200,128,199,248,0,26,0,238,99,216,13,10,191,254,15,253,202,236,32,147,213,255,75,127,255,216,151,13,26,176,5,51,253,100,201,184,12,29,128,20,95,227,182,70,64,84,92,2,60,255,146,47,238,8,131,224,8,24,1,69,142,32,19,135,0,82,192,106,203,114,1,93,248,0,161,255,247,99,136,6,113,192,29,112,21,211,25,32,87,125,255,245,128,96,215,192,1,6,66,4,128,96,12]}}"#;
@@ -189,7 +235,7 @@ fn round_trip_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_denm_wasm() {
     let json = ItsMessage {
@@ -214,7 +260,7 @@ fn round_trip_denm_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_cam_wasm() {
     let json = ItsMessage {
@@ -239,7 +285,7 @@ fn round_trip_cam_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_mapem_wasm() {
     let json = ItsMessage {
@@ -264,7 +310,7 @@ fn round_trip_mapem_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_spatem_wasm() {
     let json = ItsMessage {
@@ -289,7 +335,7 @@ fn round_trip_spatem_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_ivim_wasm() {
     let json = ItsMessage {
@@ -314,7 +360,7 @@ fn round_trip_ivim_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_srem_wasm() {
     let json = ItsMessage {
@@ -336,7 +382,7 @@ fn round_trip_srem_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_cpm_wasm() {
     let json = ItsMessage {
@@ -360,7 +406,7 @@ fn round_trip_cpm_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn decode_pcap_frame_wasm() {
     let exp_geonetworking = r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":5,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[true,false,false,false,false,false,false,false],"payload_length":67,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"PassengerCar","reserved":[false,false,false,false,false,false,false,false,false,false],"address":[138,176,248,168,162,37]},"timestamp":1151018751,"latitude":535505166,"longitude":99353789,"position_accuracy":true,"speed":14,"heading":724},"media_dependent_data":[0,0,0,0]}},"payload":[7,209,0,0,2,2,156,107,199,147,38,255,64,90,178,2,65,206,38,186,215,161,134,24,96,0,54,204,208,72,45,79,160,5,168,130,152,138,127,51,255,1,255,250,0,40,51,0,0,44,2,121,2,217,173,240,3,121,96,26,104,51,205,99,240,67,44]}}"#;
@@ -387,7 +433,7 @@ fn decode_pcap_frame_wasm() {
     );
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn strip_headers_frame_wasm() {
     let expected = ItsMessage {
@@ -420,7 +466,7 @@ fn strip_headers_frame_wasm() {
     );
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
 #[test]
 fn decode_pcap_frame() {
     let exp_geonetworking = r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":5,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[true,false,false,false,false,false,false,false],"payload_length":67,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"PassengerCar","reserved":[false,false,false,false,false,false,false,false,false,false],"address":[138,176,248,168,162,37]},"timestamp":1151018751,"latitude":535505166,"longitude":99353789,"position_accuracy":true,"speed":14,"heading":724},"media_dependent_data":[0,0,0,0]}},"payload":[7,209,0,0,2,2,156,107,199,147,38,255,64,90,178,2,65,206,38,186,215,161,134,24,96,0,54,204,208,72,45,79,160,5,168,130,152,138,127,51,255,1,255,250,0,40,51,0,0,44,2,121,2,217,173,240,3,121,96,26,104,51,205,99,240,67,44]}}"#;
@@ -462,7 +508,7 @@ fn decode_pcap_frame() {
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 #[test]
 fn round_trip() {
     let messages = [DENM, CAM, MAPEM, SPATEM, IVIM, CPM];
@@ -483,7 +529,7 @@ fn round_trip() {
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 #[test]
 fn segment() {
     let expected = Element::parse(include_str!("files/segment.xml").as_bytes()).unwrap();
@@ -499,7 +545,7 @@ fn segment() {
     assert_eq!(expected, re_encoded);
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 #[test]
 fn ivim_xer_impl() {
     let expected = Element::parse(include_str!("files/ivim_xer_impl_ivi.xml").as_bytes()).unwrap();
@@ -520,7 +566,7 @@ fn ivim_xer_impl() {
     pretty_assertions::assert_eq!(expected, re_encoded);
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 #[test]
 fn xer_to_xer() {
     let expected_bytes = include_str!("files/xer_to_xer_ivi.xml").as_bytes();
@@ -531,7 +577,7 @@ fn xer_to_xer() {
     assert_eq!(expected_xml, re_encoded);
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 #[test]
 fn xer_to_uper() {
     let expected = &[

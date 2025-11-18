@@ -21,6 +21,7 @@ impl From<crate::standards::is_1_3_1::etsi_schema::Position3D> for geo_types::Po
 }
 
 /// convert ETSI ReferencePosition to [`geo_types::Point`]
+#[cfg(feature = "etsi")]
 macro_rules! refpos_to_point {
     ($t:ty) => {
         impl From<$t> for geo_types::Point {
