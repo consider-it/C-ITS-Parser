@@ -85,4 +85,4 @@ jobs:
       - name: cargo test
         run: cargo test --all-features --verbose
       - name: wasm-pack test
-        run: wasm-pack test --node
+        run: wasm-pack test --chrome --headless
