@@ -1,0 +1,44 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_TERM_VERBOSE: true
+
+jobs:
+  publish:
+    name: NPM publish
+    runs-on:
+      - ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Give GitHub Actions access to private repos
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
+
+      - name: Install wasm-pack
+        run: |
+          cargo install wasm-pack
+
+      - name: Build for web and publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          wasm-pack build --release --target web
+          ./scripts/publish.sh
+      - name: Build for node and publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          wasm-pack build --release --target nodejs
+          ./scripts/publish.sh '-node'

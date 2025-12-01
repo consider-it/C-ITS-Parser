@@ -130,3 +130,20 @@ Then regenerate the code by running `./scripts/recompile-asn1.sh`.
 
 The source files are generated without any formatting, so the script is running `rustfmt` on these file.
 Make sure to have the nightly version installed with rust edition 2024.
+
+## Publish the NPM package
+
+We publish our internal NPM packages to the GitHub package registry.
+To do it manually:
+
+```shell
+export NODE_AUTH_TOKEN="your_PAT"
+
+# build and publish standard version
+rm -r ./pkg/ && wasm-pack build --release --target web
+./scripts/publish.sh
+
+# build and publish nodejs version
+rm -r ./pkg/ && wasm-pack build --release --target nodejs
+./scripts/publish.sh '-node'
+```
