@@ -244,3 +244,20 @@ macro_rules! angle_to_deg {
 
 angle_to_deg!(is_1_3_1::etsi_schema::CartesianAngleValue, 3601);
 angle_to_deg!(is_1_3_1::etsi_schema::WGS84AngleValue, 3601);
+
+// convenience getter
+impl is_1_3_1::etsi_schema::SpeedLimitList {
+    /// Extracts a certain speed limit in m/s, if existing
+    pub fn get_speed_limit_mps(
+        &self,
+        limit_type: is_1_3_1::etsi_schema::SpeedLimitType,
+    ) -> Option<f32> {
+        self.0.iter().find_map(|item| {
+            if item.r_type == limit_type {
+                Some(item.speed.as_mps())
+            } else {
+                None
+            }
+        })
+    }
+}
