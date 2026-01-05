@@ -176,8 +176,10 @@ macro_rules! etsi_to_mps {
     };
 }
 
-etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValueExtended, i16, 100., 16_383);
-etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValue, u16, 100., 16_383);
+etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValueExtended, i16, 100., 16_383); // Unit: 0,01 m/s
+etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValue, u16, 100., 16_383); // Unit: 0,01 m/s
+
+etsi_to_mps!(is_1_3_1::etsi_schema::Velocity, u16, 50., 8191); // Unit: 0.02 m/s
 
 /// Create conversions for ETSI type `t` with some "unavailable" value
 macro_rules! angle_to_deg {
