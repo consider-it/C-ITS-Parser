@@ -19,16 +19,16 @@ pub mod transport;
 pub use geonetworking::{Decode, Packet};
 #[cfg(feature = "transport")]
 pub use pcap::remove_pcap_headers;
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
+#[cfg(feature = "etsi")]
 use transport::TransportHeader;
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", any(feature = "json", feature = "etsi")))]
 use wasm_bindgen::prelude::*;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(getter_with_clone)]
 #[derive(Debug, Clone, PartialEq, Default)]
 /// Wrapper for the stringified JSON of headers and ITS ETSI message
-pub struct ItsMessage {
+pub struct JsonItsMessage {
     /// Optional GeoNetworking header, encoded as stringified JSON
     pub geonetworking: Option<String>,
     /// Optional transport header, encoded as stringified JSON
@@ -61,8 +61,26 @@ pub struct ItsMessage {
     pub message_type: u8,
 }
 
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
+#[wasm_bindgen]
+impl JsonItsMessage {
+    #[wasm_bindgen(constructor)]
+    pub fn from(
+        its: Option<String>,
+        geonetworking: Option<String>,
+        transport: Option<String>,
+        message_type: u8,
+    ) -> Self {
+        Self {
+            its,
+            geonetworking,
+            transport,
+            message_type,
+        }
+    }
+}
+
 #[cfg(feature = "etsi")]
-#[cfg(not(target_arch = "wasm32"))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum ItsMessage<'a> {
     DenmV1 {
@@ -141,8 +159,8 @@ pub enum EncodingRules {
 }
 
 #[cfg(any(
+    feature = "etsi",
     all(target_arch = "wasm32", feature = "etsi", feature = "json"),
-    all(not(target_arch = "wasm32"), feature = "etsi"),
     all(test, feature = "etsi")
 ))]
 impl EncodingRules {
@@ -151,25 +169,6 @@ impl EncodingRules {
             EncodingRules::UPER => rasn::Codec::Uper,
             EncodingRules::XER => rasn::Codec::Xer,
             EncodingRules::JER => rasn::Codec::Jer,
-        }
-    }
-}
-
-#[cfg(all(target_arch = "wasm32", feature = "etsi"))]
-#[wasm_bindgen]
-impl ItsMessage {
-    #[wasm_bindgen(constructor)]
-    pub fn from(
-        its: Option<String>,
-        geonetworking: Option<String>,
-        transport: Option<String>,
-        message_type: u8,
-    ) -> ItsMessage {
-        ItsMessage {
-            its,
-            geonetworking,
-            transport,
-            message_type,
         }
     }
 }
