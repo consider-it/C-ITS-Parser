@@ -2,10 +2,7 @@
 
 #[cfg(any(feature = "transport", feature = "etsi"))]
 use crate::map_err_to_string;
-#[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
-))]
+#[cfg(feature = "etsi")]
 use crate::pcap::remove_pcap_headers;
 #[cfg(feature = "transport")]
 use crate::transport::TransportHeader;
@@ -13,13 +10,12 @@ use crate::transport::TransportHeader;
 use crate::transport::{
     decode::Decode as TransportDecode, BasicTransportAHeader, BasicTransportBHeader, IPv6Header,
 };
-#[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json"),
-))]
+#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+use crate::JsonItsMessage;
+#[cfg(feature = "etsi")]
 use crate::{standards, Headers, ItsMessage};
 #[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
+    feature = "etsi",
     all(target_arch = "wasm32", feature = "etsi", feature = "json"),
     all(test, feature = "etsi")
 ))]
@@ -29,7 +25,7 @@ use geonetworking::Encode;
 #[cfg(feature = "transport")]
 use geonetworking::{Decode, NextAfterCommon, Packet};
 #[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
+    feature = "etsi",
     all(target_arch = "wasm32", feature = "etsi", feature = "json"),
     all(test, feature = "etsi")
 ))]
@@ -53,7 +49,6 @@ macro_rules! btp {
 }
 
 #[cfg(feature = "etsi")]
-#[cfg(not(target_arch = "wasm32"))]
 #[allow(clippy::too_many_lines)]
 /// Decodes an ASN.1 message with headers. Supported encoding rules are UPER, JER, and XER. JSON and XML strings are expected as UTF8 slices.
 /// ### Params
@@ -221,13 +216,13 @@ pub fn decode_gn_btp_headers(
 /// ### Params
 ///  - `message`: binary input containing the ITS message
 ///  - `headersPresent`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
-///  - `outputEncodingRules`: ASN.1 encoding rules that will be used for re-encoding the message in the `ItsMessage`'s `its` field. (UPER output will be rendered as a UTF-8 hex string)
+///  - `outputEncodingRules`: ASN.1 encoding rules that will be used for re-encoding the message in the `JsonItsMessage`'s `its` field. (UPER output will be rendered as a UTF-8 hex string)
 /// Throws string error on decoding errors.
-pub fn decode(
+pub fn decode_to(
     message: &[u8],
     headersPresent: Headers,
     outputEncodingRules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(message, headersPresent)?;
     let (input_encoding_rules, protocol_version, message_type) = message_type(input)?;
     let (msg_ty, decoded) = match (message_type, protocol_version) {
@@ -364,8 +359,8 @@ pub fn decode(
 }
 
 #[cfg(any(
+    feature = "etsi",
     all(target_arch = "wasm32", feature = "etsi", feature = "json"),
-    all(not(target_arch = "wasm32"), feature = "etsi"),
     all(test, feature = "etsi")
 ))]
 fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
@@ -453,7 +448,7 @@ fn decode_denm(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(denm, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -491,7 +486,7 @@ fn decode_cam(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cam, headers_present)?;
     etsi_json.its = match version {
         None | Some(141) => Some(
@@ -514,7 +509,7 @@ fn decode_mapem(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(mapem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::MAPEM>(
@@ -535,7 +530,7 @@ fn decode_spatem(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(spatem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SPATEM>(
@@ -558,7 +553,7 @@ fn decode_ivim(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ivim, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -594,7 +589,7 @@ fn decode_srem(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(srem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SREM>(
@@ -615,7 +610,7 @@ fn decode_cpm(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cpm, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -651,7 +646,7 @@ fn decode_ssem(
     headers_present: Headers,
     input_encoding_rules: EncodingRules,
     output_encoding_rules: EncodingRules,
-) -> Result<ItsMessage, String> {
+) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ssem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SSEM>(
@@ -669,9 +664,9 @@ fn decode_ssem(
 pub fn optionally_decode_headers(
     input: &[u8],
     headers: Headers,
-) -> Result<(&[u8], ItsMessage), String> {
+) -> Result<(&[u8], JsonItsMessage), String> {
     match headers {
-        Headers::None => Ok((input, ItsMessage::default())),
+        Headers::None => Ok((input, JsonItsMessage::default())),
         Headers::GnBtp => transcode_gn_tp_to_json(input),
         Headers::RadioTap802LlcGnBtp => {
             remove_pcap_headers(input).and_then(transcode_gn_tp_to_json)
@@ -680,12 +675,12 @@ pub fn optionally_decode_headers(
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
-fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], ItsMessage), String> {
+fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], JsonItsMessage), String> {
     decode_geonetworking_header(input).and_then(|(remaining, gn_json, next_header)| {
         decode_transport_header(remaining, next_header).map(|(rem, tp)| {
             (
                 rem,
-                ItsMessage {
+                JsonItsMessage {
                     geonetworking: Some(gn_json),
                     transport: Some(tp),
                     ..Default::default()
