@@ -149,6 +149,11 @@ pub mod cdd_1_3_1_1 {
     };
 
     // used in CAM 1.4.1 via BasicVehicleContainerHighFrequency
+    impl Default for AccelerationControl {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl AccelerationControl {
         pub fn get_brake_pedal_engaged(&self) -> bool {
             self.0[0]
@@ -225,6 +230,11 @@ pub mod cdd_1_3_1_1 {
     }
 
     // used in CAM 1.4.1 via BasicVehicleContainerLowFrequency
+    impl Default for ExteriorLights {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl ExteriorLights {
         pub fn get_low_beam_headlights_on(&self) -> bool {
             self.0[0]
@@ -310,6 +320,11 @@ pub mod cdd_1_3_1_1 {
     }
 
     // used in CAM 1.4.1 via SpecialVehicleContainer -> EmergencyContainer
+    impl Default for EmergencyPriority {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl EmergencyPriority {
         pub fn get_request_for_right_of_way(&self) -> bool {
             self.0[0]
@@ -337,6 +352,11 @@ pub mod cdd_1_3_1_1 {
     }
 
     // used in CAM 1.4.1 via SpecialVehicleContainer -> (multiple containers)
+    impl Default for LightBarSirenInUse {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LightBarSirenInUse {
         pub fn get_light_bar_activated(&self) -> bool {
             self.0[0]
@@ -364,6 +384,11 @@ pub mod cdd_1_3_1_1 {
     }
 
     // used in CAM 1.4.1 via SpecialVehicleContainer -> SpecialTransportContainer
+    impl Default for SpecialTransportType {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl SpecialTransportType {
         pub fn get_heavy_load(&self) -> bool {
             self.0[0]
@@ -424,6 +449,11 @@ pub mod cdd_2_2_1 {
 pub mod denm_2_1_1 {
     use crate::standards::denm_2_1_1::etsi_its_cdd::EnergyStorageType;
 
+    impl Default for EnergyStorageType {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl EnergyStorageType {
         pub fn get_hydrogen_storage(&self) -> bool {
             self.0[0]
@@ -541,6 +571,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneSharing {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneSharing {
         pub fn get_overlapping_lane_description_provided(&self) -> bool {
             self.0[0]
@@ -643,6 +678,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for AllowedManeuvers {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl AllowedManeuvers {
         pub fn get_maneuver_straight_allowed(&self) -> bool {
             self.0[0]
@@ -763,6 +803,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for IntersectionStatusObject {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl IntersectionStatusObject {
         pub fn get_manual_control_is_enabled(&self) -> bool {
             self.0[0]
@@ -901,6 +946,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneAttributesBarrier {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneAttributesBarrier {
         pub fn get_median_revocable_lane(&self) -> bool {
             self.0[0]
@@ -1003,6 +1053,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneAttributesBike {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneAttributesBike {
         pub fn get_bike_revocable_lane(&self) -> bool {
             self.0[0]
@@ -1078,6 +1133,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneAttributesCrosswalk {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneAttributesCrosswalk {
         pub fn get_crosswalk_revocable_lane(&self) -> bool {
             self.0[0]
@@ -1171,6 +1231,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneAttributesParking {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneAttributesParking {
         pub fn get_parking_revocable_lane(&self) -> bool {
             self.0[0]
@@ -1246,6 +1311,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneAttributesSidewalk {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneAttributesSidewalk {
         pub fn get_sidewalk_revocable_lane(&self) -> bool {
             self.0[0]
@@ -1294,6 +1364,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneAttributesStriping {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneAttributesStriping {
         pub fn get_stripe_to_connecting_lanes_revocable_lane(&self) -> bool {
             self.0[0]
@@ -1360,6 +1435,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneAttributesTrackedVehicle {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneAttributesTrackedVehicle {
         pub fn get_spec_revocable_lane(&self) -> bool {
             self.0[0]
@@ -1417,6 +1497,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneAttributesVehicle {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneAttributesVehicle {
         pub fn get_is_vehicle_revocable_lane(&self) -> bool {
             self.0[0]
@@ -1501,6 +1586,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for LaneDirection {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl LaneDirection {
         pub fn get_ingress_path(&self) -> bool {
             self.0[0]
@@ -1527,6 +1617,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for TransitVehicleStatus {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl TransitVehicleStatus {
         pub fn get_loading(&self) -> bool {
             self.0[0]
@@ -1584,6 +1679,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for PMD {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl PMD {
         pub fn get_national_holiday(&self) -> bool {
             self.0[0]
@@ -1632,6 +1732,11 @@ pub mod is_1_3_1 {
         }
     }
 
+    impl Default for DayOfWeek {
+        fn default() -> Self {
+            Self(Default::default())
+        }
+    }
     impl DayOfWeek {
         pub fn get_unused(&self) -> bool {
             self.0[0]
