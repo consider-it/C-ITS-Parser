@@ -29,6 +29,13 @@ runTest () {
   done
 }
 
+runWasmBuild () {
+  for feat in "${features[@]}"; do
+    echo "wasm-pack build for $feat ..."
+    wasm-pack build --target nodejs --no-default-features -F $feat
+  done
+}
+
 runWasmTest () {
   for feat in "${features[@]}"; do
     echo "wasm-pack test for $feat ..."
@@ -57,12 +64,16 @@ test)
 wasm-test)
   runWasmTest
   ;;
+wasm-build)
+  runWasmBuild
+  ;;
 all)
   runBuild
   runClippy
   runTest
+  runWasmBuild
   runWasmTest
   ;;
 *)
-  echo "Usage: $0 [build | clippy | test | wasm-test | all]"
+  echo "Usage: $0 [build | clippy | test | wasm-test | wasm-build | all]"
 esac

@@ -122,5 +122,7 @@ jobs:
         run: ./feat-permut.sh build
       - name: cargo test important feature permutations
         run: ./feat-permut.sh test
+      - name: wasm-pack build important feature permutations
+        run: ./feat-permut.sh wasm-build
       - name: wasm-pack test important feature permutations
         run: ./feat-permut.sh wasm-test
