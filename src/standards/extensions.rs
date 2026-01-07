@@ -1,8 +1,83 @@
-// Copyright (c) 2024 consider it GmbH
+// Copyright (c) 2026 consider it GmbH
 
 //! Manual implementation of things missing from code generated from ASN.1
 //!
 //! - rasn-compiler v0.14.3 does not generate a way to access named BIT STRING bits
+
+#[repr(u8)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+pub enum ItsMessageId {
+    Denm = 1,
+    Cam = 2,
+    Poi = 3,
+    Spatem = 4,
+    Mapem = 5,
+    Ivim = 6,
+    EvRsr = 7,
+    Tistpgtransaction = 8,
+    Srem = 9,
+    Ssem = 10,
+    Evcsn = 11,
+    Saem = 12,
+    Rtcmem = 13,
+    Cpm = 14,
+    Imzm = 15,
+    Vam = 16,
+    Dsm = 17,
+    Pcim = 18,
+    Pcvm = 19,
+    Mcm = 20,
+    Pam = 21,
+}
+
+impl ItsMessageId {
+    pub fn as_u8(self) -> u8 {
+        self as u8
+    }
+}
+
+macro_rules! itsmessageid_conv {
+    ($t:ty) => {
+        impl From<crate::standards::extensions::ItsMessageId> for $t {
+            fn from(value: crate::standards::extensions::ItsMessageId) -> Self {
+                Self(value as u8)
+            }
+        }
+
+        impl TryInto<crate::standards::extensions::ItsMessageId> for $t {
+            type Error = String;
+
+            fn try_into(self) -> Result<crate::standards::extensions::ItsMessageId, Self::Error> {
+                match self.0 {
+                    1 => Ok(crate::standards::extensions::ItsMessageId::Denm),
+                    2 => Ok(crate::standards::extensions::ItsMessageId::Cam),
+                    3 => Ok(crate::standards::extensions::ItsMessageId::Poi),
+                    4 => Ok(crate::standards::extensions::ItsMessageId::Spatem),
+                    5 => Ok(crate::standards::extensions::ItsMessageId::Mapem),
+                    6 => Ok(crate::standards::extensions::ItsMessageId::Ivim),
+                    7 => Ok(crate::standards::extensions::ItsMessageId::EvRsr),
+                    8 => Ok(crate::standards::extensions::ItsMessageId::Tistpgtransaction),
+                    9 => Ok(crate::standards::extensions::ItsMessageId::Srem),
+                    10 => Ok(crate::standards::extensions::ItsMessageId::Ssem),
+                    11 => Ok(crate::standards::extensions::ItsMessageId::Evcsn),
+                    12 => Ok(crate::standards::extensions::ItsMessageId::Saem),
+                    13 => Ok(crate::standards::extensions::ItsMessageId::Rtcmem),
+                    14 => Ok(crate::standards::extensions::ItsMessageId::Cpm),
+                    15 => Ok(crate::standards::extensions::ItsMessageId::Imzm),
+                    16 => Ok(crate::standards::extensions::ItsMessageId::Vam),
+                    17 => Ok(crate::standards::extensions::ItsMessageId::Dsm),
+                    18 => Ok(crate::standards::extensions::ItsMessageId::Pcim),
+                    19 => Ok(crate::standards::extensions::ItsMessageId::Pcvm),
+                    20 => Ok(crate::standards::extensions::ItsMessageId::Mcm),
+                    21 => Ok(crate::standards::extensions::ItsMessageId::Pam),
+                    _ => Err(format!("MessageId {} not a known value", self.0)),
+                }
+            }
+        }
+    };
+}
 
 pub mod cdd_1_3_1_1 {
     use crate::standards::cdd_1_3_1_1::its_container::{
@@ -275,6 +350,10 @@ pub mod cdd_1_3_1_1 {
     }
 }
 
+pub mod cdd_2_2_1 {
+    itsmessageid_conv!(crate::standards::cdd_2_2_1::etsi_its_cdd::MessageId);
+}
+
 pub mod denm_2_1_1 {
     use crate::standards::denm_2_1_1::etsi_its_cdd::EnergyStorageType;
 
@@ -352,6 +431,8 @@ pub mod denm_2_1_1 {
             write!(f, "{}", items.join(", "))
         }
     }
+
+    itsmessageid_conv!(crate::standards::denm_2_1_1::etsi_its_cdd::MessageId);
 }
 
 pub mod is_1_3_1 {
