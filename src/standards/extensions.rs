@@ -535,6 +535,8 @@ pub mod denm_2_1_1 {
 }
 
 pub mod is_1_3_1 {
+    use rasn::types::Ia5String;
+
     use crate::standards::is_1_3_1::etsi_schema::{
         AllowedManeuvers, DayOfWeek, IntersectionStatusObject, LaneAttributes,
         LaneAttributesBarrier, LaneAttributesBike, LaneAttributesCrosswalk, LaneAttributesParking,
@@ -1822,6 +1824,17 @@ pub mod is_1_3_1 {
     }
 
     itsstationtype_conv!(crate::standards::is_1_3_1::etsi_schema::StationType);
+
+    impl TryFrom<String> for crate::standards::is_1_3_1::etsi_schema::DescriptiveName {
+        type Error = String;
+
+        fn try_from(value: String) -> Result<Self, Self::Error> {
+            Ok(Self(
+                Ia5String::from_iso646_bytes(value.as_bytes())
+                    .map_err(|err| format!("Failed to create DescriptiveName: {err}"))?,
+            ))
+        }
+    }
 }
 
 mod ivim_2_2_1 {
