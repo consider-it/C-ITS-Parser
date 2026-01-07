@@ -79,6 +79,69 @@ macro_rules! itsmessageid_conv {
     };
 }
 
+#[repr(u8)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+pub enum ItsStationType {
+    Unknown = 0,
+    Pedestrian = 1,
+    Cyclist = 2,
+    Moped = 3,
+    Motorcycle = 4,
+    Passengercar = 5,
+    Bus = 6,
+    Lighttruck = 7,
+    Heavytruck = 8,
+    Trailer = 9,
+    Specialvehicles = 10,
+    Tram = 11,
+    LightVruVehicle = 12,
+    Animal = 13,
+    Roadsideunit = 15,
+}
+
+impl ItsStationType {
+    pub fn as_u8(self) -> u8 {
+        self as u8
+    }
+}
+
+macro_rules! itsstationtype_conv {
+    ($t:ty) => {
+        impl From<crate::standards::extensions::ItsStationType> for $t {
+            fn from(value: crate::standards::extensions::ItsStationType) -> Self {
+                Self(value as u8)
+            }
+        }
+
+        impl TryInto<crate::standards::extensions::ItsStationType> for $t {
+            type Error = String;
+
+            fn try_into(self) -> Result<crate::standards::extensions::ItsStationType, Self::Error> {
+                match self.0 {
+                    0 => Ok(crate::standards::extensions::ItsStationType::Unknown),
+                    1 => Ok(crate::standards::extensions::ItsStationType::Pedestrian),
+                    2 => Ok(crate::standards::extensions::ItsStationType::Cyclist),
+                    3 => Ok(crate::standards::extensions::ItsStationType::Moped),
+                    4 => Ok(crate::standards::extensions::ItsStationType::Motorcycle),
+                    5 => Ok(crate::standards::extensions::ItsStationType::Passengercar),
+                    6 => Ok(crate::standards::extensions::ItsStationType::Bus),
+                    7 => Ok(crate::standards::extensions::ItsStationType::Lighttruck),
+                    8 => Ok(crate::standards::extensions::ItsStationType::Heavytruck),
+                    9 => Ok(crate::standards::extensions::ItsStationType::Trailer),
+                    10 => Ok(crate::standards::extensions::ItsStationType::Specialvehicles),
+                    11 => Ok(crate::standards::extensions::ItsStationType::Tram),
+                    12 => Ok(crate::standards::extensions::ItsStationType::LightVruVehicle),
+                    13 => Ok(crate::standards::extensions::ItsStationType::Animal),
+                    15 => Ok(crate::standards::extensions::ItsStationType::Roadsideunit),
+                    _ => Err(format!("StationType {} not a known value", self.0)),
+                }
+            }
+        }
+    };
+}
+
 pub mod cdd_1_3_1_1 {
     use crate::standards::cdd_1_3_1_1::its_container::{
         AccelerationControl, EmergencyPriority, ExteriorLights, LightBarSirenInUse,
@@ -348,10 +411,14 @@ pub mod cdd_1_3_1_1 {
             write!(f, "{}", items.join(", "))
         }
     }
+
+    itsstationtype_conv!(crate::standards::cdd_1_3_1_1::its_container::StationType);
 }
 
 pub mod cdd_2_2_1 {
     itsmessageid_conv!(crate::standards::cdd_2_2_1::etsi_its_cdd::MessageId);
+
+    itsstationtype_conv!(crate::standards::cdd_2_2_1::etsi_its_cdd::StationType);
 }
 
 pub mod denm_2_1_1 {
@@ -433,6 +500,8 @@ pub mod denm_2_1_1 {
     }
 
     itsmessageid_conv!(crate::standards::denm_2_1_1::etsi_its_cdd::MessageId);
+
+    itsstationtype_conv!(crate::standards::denm_2_1_1::etsi_its_cdd::StationType);
 }
 
 pub mod is_1_3_1 {
@@ -1646,4 +1715,10 @@ pub mod is_1_3_1 {
             write!(f, "{}", items.join(", "))
         }
     }
+
+    itsstationtype_conv!(crate::standards::is_1_3_1::etsi_schema::StationType);
+}
+
+mod ivim_2_2_1 {
+    itsstationtype_conv!(crate::standards::ivim_2_2_1::ivim_pdu_descriptions::StationType);
 }
