@@ -181,14 +181,14 @@ etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValue, u16, 100., 16_383); // Unit: 0,0
 
 etsi_to_mps!(is_1_3_1::etsi_schema::Velocity, u16, 50., 8191); // Unit: 0.02 m/s
 
-/// Create conversions for ETSI type `t` with some "unavailable" value
+/// Create conversions for ETSI type `t` with conversion factor `conv` and some "unavailable" value
 macro_rules! angle_to_deg {
-    ($t:ty, $unavailable:expr) => {
+    ($t:ty, $conv:expr, $unavailable:expr) => {
         impl $t {
             /// convert ETSI WGS84AngleValue/ CartesianAngleValue to degrees
             #[must_use]
             pub fn as_deg(&self) -> f32 {
-                f32::from(self.0) / 10.
+                f32::from(self.0) / $conv
             }
 
             /// create ETSI WGS84AngleValue/ CartesianAngleValue from degrees
@@ -199,7 +199,7 @@ macro_rules! angle_to_deg {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
-                let etsi_val = (value * 10.) as u16;
+                let etsi_val = (value * $conv) as u16;
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
@@ -242,8 +242,131 @@ macro_rules! angle_to_deg {
     };
 }
 
-angle_to_deg!(is_1_3_1::etsi_schema::CartesianAngleValue, 3601);
-angle_to_deg!(is_1_3_1::etsi_schema::WGS84AngleValue, 3601);
+angle_to_deg!(is_1_3_1::etsi_schema::CartesianAngleValue, 10., 3601); // Unit: 0,1 degrees
+angle_to_deg!(is_1_3_1::etsi_schema::WGS84AngleValue, 10., 3601); // Unit: 0,1 degrees
+angle_to_deg!(is_1_3_1::etsi_schema::Angle, 80., 28800); // Unit: 0.0125 degrees
+
+// DeltaTime: unit 10 seconds, clamping to -121 for <-20 minutes and +120 for >+20 minutes, -122 for unavailable
+impl is_1_3_1::etsi_schema::DeltaTime {
+    /// convert ETSI DeltaTime to seconds
+    #[must_use]
+    pub fn as_sec(&self) -> i16 {
+        i16::from(self.0) * 10
+    }
+
+    /// create ETSI DeltaTime from seconds, clamping at min. and max. bounds
+    pub fn from_sec(value: i16) -> Self {
+        #[allow(clippy::cast_possible_truncation)]
+        let etsi_val = (value / 10) as i8;
+
+        Self(etsi_val.clamp(-121, 120))
+    }
+
+    /// create ETSI DeltaTime with "unavailable" value
+    pub fn unavailable() -> Self {
+        Self(-122)
+    }
+
+    /// determines if the ETSI value is special "unavailable" value
+    pub fn is_unavailable(&self) -> bool {
+        self.0 == -122
+    }
+}
+
+impl From<&is_1_3_1::etsi_schema::DeltaTime> for i16 {
+    fn from(other: &is_1_3_1::etsi_schema::DeltaTime) -> i16 {
+        other.as_sec()
+    }
+}
+impl From<is_1_3_1::etsi_schema::DeltaTime> for i16 {
+    fn from(other: is_1_3_1::etsi_schema::DeltaTime) -> i16 {
+        other.as_sec()
+    }
+}
+
+// DSecond: unit milliseconds, 65535 for unavailable
+impl is_1_3_1::etsi_schema::DSecond {
+    /// convert ETSI DeltaTime to milliseconds
+    #[must_use]
+    pub fn as_millis(&self) -> u16 {
+        self.0
+    }
+
+    /// create ETSI DSecond from milliseconds
+    ///
+    /// # Errors
+    /// human-readable string when input value is out of bounds
+    pub fn from_millis(value: u16) -> Result<Self, String> {
+        use rasn::AsnType;
+
+        if let Some(constraints) = Self::CONSTRAINTS.value() {
+            if !constraints.constraint.in_bound(&value) {
+                return Err(format!("Value out of bounds"));
+            }
+        }
+
+        Ok(Self(value))
+    }
+
+    /// create ETSI DSecond with "unavailable" value
+    pub fn unavailable() -> Self {
+        Self(65535)
+    }
+
+    /// determines if the ETSI value is special "unavailable" value
+    pub fn is_unavailable(&self) -> bool {
+        self.0 == 65535
+    }
+}
+
+impl From<&is_1_3_1::etsi_schema::DSecond> for u16 {
+    fn from(other: &is_1_3_1::etsi_schema::DSecond) -> u16 {
+        other.as_millis()
+    }
+}
+impl From<is_1_3_1::etsi_schema::DSecond> for u16 {
+    fn from(other: is_1_3_1::etsi_schema::DSecond) -> u16 {
+        other.as_millis()
+    }
+}
+
+// MinuteOfTheYear: unit minute, 527040 for invalid
+impl is_1_3_1::etsi_schema::MinuteOfTheYear {
+    /// create ETSI MinuteOfTheYear with "invalid" value
+    pub fn invalid() -> Self {
+        Self(527040)
+    }
+
+    /// determines if the ETSI value is special "invalid" value
+    pub fn is_invalid(&self) -> bool {
+        self.0 == 527040
+    }
+}
+
+// MsgCount 0..127
+impl crate::standards::is_1_3_1::etsi_schema::MsgCount {
+    pub fn increment(&self) -> Self {
+        Self((self.0 + 1) % 128)
+    }
+}
+impl From<u8> for is_1_3_1::etsi_schema::MsgCount {
+    fn from(value: u8) -> Self {
+        Self(value % 128)
+    }
+}
+
+// RequestID 0..255
+impl crate::standards::is_1_3_1::etsi_schema::RequestID {
+    pub fn increment(&self) -> Self {
+        Self(self.0.wrapping_add(1))
+    }
+}
+impl From<u8> for is_1_3_1::etsi_schema::RequestID {
+    // for convenience and interface unification only
+    fn from(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 // convenience getter
 impl is_1_3_1::etsi_schema::SpeedLimitList {
