@@ -122,7 +122,7 @@ macro_rules! etsi_to_mps {
         impl $t {
             /// convert ETSI speed to m/s
             pub fn as_mps(&self) -> f32 {
-                f32::from(self.0) / 100.
+                f32::from(self.0) / $conv
             }
 
             /// create ETSI speed from m/s
@@ -133,7 +133,7 @@ macro_rules! etsi_to_mps {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
-                let etsi_val = (value * 100.) as $tt;
+                let etsi_val = (value * $conv) as $tt;
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
