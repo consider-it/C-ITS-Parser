@@ -19,6 +19,20 @@ impl From<crate::standards::is_1_3_1::etsi_schema::Position3D> for geo_types::Po
         geo_types::Point::new(other.long.as_deg(), other.lat.as_deg())
     }
 }
+#[cfg(feature = "etsi")]
+impl From<geo_types::Point> for crate::standards::is_1_3_1::etsi_schema::Position3D {
+    fn from(other: geo_types::Point) -> Self {
+        use crate::standards::is_1_3_1::etsi_schema::Latitude;
+        use crate::standards::is_1_3_1::etsi_schema::Longitude;
+
+        Self {
+            lat: Latitude::from_deg(other.y()),
+            long: Longitude::from_deg(other.x()),
+            elevation: None,
+            regional: None,
+        }
+    }
+}
 
 /// convert ETSI ReferencePosition to [`geo_types::Point`]
 #[cfg(feature = "etsi")]
