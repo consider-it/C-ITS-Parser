@@ -65,6 +65,85 @@ pub fn time_from_moy_and_dsecond(
     time.and_utc()
 }
 
+/// convert between ETSI TimestampIts and [`chrono::DateTime`]
+///
+/// Note: UTC is 37 seconds behind TAI as of 2017-01-01 (when the last leap seconds was
+/// added to UTC).
+/// But the TimestampIts epoch starts at 2004-01-01 00:00:00 UTC which was 32 seconds
+/// behind TAI, so the difference is 5 seconds since the last leap second insertion on
+/// 2022-01-01.
+#[cfg(feature = "etsi")]
+macro_rules! timestampits_conv_datetime {
+    ($t:ty) => {
+        impl From<$t> for chrono::DateTime<chrono::Utc> {
+            fn from(other: $t) -> Self {
+                const ITS_EPOCH_UNIX_MS: i64 = 1_072_915_200_000; // UNIX timestamp of ITS epoch begin
+
+                #[allow(clippy::cast_possible_wrap, reason = "42 bits fit in i64")]
+                let its_millis = other.0 as i64 + ITS_EPOCH_UNIX_MS;
+                // Note: This will use the wrong leap second count around the timestamp
+                //       where a leap second is introduced since we're comparing to UNIX
+                //       timestamps and the "corrected" timestamp. But this is irrelevant
+                //       for applications after 2022-01-01 and this was written in 2026.
+                let utc_millis = its_millis - i64::from(its_offset_ms(its_millis.cast_unsigned()));
+
+                chrono::DateTime::from_timestamp_millis(utc_millis)
+                    .expect("ITS Timestamp suddenly out of range for chrono::DateTime")
+            }
+        }
+
+        impl From<chrono::DateTime<chrono::Utc>> for $t {
+            fn from(other: chrono::DateTime<chrono::Utc>) -> $t {
+                const ITS_EPOCH_UNIX_MS: u64 = 1_072_915_200_000; // UNIX timestamp of ITS epoch begin
+
+                #[allow(
+                    clippy::cast_sign_loss,
+                    reason = "expecting positive UNIX time is fine"
+                )]
+                let utc_millis = other.timestamp_millis() as u64;
+                let its_time =
+                    utc_millis - ITS_EPOCH_UNIX_MS + u64::from(its_offset_ms(utc_millis));
+
+                Self(its_time)
+            }
+        }
+    };
+}
+
+#[cfg(feature = "etsi")]
+fn its_offset_ms(unix_time_ms: u64) -> u16 {
+    if unix_time_ms >= 1_483_228_800_000 {
+        // leap second introduced at 2016-12-31, so +5 since 2017-01-01
+        5000
+    } else if unix_time_ms >= 1_435_708_800_000 {
+        // leap second introduced at 2015-06-30, so +4 since 2015-07-01
+        4000
+    } else if unix_time_ms >= 1_341_100_800_000 {
+        // leap second introduced at 2012-06-30, so +3 since 2012-07-01
+        3000
+    } else if unix_time_ms >= 1_199_145_600_000 {
+        // leap second introduced at 2008-12-31, so +2 since 2009-01-01
+        2000
+    } else if unix_time_ms >= 1_136_073_600_000 {
+        // leap second introduced at 2005-12-31, so +1 since 2006-01-01
+        1000
+    } else {
+        0
+    }
+}
+
+// used by DENM 2.2.1
+#[cfg(feature = "etsi")]
+timestampits_conv_datetime!(crate::standards::denm_2_1_1::etsi_its_cdd::TimestampIts);
+
+// used by IVIM from IS 1.3.1
+#[cfg(feature = "etsi")]
+timestampits_conv_datetime!(crate::standards::is_1_3_1::etsi_schema::TimestampIts);
+
+// used by IVIM 2.2.1
+#[cfg(feature = "etsi")]
+timestampits_conv_datetime!(crate::standards::ivim_2_2_1::ivim_pdu_descriptions::TimestampIts);
+
 #[cfg(all(test, feature = "etsi"))]
 mod tests {
 
@@ -136,5 +215,33 @@ mod tests {
         let date =
             time_from_moy_and_dsecond(&MinuteOfTheYear(31 * 24 * 60), &DSecond(42_000), 2024);
         assert_eq!(ref_date, date);
+    }
+
+    #[test]
+    fn utc_to_its_timestamp() {
+        use crate::standards::is_1_3_1::etsi_schema::TimestampIts;
+
+        // From ASN.1 definition: "The value for TimestampIts for 1 January 2007 00:00:00.000 UTC is `94 694 401 000` milliseconds"
+        let ref_date = chrono::NaiveDate::from_ymd_opt(2007, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(0, 0, 0).unwrap())
+            .and_utc();
+
+        let its: TimestampIts = ref_date.into();
+        assert_eq!(94_694_401_000, its.0);
+    }
+
+    #[test]
+    fn its_to_utc_timestamp() {
+        use crate::standards::is_1_3_1::etsi_schema::TimestampIts;
+
+        // From ASN.1 definition: "The value for TimestampIts for 1 January 2007 00:00:00.000 UTC is `94 694 401 000` milliseconds"
+        let ref_date = chrono::NaiveDate::from_ymd_opt(2007, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(0, 0, 0).unwrap())
+            .and_utc();
+
+        let utc: chrono::DateTime<chrono::Utc> = TimestampIts(94_694_401_000).into();
+        assert_eq!(ref_date, utc);
     }
 }
