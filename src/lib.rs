@@ -7,6 +7,8 @@ pub mod standards;
 
 #[cfg(feature = "geo")]
 pub mod geo_utils;
+#[cfg(feature = "time")]
+pub mod time_utils;
 
 #[cfg(feature = "transport")]
 pub(crate) mod pcap;
