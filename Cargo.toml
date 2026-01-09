@@ -25,8 +25,11 @@ transport = ["dep:geonetworking", "dep:nom", "dep:etherparse"]
 json = ["geonetworking/json", "dep:serde", "dep:serde_json", "dep:js-sys"]
 # enable conversions to geo-types
 geo = ["dep:geo-types"]
+# enable conversions of time types
+time = ["dep:chrono"]
 
 [dependencies]
+chrono = { version = "0.4.42", optional = true }
 etherparse = { version = "0.19", optional = true }
 geonetworking = { version = "0.2", default-features = false, optional = true }
 geo-types = { version = "0.7.17", optional = true }
