@@ -142,6 +142,929 @@ macro_rules! itsstationtype_conv {
     };
 }
 
+pub mod its_scc {
+    /// Common conversions for manual ETSI Enums
+    macro_rules! scc_conv_part {
+        ($t:ty, $etsi:ty) => {
+            impl $t {
+                pub fn as_u8(self) -> u8 {
+                    self as u8
+                }
+            }
+
+            impl From<$t> for $etsi {
+                fn from(value: $t) -> Self {
+                    Self(value as u8)
+                }
+            }
+        };
+    }
+
+    /// SCC 1, ASN.1 `TrafficConditionSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum TrafficCondition {
+        Unavailable = 0,
+        IncreasedVolumeOfTraffic = 1,
+        TrafficJamSlowlyIncreasing = 2,
+        TrafficJamIncreasing = 3,
+        TrafficJamStronglyIncreasing = 4,
+        TrafficStationary = 5,
+        TrafficJamSlightlyDecreasing = 6,
+        TrafficJamDecreasing = 7,
+        TrafficJamStronglyDecreasing = 8,
+    }
+    scc_conv_part!(
+        TrafficCondition,
+        crate::standards::denm_2_1_1::etsi_its_cdd::TrafficConditionSubCauseCode
+    );
+    impl TryInto<TrafficCondition>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::TrafficConditionSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<TrafficCondition, Self::Error> {
+            match self.0 {
+                0 => Ok(TrafficCondition::Unavailable),
+                1 => Ok(TrafficCondition::IncreasedVolumeOfTraffic),
+                2 => Ok(TrafficCondition::TrafficJamSlowlyIncreasing),
+                3 => Ok(TrafficCondition::TrafficJamIncreasing),
+                4 => Ok(TrafficCondition::TrafficJamStronglyIncreasing),
+                5 => Ok(TrafficCondition::TrafficStationary),
+                6 => Ok(TrafficCondition::TrafficJamSlightlyDecreasing),
+                7 => Ok(TrafficCondition::TrafficJamDecreasing),
+                8 => Ok(TrafficCondition::TrafficJamStronglyDecreasing),
+                _ => Err(format!(
+                    "TrafficConditionSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 2, ASN.1 `AccidentSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum Accident {
+        Unavailable = 0,
+        MultiVehicleAccident = 1,
+        HeavyAccident = 2,
+        AccidentInvolvingLorry = 3,
+        AccidentInvolvingBus = 4,
+        AccidentInvolvingHazardousMaterials = 5,
+        AccidentOnOppositeLane = 6,
+        UnsecuredAccident = 7,
+        AssistanceRequested = 8,
+    }
+    scc_conv_part!(
+        Accident,
+        crate::standards::denm_2_1_1::etsi_its_cdd::AccidentSubCauseCode
+    );
+    impl TryInto<Accident> for crate::standards::denm_2_1_1::etsi_its_cdd::AccidentSubCauseCode {
+        type Error = String;
+
+        fn try_into(self) -> Result<Accident, Self::Error> {
+            match self.0 {
+                0 => Ok(Accident::Unavailable),
+                1 => Ok(Accident::MultiVehicleAccident),
+                2 => Ok(Accident::HeavyAccident),
+                3 => Ok(Accident::AccidentInvolvingLorry),
+                4 => Ok(Accident::AccidentInvolvingBus),
+                5 => Ok(Accident::AccidentInvolvingHazardousMaterials),
+                6 => Ok(Accident::AccidentOnOppositeLane),
+                7 => Ok(Accident::UnsecuredAccident),
+                8 => Ok(Accident::AssistanceRequested),
+                _ => Err(format!("AccidentSubCauseCode {} not a known value", self.0)),
+            }
+        }
+    }
+
+    /// SCC 3, ASN.1 `RoadworksSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum Roadworks {
+        Unavailable = 0,
+        MajorRoadworks = 1,
+        RoadMarkingWork = 2,
+        SlowMovingRoadMaintenance = 3,
+        ShortTermStationaryRoadworks = 4,
+        StreetCleaning = 5,
+        WinterService = 6,
+    }
+    scc_conv_part!(
+        Roadworks,
+        crate::standards::denm_2_1_1::etsi_its_cdd::RoadworksSubCauseCode
+    );
+    impl TryInto<Roadworks> for crate::standards::denm_2_1_1::etsi_its_cdd::RoadworksSubCauseCode {
+        type Error = String;
+
+        fn try_into(self) -> Result<Roadworks, Self::Error> {
+            match self.0 {
+                0 => Ok(Roadworks::Unavailable),
+                1 => Ok(Roadworks::MajorRoadworks),
+                2 => Ok(Roadworks::RoadMarkingWork),
+                3 => Ok(Roadworks::SlowMovingRoadMaintenance),
+                4 => Ok(Roadworks::ShortTermStationaryRoadworks),
+                5 => Ok(Roadworks::StreetCleaning),
+                6 => Ok(Roadworks::WinterService),
+                _ => Err(format!(
+                    "RoadworksSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 12, ASN.1 `HumanPresenceOnTheRoadSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum HumanPresenceOnTheRoad {
+        Unavailable = 0,
+        ChildrenOnRoadway = 1,
+        CyclistOnRoadway = 2,
+        MotorcyclistOnRoadway = 3,
+    }
+    scc_conv_part!(
+        HumanPresenceOnTheRoad,
+        crate::standards::denm_2_1_1::etsi_its_cdd::HumanPresenceOnTheRoadSubCauseCode
+    );
+    impl TryInto<HumanPresenceOnTheRoad>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::HumanPresenceOnTheRoadSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<HumanPresenceOnTheRoad, Self::Error> {
+            match self.0 {
+                0 => Ok(HumanPresenceOnTheRoad::Unavailable),
+                1 => Ok(HumanPresenceOnTheRoad::ChildrenOnRoadway),
+                2 => Ok(HumanPresenceOnTheRoad::CyclistOnRoadway),
+                3 => Ok(HumanPresenceOnTheRoad::MotorcyclistOnRoadway),
+                _ => Err(format!(
+                    "HumanPresenceOnTheRoadSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 14, ASN.1 `WrongWayDrivingSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum WrongWayDriving {
+        Unavailable = 0,
+        WrongLane = 1,
+        WrongDirection = 2,
+    }
+    scc_conv_part!(
+        WrongWayDriving,
+        crate::standards::denm_2_1_1::etsi_its_cdd::WrongWayDrivingSubCauseCode
+    );
+    impl TryInto<WrongWayDriving>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::WrongWayDrivingSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<WrongWayDriving, Self::Error> {
+            match self.0 {
+                0 => Ok(WrongWayDriving::Unavailable),
+                1 => Ok(WrongWayDriving::WrongLane),
+                2 => Ok(WrongWayDriving::WrongDirection),
+                _ => Err(format!(
+                    "WrongWayDrivingSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 17, ASN.1 `AdverseWeatherCondition-ExtremeWeatherConditionSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum AdverseWeatherConditionExtremeWeatherCondition {
+        Unavailable = 0,
+        StrongWinds = 1,
+        DamagingHail = 2,
+        Hurricane = 3,
+        Thunderstorm = 4,
+        Tornado = 5,
+        Blizzard = 6,
+    }
+    scc_conv_part!(
+        AdverseWeatherConditionExtremeWeatherCondition,
+        crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionExtremeWeatherConditionSubCauseCode
+    );
+    impl TryInto<AdverseWeatherConditionExtremeWeatherCondition>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionExtremeWeatherConditionSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<AdverseWeatherConditionExtremeWeatherCondition, Self::Error> {
+            match self.0 {
+                0 => Ok(AdverseWeatherConditionExtremeWeatherCondition::Unavailable),
+                1 => Ok(AdverseWeatherConditionExtremeWeatherCondition::StrongWinds),
+                2 => Ok(AdverseWeatherConditionExtremeWeatherCondition::DamagingHail),
+                3 => Ok(AdverseWeatherConditionExtremeWeatherCondition::Hurricane),
+                4 => Ok(AdverseWeatherConditionExtremeWeatherCondition::Thunderstorm),
+                5 => Ok(AdverseWeatherConditionExtremeWeatherCondition::Tornado),
+                6 => Ok(AdverseWeatherConditionExtremeWeatherCondition::Blizzard),
+                _ => Err(format!("ExtremeWeatherConditionSubCauseCode {} not a known value", self.0)),
+            }
+        }
+    }
+
+    /// SCC 6, ASN.1 `AdverseWeatherCondition-AdhesionSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum AdverseWeatherConditionAdhesion {
+        Unavailable = 0,
+        HeavyFrostOnRoad = 1,
+        FuelOnRoad = 2,
+        MudOnRoad = 3,
+        SnowOnRoad = 4,
+        IceOnRoad = 5,
+        BlackIceOnRoad = 6,
+        OilOnRoad = 7,
+        LooseChippings = 8,
+        InstantBlackIce = 9,
+        RoadsSalted = 10,
+    }
+    scc_conv_part!(
+        AdverseWeatherConditionAdhesion,
+        crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionAdhesionSubCauseCode
+    );
+    impl TryInto<AdverseWeatherConditionAdhesion>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionAdhesionSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<AdverseWeatherConditionAdhesion, Self::Error> {
+            match self.0 {
+                0 => Ok(AdverseWeatherConditionAdhesion::Unavailable),
+                1 => Ok(AdverseWeatherConditionAdhesion::HeavyFrostOnRoad),
+                2 => Ok(AdverseWeatherConditionAdhesion::FuelOnRoad),
+                3 => Ok(AdverseWeatherConditionAdhesion::MudOnRoad),
+                4 => Ok(AdverseWeatherConditionAdhesion::SnowOnRoad),
+                5 => Ok(AdverseWeatherConditionAdhesion::IceOnRoad),
+                6 => Ok(AdverseWeatherConditionAdhesion::BlackIceOnRoad),
+                7 => Ok(AdverseWeatherConditionAdhesion::OilOnRoad),
+                8 => Ok(AdverseWeatherConditionAdhesion::LooseChippings),
+                9 => Ok(AdverseWeatherConditionAdhesion::InstantBlackIce),
+                10 => Ok(AdverseWeatherConditionAdhesion::RoadsSalted),
+                _ => Err(format!("AdhesionSubCauseCode {} not a known value", self.0)),
+            }
+        }
+    }
+
+    /// SCC 18, ASN.1 `AdverseWeatherCondition-VisibilitySubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum AdverseWeatherConditionVisibility {
+        Unavailable = 0,
+        Fog = 1,
+        Smoke = 2,
+        HeavySnowfall = 3,
+        HeavyRain = 4,
+        HeavyHail = 5,
+        LowSunGlare = 6,
+        Sandstorms = 7,
+        SwarmsOfInsects = 8,
+    }
+    scc_conv_part!(
+        AdverseWeatherConditionVisibility,
+        crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionVisibilitySubCauseCode
+    );
+    impl TryInto<AdverseWeatherConditionVisibility>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionVisibilitySubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<AdverseWeatherConditionVisibility, Self::Error> {
+            match self.0 {
+                0 => Ok(AdverseWeatherConditionVisibility::Unavailable),
+                1 => Ok(AdverseWeatherConditionVisibility::Fog),
+                2 => Ok(AdverseWeatherConditionVisibility::Smoke),
+                3 => Ok(AdverseWeatherConditionVisibility::HeavySnowfall),
+                4 => Ok(AdverseWeatherConditionVisibility::HeavyRain),
+                5 => Ok(AdverseWeatherConditionVisibility::HeavyHail),
+                6 => Ok(AdverseWeatherConditionVisibility::LowSunGlare),
+                7 => Ok(AdverseWeatherConditionVisibility::Sandstorms),
+                8 => Ok(AdverseWeatherConditionVisibility::SwarmsOfInsects),
+                _ => Err(format!("VisibilitySubCauseCode {} not a known value", self.0)),
+            }
+        }
+    }
+
+    /// SCC 19, ASN.1 `AdverseWeatherCondition-PrecipitationSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum AdverseWeatherConditionPrecipitation {
+        Unavailable = 0,
+        HeavyRain = 1,
+        HeavySnowfall = 2,
+        SoftHail = 3,
+    }
+    scc_conv_part!(
+        AdverseWeatherConditionPrecipitation,
+        crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionPrecipitationSubCauseCode
+    );
+    impl TryInto<AdverseWeatherConditionPrecipitation>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionPrecipitationSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<AdverseWeatherConditionPrecipitation, Self::Error> {
+            match self.0 {
+                0 => Ok(AdverseWeatherConditionPrecipitation::Unavailable),
+                1 => Ok(AdverseWeatherConditionPrecipitation::HeavyRain),
+                2 => Ok(AdverseWeatherConditionPrecipitation::HeavySnowfall),
+                3 => Ok(AdverseWeatherConditionPrecipitation::SoftHail),
+                _ => Err(format!("PrecipitationSubCauseCode {} not a known value", self.0)),
+            }
+        }
+    }
+
+    /// SCC 26, ASN.1 `SlowVehicleSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum SlowVehicle {
+        Unavailable = 0,
+        MaintenanceVehicle = 1,
+        VehiclesSlowingToLookAtAccident = 2,
+        AbnormalLoad = 3,
+        AbnormalWideLoad = 4,
+        Convoy = 5,
+        Snowplough = 6,
+        Deicing = 7,
+        SaltingVehicles = 8,
+    }
+    scc_conv_part!(
+        SlowVehicle,
+        crate::standards::denm_2_1_1::etsi_its_cdd::SlowVehicleSubCauseCode
+    );
+    impl TryInto<SlowVehicle> for crate::standards::denm_2_1_1::etsi_its_cdd::SlowVehicleSubCauseCode {
+        type Error = String;
+
+        fn try_into(self) -> Result<SlowVehicle, Self::Error> {
+            match self.0 {
+                0 => Ok(SlowVehicle::Unavailable),
+                1 => Ok(SlowVehicle::MaintenanceVehicle),
+                2 => Ok(SlowVehicle::VehiclesSlowingToLookAtAccident),
+                3 => Ok(SlowVehicle::AbnormalLoad),
+                4 => Ok(SlowVehicle::AbnormalWideLoad),
+                5 => Ok(SlowVehicle::Convoy),
+                6 => Ok(SlowVehicle::Snowplough),
+                7 => Ok(SlowVehicle::Deicing),
+                8 => Ok(SlowVehicle::SaltingVehicles),
+                _ => Err(format!(
+                    "SlowVehicleSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 94, ASN.1 `StationaryVehicleSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum StationaryVehicle {
+        Unavailable = 0,
+        HumanProblem = 1,
+        VehicleBreakdown = 2,
+        PostCrash = 3,
+        PublicTransportStop = 4,
+        CarryingDangerousGoods = 5,
+    }
+    scc_conv_part!(
+        StationaryVehicle,
+        crate::standards::denm_2_1_1::etsi_its_cdd::StationaryVehicleSubCauseCode
+    );
+    impl TryInto<StationaryVehicle>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::StationaryVehicleSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<StationaryVehicle, Self::Error> {
+            match self.0 {
+                0 => Ok(StationaryVehicle::Unavailable),
+                1 => Ok(StationaryVehicle::HumanProblem),
+                2 => Ok(StationaryVehicle::VehicleBreakdown),
+                3 => Ok(StationaryVehicle::PostCrash),
+                4 => Ok(StationaryVehicle::PublicTransportStop),
+                5 => Ok(StationaryVehicle::CarryingDangerousGoods),
+                _ => Err(format!(
+                    "StationaryVehicleSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 93, ASN.1 `HumanProblemSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum HumanProblem {
+        Unavailable = 0,
+        GlycemiaProblem = 1,
+        HeartProblem = 2,
+    }
+    scc_conv_part!(
+        HumanProblem,
+        crate::standards::denm_2_1_1::etsi_its_cdd::HumanProblemSubCauseCode
+    );
+    impl TryInto<HumanProblem>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::HumanProblemSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<HumanProblem, Self::Error> {
+            match self.0 {
+                0 => Ok(HumanProblem::Unavailable),
+                1 => Ok(HumanProblem::GlycemiaProblem),
+                2 => Ok(HumanProblem::HeartProblem),
+                _ => Err(format!(
+                    "HumanProblemSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 95, ASN.1 `EmergencyVehicleApproachingSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum EmergencyVehicleApproaching {
+        Unavailable = 0,
+        EmergencyVehicleApproaching = 1,
+        PrioritizedVehicleApproaching = 2,
+    }
+    scc_conv_part!(
+        EmergencyVehicleApproaching,
+        crate::standards::denm_2_1_1::etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode
+    );
+    impl TryInto<EmergencyVehicleApproaching>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<EmergencyVehicleApproaching, Self::Error> {
+            match self.0 {
+                0 => Ok(EmergencyVehicleApproaching::Unavailable),
+                1 => Ok(EmergencyVehicleApproaching::EmergencyVehicleApproaching),
+                2 => Ok(EmergencyVehicleApproaching::PrioritizedVehicleApproaching),
+                _ => Err(format!(
+                    "EmergencyVehicleApproachingSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 96, ASN.1 `HazardousLocation-DangerousCurveSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum HazardousLocationDangerousCurve {
+        Unavailable = 0,
+        DangerousLeftTurnCurve = 1,
+        DangerousRightTurnCurve = 2,
+        MultipleCurvesStartingWithUnknownTurningDirection = 3,
+        MultipleCurvesStartingWithLeftTurn = 4,
+        MultipleCurvesStartingWithRightTurn = 5,
+    }
+    scc_conv_part!(
+        HazardousLocationDangerousCurve,
+        crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationDangerousCurveSubCauseCode
+    );
+    impl TryInto<HazardousLocationDangerousCurve>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationDangerousCurveSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<HazardousLocationDangerousCurve, Self::Error> {
+            match self.0 {
+                0 => Ok(HazardousLocationDangerousCurve::Unavailable),
+                1 => Ok(HazardousLocationDangerousCurve::DangerousLeftTurnCurve),
+                2 => Ok(HazardousLocationDangerousCurve::DangerousRightTurnCurve),
+                3 => Ok(HazardousLocationDangerousCurve::MultipleCurvesStartingWithUnknownTurningDirection),
+                4 => Ok(HazardousLocationDangerousCurve::MultipleCurvesStartingWithLeftTurn),
+                5 => Ok(HazardousLocationDangerousCurve::MultipleCurvesStartingWithRightTurn),
+                _ => Err(format!("DangerousCurveSubCauseCode {} not a known value", self.0)),
+            }
+        }
+    }
+
+    /// SCC 9, ASN.1 `HazardousLocation-SurfaceConditionSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum HazardousLocationSurfaceCondition {
+        Unavailable = 0,
+        Rockfalls = 1,
+        EarthquakeDamage = 2,
+        SewerCollapse = 3,
+        Subsidence = 4,
+        SnowDrifts = 5,
+        StormDamage = 6,
+        BurstPipe = 7,
+        VolcanoEruption = 8,
+        FallingIce = 9,
+    }
+    scc_conv_part!(
+        HazardousLocationSurfaceCondition,
+        crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationSurfaceConditionSubCauseCode
+    );
+    impl TryInto<HazardousLocationSurfaceCondition>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationSurfaceConditionSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<HazardousLocationSurfaceCondition, Self::Error> {
+            match self.0 {
+                0 => Ok(HazardousLocationSurfaceCondition::Unavailable),
+                1 => Ok(HazardousLocationSurfaceCondition::Rockfalls),
+                2 => Ok(HazardousLocationSurfaceCondition::EarthquakeDamage),
+                3 => Ok(HazardousLocationSurfaceCondition::SewerCollapse),
+                4 => Ok(HazardousLocationSurfaceCondition::Subsidence),
+                5 => Ok(HazardousLocationSurfaceCondition::SnowDrifts),
+                6 => Ok(HazardousLocationSurfaceCondition::StormDamage),
+                7 => Ok(HazardousLocationSurfaceCondition::BurstPipe),
+                8 => Ok(HazardousLocationSurfaceCondition::VolcanoEruption),
+                9 => Ok(HazardousLocationSurfaceCondition::FallingIce),
+                _ => Err(format!("SurfaceConditionSubCauseCode {} not a known value", self.0)),
+            }
+        }
+    }
+
+    /// SCC 10, ASN.1 `HazardousLocation-ObstacleOnTheRoadSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum HazardousLocationObstacleOnTheRoad {
+        Unavailable = 0,
+        ShedLoad = 1,
+        PartsOfVehicles = 2,
+        PartsOfTyres = 3,
+        BigObjects = 4,
+        FallenTrees = 5,
+        HubCaps = 6,
+        WaitingVehicles = 7,
+    }
+    scc_conv_part!(
+        HazardousLocationObstacleOnTheRoad,
+        crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationObstacleOnTheRoadSubCauseCode
+    );
+    impl TryInto<HazardousLocationObstacleOnTheRoad>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationObstacleOnTheRoadSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<HazardousLocationObstacleOnTheRoad, Self::Error> {
+            match self.0 {
+                0 => Ok(HazardousLocationObstacleOnTheRoad::Unavailable),
+                1 => Ok(HazardousLocationObstacleOnTheRoad::ShedLoad),
+                2 => Ok(HazardousLocationObstacleOnTheRoad::PartsOfVehicles),
+                3 => Ok(HazardousLocationObstacleOnTheRoad::PartsOfTyres),
+                4 => Ok(HazardousLocationObstacleOnTheRoad::BigObjects),
+                5 => Ok(HazardousLocationObstacleOnTheRoad::FallenTrees),
+                6 => Ok(HazardousLocationObstacleOnTheRoad::HubCaps),
+                7 => Ok(HazardousLocationObstacleOnTheRoad::WaitingVehicles),
+                _ => Err(format!("ObstacleOnTheRoadSubCauseCode {} not a known value", self.0)),
+            }
+        }
+    }
+
+    /// SCC 11, ASN.1 `HazardousLocation-AnimalOnTheRoadSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum HazardousLocationAnimalOnTheRoad {
+        Unavailable = 0,
+        WildAnimals = 1,
+        HerdOfAnimals = 2,
+        SmallAnimals = 3,
+        LargeAnimals = 4,
+    }
+    scc_conv_part!(
+        HazardousLocationAnimalOnTheRoad,
+        crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationAnimalOnTheRoadSubCauseCode
+    );
+    impl TryInto<HazardousLocationAnimalOnTheRoad>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationAnimalOnTheRoadSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<HazardousLocationAnimalOnTheRoad, Self::Error> {
+            match self.0 {
+                0 => Ok(HazardousLocationAnimalOnTheRoad::Unavailable),
+                1 => Ok(HazardousLocationAnimalOnTheRoad::WildAnimals),
+                2 => Ok(HazardousLocationAnimalOnTheRoad::HerdOfAnimals),
+                3 => Ok(HazardousLocationAnimalOnTheRoad::SmallAnimals),
+                4 => Ok(HazardousLocationAnimalOnTheRoad::LargeAnimals),
+                _ => Err(format!(
+                    "AnimalOnTheRoadSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 97, ASN.1 `CollisionRiskSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum CollisionRisk {
+        Unavailable = 0,
+        LongitudinalCollisionRisk = 1,
+        CrossingCollisionRisk = 2,
+        LateralCollisionRisk = 3,
+        VulnerableRoadUser = 4,
+    }
+    scc_conv_part!(
+        CollisionRisk,
+        crate::standards::denm_2_1_1::etsi_its_cdd::CollisionRiskSubCauseCode
+    );
+    impl TryInto<CollisionRisk>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::CollisionRiskSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<CollisionRisk, Self::Error> {
+            match self.0 {
+                0 => Ok(CollisionRisk::Unavailable),
+                1 => Ok(CollisionRisk::LongitudinalCollisionRisk),
+                2 => Ok(CollisionRisk::CrossingCollisionRisk),
+                3 => Ok(CollisionRisk::LateralCollisionRisk),
+                4 => Ok(CollisionRisk::VulnerableRoadUser),
+                _ => Err(format!(
+                    "CollisionRiskSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 98, ASN.1 `SignalViolationSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum SignalViolation {
+        Unavailable = 0,
+        StopSignViolation = 1,
+        TrafficLightViolation = 2,
+        TurningRegulationViolation = 3,
+    }
+    scc_conv_part!(
+        SignalViolation,
+        crate::standards::denm_2_1_1::etsi_its_cdd::SignalViolationSubCauseCode
+    );
+    impl TryInto<SignalViolation>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::SignalViolationSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<SignalViolation, Self::Error> {
+            match self.0 {
+                0 => Ok(SignalViolation::Unavailable),
+                1 => Ok(SignalViolation::StopSignViolation),
+                2 => Ok(SignalViolation::TrafficLightViolation),
+                3 => Ok(SignalViolation::TurningRegulationViolation),
+                _ => Err(format!(
+                    "SignalViolationSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 15, ASN.1 `RescueAndRecoveryWorkInProgressSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum RescueAndRecoveryWorkInProgress {
+        Unavailable = 0,
+        EmergencyVehicles = 1,
+        RescueHelicopterLanding = 2,
+        PoliceActivityOngoing = 3,
+        MedicalEmergencyOngoing = 4,
+        ChildAbductionInProgress = 5,
+    }
+    scc_conv_part!(
+        RescueAndRecoveryWorkInProgress,
+        crate::standards::denm_2_1_1::etsi_its_cdd::RescueAndRecoveryWorkInProgressSubCauseCode
+    );
+    impl TryInto<RescueAndRecoveryWorkInProgress>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::RescueAndRecoveryWorkInProgressSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<RescueAndRecoveryWorkInProgress, Self::Error> {
+            match self.0 {
+                0 => Ok(RescueAndRecoveryWorkInProgress::Unavailable),
+                1 => Ok(RescueAndRecoveryWorkInProgress::EmergencyVehicles),
+                2 => Ok(RescueAndRecoveryWorkInProgress::RescueHelicopterLanding),
+                3 => Ok(RescueAndRecoveryWorkInProgress::PoliceActivityOngoing),
+                4 => Ok(RescueAndRecoveryWorkInProgress::MedicalEmergencyOngoing),
+                5 => Ok(RescueAndRecoveryWorkInProgress::ChildAbductionInProgress),
+                _ => Err(format!(
+                    "RescueAndRecoveryWorkInProgressSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 27, ASN.1 `DangerousEndOfQueueSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum DangerousEndOfQueue {
+        Unavailable = 0,
+        SuddenEndOfQueue = 1,
+        QueueOverHill = 2,
+        QueueAroundBend = 3,
+        QueueInTunnel = 4,
+    }
+    scc_conv_part!(
+        DangerousEndOfQueue,
+        crate::standards::denm_2_1_1::etsi_its_cdd::DangerousEndOfQueueSubCauseCode
+    );
+    impl TryInto<DangerousEndOfQueue>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::DangerousEndOfQueueSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<DangerousEndOfQueue, Self::Error> {
+            match self.0 {
+                0 => Ok(DangerousEndOfQueue::Unavailable),
+                1 => Ok(DangerousEndOfQueue::SuddenEndOfQueue),
+                2 => Ok(DangerousEndOfQueue::QueueOverHill),
+                3 => Ok(DangerousEndOfQueue::QueueAroundBend),
+                4 => Ok(DangerousEndOfQueue::QueueInTunnel),
+                _ => Err(format!(
+                    "DangerousEndOfQueueSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 99, ASN.1 `DangerousSituationSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum DangerousSituation {
+        Unavailable = 0,
+        EmergencyElectronicBrakeEngaged = 1,
+        PreCrashSystemEngaged = 2,
+        EspEngaged = 3,
+        AbsEngaged = 4,
+        AebEngaged = 5,
+        BrakeWarningEngaged = 6,
+        CollisionRiskWarningEngaged = 7,
+    }
+    scc_conv_part!(
+        DangerousSituation,
+        crate::standards::denm_2_1_1::etsi_its_cdd::DangerousSituationSubCauseCode
+    );
+    impl TryInto<DangerousSituation>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::DangerousSituationSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<DangerousSituation, Self::Error> {
+            match self.0 {
+                0 => Ok(DangerousSituation::Unavailable),
+                1 => Ok(DangerousSituation::EmergencyElectronicBrakeEngaged),
+                2 => Ok(DangerousSituation::PreCrashSystemEngaged),
+                3 => Ok(DangerousSituation::EspEngaged),
+                4 => Ok(DangerousSituation::AbsEngaged),
+                5 => Ok(DangerousSituation::AebEngaged),
+                6 => Ok(DangerousSituation::BrakeWarningEngaged),
+                7 => Ok(DangerousSituation::CollisionRiskWarningEngaged),
+                _ => Err(format!(
+                    "DangerousSituationSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 91, ASN.1 `VehicleBreakdownSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum VehicleBreakdown {
+        Unavailable = 0,
+        LackOfFuel = 1,
+        LackOfBatteryPower = 2,
+        EngineProblem = 3,
+        TransmissionProblem = 4,
+        EngineCoolingProblem = 5,
+        BrakingSystemProblem = 6,
+        SteeringProblem = 7,
+        TyrePuncture = 8,
+        TyrePressureProblem = 9,
+    }
+    scc_conv_part!(
+        VehicleBreakdown,
+        crate::standards::denm_2_1_1::etsi_its_cdd::VehicleBreakdownSubCauseCode
+    );
+    impl TryInto<VehicleBreakdown>
+        for crate::standards::denm_2_1_1::etsi_its_cdd::VehicleBreakdownSubCauseCode
+    {
+        type Error = String;
+
+        fn try_into(self) -> Result<VehicleBreakdown, Self::Error> {
+            match self.0 {
+                0 => Ok(VehicleBreakdown::Unavailable),
+                1 => Ok(VehicleBreakdown::LackOfFuel),
+                2 => Ok(VehicleBreakdown::LackOfBatteryPower),
+                3 => Ok(VehicleBreakdown::EngineProblem),
+                4 => Ok(VehicleBreakdown::TransmissionProblem),
+                5 => Ok(VehicleBreakdown::EngineCoolingProblem),
+                6 => Ok(VehicleBreakdown::BrakingSystemProblem),
+                7 => Ok(VehicleBreakdown::SteeringProblem),
+                8 => Ok(VehicleBreakdown::TyrePuncture),
+                9 => Ok(VehicleBreakdown::TyrePressureProblem),
+                _ => Err(format!(
+                    "VehicleBreakdownSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+
+    /// SCC 92, ASN.1 `PostCrashSubCauseCode`
+    #[repr(u8)]
+    #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+    #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+    pub enum PostCrash {
+        Unavailable = 0,
+        AccidentWithoutECallTriggered = 1,
+        AccidentWithECallManuallyTriggered = 2,
+        AccidentWithECallAutomaticallyTriggered = 3,
+        AccidentWithECallTriggeredWithoutAccessToCellularNetwork = 4,
+    }
+    scc_conv_part!(
+        PostCrash,
+        crate::standards::denm_2_1_1::etsi_its_cdd::PostCrashSubCauseCode
+    );
+    impl TryInto<PostCrash> for crate::standards::denm_2_1_1::etsi_its_cdd::PostCrashSubCauseCode {
+        type Error = String;
+
+        fn try_into(self) -> Result<PostCrash, Self::Error> {
+            match self.0 {
+                0 => Ok(PostCrash::Unavailable),
+                1 => Ok(PostCrash::AccidentWithoutECallTriggered),
+                2 => Ok(PostCrash::AccidentWithECallManuallyTriggered),
+                3 => Ok(PostCrash::AccidentWithECallAutomaticallyTriggered),
+                4 => Ok(PostCrash::AccidentWithECallTriggeredWithoutAccessToCellularNetwork),
+                _ => Err(format!(
+                    "PostCrashSubCauseCode {} not a known value",
+                    self.0
+                )),
+            }
+        }
+    }
+}
+
 pub mod cdd_1_3_1_1 {
     use crate::standards::cdd_1_3_1_1::its_container::{
         AccelerationControl, EmergencyPriority, ExteriorLights, LightBarSirenInUse,
