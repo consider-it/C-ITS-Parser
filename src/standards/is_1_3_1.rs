@@ -12,23 +12,6 @@ pub mod etsi_schema {
     use std::sync::LazyLock;
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct ACKResponseService {
-        #[rasn(value("-32768..=32767"), identifier = "ackRespDelayAdjust")]
-        pub ack_resp_delay_adjust: i16,
-        #[rasn(value("0..=65535"), identifier = "ackRespDelayStdDev")]
-        pub ack_resp_delay_std_dev: u16,
-    }
-    impl ACKResponseService {
-        pub fn new(ack_resp_delay_adjust: i16, ack_resp_delay_std_dev: u16) -> Self {
-            Self {
-                ack_resp_delay_adjust,
-                ack_resp_delay_std_dev,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
     pub struct AbsolutePosition {
         pub latitude: Latitude,
         pub longitude: Longitude,
@@ -63,43 +46,9 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=8", extensible))]
     pub struct AbsolutePositionsWithAltitude(pub SequenceOf<AbsolutePositionWAltitude>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum AccelOrDecel {
-        accelerate = 0,
-        decelerate = 1,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct AccelerationChangeIndication {
-        #[rasn(identifier = "accelOrDecel")]
-        pub accel_or_decel: AccelOrDecel,
-        #[rasn(identifier = "actionDeltaTime")]
-        pub action_delta_time: ActionDeltaTime,
-    }
-    impl AccelerationChangeIndication {
-        pub fn new(accel_or_decel: AccelOrDecel, action_delta_time: ActionDeltaTime) -> Self {
-            Self {
-                accel_or_decel,
-                action_delta_time,
-            }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=102"))]
     pub struct AccelerationConfidence(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct AccidentSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum AckNackIndication {
-        aCK = 0,
-        nACK = 1,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=127"))]
-    pub struct ActionDeltaTime(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct ActionID {
@@ -116,40 +65,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(
-        delegate,
-        identifier = "AdverseWeatherCondition-AdhesionSubCauseCode",
-        value("0..=255")
-    )]
-    pub struct AdverseWeatherConditionAdhesionSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(
-        delegate,
-        identifier = "AdverseWeatherCondition-ExtremeWeatherConditionSubCauseCode",
-        value("0..=255")
-    )]
-    pub struct AdverseWeatherConditionExtremeWeatherConditionSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(
-        delegate,
-        identifier = "AdverseWeatherCondition-PrecipitationSubCauseCode",
-        value("0..=255")
-    )]
-    pub struct AdverseWeatherConditionPrecipitationSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(
-        delegate,
-        identifier = "AdverseWeatherCondition-VisibilitySubCauseCode",
-        value("0..=255")
-    )]
-    pub struct AdverseWeatherConditionVisibilitySubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=32"))]
-    pub struct AdvertiserIdentifier(pub Utf8String);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct AdvertiserPermissions(pub SequenceOf<ChannelIdentifier>);
     #[doc = " Anonymous SEQUENCE OF member "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags, identifier = "SEQUENCE")]
@@ -536,30 +451,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum BasePublicEncryptionKey {
-        eciesNistP256(EccP256CurvePoint),
-        eciesBrainpoolP256r1(EccP256CurvePoint),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct BasicContainer {
-        #[rasn(identifier = "stationType")]
-        pub station_type: StationType,
-        #[rasn(identifier = "referencePosition")]
-        pub reference_position: ReferencePosition,
-    }
-    impl BasicContainer {
-        pub fn new(station_type: StationType, reference_position: ReferencePosition) -> Self {
-            Self {
-                station_type,
-                reference_position,
-            }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     #[non_exhaustive]
@@ -599,25 +490,6 @@ pub mod etsi_schema {
         good = 3,
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("0..=31"))]
-    pub struct BitmapSsp(pub OctetString);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct BitmapSspRange {
-        #[rasn(size("1..=32"), identifier = "sspValue")]
-        pub ssp_value: OctetString,
-        #[rasn(size("1..=32"), identifier = "sspBitmask")]
-        pub ssp_bitmask: OctetString,
-    }
-    impl BitmapSspRange {
-        pub fn new(ssp_value: OctetString, ssp_bitmask: OctetString) -> Self {
-            Self {
-                ssp_value,
-                ssp_bitmask,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct CPM {
         pub header: ItsPduHeader,
@@ -655,298 +527,8 @@ pub mod etsi_schema {
     #[rasn(delegate, value("0..=3601"))]
     pub struct CartesianAngleValue(pub u16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct CauseCode {
-        #[rasn(identifier = "causeCode")]
-        pub cause_code: CauseCodeType,
-        #[rasn(identifier = "subCauseCode")]
-        pub sub_cause_code: SubCauseCodeType,
-    }
-    impl CauseCode {
-        pub fn new(cause_code: CauseCodeType, sub_cause_code: SubCauseCodeType) -> Self {
-            Self {
-                cause_code,
-                sub_cause_code,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct CauseCodeType(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ChInfoOptions {
-        pub option1: Option<()>,
-        pub option2: Option<()>,
-        pub option3: Option<()>,
-        pub option4: Option<()>,
-        pub option5: Option<()>,
-        pub option6: Option<()>,
-        pub option7: Option<()>,
-        pub extensions: Option<ChannelInfoExts>,
-    }
-    impl ChInfoOptions {
-        pub fn new(
-            option1: Option<()>,
-            option2: Option<()>,
-            option3: Option<()>,
-            option4: Option<()>,
-            option5: Option<()>,
-            option6: Option<()>,
-            option7: Option<()>,
-            extensions: Option<ChannelInfoExts>,
-        ) -> Self {
-            Self {
-                option1,
-                option2,
-                option3,
-                option4,
-                option5,
-                option6,
-                option7,
-                extensions,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct ChannelAccess80211(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ChannelIdentifier {
-        #[rasn(size("3"), identifier = "countryString")]
-        pub country_string: OctetString,
-        #[rasn(identifier = "operatingClass")]
-        pub operating_class: Uint8,
-        #[rasn(identifier = "channelNumber")]
-        pub channel_number: Uint8,
-    }
-    impl ChannelIdentifier {
-        pub fn new(
-            country_string: OctetString,
-            operating_class: Uint8,
-            channel_number: Uint8,
-        ) -> Self {
-            Self {
-                country_string,
-                operating_class,
-                channel_number,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=31"))]
-    pub struct ChannelIndex(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ChannelInfo {
-        #[rasn(identifier = "operatingClass")]
-        pub operating_class: OperatingClass80211,
-        #[rasn(identifier = "channelNumber")]
-        pub channel_number: ChannelNumber80211,
-        #[rasn(identifier = "powerLevel")]
-        pub power_level: TXpower80211,
-        #[rasn(identifier = "dataRate")]
-        pub data_rate: WsaChInfoDataRate,
-        pub extensions: ChInfoOptions,
-    }
-    impl ChannelInfo {
-        pub fn new(
-            operating_class: OperatingClass80211,
-            channel_number: ChannelNumber80211,
-            power_level: TXpower80211,
-            data_rate: WsaChInfoDataRate,
-            extensions: ChInfoOptions,
-        ) -> Self {
-            Self {
-                operating_class,
-                channel_number,
-                power_level,
-                data_rate,
-                extensions,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ChannelInfoExt {
-        #[rasn(value("0..=255"), identifier = "extensionId")]
-        pub extension_id: u8,
-        pub value: Any,
-    }
-    impl ChannelInfoExt {
-        pub fn new(extension_id: u8, value: Any) -> Self {
-            Self {
-                extension_id,
-                value,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ChannelInfoExts(pub SequenceOf<ChannelInfoExt>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ChannelInfos(pub SequenceOf<ChannelInfo>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct ChannelNumber80211(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ChannelOptions {
-        #[rasn(identifier = "systemService")]
-        pub system_service: Option<SystemService>,
-        #[rasn(identifier = "serviceProviderPort")]
-        pub service_provider_port: Option<ReplyAddress>,
-        pub extensions: Option<ServiceInfoExts>,
-    }
-    impl ChannelOptions {
-        pub fn new(
-            system_service: Option<SystemService>,
-            service_provider_port: Option<ReplyAddress>,
-            extensions: Option<ServiceInfoExts>,
-        ) -> Self {
-            Self {
-                system_service,
-                service_provider_port,
-                extensions,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct ChannelSpecificProviderPermission {
-        #[rasn(identifier = "channelId")]
-        pub channel_id: ChannelIdentifier,
-        #[rasn(identifier = "permittedPsids")]
-        pub permitted_psids: Option<SequenceOfPsid>,
-        #[rasn(identifier = "permittedEdcaParameters")]
-        pub permitted_edca_parameters: Option<SequenceOfEdcaIdentifier>,
-        #[rasn(identifier = "maximumTransmitPower")]
-        pub maximum_transmit_power: Option<Uint8>,
-    }
-    impl ChannelSpecificProviderPermission {
-        pub fn new(
-            channel_id: ChannelIdentifier,
-            permitted_psids: Option<SequenceOfPsid>,
-            permitted_edca_parameters: Option<SequenceOfEdcaIdentifier>,
-            maximum_transmit_power: Option<Uint8>,
-        ) -> Self {
-            Self {
-                channel_id,
-                permitted_psids,
-                permitted_edca_parameters,
-                maximum_transmit_power,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ChargingSpotType(pub BitString);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct CircularRegion {
-        pub center: Dot2TwoDLocation,
-        pub radius: Uint16,
-    }
-    impl CircularRegion {
-        pub fn new(center: Dot2TwoDLocation, radius: Uint16) -> Self {
-            Self { center, radius }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=101"))]
     pub struct ClassConfidence(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum ClusterBoundingBoxShape {
-        clusterRectangle(AreaRectangle),
-        clusterCircle(AreaCircular),
-        clusterPolygon(AreaPolygon),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct ClusterBreakupInfo {
-        #[rasn(identifier = "clusterBreakupReason")]
-        pub cluster_breakup_reason: ClusterBreakupReason,
-        #[rasn(identifier = "breakupTime")]
-        pub breakup_time: VruClusterOpTimestamp,
-    }
-    impl ClusterBreakupInfo {
-        pub fn new(
-            cluster_breakup_reason: ClusterBreakupReason,
-            breakup_time: VruClusterOpTimestamp,
-        ) -> Self {
-            Self {
-                cluster_breakup_reason,
-                breakup_time,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum ClusterBreakupReason {
-        notProvided = 0,
-        clusteringPurposeCompleted = 1,
-        leaderMovedOutOfClusterBoundingBox = 2,
-        joiningAnotherCluster = 3,
-        max = 15,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct ClusterId(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct ClusterJoinInfo {
-        #[rasn(identifier = "clusterId")]
-        pub cluster_id: ClusterId,
-        #[rasn(identifier = "joinTime")]
-        pub join_time: VruClusterOpTimestamp,
-    }
-    impl ClusterJoinInfo {
-        pub fn new(cluster_id: ClusterId, join_time: VruClusterOpTimestamp) -> Self {
-            Self {
-                cluster_id,
-                join_time,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct ClusterLeaveInfo {
-        #[rasn(identifier = "clusterId")]
-        pub cluster_id: ClusterId,
-        #[rasn(identifier = "clusterLeaveReason")]
-        pub cluster_leave_reason: ClusterLeaveReason,
-    }
-    impl ClusterLeaveInfo {
-        pub fn new(cluster_id: ClusterId, cluster_leave_reason: ClusterLeaveReason) -> Self {
-            Self {
-                cluster_id,
-                cluster_leave_reason,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum ClusterLeaveReason {
-        notProvided = 0,
-        clusterLeaderLost = 1,
-        clusterDisbandedByLeader = 2,
-        outOfClusterBoundingBox = 3,
-        outOfClusterSpeedRange = 4,
-        joiningAnotherCluster = 5,
-        max = 15,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ClusterProfiles(pub FixedBitString<4usize>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     #[non_exhaustive]
@@ -976,9 +558,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct CollisionRiskSubCauseCode(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=3"))]
     pub struct ComparisonOperator(pub u8);
@@ -1241,44 +820,8 @@ pub mod etsi_schema {
         reservedforUse = 8,
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct CountryAndRegions {
-        #[rasn(identifier = "countryOnly")]
-        pub country_only: CountryOnly,
-        pub regions: SequenceOfUint8,
-    }
-    impl CountryAndRegions {
-        pub fn new(country_only: CountryOnly, regions: SequenceOfUint8) -> Self {
-            Self {
-                country_only,
-                regions,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct CountryAndSubregions {
-        pub country: CountryOnly,
-        #[rasn(identifier = "regionAndSubregions")]
-        pub region_and_subregions: SequenceOfRegionAndSubregions,
-    }
-    impl CountryAndSubregions {
-        pub fn new(
-            country: CountryOnly,
-            region_and_subregions: SequenceOfRegionAndSubregions,
-        ) -> Self {
-            Self {
-                country,
-                region_and_subregions,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct CountryCode(pub FixedBitString<10usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct CountryOnly(pub Uint16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
@@ -1339,60 +882,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct CrlSeries(pub Uint16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct CtxRef(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct Curvature {
-        #[rasn(identifier = "curvatureValue")]
-        pub curvature_value: CurvatureValue,
-        #[rasn(identifier = "curvatureConfidence")]
-        pub curvature_confidence: CurvatureConfidence,
-    }
-    impl Curvature {
-        pub fn new(
-            curvature_value: CurvatureValue,
-            curvature_confidence: CurvatureConfidence,
-        ) -> Self {
-            Self {
-                curvature_value,
-                curvature_confidence,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    #[non_exhaustive]
-    pub enum CurvatureCalculationMode {
-        yawRateUsed = 0,
-        yawRateNotUsed = 1,
-        unavailable = 2,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum CurvatureConfidence {
-        #[rasn(identifier = "onePerMeter-0-00002")]
-        onePerMeter_0_00002 = 0,
-        #[rasn(identifier = "onePerMeter-0-0001")]
-        onePerMeter_0_0001 = 1,
-        #[rasn(identifier = "onePerMeter-0-0005")]
-        onePerMeter_0_0005 = 2,
-        #[rasn(identifier = "onePerMeter-0-002")]
-        onePerMeter_0_002 = 3,
-        #[rasn(identifier = "onePerMeter-0-01")]
-        onePerMeter_0_01 = 4,
-        #[rasn(identifier = "onePerMeter-0-1")]
-        onePerMeter_0_1 = 5,
-        outOfRange = 6,
-        unavailable = 7,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-1023..=1023"))]
-    pub struct CurvatureValue(pub i16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct DBV(pub Distance);
@@ -1471,58 +960,8 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct DDateTime {
-        pub year: Option<DYear>,
-        pub month: Option<DMonth>,
-        pub day: Option<DDay>,
-        pub hour: Option<DHour>,
-        pub minute: Option<DMinute>,
-        pub second: Option<DSecond>,
-        pub offset: Option<DOffset>,
-    }
-    impl DDateTime {
-        pub fn new(
-            year: Option<DYear>,
-            month: Option<DMonth>,
-            day: Option<DDay>,
-            hour: Option<DHour>,
-            minute: Option<DMinute>,
-            second: Option<DSecond>,
-            offset: Option<DOffset>,
-        ) -> Self {
-            Self {
-                year,
-                month,
-                day,
-                hour,
-                minute,
-                second,
-                offset,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=31"))]
-    pub struct DDay(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=8"))]
     pub struct DFL(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=31"))]
-    pub struct DHour(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=60"))]
-    pub struct DMinute(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=12"))]
-    pub struct DMonth(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-840..=840"))]
-    pub struct DOffset(pub i16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=32767"))]
-    pub struct DSRCmsgID(pub u16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=65535"))]
     pub struct DSecond(pub u16);
@@ -1561,9 +1000,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=4095"))]
     pub struct DYear(pub u16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct DangerousEndOfQueueSubCauseCode(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum DangerousGoodsBasic {
@@ -1588,9 +1024,6 @@ pub mod etsi_schema {
         corrosiveSubstances = 18,
         miscellaneousDangerousSubstances = 19,
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct DangerousSituationSubCauseCode(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
@@ -1619,9 +1052,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct DataRate80211(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct DayOfWeek(pub FixedBitString<8usize>);
@@ -1765,9 +1195,6 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=256"))]
-    pub struct DigitalMap(pub SequenceOf<ReferencePosition>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=3"))]
     pub struct Direction(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -1800,49 +1227,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("-132768..=132767"))]
     pub struct DistanceValue(pub i32);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct Dot2Elevation(pub ElevInt);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct Dot2Latitude(pub NinetyDegreeInt);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct Dot2Longitude(pub OneEightyDegreeInt);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct Dot2ThreeDLocation {
-        pub latitude: Dot2Latitude,
-        pub longitude: Dot2Longitude,
-        pub elevation: Dot2Elevation,
-    }
-    impl Dot2ThreeDLocation {
-        pub fn new(
-            latitude: Dot2Latitude,
-            longitude: Dot2Longitude,
-            elevation: Dot2Elevation,
-        ) -> Self {
-            Self {
-                latitude,
-                longitude,
-                elevation,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct Dot2TwoDLocation {
-        pub latitude: Dot2Latitude,
-        pub longitude: Dot2Longitude,
-    }
-    impl Dot2TwoDLocation {
-        pub fn new(latitude: Dot2Latitude, longitude: Dot2Longitude) -> Self {
-            Self {
-                latitude,
-                longitude,
-            }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum DriveDirection {
@@ -1895,208 +1279,11 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    pub enum Duration {
-        microseconds(Uint16),
-        milliseconds(Uint16),
-        seconds(Uint16),
-        minutes(Uint16),
-        hours(Uint16),
-        sixtyHours(Uint16),
-        years(Uint16),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=2"))]
     pub struct DynamicStatus(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct EDT(pub DTM);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EVChargingSpotNotificationPOIMessage {
-        #[rasn(identifier = "poiHeader")]
-        pub poi_header: ItsPOIHeader,
-        #[rasn(identifier = "evcsnData")]
-        pub evcsn_data: ItsEVCSNData,
-    }
-    impl EVChargingSpotNotificationPOIMessage {
-        pub fn new(poi_header: ItsPOIHeader, evcsn_data: ItsEVCSNData) -> Self {
-            Self {
-                poi_header,
-                evcsn_data,
-            }
-        }
-    }
-    #[doc = " Inner type "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EccP256CurvePointUncompressedP256 {
-        #[rasn(size("32"))]
-        pub x: OctetString,
-        #[rasn(size("32"))]
-        pub y: OctetString,
-    }
-    impl EccP256CurvePointUncompressedP256 {
-        pub fn new(x: OctetString, y: OctetString) -> Self {
-            Self { x, y }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    pub enum EccP256CurvePoint {
-        #[rasn(size("32"), identifier = "x-only")]
-        x_only(OctetString),
-        fill(()),
-        #[rasn(size("32"), identifier = "compressed-y-0")]
-        compressed_y_0(OctetString),
-        #[rasn(size("32"), identifier = "compressed-y-1")]
-        compressed_y_1(OctetString),
-        uncompressedP256(EccP256CurvePointUncompressedP256),
-    }
-    #[doc = " Inner type "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EccP384CurvePointUncompressedP384 {
-        #[rasn(size("48"))]
-        pub x: OctetString,
-        #[rasn(size("48"))]
-        pub y: OctetString,
-    }
-    impl EccP384CurvePointUncompressedP384 {
-        pub fn new(x: OctetString, y: OctetString) -> Self {
-            Self { x, y }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    pub enum EccP384CurvePoint {
-        #[rasn(size("48"), identifier = "x-only")]
-        x_only(OctetString),
-        fill(()),
-        #[rasn(size("48"), identifier = "compressed-y-0")]
-        compressed_y_0(OctetString),
-        #[rasn(size("48"), identifier = "compressed-y-1")]
-        compressed_y_1(OctetString),
-        uncompressedP384(EccP384CurvePointUncompressedP384),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EcdsaP256Signature {
-        #[rasn(identifier = "rSig")]
-        pub r_sig: EccP256CurvePoint,
-        #[rasn(size("32"), identifier = "sSig")]
-        pub s_sig: OctetString,
-    }
-    impl EcdsaP256Signature {
-        pub fn new(r_sig: EccP256CurvePoint, s_sig: OctetString) -> Self {
-            Self { r_sig, s_sig }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EcdsaP384Signature {
-        #[rasn(identifier = "rSig")]
-        pub r_sig: EccP384CurvePoint,
-        #[rasn(size("48"), identifier = "sSig")]
-        pub s_sig: OctetString,
-    }
-    impl EcdsaP384Signature {
-        pub fn new(r_sig: EccP384CurvePoint, s_sig: OctetString) -> Self {
-            Self { r_sig, s_sig }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EciesP256EncryptedKey {
-        pub v: EccP256CurvePoint,
-        #[rasn(size("16"))]
-        pub c: OctetString,
-        #[rasn(size("16"))]
-        pub t: OctetString,
-    }
-    impl EciesP256EncryptedKey {
-        pub fn new(v: EccP256CurvePoint, c: OctetString, t: OctetString) -> Self {
-            Self { v, c, t }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum EdcaIdentifier {
-        #[rasn(identifier = "enum")]
-        R_enum(EnumeratedEdcaIdentifier),
-        explicit(ExplicitEdcaIdentifier),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EdcaParameterRecord {
-        #[rasn(value("0..=1"))]
-        pub res: u8,
-        #[rasn(value("0..=3"))]
-        pub aci: u8,
-        #[rasn(value("0..=1"))]
-        pub acm: u8,
-        #[rasn(value("0..=15"))]
-        pub aifsn: u8,
-        #[rasn(value("0..=15"), identifier = "ecwMax")]
-        pub ecw_max: u8,
-        #[rasn(value("0..=15"), identifier = "ecwMin")]
-        pub ecw_min: u8,
-        #[rasn(value("0..=65535"), identifier = "txopLimit")]
-        pub txop_limit: u16,
-    }
-    impl EdcaParameterRecord {
-        pub fn new(
-            res: u8,
-            aci: u8,
-            acm: u8,
-            aifsn: u8,
-            ecw_max: u8,
-            ecw_min: u8,
-            txop_limit: u16,
-        ) -> Self {
-            Self {
-                res,
-                aci,
-                acm,
-                aifsn,
-                ecw_max,
-                ecw_min,
-                txop_limit,
-            }
-        }
-    }
-    #[doc = "ChannelInfo extension elements"]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EdcaParameterSet {
-        #[rasn(identifier = "acbeRecord")]
-        pub acbe_record: EdcaParameterRecord,
-        #[rasn(identifier = "acbkRecord")]
-        pub acbk_record: EdcaParameterRecord,
-        #[rasn(identifier = "acviRecord")]
-        pub acvi_record: EdcaParameterRecord,
-        #[rasn(identifier = "acvoRecord")]
-        pub acvo_record: EdcaParameterRecord,
-    }
-    impl EdcaParameterSet {
-        pub fn new(
-            acbe_record: EdcaParameterRecord,
-            acbk_record: EdcaParameterRecord,
-            acvi_record: EdcaParameterRecord,
-            acvo_record: EdcaParameterRecord,
-        ) -> Self {
-            Self {
-                acbe_record,
-                acbk_record,
-                acvi_record,
-                acvo_record,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ElevInt(pub Uint16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("-4096..=61439"))]
     pub struct Elevation(pub i32);
@@ -2135,9 +1322,6 @@ pub mod etsi_schema {
         #[rasn(identifier = "elev-000-01")]
         elev_000_01 = 15,
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct EmergencyVehicleApproachingSubCauseCode(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     #[non_exhaustive]
@@ -2153,21 +1337,8 @@ pub mod etsi_schema {
     #[rasn(delegate, size("1..=16"))]
     pub struct EnabledLaneList(pub SequenceOf<LaneID>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    pub enum EncryptionKey {
-        public(PublicEncryptionKey),
-        symmetric(SymmetricEncryptionKey),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct EngineCharacteristics(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    #[non_exhaustive]
-    pub enum EnumeratedEdcaIdentifier {
-        #[rasn(identifier = "us-j2945-bsm")]
-        us_j2945_bsm = 0,
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct EnvironmentalCharacteristics {
@@ -2253,17 +1424,6 @@ pub mod etsi_schema {
         reservedForUse8 = 14,
         eev = 15,
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct EvcsnPdu {
-        pub header: ItsPduHeader,
-        pub evcsn: EVChargingSpotNotificationPOIMessage,
-    }
-    impl EvcsnPdu {
-        pub fn new(header: ItsPduHeader, evcsn: EVChargingSpotNotificationPOIMessage) -> Self {
-            Self { header, evcsn }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     #[non_exhaustive]
@@ -2314,40 +1474,6 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ExplicitEdcaIdentifier {
-        #[rasn(identifier = "qosInfo")]
-        pub qos_info: Uint8,
-        pub reserved: Uint8,
-        #[rasn(size("4"))]
-        pub set1: OctetString,
-        #[rasn(size("4"))]
-        pub set2: OctetString,
-        #[rasn(size("4"))]
-        pub set3: OctetString,
-        #[rasn(size("4"))]
-        pub set4: OctetString,
-    }
-    impl ExplicitEdcaIdentifier {
-        pub fn new(
-            qos_info: Uint8,
-            reserved: Uint8,
-            set1: OctetString,
-            set2: OctetString,
-            set3: OctetString,
-            set4: OctetString,
-        ) -> Self {
-            Self {
-                qos_info,
-                reserved,
-                set1,
-                set2,
-                set3,
-                set4,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     pub enum Ext1 {
         #[rasn(value("128..=16511"))]
@@ -2364,21 +1490,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("2113664..=270549119", extensible))]
     pub struct Ext3(pub Integer);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ExtendedChannelInfo {
-        #[rasn(identifier = "medId")]
-        pub med_id: MedType,
-        pub value: Any,
-    }
-    impl ExtendedChannelInfo {
-        pub fn new(med_id: MedType, value: Any) -> Self {
-            Self { med_id, value }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ExtendedChannelInfos(pub SequenceOf<ExtendedChannelInfo>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct ExteriorLights(pub FixedBitString<8usize>);
@@ -2438,58 +1549,8 @@ pub mod etsi_schema {
     #[rasn(delegate, value("0..=15"))]
     pub struct FuelType(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct FullPositionVector {
-        #[rasn(identifier = "utcTime")]
-        pub utc_time: Option<DDateTime>,
-        pub long: Longitude,
-        pub lat: Latitude,
-        pub elevation: Option<Elevation>,
-        pub heading: Option<SAEHeading>,
-        pub speed: Option<TransmissionAndSpeed>,
-        #[rasn(identifier = "posAccuracy")]
-        pub pos_accuracy: Option<PositionalAccuracy>,
-        #[rasn(identifier = "timeConfidence")]
-        pub time_confidence: Option<TimeConfidence>,
-        #[rasn(identifier = "posConfidence")]
-        pub pos_confidence: Option<PositionConfidenceSet>,
-        #[rasn(identifier = "speedConfidence")]
-        pub speed_confidence: Option<SpeedandHeadingandThrottleConfidence>,
-    }
-    impl FullPositionVector {
-        pub fn new(
-            utc_time: Option<DDateTime>,
-            long: Longitude,
-            lat: Latitude,
-            elevation: Option<Elevation>,
-            heading: Option<SAEHeading>,
-            speed: Option<TransmissionAndSpeed>,
-            pos_accuracy: Option<PositionalAccuracy>,
-            time_confidence: Option<TimeConfidence>,
-            pos_confidence: Option<PositionConfidenceSet>,
-            speed_confidence: Option<SpeedandHeadingandThrottleConfidence>,
-        ) -> Self {
-            Self {
-                utc_time,
-                long,
-                lat,
-                elevation,
-                heading,
-                speed,
-                pos_accuracy,
-                time_confidence,
-                pos_confidence,
-                speed_confidence,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct GNSSstatus(pub FixedBitString<8usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct GatewayMacAddress(pub MACaddress);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=16", extensible))]
     pub struct GeneralIviContainer(pub SequenceOf<GicPart>);
@@ -2596,15 +1657,6 @@ pub mod etsi_schema {
                 parts,
             }
         }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum GeographicRegion {
-        circularRegion(CircularRegion),
-        rectangularRegion(SequenceOfRectangularRegion),
-        polygonalRegion(PolygonalRegion),
-        identifiedRegion(SequenceOfIdentifiedRegion),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -2717,64 +1769,6 @@ pub mod etsi_schema {
     pub struct GoodsType(pub Integer);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
-    pub struct GroupLinkageValue {
-        #[rasn(size("4"), identifier = "jValue")]
-        pub j_value: OctetString,
-        #[rasn(size("9"))]
-        pub value: OctetString,
-    }
-    impl GroupLinkageValue {
-        pub fn new(j_value: OctetString, value: OctetString) -> Self {
-            Self { j_value, value }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    #[non_exhaustive]
-    pub enum HashAlgorithm {
-        sha256 = 0,
-        #[rasn(extension_addition)]
-        sha384 = 1,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct HashedId10(pub FixedOctetString<10usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct HashedId3(pub FixedOctetString<3usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct HashedId8(pub FixedOctetString<8usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(
-        delegate,
-        identifier = "HazardousLocation-AnimalOnTheRoadSubCauseCode",
-        value("0..=255")
-    )]
-    pub struct HazardousLocationAnimalOnTheRoadSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(
-        delegate,
-        identifier = "HazardousLocation-DangerousCurveSubCauseCode",
-        value("0..=255")
-    )]
-    pub struct HazardousLocationDangerousCurveSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(
-        delegate,
-        identifier = "HazardousLocation-ObstacleOnTheRoadSubCauseCode",
-        value("0..=255")
-    )]
-    pub struct HazardousLocationObstacleOnTheRoadSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(
-        delegate,
-        identifier = "HazardousLocation-SurfaceConditionSubCauseCode",
-        value("0..=255")
-    )]
-    pub struct HazardousLocationSurfaceConditionSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
     pub struct Heading {
         #[rasn(identifier = "headingValue")]
         pub heading_value: HeadingValue,
@@ -2790,21 +1784,6 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct HeadingChangeIndication {
-        pub direction: LeftOrRight,
-        #[rasn(identifier = "actionDeltaTime")]
-        pub action_delta_time: ActionDeltaTime,
-    }
-    impl HeadingChangeIndication {
-        pub fn new(direction: LeftOrRight, action_delta_time: ActionDeltaTime) -> Self {
-            Self {
-                direction,
-                action_delta_time,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=127"))]
     pub struct HeadingConfidence(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -2813,9 +1792,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=100"))]
     pub struct HitchPointOffset(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("0..=255"))]
-    pub struct Hostname(pub Utf8String);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct HoursMinutes {
@@ -2829,15 +1805,6 @@ pub mod etsi_schema {
             Self { hours, mins }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct HumanPresenceOnTheRoadSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct HumanProblemSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct IPv6Address(pub FixedOctetString<16usize>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     pub enum ISO14823Attribute {
@@ -2868,37 +1835,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct ITSRangingSAMAppData {
-        #[rasn(value("0..=255"), identifier = "protocolVersion")]
-        pub protocol_version: u8,
-        #[rasn(identifier = "ackResponseService")]
-        pub ack_response_service: ACKResponseService,
-        #[rasn(identifier = "groundAltitude")]
-        pub ground_altitude: Option<Altitude>,
-        #[rasn(identifier = "roadAngles")]
-        pub road_angles: Option<RoadAngles>,
-    }
-    impl ITSRangingSAMAppData {
-        pub fn new(
-            protocol_version: u8,
-            ack_response_service: ACKResponseService,
-            ground_altitude: Option<Altitude>,
-            road_angles: Option<RoadAngles>,
-        ) -> Self {
-            Self {
-                protocol_version,
-                ack_response_service,
-                ground_altitude,
-                road_angles,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ITSaid(pub VarLengthNumber);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=1023"))]
     pub struct IVILaneWidth(pub u16);
@@ -2952,17 +1888,6 @@ pub mod etsi_schema {
                 ivi_status,
             }
         }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct IValue(pub Uint16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum IdentifiedRegion {
-        countryOnly(CountryOnly),
-        countryAndRegions(CountryAndRegions),
-        countryAndSubregions(CountryAndSubregions),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
@@ -3153,160 +2078,11 @@ pub mod etsi_schema {
     #[rasn(delegate)]
     pub struct IntersectionStatusObject(pub FixedBitString<16usize>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct IpV6Prefix(pub FixedOctetString<16usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct IpV6PrefixLength(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct Iso3833VehicleType(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=16383"))]
     pub struct IssuerIdentifier(pub u16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ItsAidCtxRef {
-        pub itsaid: ITSaid,
-        pub ctx: CtxRef,
-    }
-    impl ItsAidCtxRef {
-        pub fn new(itsaid: ITSaid, ctx: CtxRef) -> Self {
-            Self { itsaid, ctx }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ItsChargingSpotDataElements {
-        #[rasn(identifier = "type")]
-        pub r_type: ChargingSpotType,
-        #[rasn(identifier = "evEquipmentID")]
-        pub ev_equipment_id: Option<Utf8String>,
-        #[rasn(identifier = "typeOfReceptacle")]
-        pub type_of_receptacle: TypeOfReceptacle,
-        #[rasn(identifier = "energyAvailability")]
-        pub energy_availability: Utf8String,
-        #[rasn(identifier = "parkingPlacesData")]
-        pub parking_places_data: Option<ParkingPlacesData>,
-    }
-    impl ItsChargingSpotDataElements {
-        pub fn new(
-            r_type: ChargingSpotType,
-            ev_equipment_id: Option<Utf8String>,
-            type_of_receptacle: TypeOfReceptacle,
-            energy_availability: Utf8String,
-            parking_places_data: Option<ParkingPlacesData>,
-        ) -> Self {
-            Self {
-                r_type,
-                ev_equipment_id,
-                type_of_receptacle,
-                energy_availability,
-                parking_places_data,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=16"))]
-    pub struct ItsChargingSpots(pub SequenceOf<ItsChargingSpotDataElements>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct ItsChargingStationData {
-        #[rasn(identifier = "chargingStationID")]
-        pub charging_station_id: StationID,
-        #[rasn(identifier = "utilityDistributorId")]
-        pub utility_distributor_id: Option<Utf8String>,
-        #[rasn(identifier = "providerID")]
-        pub provider_id: Option<Utf8String>,
-        #[rasn(identifier = "chargingStationLocation")]
-        pub charging_station_location: ReferencePosition,
-        pub address: Option<Utf8String>,
-        #[rasn(size("1..=16"), identifier = "phoneNumber")]
-        pub phone_number: Option<NumericString>,
-        pub accessibility: Utf8String,
-        #[rasn(identifier = "digitalMap")]
-        pub digital_map: Option<DigitalMap>,
-        #[rasn(identifier = "openingDaysHours")]
-        pub opening_days_hours: Utf8String,
-        pub pricing: Utf8String,
-        #[rasn(identifier = "bookingContactInfo")]
-        pub booking_contact_info: Option<Utf8String>,
-        pub payment: Option<Utf8String>,
-        #[rasn(identifier = "chargingSpotsAvailable")]
-        pub charging_spots_available: ItsChargingSpots,
-    }
-    impl ItsChargingStationData {
-        pub fn new(
-            charging_station_id: StationID,
-            utility_distributor_id: Option<Utf8String>,
-            provider_id: Option<Utf8String>,
-            charging_station_location: ReferencePosition,
-            address: Option<Utf8String>,
-            phone_number: Option<NumericString>,
-            accessibility: Utf8String,
-            digital_map: Option<DigitalMap>,
-            opening_days_hours: Utf8String,
-            pricing: Utf8String,
-            booking_contact_info: Option<Utf8String>,
-            payment: Option<Utf8String>,
-            charging_spots_available: ItsChargingSpots,
-        ) -> Self {
-            Self {
-                charging_station_id,
-                utility_distributor_id,
-                provider_id,
-                charging_station_location,
-                address,
-                phone_number,
-                accessibility,
-                digital_map,
-                opening_days_hours,
-                pricing,
-                booking_contact_info,
-                payment,
-                charging_spots_available,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ItsEVCSNData {
-        #[rasn(identifier = "totalNumberOfStations")]
-        pub total_number_of_stations: NumberStations,
-        #[rasn(size("1..=256"), identifier = "chargingStationsData")]
-        pub charging_stations_data: SequenceOf<ItsChargingStationData>,
-    }
-    impl ItsEVCSNData {
-        pub fn new(
-            total_number_of_stations: NumberStations,
-            charging_stations_data: SequenceOf<ItsChargingStationData>,
-        ) -> Self {
-            Self {
-                total_number_of_stations,
-                charging_stations_data,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ItsPOIHeader {
-        #[rasn(identifier = "poiType")]
-        pub poi_type: POIType,
-        #[rasn(identifier = "timeStamp")]
-        pub time_stamp: TimestampIts,
-        #[rasn(identifier = "relayCapable")]
-        pub relay_capable: bool,
-    }
-    impl ItsPOIHeader {
-        pub fn new(poi_type: POIType, time_stamp: TimestampIts, relay_capable: bool) -> Self {
-            Self {
-                poi_type,
-                time_stamp,
-                relay_capable,
-            }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct ItsPduHeader {
@@ -3398,18 +2174,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=7"))]
     pub struct IviType(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-900000000..=900000000"))]
-    pub struct KnownLatitude(pub NinetyDegreeInt);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-1799999999..=1800000000"))]
-    pub struct KnownLongitude(pub OneEightyDegreeInt);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct LMchannelBusyRatio(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct LaId(pub FixedOctetString<2usize>);
     #[doc = " Inner type "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -3715,18 +2479,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum LeftOrRight {
-        left = 0,
-        right = 1,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct LinkageSeed(pub FixedOctetString<16usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct LinkageValue(pub FixedOctetString<9usize>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct LoadType {
@@ -3801,9 +2553,6 @@ pub mod etsi_schema {
     #[rasn(delegate, value("0..=32767"))]
     pub struct LongitudinalLanePositionValue(pub u16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct MACaddress(pub FixedOctetString<6usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct MAPEM {
         pub header: ItsPduHeader,
@@ -3814,162 +2563,6 @@ pub mod etsi_schema {
             Self { header, map }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags, identifier = "MCDM-ApplicationContainer")]
-    #[non_exhaustive]
-    pub struct MCDMApplicationContainer {}
-    impl MCDMApplicationContainer {
-        pub fn new() -> Self {
-            Self {}
-        }
-    }
-    impl std::default::Default for MCDMApplicationContainer {
-        fn default() -> Self {
-            Self {}
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags, identifier = "MCDM-LocationContainer")]
-    #[non_exhaustive]
-    pub struct MCDMLocationContainer {
-        #[rasn(identifier = "eventPosition")]
-        pub event_position: ReferencePosition,
-    }
-    impl MCDMLocationContainer {
-        pub fn new(event_position: ReferencePosition) -> Self {
-            Self { event_position }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags, identifier = "MCDM-ManagementContainer")]
-    #[non_exhaustive]
-    pub struct MCDMManagementContainer {
-        #[rasn(identifier = "actionID")]
-        pub action_id: ActionID,
-        pub request: Option<RequestResponseIndication>,
-        pub ack: Option<AckNackIndication>,
-        #[rasn(identifier = "detectionTime")]
-        pub detection_time: Option<TimestampIts>,
-        #[rasn(identifier = "referenceTime")]
-        pub reference_time: TimestampIts,
-        #[rasn(identifier = "linkedDenm")]
-        pub linked_denm: Option<ActionID>,
-        #[rasn(identifier = "validityDuration")]
-        pub validity_duration: Option<ValidityDuration>,
-        #[rasn(identifier = "stationType")]
-        pub station_type: Option<StationType>,
-        #[rasn(
-            value("0..=4294967295"),
-            default = "mcdmmanagement_container_number_of_mdus_default",
-            identifier = "numberOfMDUs"
-        )]
-        pub number_of_mdus: u32,
-        #[rasn(
-            value("1..=4294967295"),
-            default = "mcdmmanagement_container_number_of_pdus_default",
-            identifier = "numberOfPDUs"
-        )]
-        pub number_of_pdus: u32,
-        #[rasn(
-            value("1..=4294967295"),
-            default = "mcdmmanagement_container_pdu_sequence_number_default",
-            identifier = "pduSequenceNumber"
-        )]
-        pub pdu_sequence_number: u32,
-        #[rasn(identifier = "mediaTypes")]
-        pub media_types: Option<SequenceOf<MediaTypeOfMDUs>>,
-        pub urls: Option<SequenceOf<URLOfMDUs>>,
-        #[rasn(
-            default = "mcdmmanagement_container_real_time_default",
-            identifier = "realTime"
-        )]
-        pub real_time: bool,
-        #[rasn(value("0..=4294967295"))]
-        pub size: Option<u32>,
-    }
-    impl MCDMManagementContainer {
-        pub fn new(
-            action_id: ActionID,
-            request: Option<RequestResponseIndication>,
-            ack: Option<AckNackIndication>,
-            detection_time: Option<TimestampIts>,
-            reference_time: TimestampIts,
-            linked_denm: Option<ActionID>,
-            validity_duration: Option<ValidityDuration>,
-            station_type: Option<StationType>,
-            number_of_mdus: u32,
-            number_of_pdus: u32,
-            pdu_sequence_number: u32,
-            media_types: Option<SequenceOf<MediaTypeOfMDUs>>,
-            urls: Option<SequenceOf<URLOfMDUs>>,
-            real_time: bool,
-            size: Option<u32>,
-        ) -> Self {
-            Self {
-                action_id,
-                request,
-                ack,
-                detection_time,
-                reference_time,
-                linked_denm,
-                validity_duration,
-                station_type,
-                number_of_mdus,
-                number_of_pdus,
-                pdu_sequence_number,
-                media_types,
-                urls,
-                real_time,
-                size,
-            }
-        }
-    }
-    fn mcdmmanagement_container_number_of_mdus_default() -> u32 {
-        1
-    }
-    fn mcdmmanagement_container_number_of_pdus_default() -> u32 {
-        1
-    }
-    fn mcdmmanagement_container_pdu_sequence_number_default() -> u32 {
-        1
-    }
-    fn mcdmmanagement_container_real_time_default() -> bool {
-        false
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=7"), identifier = "MCDM-MultimediaContainer")]
-    pub struct MCDMMultimediaContainer(pub SequenceOf<MultimediaDataUnit>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags, identifier = "MCDM-SituationContainer")]
-    #[non_exhaustive]
-    pub struct MCDMSituationContainer {
-        #[rasn(identifier = "eventType")]
-        pub event_type: CauseCode,
-        #[rasn(identifier = "linkedCause")]
-        pub linked_cause: Option<CauseCode>,
-        #[rasn(value("0..=100"), identifier = "authorizedPercentageLoss")]
-        pub authorized_percentage_loss: Option<u8>,
-        #[rasn(identifier = "informationQuality")]
-        pub information_quality: InformationQuality,
-    }
-    impl MCDMSituationContainer {
-        pub fn new(
-            event_type: CauseCode,
-            linked_cause: Option<CauseCode>,
-            authorized_percentage_loss: Option<u8>,
-            information_quality: InformationQuality,
-        ) -> Self {
-            Self {
-                event_type,
-                linked_cause,
-                authorized_percentage_loss,
-                information_quality,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct MandAppCtx(pub SequenceOf<ItsAidCtxRef>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=16"))]
     pub struct ManeuverAssistList(pub SequenceOf<ConnectionManeuverAssist>);
@@ -4056,21 +2649,6 @@ pub mod etsi_schema {
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
-    pub struct MapPosition {
-        #[rasn(identifier = "intersectionId")]
-        pub intersection_id: IntersectionReferenceID,
-        pub lane: LaneID,
-    }
-    impl MapPosition {
-        pub fn new(intersection_id: IntersectionReferenceID, lane: LaneID) -> Self {
-            Self {
-                intersection_id,
-                lane,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
     #[non_exhaustive]
     pub struct MatchedPosition {
         #[rasn(identifier = "laneID")]
@@ -4086,70 +2664,6 @@ pub mod etsi_schema {
             Self {
                 lane_id,
                 longitudinal_lane_position,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct McdmInfo {
-        pub management: MCDMManagementContainer,
-        pub situation: Option<MCDMSituationContainer>,
-        pub location: Option<MCDMLocationContainer>,
-        pub application: Option<MCDMApplicationContainer>,
-        pub multimedia: Option<MCDMMultimediaContainer>,
-    }
-    impl McdmInfo {
-        pub fn new(
-            management: MCDMManagementContainer,
-            situation: Option<MCDMSituationContainer>,
-            location: Option<MCDMLocationContainer>,
-            application: Option<MCDMApplicationContainer>,
-            multimedia: Option<MCDMMultimediaContainer>,
-        ) -> Self {
-            Self {
-                management,
-                situation,
-                location,
-                application,
-                multimedia,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct McdmPdu {
-        pub header: ItsPduHeader,
-        #[rasn(identifier = "mcdmInfo")]
-        pub mcdm_info: McdmInfo,
-    }
-    impl McdmPdu {
-        pub fn new(header: ItsPduHeader, mcdm_info: McdmInfo) -> Self {
-            Self { header, mcdm_info }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct MedType(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct MediaTypeOfMDUs {
-        #[rasn(identifier = "startingMDU")]
-        pub starting_mdu: Option<SequenceNumber>,
-        #[rasn(identifier = "endingMDU")]
-        pub ending_mdu: Option<SequenceNumber>,
-        #[rasn(identifier = "mediaType")]
-        pub media_type: Ia5String,
-    }
-    impl MediaTypeOfMDUs {
-        pub fn new(
-            starting_mdu: Option<SequenceNumber>,
-            ending_mdu: Option<SequenceNumber>,
-            media_type: Ia5String,
-        ) -> Self {
-            Self {
-                starting_mdu,
-                ending_mdu,
-                media_type,
             }
         }
     }
@@ -4315,15 +2829,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=127"))]
     pub struct MsgCount(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    pub enum MultimediaDataUnit {
-        mediaContentUTF8(Utf8String),
-        mediaContentOctet(OctetString),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-900000000..=900000001"))]
-    pub struct NinetyDegreeInt(pub i32);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
@@ -4605,22 +3110,8 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum NonIslandLanePosition {
-        offRoadLanePosition(OffRoadLanePosition),
-        vehicularLanePosition(LanePosition),
-        mapPosition(MapPosition),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(delegate)]
-    pub struct NullCtx(pub ());
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct NumberOfPerceivedObjects(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("1..=256"))]
-    pub struct NumberStations(pub u16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=1500"))]
     pub struct ObjectAge(pub u16);
@@ -4680,15 +3171,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=8"))]
     pub struct ObjectRefPoint(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum OffRoadLanePosition {
-        unavailable = 0,
-        sidewalk = 1,
-        parkingLane = 2,
-        bikeLane = 3,
-        max = 15,
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, identifier = "Offset-B09", value("-256..=255"))]
     pub struct OffsetB09(pub i16);
@@ -4741,15 +3223,6 @@ pub mod etsi_schema {
         small(DrivenLineOffsetSm),
         large(DrivenLineOffsetLg),
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-1799999999..=1800000001"))]
-    pub struct OneEightyDegreeInt(pub i32);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct Opaque(pub OctetString);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct OperatingClass80211(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     #[non_exhaustive]
@@ -4866,12 +3339,6 @@ pub mod etsi_schema {
     #[rasn(delegate)]
     pub struct PMD(pub FixedBitString<4usize>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=65535"))]
-    pub struct POIType(pub u16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=4"))]
-    pub struct ParkingPlacesData(pub SequenceOf<SpotAvailability>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct Particulate {
         #[rasn(identifier = "unitType")]
@@ -4900,34 +3367,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("1..=65535", extensible))]
-    pub struct PathDeltaTime(pub Integer);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("0..=40"))]
-    pub struct PathHistory(pub SequenceOf<PathPoint>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct PathPoint {
-        #[rasn(identifier = "pathPosition")]
-        pub path_position: DeltaReferencePosition,
-        #[rasn(identifier = "pathDeltaTime")]
-        pub path_delta_time: Option<PathDeltaTime>,
-    }
-    impl PathPoint {
-        pub fn new(
-            path_position: DeltaReferencePosition,
-            path_delta_time: Option<PathDeltaTime>,
-        ) -> Self {
-            Self {
-                path_position,
-                path_delta_time,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct PathPrediction(pub PathHistory);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(delegate)]
     pub struct PedestrianBicycleDetect(pub bool);
@@ -5143,12 +3582,6 @@ pub mod etsi_schema {
         absolutePositionsWithAltitude(AbsolutePositionsWithAltitude),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("3.."))]
-    pub struct PolygonalRegion(pub SequenceOf<Dot2TwoDLocation>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=65535"))]
-    pub struct PortNumber(pub u16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct PosConfidenceEllipse {
         #[rasn(identifier = "semiMajorConfidence")]
@@ -5281,9 +3714,6 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct PostCrashSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=32"))]
     pub struct PreemptPriorityList(pub SequenceOf<SignalControlZone>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -5336,9 +3766,6 @@ pub mod etsi_schema {
         priorityCancellation = 3,
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ProtocolType(pub VarLengthNumber);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct Provider {
         #[rasn(identifier = "countryCode")]
@@ -5354,52 +3781,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ProviderMacAddress(pub MACaddress);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ProviderPermissions(pub SequenceOf<ChannelSpecificProviderPermission>);
-    #[doc = "ServiceInfo extension elements"]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ProviderServiceContext {
-        #[rasn(size("3"), identifier = "fillBit")]
-        pub fill_bit: BitString,
-        #[rasn(size("0..=31"))]
-        pub psc: OctetString,
-    }
-    impl ProviderServiceContext {
-        pub fn new(fill_bit: BitString, psc: OctetString) -> Self {
-            Self { fill_bit, psc }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0.."))]
-    pub struct Psid(pub Integer);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct PsidSsp {
-        pub psid: Psid,
-        pub ssp: Option<ServiceSpecificPermissions>,
-    }
-    impl PsidSsp {
-        pub fn new(psid: Psid, ssp: Option<ServiceSpecificPermissions>) -> Self {
-            Self { psid, ssp }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct PsidSspRange {
-        pub psid: Psid,
-        #[rasn(identifier = "sspRange")]
-        pub ssp_range: Option<SspRange>,
-    }
-    impl PsidSspRange {
-        pub fn new(psid: Psid, ssp_range: Option<SspRange>) -> Self {
-            Self { psid, ssp_range }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     #[non_exhaustive]
@@ -5410,36 +3791,11 @@ pub mod etsi_schema {
         cancelRequest = 3,
         emergencyRequest = 4,
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct PublicEncryptionKey {
-        #[rasn(identifier = "supportedSymmAlg")]
-        pub supported_symm_alg: SymmAlgorithm,
-        #[rasn(identifier = "publicKey")]
-        pub public_key: BasePublicEncryptionKey,
-    }
-    impl PublicEncryptionKey {
-        pub fn new(supported_symm_alg: SymmAlgorithm, public_key: BasePublicEncryptionKey) -> Self {
-            Self {
-                supported_symm_alg,
-                public_key,
-            }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     #[non_exhaustive]
     pub enum PublicFacilitiesPictogram {
         publicFacilities = 0,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum PublicVerificationKey {
-        ecdsaNistP256(EccP256CurvePoint),
-        ecdsaBrainpoolP256r1(EccP256CurvePoint),
-        #[rasn(extension_addition)]
-        ecdsaBrainpoolP384r1(EccP384CurvePoint),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=32"))]
@@ -5462,102 +3818,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated, identifier = "RTCM-Revision")]
-    #[non_exhaustive]
-    pub enum RTCMRevision {
-        unknown = 0,
-        rtcmRev2 = 1,
-        rtcmRev3 = 2,
-        reserved = 3,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct RTCMEM {
-        pub header: ItsPduHeader,
-        pub rtcmc: RTCMcorrections,
-    }
-    impl RTCMEM {
-        pub fn new(header: ItsPduHeader, rtcmc: RTCMcorrections) -> Self {
-            Self { header, rtcmc }
-        }
-    }
-    #[doc = " Anonymous SEQUENCE OF member "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags, identifier = "SEQUENCE")]
-    pub struct AnonymousRTCMcorrectionsRegional {
-        #[rasn(value("0..=255"), identifier = "regionId")]
-        pub region_id: u8,
-        #[rasn(identifier = "regExtValue")]
-        pub reg_ext_value: Any,
-    }
-    impl AnonymousRTCMcorrectionsRegional {
-        pub fn new(region_id: u8, reg_ext_value: Any) -> Self {
-            Self {
-                region_id,
-                reg_ext_value,
-            }
-        }
-    }
-    #[doc = " Inner type "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=4"))]
-    pub struct RTCMcorrectionsRegional(pub SequenceOf<AnonymousRTCMcorrectionsRegional>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct RTCMcorrections {
-        #[rasn(identifier = "msgCnt")]
-        pub msg_cnt: MsgCount,
-        pub rev: RTCMRevision,
-        #[rasn(identifier = "timeStamp")]
-        pub time_stamp: Option<MinuteOfTheYear>,
-        #[rasn(identifier = "anchorPoint")]
-        pub anchor_point: Option<FullPositionVector>,
-        #[rasn(identifier = "rtcmHeader")]
-        pub rtcm_header: Option<RTCMheader>,
-        pub msgs: RTCMmessageList,
-        pub regional: Option<RTCMcorrectionsRegional>,
-    }
-    impl RTCMcorrections {
-        pub fn new(
-            msg_cnt: MsgCount,
-            rev: RTCMRevision,
-            time_stamp: Option<MinuteOfTheYear>,
-            anchor_point: Option<FullPositionVector>,
-            rtcm_header: Option<RTCMheader>,
-            msgs: RTCMmessageList,
-            regional: Option<RTCMcorrectionsRegional>,
-        ) -> Self {
-            Self {
-                msg_cnt,
-                rev,
-                time_stamp,
-                anchor_point,
-                rtcm_header,
-                msgs,
-                regional,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct RTCMheader {
-        pub status: GNSSstatus,
-        #[rasn(identifier = "offsetSet")]
-        pub offset_set: AntennaOffsetSet,
-    }
-    impl RTCMheader {
-        pub fn new(status: GNSSstatus, offset_set: AntennaOffsetSet) -> Self {
-            Self { status, offset_set }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=1023"))]
-    pub struct RTCMmessage(pub OctetString);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=5"))]
-    pub struct RTCMmessageList(pub SequenceOf<RTCMmessage>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=10000"))]
     pub struct Radius(pub u16);
@@ -5589,30 +3849,8 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct RcpiThreshold(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=150"))]
     pub struct RearOverhang(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct RectangularRegion {
-        #[rasn(identifier = "northWest")]
-        pub north_west: Dot2TwoDLocation,
-        #[rasn(identifier = "southEast")]
-        pub south_east: Dot2TwoDLocation,
-    }
-    impl RectangularRegion {
-        pub fn new(north_west: Dot2TwoDLocation, south_east: Dot2TwoDLocation) -> Self {
-            Self {
-                north_west,
-                south_east,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct RefExt(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct RefPointId(pub u8);
@@ -5641,17 +3879,6 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct RegionAndSubregions {
-        pub region: Uint8,
-        pub subregions: SequenceOfUint16,
-    }
-    impl RegionAndSubregions {
-        pub fn new(region: Uint8, subregions: SequenceOfUint16) -> Self {
-            Self { region, subregions }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct RegionId(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -5677,12 +3904,6 @@ pub mod etsi_schema {
         higherPTPriorityGranted = 4,
         vehicleTrackingUnknown = 5,
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct RepeatRate(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ReplyAddress(pub PortNumber);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct RequestID(pub u8);
@@ -5882,9 +4103,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct RescueAndRecoveryWorkInProgressSubCauseCode(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     #[non_exhaustive]
@@ -5964,9 +4182,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=16"))]
     pub struct RestrictionUserTypeList(pub SequenceOf<RestrictionUserType>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct RoadAngles(pub SequenceOf<Heading>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=16", extensible))]
     pub struct RoadConfigurationContainer(pub SequenceOf<RccPart>);
@@ -6070,66 +4285,6 @@ pub mod etsi_schema {
     #[rasn(delegate, value("-128..=127"))]
     pub struct RoadwayCrownAngle(pub i8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct RoadworksSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct RoutAdvertExt {
-        #[rasn(identifier = "extensionId")]
-        pub extension_id: RefExt,
-        pub value: Any,
-    }
-    impl RoutAdvertExt {
-        pub fn new(extension_id: RefExt, value: Any) -> Self {
-            Self {
-                extension_id,
-                value,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct RoutAdvertExts(pub SequenceOf<RoutAdvertExt>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=65535"))]
-    pub struct RouterLifetime(pub u16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct RoutingAdvertisement {
-        pub lifetime: RouterLifetime,
-        #[rasn(identifier = "ipPrefix")]
-        pub ip_prefix: IpV6Prefix,
-        #[rasn(identifier = "ipPrefixLength")]
-        pub ip_prefix_length: IpV6PrefixLength,
-        #[rasn(identifier = "defaultGateway")]
-        pub default_gateway: IPv6Address,
-        #[rasn(identifier = "primaryDns")]
-        pub primary_dns: IPv6Address,
-        pub extensions: RoutAdvertExts,
-    }
-    impl RoutingAdvertisement {
-        pub fn new(
-            lifetime: RouterLifetime,
-            ip_prefix: IpV6Prefix,
-            ip_prefix_length: IpV6PrefixLength,
-            default_gateway: IPv6Address,
-            primary_dns: IPv6Address,
-            extensions: RoutAdvertExts,
-        ) -> Self {
-            Self {
-                lifetime,
-                ip_prefix,
-                ip_prefix_length,
-                default_gateway,
-                primary_dns,
-                extensions,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=15"))]
-    pub struct RsvAdvPrtVersion(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=28800"))]
     pub struct SAEHeading(pub u16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
@@ -6172,28 +4327,6 @@ pub mod etsi_schema {
         #[rasn(identifier = "prec0-5percent")]
         prec0_5percent = 3,
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-4096..=61439"))]
-    pub struct SAElevation(pub i32);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SALatitude {
-        #[rasn(size("1"), identifier = "fillBit")]
-        pub fill_bit: BitString,
-        #[rasn(value("-900000000..=900000001"))]
-        pub lat: i32,
-    }
-    impl SALatitude {
-        pub fn new(fill_bit: BitString, lat: i32) -> Self {
-            Self { fill_bit, lat }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-1800000000..=1800000001"))]
-    pub struct SALongitude(pub i32);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SAMapplicationData(pub OctetString);
     #[doc = " Anonymous SEQUENCE OF member "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags, identifier = "SEQUENCE")]
@@ -6278,24 +4411,6 @@ pub mod etsi_schema {
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
-    pub struct SRMextension {
-        #[rasn(identifier = "extensionId")]
-        pub extension_id: RefExt,
-        pub value: Any,
-    }
-    impl SRMextension {
-        pub fn new(extension_id: RefExt, value: Any) -> Self {
-            Self {
-                extension_id,
-                value,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SRMextensions(pub SequenceOf<SRMextension>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
     pub struct SSEM {
         pub header: ItsPduHeader,
         pub ssm: SignalStatusMessage,
@@ -6306,67 +4421,8 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct Sam {
-        pub version: RsvAdvPrtVersion,
-        pub body: SamBody,
-    }
-    impl Sam {
-        pub fn new(version: RsvAdvPrtVersion, body: SamBody) -> Self {
-            Self { version, body }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SamBody {
-        #[rasn(identifier = "changeCount")]
-        pub change_count: SrvAdvChangeCount,
-        pub extensions: Option<SrvAdvMsgHeaderExts>,
-        #[rasn(identifier = "serviceInfos")]
-        pub service_infos: Option<ServiceInfos>,
-        #[rasn(identifier = "channelInfos")]
-        pub channel_infos: Option<ChannelInfos>,
-        #[rasn(identifier = "routingAdvertisement")]
-        pub routing_advertisement: Option<RoutingAdvertisement>,
-    }
-    impl SamBody {
-        pub fn new(
-            change_count: SrvAdvChangeCount,
-            extensions: Option<SrvAdvMsgHeaderExts>,
-            service_infos: Option<ServiceInfos>,
-            channel_infos: Option<ChannelInfos>,
-            routing_advertisement: Option<RoutingAdvertisement>,
-        ) -> Self {
-            Self {
-                change_count,
-                extensions,
-                service_infos,
-                channel_infos,
-                routing_advertisement,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SamContext {
-        #[rasn(identifier = "itsaidCtxRef")]
-        pub itsaid_ctx_ref: ItsAidCtxRef,
-        pub context: Any,
-    }
-    impl SamContext {
-        pub fn new(itsaid_ctx_ref: ItsAidCtxRef, context: Any) -> Self {
-            Self {
-                itsaid_ctx_ref,
-                context,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, identifier = "Scale-B12", value("-2048..=2047"))]
     pub struct ScaleB12(pub i16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SecondaryDns(pub IPv6Address);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct Segment {
@@ -6487,112 +4543,12 @@ pub mod etsi_schema {
     #[rasn(delegate, value("0..=65535"))]
     pub struct SequenceNumber(pub u16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfEdcaIdentifier(pub SequenceOf<EdcaIdentifier>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfHashedId3(pub SequenceOf<HashedId3>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfIdentifiedRegion(pub SequenceOf<IdentifiedRegion>);
-    #[doc = " Anonymous SEQUENCE OF member "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, identifier = "OCTET_STRING")]
-    pub struct AnonymousSequenceOfOctetString(pub OctetString);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfOctetString(pub SequenceOf<AnonymousSequenceOfOctetString>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfPsid(pub SequenceOf<Psid>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfPsidSsp(pub SequenceOf<PsidSsp>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfPsidSspRange(pub SequenceOf<PsidSspRange>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfRectangularRegion(pub SequenceOf<RectangularRegion>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfRegionAndSubregions(pub SequenceOf<RegionAndSubregions>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=8"))]
-    pub struct SequenceOfTrajectoryInterceptionIndication(
-        pub SequenceOf<TrajectoryInterceptionIndication>,
-    );
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfUint16(pub SequenceOf<Uint16>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SequenceOfUint8(pub SequenceOf<Uint8>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("0..=8"))]
-    pub struct SequenceOfVruSafeDistanceIndication(pub SequenceOf<VruSafeDistanceIndication>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     #[non_exhaustive]
     pub enum ServiceCategoryCode {
         trafficSignPictogram(TrafficSignPictogram),
         publicFacilitiesPictogram(PublicFacilitiesPictogram),
         ambientOrRoadConditionPictogram(AmbientOrRoadConditionPictogram),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ServiceInfo {
-        #[rasn(identifier = "serviceID")]
-        pub service_id: ITSaid,
-        #[rasn(identifier = "channelIndex")]
-        pub channel_index: ChannelIndex,
-        #[rasn(identifier = "chOptions")]
-        pub ch_options: ChannelOptions,
-    }
-    impl ServiceInfo {
-        pub fn new(
-            service_id: ITSaid,
-            channel_index: ChannelIndex,
-            ch_options: ChannelOptions,
-        ) -> Self {
-            Self {
-                service_id,
-                channel_index,
-                ch_options,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ServiceInfoExt {
-        #[rasn(identifier = "extensionId")]
-        pub extension_id: RefExt,
-        pub value: Any,
-    }
-    impl ServiceInfoExt {
-        pub fn new(extension_id: RefExt, value: Any) -> Self {
-            Self {
-                extension_id,
-                value,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ServiceInfoExts(pub SequenceOf<ServiceInfoExt>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct ServiceInfos(pub SequenceOf<ServiceInfo>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=65535"))]
-    pub struct ServicePort(pub u16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum ServiceSpecificPermissions {
-        opaque(OctetString),
-        #[rasn(extension_addition)]
-        bitmapSsp(BitmapSsp),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(delegate)]
@@ -7026,21 +4982,6 @@ pub mod etsi_schema {
     #[rasn(delegate, size("1..=32"))]
     pub struct SignalStatusPackageList(pub SequenceOf<SignalStatusPackage>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct SignalViolationSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum Signature {
-        ecdsaNistP256Signature(EcdsaP256Signature),
-        ecdsaBrainpoolP256r1Signature(EcdsaP256Signature),
-        #[rasn(extension_addition)]
-        ecdsaBrainpoolP384r1Signature(EcdsaP384Signature),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct SlowVehicleSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct SoundLevel {
         pub soundstationary: Int1,
@@ -7138,168 +5079,6 @@ pub mod etsi_schema {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SpotAvailability {
-        #[rasn(value("0..=1400"), identifier = "maxWaitingTimeMinutes")]
-        pub max_waiting_time_minutes: u16,
-        pub blocking: bool,
-    }
-    impl SpotAvailability {
-        pub fn new(max_waiting_time_minutes: u16, blocking: bool) -> Self {
-            Self {
-                max_waiting_time_minutes,
-                blocking,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct Srm {
-        pub header: RsvAdvPrtVersion,
-        pub body: SrmBody,
-    }
-    impl Srm {
-        pub fn new(header: RsvAdvPrtVersion, body: SrmBody) -> Self {
-            Self { header, body }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SrmBody {
-        pub extensions: Option<SRMextensions>,
-        #[rasn(identifier = "prvChannelsRq")]
-        pub prv_channels_rq: Option<SrmPrivateChannelsRq>,
-        pub contexts: Option<SrmContexts>,
-        #[rasn(identifier = "prvChannelsCf")]
-        pub prv_channels_cf: Option<SrmPrvChAllocConf>,
-    }
-    impl SrmBody {
-        pub fn new(
-            extensions: Option<SRMextensions>,
-            prv_channels_rq: Option<SrmPrivateChannelsRq>,
-            contexts: Option<SrmContexts>,
-            prv_channels_cf: Option<SrmPrvChAllocConf>,
-        ) -> Self {
-            Self {
-                extensions,
-                prv_channels_rq,
-                contexts,
-                prv_channels_cf,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SrmContext {
-        pub context: SamContext,
-        #[rasn(identifier = "clientPort")]
-        pub client_port: PortNumber,
-    }
-    impl SrmContext {
-        pub fn new(context: SamContext, client_port: PortNumber) -> Self {
-            Self {
-                context,
-                client_port,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SrmContexts(pub SequenceOf<SrmContext>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SrmPrivateChannelsRq {
-        #[rasn(identifier = "portDynSam")]
-        pub port_dyn_sam: PortNumber,
-        #[rasn(identifier = "allocReqs")]
-        pub alloc_reqs: SrmPrvChAllocReq,
-    }
-    impl SrmPrivateChannelsRq {
-        pub fn new(port_dyn_sam: PortNumber, alloc_reqs: SrmPrvChAllocReq) -> Self {
-            Self {
-                port_dyn_sam,
-                alloc_reqs,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SrmPrvChAllocConf(pub SequenceOf<ITSaid>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SrmPrvChAllocReq(pub SequenceOf<ITSaid>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SrvAdvChangeCount {
-        #[rasn(identifier = "saID")]
-        pub sa_id: SrvAdvID,
-        #[rasn(identifier = "contentCount")]
-        pub content_count: SrvAdvContentCount,
-    }
-    impl SrvAdvChangeCount {
-        pub fn new(sa_id: SrvAdvID, content_count: SrvAdvContentCount) -> Self {
-            Self {
-                sa_id,
-                content_count,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=15"))]
-    pub struct SrvAdvContentCount(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=15"))]
-    pub struct SrvAdvID(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SrvAdvMsgHeaderExt {
-        #[rasn(identifier = "extensionId")]
-        pub extension_id: RefExt,
-        pub value: Any,
-    }
-    impl SrvAdvMsgHeaderExt {
-        pub fn new(extension_id: RefExt, value: Any) -> Self {
-            Self {
-                extension_id,
-                value,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SrvAdvMsgHeaderExts(pub SequenceOf<SrvAdvMsgHeaderExt>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum SspRange {
-        opaque(SequenceOfOctetString),
-        all(()),
-        #[rasn(extension_addition)]
-        bitmapSspRange(BitmapSspRange),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct StabilityChangeIndication {
-        #[rasn(identifier = "lossProbability")]
-        pub loss_probability: StabilityLossProbability,
-        #[rasn(identifier = "actionDeltaTime")]
-        pub action_delta_time: ActionDeltaTime,
-    }
-    impl StabilityChangeIndication {
-        pub fn new(
-            loss_probability: StabilityLossProbability,
-            action_delta_time: ActionDeltaTime,
-        ) -> Self {
-            Self {
-                loss_probability,
-                action_delta_time,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=63"))]
-    pub struct StabilityLossProbability(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     #[non_exhaustive]
     pub enum StationDataContainer {
@@ -7312,9 +5091,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct StationType(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct StationaryVehicleSubCauseCode(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct SteeringWheelAngle {
@@ -7340,34 +5116,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("-511..=512"))]
     pub struct SteeringWheelAngleValue(pub i16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct SubCauseCodeType(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SubjectAssurance(pub FixedOctetString<1usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    #[non_exhaustive]
-    pub enum SymmAlgorithm {
-        aes128Ccm = 0,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum SymmetricEncryptionKey {
-        #[rasn(size("16"))]
-        aes128Ccm(OctetString),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SystemService(pub SequenceOf<SystemServiceAndContext>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct SystemServiceAndContext(pub SamContext);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("-128..=127"))]
-    pub struct TXpower80211(pub i8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
@@ -7447,28 +5195,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=16", extensible))]
     pub struct TextContainer(pub SequenceOf<TcPart>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ThreeDLocation {
-        pub latitude: SALatitude,
-        pub longitude: SALongitude,
-        pub elevation: SAElevation,
-    }
-    impl ThreeDLocation {
-        pub fn new(latitude: SALatitude, longitude: SALongitude, elevation: SAElevation) -> Self {
-            Self {
-                latitude,
-                longitude,
-                elevation,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct Time32(pub Uint32);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct Time64(pub Uint64);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct TimeChangeDetails {
@@ -7624,25 +5350,6 @@ pub mod etsi_schema {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct TrafficConditionSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct TrafficIslandPosition {
-        #[rasn(identifier = "oneSide")]
-        pub one_side: NonIslandLanePosition,
-        #[rasn(identifier = "otherSide")]
-        pub other_side: NonIslandLanePosition,
-    }
-    impl TrafficIslandPosition {
-        pub fn new(one_side: NonIslandLanePosition, other_side: NonIslandLanePosition) -> Self {
-            Self {
-                one_side,
-                other_side,
-            }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     #[non_exhaustive]
@@ -7716,25 +5423,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct TrainCharacteristics(pub TractorCharacteristics);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct TrajectoryInterceptionIndication {
-        #[rasn(identifier = "subjectStation")]
-        pub subject_station: Option<StationID>,
-        #[rasn(identifier = "trajectoryInterceptionIndication")]
-        pub trajectory_interception_indication: bool,
-    }
-    impl TrajectoryInterceptionIndication {
-        pub fn new(
-            subject_station: Option<StationID>,
-            trajectory_interception_indication: bool,
-        ) -> Self {
-            Self {
-                subject_station,
-                trajectory_interception_indication,
-            }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum TransitVehicleOccupancy {
@@ -7773,60 +5461,6 @@ pub mod etsi_schema {
         reserved3 = 6,
         unavailable = 7,
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct TwoDLocation {
-        pub latitude: SALatitude,
-        pub longitude: SALongitude,
-    }
-    impl TwoDLocation {
-        pub fn new(latitude: SALatitude, longitude: SALongitude) -> Self {
-            Self {
-                latitude,
-                longitude,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct TypeOfReceptacle(pub BitString);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct URLOfMDUs {
-        #[rasn(identifier = "startingMDU")]
-        pub starting_mdu: Option<SequenceNumber>,
-        #[rasn(identifier = "endingMDU")]
-        pub ending_mdu: Option<SequenceNumber>,
-        pub url: Ia5String,
-    }
-    impl URLOfMDUs {
-        pub fn new(
-            starting_mdu: Option<SequenceNumber>,
-            ending_mdu: Option<SequenceNumber>,
-            url: Ia5String,
-        ) -> Self {
-            Self {
-                starting_mdu,
-                ending_mdu,
-                url,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=65535"))]
-    pub struct Uint16(pub u16);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=7"))]
-    pub struct Uint3(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=4294967295"))]
-    pub struct Uint32(pub u32);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=18446744073709551615"))]
-    pub struct Uint64(pub u64);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct Uint8(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum UnitType {
@@ -7834,23 +5468,6 @@ pub mod etsi_schema {
         mg_km = 0,
         #[rasn(identifier = "mg-kWh")]
         mg_kWh = 1,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("900000001"))]
-    pub struct UnknownLatitude(pub NinetyDegreeInt);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("1800000001"))]
-    pub struct UnknownLongitude(pub OneEightyDegreeInt);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct VAM {
-        pub header: ItsPduHeader,
-        pub vam: VruAwareness,
-    }
-    impl VAM {
-        pub fn new(header: ItsPduHeader, vam: VruAwareness) -> Self {
-            Self { header, vam }
-        }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -7873,53 +5490,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=86400"))]
     pub struct ValidityDuration(pub u32);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct ValidityPeriod {
-        pub start: Time32,
-        pub duration: Duration,
-    }
-    impl ValidityPeriod {
-        pub fn new(start: Time32, duration: Duration) -> Self {
-            Self { start, duration }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct VamParameters {
-        #[rasn(identifier = "basicContainer")]
-        pub basic_container: BasicContainer,
-        #[rasn(identifier = "vruHighFrequencyContainer")]
-        pub vru_high_frequency_container: Option<VruHighFrequencyContainer>,
-        #[rasn(identifier = "vruLowFrequencyContainer")]
-        pub vru_low_frequency_container: Option<VruLowFrequencyContainer>,
-        #[rasn(identifier = "vruClusterInformationContainer")]
-        pub vru_cluster_information_container: Option<VruClusterInformationContainer>,
-        #[rasn(identifier = "vruClusterOperationContainer")]
-        pub vru_cluster_operation_container: Option<VruClusterOperationContainer>,
-        #[rasn(identifier = "vruMotionPredictionContainer")]
-        pub vru_motion_prediction_container: Option<VruMotionPredictionContainer>,
-    }
-    impl VamParameters {
-        pub fn new(
-            basic_container: BasicContainer,
-            vru_high_frequency_container: Option<VruHighFrequencyContainer>,
-            vru_low_frequency_container: Option<VruLowFrequencyContainer>,
-            vru_cluster_information_container: Option<VruClusterInformationContainer>,
-            vru_cluster_operation_container: Option<VruClusterOperationContainer>,
-            vru_motion_prediction_container: Option<VruMotionPredictionContainer>,
-        ) -> Self {
-            Self {
-                basic_container,
-                vru_high_frequency_container,
-                vru_low_frequency_container,
-                vru_cluster_information_container,
-                vru_cluster_operation_container,
-                vru_motion_prediction_container,
-            }
-        }
-    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     pub enum VarLengthNumber {
@@ -7967,9 +5537,6 @@ pub mod etsi_schema {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=7"))]
     pub struct VcOption(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct VehicleBreakdownSubCauseCode(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     #[non_exhaustive]
@@ -8276,380 +5843,6 @@ pub mod etsi_schema {
     pub struct VerticalAccelerationValue(pub i16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
-    pub struct VruAwareness {
-        #[rasn(identifier = "generationDeltaTime")]
-        pub generation_delta_time: GenerationDeltaTime,
-        #[rasn(identifier = "vamParameters")]
-        pub vam_parameters: VamParameters,
-    }
-    impl VruAwareness {
-        pub fn new(
-            generation_delta_time: GenerationDeltaTime,
-            vam_parameters: VamParameters,
-        ) -> Self {
-            Self {
-                generation_delta_time,
-                vam_parameters,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct VruClusterInformationContainer {
-        #[rasn(identifier = "clusterId")]
-        pub cluster_id: ClusterId,
-        #[rasn(identifier = "clusterBoundingBoxShape")]
-        pub cluster_bounding_box_shape: ClusterBoundingBoxShape,
-        #[rasn(value("0..=255"), identifier = "clusterCardinalitySize")]
-        pub cluster_cardinality_size: u8,
-        #[rasn(identifier = "clusterProfiles")]
-        pub cluster_profiles: ClusterProfiles,
-    }
-    impl VruClusterInformationContainer {
-        pub fn new(
-            cluster_id: ClusterId,
-            cluster_bounding_box_shape: ClusterBoundingBoxShape,
-            cluster_cardinality_size: u8,
-            cluster_profiles: ClusterProfiles,
-        ) -> Self {
-            Self {
-                cluster_id,
-                cluster_bounding_box_shape,
-                cluster_cardinality_size,
-                cluster_profiles,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("1..=255"))]
-    pub struct VruClusterOpTimestamp(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct VruClusterOperationContainer {
-        #[rasn(identifier = "clusterJoinInfo")]
-        pub cluster_join_info: Option<ClusterJoinInfo>,
-        #[rasn(identifier = "clusterLeaveInfo")]
-        pub cluster_leave_info: Option<ClusterLeaveInfo>,
-        #[rasn(identifier = "clusterBreakupInfo")]
-        pub cluster_breakup_info: Option<ClusterBreakupInfo>,
-        #[rasn(identifier = "clusterIdChangeInfo")]
-        pub cluster_id_change_info: Option<VruClusterOpTimestamp>,
-    }
-    impl VruClusterOperationContainer {
-        pub fn new(
-            cluster_join_info: Option<ClusterJoinInfo>,
-            cluster_leave_info: Option<ClusterLeaveInfo>,
-            cluster_breakup_info: Option<ClusterBreakupInfo>,
-            cluster_id_change_info: Option<VruClusterOpTimestamp>,
-        ) -> Self {
-            Self {
-                cluster_join_info,
-                cluster_leave_info,
-                cluster_breakup_info,
-                cluster_id_change_info,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruDeviceUsage {
-        unavailable = 0,
-        other = 1,
-        idle = 2,
-        listeningToAudio = 3,
-        typing = 4,
-        calling = 5,
-        playingGames = 6,
-        reading = 7,
-        viewing = 8,
-        max = 255,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruEnvironment {
-        unavailable = 0,
-        intersectionCrossing = 1,
-        zebraCrossing = 2,
-        sidewalk = 3,
-        onVehicleRoad = 4,
-        protectedGeographicArea = 5,
-        max = 255,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct VruExteriorLights {
-        #[rasn(identifier = "vruSpecific")]
-        pub vru_specific: VruSpecificExteriorLights,
-        pub generic: ExteriorLights,
-    }
-    impl VruExteriorLights {
-        pub fn new(vru_specific: VruSpecificExteriorLights, generic: ExteriorLights) -> Self {
-            Self {
-                vru_specific,
-                generic,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct VruHighFrequencyContainer {
-        pub heading: Heading,
-        pub speed: Speed,
-        #[rasn(identifier = "longitudinalAcceleration")]
-        pub longitudinal_acceleration: LongitudinalAcceleration,
-        pub curvature: Option<Curvature>,
-        #[rasn(identifier = "curvatureCalculationMode")]
-        pub curvature_calculation_mode: Option<CurvatureCalculationMode>,
-        #[rasn(identifier = "yawRate")]
-        pub yaw_rate: Option<YawRate>,
-        #[rasn(identifier = "lateralAcceleration")]
-        pub lateral_acceleration: Option<LateralAcceleration>,
-        #[rasn(identifier = "verticalAcceleration")]
-        pub vertical_acceleration: Option<VerticalAcceleration>,
-        #[rasn(identifier = "vruLanePosition")]
-        pub vru_lane_position: Option<VruLanePosition>,
-        pub environment: Option<VruEnvironment>,
-        #[rasn(identifier = "movementControl")]
-        pub movement_control: Option<VruMovementControl>,
-        pub orientation: Option<VruOrientation>,
-        #[rasn(identifier = "rollAngle")]
-        pub roll_angle: Option<VruRollAngle>,
-        #[rasn(identifier = "deviceUsage")]
-        pub device_usage: Option<VruDeviceUsage>,
-    }
-    impl VruHighFrequencyContainer {
-        pub fn new(
-            heading: Heading,
-            speed: Speed,
-            longitudinal_acceleration: LongitudinalAcceleration,
-            curvature: Option<Curvature>,
-            curvature_calculation_mode: Option<CurvatureCalculationMode>,
-            yaw_rate: Option<YawRate>,
-            lateral_acceleration: Option<LateralAcceleration>,
-            vertical_acceleration: Option<VerticalAcceleration>,
-            vru_lane_position: Option<VruLanePosition>,
-            environment: Option<VruEnvironment>,
-            movement_control: Option<VruMovementControl>,
-            orientation: Option<VruOrientation>,
-            roll_angle: Option<VruRollAngle>,
-            device_usage: Option<VruDeviceUsage>,
-        ) -> Self {
-            Self {
-                heading,
-                speed,
-                longitudinal_acceleration,
-                curvature,
-                curvature_calculation_mode,
-                yaw_rate,
-                lateral_acceleration,
-                vertical_acceleration,
-                vru_lane_position,
-                environment,
-                movement_control,
-                orientation,
-                roll_angle,
-                device_usage,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum VruLanePosition {
-        offRoadLanePosition(OffRoadLanePosition),
-        vehicularLanePosition(LanePosition),
-        trafficIslandPosition(TrafficIslandPosition),
-        mapPosition(MapPosition),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct VruLowFrequencyContainer {
-        #[rasn(identifier = "profileAndSubprofile")]
-        pub profile_and_subprofile: Option<VruProfileAndSubprofile>,
-        #[rasn(identifier = "exteriorLights")]
-        pub exterior_lights: Option<VruExteriorLights>,
-        #[rasn(identifier = "sizeClass")]
-        pub size_class: Option<VruSizeClass>,
-    }
-    impl VruLowFrequencyContainer {
-        pub fn new(
-            profile_and_subprofile: Option<VruProfileAndSubprofile>,
-            exterior_lights: Option<VruExteriorLights>,
-            size_class: Option<VruSizeClass>,
-        ) -> Self {
-            Self {
-                profile_and_subprofile,
-                exterior_lights,
-                size_class,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct VruMotionPredictionContainer {
-        #[rasn(identifier = "pathHistory")]
-        pub path_history: Option<PathHistory>,
-        #[rasn(identifier = "pathPrediction")]
-        pub path_prediction: Option<PathPrediction>,
-        #[rasn(identifier = "safeDistance")]
-        pub safe_distance: Option<SequenceOfVruSafeDistanceIndication>,
-        #[rasn(identifier = "trajectoryChangeIndication")]
-        pub trajectory_change_indication: Option<SequenceOfTrajectoryInterceptionIndication>,
-        #[rasn(identifier = "accelerationChangeIndication")]
-        pub acceleration_change_indication: Option<AccelerationChangeIndication>,
-        #[rasn(identifier = "headingChangeIndication")]
-        pub heading_change_indication: Option<HeadingChangeIndication>,
-        #[rasn(identifier = "stabilityChangeIndication")]
-        pub stability_change_indication: Option<StabilityChangeIndication>,
-    }
-    impl VruMotionPredictionContainer {
-        pub fn new(
-            path_history: Option<PathHistory>,
-            path_prediction: Option<PathPrediction>,
-            safe_distance: Option<SequenceOfVruSafeDistanceIndication>,
-            trajectory_change_indication: Option<SequenceOfTrajectoryInterceptionIndication>,
-            acceleration_change_indication: Option<AccelerationChangeIndication>,
-            heading_change_indication: Option<HeadingChangeIndication>,
-            stability_change_indication: Option<StabilityChangeIndication>,
-        ) -> Self {
-            Self {
-                path_history,
-                path_prediction,
-                safe_distance,
-                trajectory_change_indication,
-                acceleration_change_indication,
-                heading_change_indication,
-                stability_change_indication,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruMovementControl {
-        unavailable = 0,
-        braking = 1,
-        hardBraking = 2,
-        stopPedaling = 3,
-        noReaction = 4,
-        max = 255,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct VruOrientation(pub Heading);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruProfile {
-        unavailable = 0,
-        pedestrian = 1,
-        cyclist = 2,
-        motorcyclist = 3,
-        animal = 4,
-        max = 15,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
-    #[non_exhaustive]
-    pub enum VruProfileAndSubprofile {
-        pedestrian(VruSubProfilePedestrian),
-        bicyclist(VruSubProfileBicyclist),
-        motorcylist(VruSubProfileMotorcyclist),
-        animal(VruSubProfileAnimal),
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct VruRollAngle(pub SteeringWheelAngle);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct VruSafeDistanceIndication {
-        #[rasn(identifier = "subjectStation")]
-        pub subject_station: Option<StationID>,
-        #[rasn(identifier = "stationSafeDistanceIndication")]
-        pub station_safe_distance_indication: bool,
-        #[rasn(identifier = "timeToCollision")]
-        pub time_to_collision: Option<ActionDeltaTime>,
-    }
-    impl VruSafeDistanceIndication {
-        pub fn new(
-            subject_station: Option<StationID>,
-            station_safe_distance_indication: bool,
-            time_to_collision: Option<ActionDeltaTime>,
-        ) -> Self {
-            Self {
-                subject_station,
-                station_safe_distance_indication,
-                time_to_collision,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSizeClass {
-        unavailable = 0,
-        low = 1,
-        medium = 2,
-        high = 3,
-        max = 15,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate)]
-    pub struct VruSpecificExteriorLights(pub FixedBitString<8usize>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSubProfileAnimal {
-        unavailable = 0,
-        max = 15,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSubProfileBicyclist {
-        unavailable = 0,
-        bicyclist = 1,
-        #[rasn(identifier = "wheelchair-user")]
-        wheelchair_user = 2,
-        #[rasn(identifier = "horse-and-rider")]
-        horse_and_rider = 3,
-        rollerskater = 4,
-        #[rasn(identifier = "e-scooter")]
-        e_scooter = 5,
-        #[rasn(identifier = "personal-transporter")]
-        personal_transporter = 6,
-        pedelec = 7,
-        #[rasn(identifier = "speed-pedelec")]
-        speed_pedelec = 8,
-        max = 15,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSubProfileMotorcyclist {
-        unavailable = 0,
-        moped = 1,
-        motorcycle = 2,
-        #[rasn(identifier = "motorcycle-and-sidecar-right")]
-        motorcycle_and_sidecar_right = 3,
-        #[rasn(identifier = "motorcycle-and-sidecar-left")]
-        motorcycle_and_sidecar_left = 4,
-        max = 15,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSubProfilePedestrian {
-        unavailable = 0,
-        #[rasn(identifier = "ordinary-pedestrian")]
-        ordinary_pedestrian = 1,
-        #[rasn(identifier = "road-worker")]
-        road_worker = 2,
-        #[rasn(identifier = "first-responder")]
-        first_responder = 3,
-        max = 15,
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
     pub struct WGS84Angle {
         pub value: WGS84AngleValue,
         pub confidence: AngleConfidence,
@@ -8675,54 +5868,6 @@ pub mod etsi_schema {
     impl Weight {
         pub fn new(value: u16, unit: RSCUnit) -> Self {
             Self { value, unit }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct WrongWayDrivingSubCauseCode(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct WsaChInfoDataRate {
-        #[rasn(size("1"))]
-        pub adaptable: BitString,
-        #[rasn(value("0..=127"), identifier = "dataRate")]
-        pub data_rate: u8,
-    }
-    impl WsaChInfoDataRate {
-        pub fn new(adaptable: BitString, data_rate: u8) -> Self {
-            Self {
-                adaptable,
-                data_rate,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct WsaCountThreshold(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=255"))]
-    pub struct WsaCountThresholdInterval(pub u8);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct WsaSsp {
-        pub version: Uint8,
-        #[rasn(identifier = "advertiserPermissions")]
-        pub advertiser_permissions: Option<AdvertiserPermissions>,
-        #[rasn(identifier = "providerPermissions")]
-        pub provider_permissions: Option<ProviderPermissions>,
-    }
-    impl WsaSsp {
-        pub fn new(
-            version: Uint8,
-            advertiser_permissions: Option<AdvertiserPermissions>,
-            provider_permissions: Option<ProviderPermissions>,
-        ) -> Self {
-            Self {
-                version,
-                advertiser_permissions,
-                provider_permissions,
-            }
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -8790,70 +5935,15 @@ pub mod etsi_schema {
     pub const ADD_GRP_A: RegionId = RegionId(1);
     pub const ADD_GRP_B: RegionId = RegionId(2);
     pub const ADD_GRP_C: RegionId = RegionId(3);
-    pub const C_2_DLOCATION: RefExt = RefExt(5);
-    pub const C_3_DLOCATION: RefExt = RefExt(6);
-    pub const C_CHANNEL_ACCESS: RefExt = RefExt(21);
-    pub const C_CHANNEL_LOAD: RefExt = RefExt(23);
-    pub const C_CHANNEL_NUMBER80211: RefExt = RefExt(15);
-    pub const C_COUNTRY_STRING: RefExt = RefExt(18);
-    pub static C_CTX_TYPE_SYSTEM_MAND_APP: LazyLock<ItsAidCtxRef> = LazyLock::new(|| {
-        ItsAidCtxRef::new(ITSaid(VarLengthNumber::content(0)), C_CTX_REF_MAND_APP)
-    });
-    pub static C_CTX_TYPE_SYSTEM_NULL: LazyLock<ItsAidCtxRef> =
-        LazyLock::new(|| ItsAidCtxRef::new(ITSaid(VarLengthNumber::content(0)), C_CTX_REF_NULL));
-    pub const C_DATA_RATE80211: RefExt = RefExt(16);
-    pub const C_EDCAPARAMETER_SET: RefExt = RefExt(12);
-    pub const C_EXTENDED_CHANNEL_INFOS: RefExt = RefExt(84);
-    pub const C_GATEWAY_MACADDRESS: RefExt = RefExt(14);
-    pub const C_IPV6_ADDRESS: RefExt = RefExt(9);
-    pub const C_LMCHANNEL_BUSY_RATIO: RefExt = RefExt(82);
-    pub const C_LMPACKET_ID: RefExt = RefExt(83);
-    pub const C_LMRX_CIP: RefExt = RefExt(81);
-    pub const C_LMTX_CIP: RefExt = RefExt(80);
-    pub const C_PROTOCOL_TYPE: RefExt = RefExt(24);
-    pub const C_PROVIDER_MACADDRESS: RefExt = RefExt(11);
-    pub const C_PROVIDER_SERV_CONTEXT: RefExt = RefExt(8);
-    pub const C_RCPITHRESHOLD: RefExt = RefExt(19);
-    pub const C_REPEAT_RATE: RefExt = RefExt(17);
-    pub const C_RESERVED: RefExt = RefExt(0);
-    pub const C_SAMAPPLICATION_DATA: RefExt = RefExt(85);
-    pub const C_SECONDARY_DNS: RefExt = RefExt(13);
-    pub const C_TX_POWER_USED80211: RefExt = RefExt(4);
-    pub const C_WSACOUNT_THRES_INT: RefExt = RefExt(22);
-    pub const C_WSACOUNT_THRESHOLD: RefExt = RefExt(20);
-    pub const C_ADVERTISER_ID: RefExt = RefExt(7);
-    pub const C_CTX_REF_MAND_APP: CtxRef = CtxRef(1);
-    pub const C_CTX_REF_NULL: CtxRef = CtxRef(0);
-    pub const C_SERVICE_PORT: RefExt = RefExt(10);
-    pub const CH_INFO_TYPE_15628: MedType = MedType(128);
-    pub const CH_INFO_TYPE_2_G: MedType = MedType(2);
-    pub const CH_INFO_TYPE_3_G: MedType = MedType(3);
-    pub const CH_INFO_TYPE_6_LOW_PAN: MedType = MedType(11);
-    pub const CH_INFO_TYPE_80216E: MedType = MedType(7);
-    pub const CH_INFO_TYPE_80220: MedType = MedType(9);
-    pub const CH_INFO_TYPE_CAN: MedType = MedType(254);
-    pub const CH_INFO_TYPE_ETHERNET: MedType = MedType(255);
-    pub const CH_INFO_TYPE_HC_SDMA: MedType = MedType(8);
-    pub const CH_INFO_TYPE_IR: MedType = MedType(4);
-    pub const CH_INFO_TYPE_LTE: MedType = MedType(10);
-    pub const CH_INFO_TYPE_M5: MedType = MedType(5);
-    pub const CH_INFO_TYPE_MM: MedType = MedType(6);
-    pub const CH_INFO_TYPE_ANY: MedType = MedType(1);
-    pub const CH_INFO_TYPE_UNKNOWN: MedType = MedType(0);
     pub const DIESEL: FuelType = FuelType(3);
     pub const ELECTRIC: FuelType = FuelType(4);
     pub const ETHANOL: FuelType = FuelType(2);
     pub const GASOLINE: FuelType = FuelType(1);
     pub const HYBRID: FuelType = FuelType(5);
     pub const HYDROGEN: FuelType = FuelType(6);
-    pub const MAP_DATA: DSRCmsgID = DSRCmsgID(18);
     pub const NAT_GAS_COMP: FuelType = FuelType(8);
     pub const NAT_GAS_LIQUID: FuelType = FuelType(7);
     pub const NO_REGION: RegionId = RegionId(0);
     pub const PROPANE: FuelType = FuelType(9);
-    pub const RTCM_CORRECTIONS: DSRCmsgID = DSRCmsgID(28);
-    pub const SIGNAL_PHASE_AND_TIMING_MESSAGE: DSRCmsgID = DSRCmsgID(19);
-    pub const SIGNAL_REQUEST_MESSAGE: DSRCmsgID = DSRCmsgID(29);
-    pub const SIGNAL_STATUS_MESSAGE: DSRCmsgID = DSRCmsgID(30);
     pub const UNKNOWN_FUEL: FuelType = FuelType(0);
 }
