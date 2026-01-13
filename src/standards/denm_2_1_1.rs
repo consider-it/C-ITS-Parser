@@ -717,7 +717,7 @@ pub mod denm_pdu_description {
     #[doc = "* "]
     #[doc = " * This type specifies the default value for DENM validity duration used for DENM protocol operation."]
     #[doc = ""]
-    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600));
+    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600i128));
 }
 #[allow(
     non_camel_case_types,
@@ -2773,7 +2773,7 @@ pub mod etsi_its_cdd {
         pub emergency_action_code: Option<Ia5String>,
         #[rasn(identifier = "phoneNumber")]
         pub phone_number: Option<PhoneNumber>,
-        #[rasn(size("1..=24"), identifier = "companyName")]
+        #[rasn(identifier = "companyName")]
         pub company_name: Option<Utf8String>,
     }
     impl DangerousGoodsExtended {

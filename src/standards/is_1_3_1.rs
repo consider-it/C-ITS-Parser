@@ -1880,7 +1880,7 @@ pub mod etsi_schema {
         pub emergency_action_code: Option<Ia5String>,
         #[rasn(identifier = "phoneNumber")]
         pub phone_number: Option<PhoneNumber>,
-        #[rasn(size("1..=24"), identifier = "companyName")]
+        #[rasn(identifier = "companyName")]
         pub company_name: Option<Utf8String>,
     }
     impl DangerousGoodsExtended {
@@ -3742,16 +3742,15 @@ pub mod etsi_schema {
     pub struct ItsChargingStationData {
         #[rasn(identifier = "chargingStationID")]
         pub charging_station_id: StationID,
-        #[rasn(size("1..=32"), identifier = "utilityDistributorId")]
+        #[rasn(identifier = "utilityDistributorId")]
         pub utility_distributor_id: Option<Utf8String>,
-        #[rasn(size("1..=32"), identifier = "providerID")]
+        #[rasn(identifier = "providerID")]
         pub provider_id: Option<Utf8String>,
         #[rasn(identifier = "chargingStationLocation")]
         pub charging_station_location: ReferencePosition,
         pub address: Option<Utf8String>,
         #[rasn(size("1..=16"), identifier = "phoneNumber")]
         pub phone_number: Option<NumericString>,
-        #[rasn(size("1..=32"))]
         pub accessibility: Utf8String,
         #[rasn(identifier = "digitalMap")]
         pub digital_map: Option<DigitalMap>,
@@ -10144,7 +10143,7 @@ pub mod etsi_schema {
     pub const CH_INFO_TYPE_MM: MedType = MedType(6);
     pub const CH_INFO_TYPE_ANY: MedType = MedType(1);
     pub const CH_INFO_TYPE_UNKNOWN: MedType = MedType(0);
-    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600));
+    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600i128));
     pub const DIESEL: FuelType = FuelType(3);
     pub const ELECTRIC: FuelType = FuelType(4);
     pub const ETHANOL: FuelType = FuelType(2);
