@@ -98,7 +98,7 @@ index 1f48d44..16e047b 100644
          isCancellation = 0,
          isNegation = 1,
      }
--    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600));
+-    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600i128));
 +    pub static DEFAULT_VALIDITY: ValidityDuration = ValidityDuration(600);
  }
 diff --git a/src/standards/denm_2_1_1.rs b/src/standards/denm_2_1_1.rs

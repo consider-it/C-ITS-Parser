@@ -125,7 +125,7 @@ export class ItsMessage {
 
 With updates to the `rasn` library it may be needed to refresh the code generated from the ASN.1 definitions.
 
-First install the [rasn-compiler](https://github.com/librasn/compiler) CLI using cargo: `cargo install rasn-compiler --feature="cli"`.
+First install the [rasn-compiler](https://github.com/librasn/compiler) CLI using cargo: `cargo install rasn-compiler --features cli`.
 Then regenerate the code by running `./scripts/recompile-asn1.sh`.
 
 The source files are generated without any formatting, so the script is running `rustfmt` on these file.

@@ -283,7 +283,7 @@ pub mod its_container {
         pub emergency_action_code: Option<Ia5String>,
         #[rasn(identifier = "phoneNumber")]
         pub phone_number: Option<PhoneNumber>,
-        #[rasn(size("1..=24"), identifier = "companyName")]
+        #[rasn(identifier = "companyName")]
         pub company_name: Option<Utf8String>,
     }
     impl DangerousGoodsExtended {
