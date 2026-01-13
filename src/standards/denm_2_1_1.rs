@@ -717,7 +717,8 @@ pub mod denm_pdu_description {
     #[doc = "* "]
     #[doc = " * This type specifies the default value for DENM validity duration used for DENM protocol operation."]
     #[doc = ""]
-    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600i128));
+    pub static DEFAULT_VALIDITY: super::etsi_its_cdd::ValidityDuration =
+        super::etsi_its_cdd::ValidityDuration(600);
 }
 #[allow(
     non_camel_case_types,
