@@ -61,7 +61,7 @@ PartialSpat ::= SEQUENCE {
  dummy NULL OPTIONAL,
  ...
 }
-      
+
 CAM ::= SEQUENCE {
  header ItsPduHeader,
  cam CoopAwareness
@@ -143,15 +143,15 @@ SpecialTransportContainer ::= SEQUENCE {
  lightBarSirenInUse LightBarSirenInUse
 }
 
- DangerousGoodsContainer ::= SEQUENCE {
+DangerousGoodsContainer ::= SEQUENCE {
  dangerousGoodsBasic DangerousGoodsBasic
- }
- 
- RoadWorksContainerBasic ::= SEQUENCE {
+}
+
+RoadWorksContainerBasic ::= SEQUENCE {
  roadworksSubCauseCode RoadworksSubCauseCode OPTIONAL,
  lightBarSirenInUse LightBarSirenInUse,
  closedLanes ClosedLanes OPTIONAL
- }
+}
 
 RescueContainer ::= SEQUENCE {
  lightBarSirenInUse LightBarSirenInUse
@@ -244,7 +244,7 @@ RoadWorksContainerExtended ::= SEQUENCE {
  startingPointSpeedLimit DeltaReferencePosition OPTIONAL,
  trafficFlowRule TrafficRule OPTIONAL,
  referenceDenms ReferenceDenms OPTIONAL
- }
+}
 
 StationaryVehicleContainer ::= SEQUENCE {
  stationarySince StationarySince OPTIONAL,
@@ -431,7 +431,7 @@ AdverseWeatherCondition-VisibilitySubCauseCode ::= INTEGER { unavailable(0), fog
 AdverseWeatherCondition-PrecipitationSubCauseCode ::= INTEGER { unavailable(0), heavyRain(1), heavySnowfall(2), softHail(3) } (0..255)
 
 SlowVehicleSubCauseCode ::= INTEGER { unavailable(0), maintenanceVehicle(1), vehiclesSlowingToLookAtAccident(2), abnormalLoad(3), abnormalWideLoad(4), convoy(5), snowplough(6), deicing(7), saltingVehicles(8) } (0..255)
- 
+
 StationaryVehicleSubCauseCode ::= INTEGER { unavailable(0), humanProblem(1), vehicleBreakdown(2), postCrash(3), publicTransportStop(4), carryingDangerousGoods(5) } (0..255)
 
 HumanProblemSubCauseCode ::= INTEGER { unavailable(0), glycemiaProblem(1), heartProblem(2) } (0..255)
@@ -447,7 +447,7 @@ HazardousLocation-ObstacleOnTheRoadSubCauseCode ::= INTEGER { unavailable(0), sh
 HazardousLocation-AnimalOnTheRoadSubCauseCode ::= INTEGER { unavailable(0), wildAnimals(1), herdOfAnimals(2), smallAnimals(3), largeAnimals(4) } (0..255)
 
 CollisionRiskSubCauseCode ::= INTEGER { unavailable(0), longitudinalCollisionRisk(1), crossingCollisionRisk(2), lateralCollisionRisk(3), vulnerableRoadUser(4) } (0..255)
- 
+
 SignalViolationSubCauseCode ::= INTEGER { unavailable(0), stopSignViolation(1), trafficLightViolation(2), turningRegulationViolation(3) } (0..255)
 
 RescueAndRecoveryWorkInProgressSubCauseCode ::= INTEGER { unavailable(0), emergencyVehicles(1), rescueHelicopterLanding(2), policeActivityOngoing(3), medicalEmergencyOngoing(4), childAbductionInProgress(5) } (0..255)
@@ -509,7 +509,7 @@ SpeedValue ::= INTEGER { standstill(0), oneCentimeterPerSec(1), unavailable(1638
 
 SpeedConfidence ::= INTEGER { equalOrWithinOneCentimeterPerSec(1), equalOrWithinOneMeterPerSec(100), outOfRange(126), unavailable(127) } (1..127)
 
-VehicleMass ::= INTEGER { hundredKg(1), unavailable(1024) } (1..1024) 
+VehicleMass ::= INTEGER { hundredKg(1), unavailable(1024) } (1..1024)
 
 Speed ::= SEQUENCE {
  speedValue SpeedValue,
@@ -543,8 +543,7 @@ VerticalAcceleration ::= SEQUENCE {
 
 VerticalAccelerationValue ::= INTEGER { pointOneMeterPerSecSquaredUp(1), pointOneMeterPerSecSquaredDown(-1), unavailable(161) } (-160 .. 161)
 
-StationType ::= INTEGER { unknown(0), pedestrian(1), cyclist(2), moped(3), motorcycle(4), passengerCar(5), bus(6),
-lightTruck(7), heavyTruck(8), trailer(9), specialVehicles(10), tram(11), roadSideUnit(15) } (0..255)
+StationType ::= INTEGER { unknown(0), pedestrian(1), cyclist(2), moped(3), motorcycle(4), passengerCar(5), bus(6), lightTruck(7), heavyTruck(8), trailer(9), specialVehicles(10), tram(11), roadSideUnit(15) } (0..255)
 
 ExteriorLights ::= BIT STRING {
  lowBeamHeadlightsOn (0),
@@ -760,7 +759,7 @@ EventPoint ::= SEQUENCE {
  informationQuality InformationQuality
 }
 
-ProtectedCommunicationZonesRSU ::= SEQUENCE (SIZE (1..16)) OF ProtectedCommunicationZone 
+ProtectedCommunicationZonesRSU ::= SEQUENCE (SIZE (1..16)) OF ProtectedCommunicationZone
 
 CenDsrcTollingZone ::= SEQUENCE {
  protectedZoneLatitude Latitude,
@@ -775,7 +774,7 @@ ProtectedZoneID ::= INTEGER (0.. 134217727)
 
 CenDsrcTollingZoneID ::= ProtectedZoneID
 
-OpeningDaysHours ::= UTF8String 
+OpeningDaysHours ::= UTF8String
 
 PhoneNumber ::= NumericString (SIZE (1..16))
 
@@ -1059,7 +1058,7 @@ RegionalExtension { REG-EXT-ID-AND-TYPE : Set } ::= SEQUENCE {
  regionId REG-EXT-ID-AND-TYPE.&id( { Set } ),
  regExtValue REG-EXT-ID-AND-TYPE.&Type( { Set } {@regionId} )
 }
- 
+
 MapData ::= SEQUENCE {
  timeStamp MinuteOfTheYear OPTIONAL,
  msgIssueRevision MsgCount,
@@ -1069,14 +1068,14 @@ MapData ::= SEQUENCE {
  roadSegments RoadSegmentList OPTIONAL,
  dataParameters DataParameters OPTIONAL,
  restrictionList RestrictionClassList OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-MapData } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-MapData } } OPTIONAL,
  ...
 }
 
 TestData ::= SEQUENCE {
-  regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-MapData } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-MapData } } OPTIONAL,
  ...
 }
 
@@ -1087,8 +1086,8 @@ RTCMcorrections ::= SEQUENCE {
  anchorPoint FullPositionVector OPTIONAL,
  rtcmHeader RTCMheader OPTIONAL,
  msgs RTCMmessageList,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-RTCMcorrections } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-RTCMcorrections } } OPTIONAL,
  ...
 }
 
@@ -1096,8 +1095,8 @@ SPAT ::= SEQUENCE {
  timeStamp MinuteOfTheYear OPTIONAL,
  name DescriptiveName OPTIONAL,
  intersections IntersectionStateList,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-SPAT } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-SPAT } } OPTIONAL,
  ...
 }
 
@@ -1107,8 +1106,8 @@ SignalRequestMessage ::= SEQUENCE {
  sequenceNumber MsgCount OPTIONAL,
  requests SignalRequestList OPTIONAL,
  requester RequesterDescription,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-SignalRequestMessage } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-SignalRequestMessage } } OPTIONAL,
  ...
 }
 
@@ -1117,8 +1116,8 @@ SignalStatusMessage ::= SEQUENCE {
  second DSecond,
  sequenceNumber MsgCount OPTIONAL,
  status SignalStatusList,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-SignalStatusMessage } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-SignalStatusMessage } } OPTIONAL,
  ...
 }
 
@@ -1128,8 +1127,8 @@ AdvisorySpeed ::= SEQUENCE {
  confidence SAESpeedConfidence OPTIONAL,
  distance ZoneLength OPTIONAL,
  class RestrictionClassID OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-AdvisorySpeed } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-AdvisorySpeed } } OPTIONAL,
  ...
 }
 
@@ -1139,7 +1138,7 @@ AntennaOffsetSet ::= SEQUENCE {
  antOffsetX Offset-B12,
  antOffsetY Offset-B09,
  antOffsetZ Offset-B10
- }
+}
 
 OffsetXaxis ::= CHOICE {
  small DrivenLineOffsetSm,
@@ -1158,9 +1157,9 @@ ComputedLane ::= SEQUENCE {
  rotateXY Angle OPTIONAL,
  scaleXaxis Scale-B12 OPTIONAL,
  scaleYaxis Scale-B12 OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-ComputedLane } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-ComputedLane } } OPTIONAL,
+ ...
 }
 
 ConnectsToList ::= SEQUENCE (SIZE (1..16)) OF Connection
@@ -1184,9 +1183,9 @@ ConnectionManeuverAssist ::= SEQUENCE {
  availableStorageLength ZoneLength OPTIONAL,
  waitOnStop WaitOnStopline OPTIONAL,
  pedBicycleDetect PedestrianBicycleDetect OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-ConnectionManeuverAssist } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-ConnectionManeuverAssist } } OPTIONAL,
+ ...
 }
 
 DataParameters ::= SEQUENCE {
@@ -1194,7 +1193,7 @@ DataParameters ::= SEQUENCE {
  processAgency IA5String(SIZE (1..255)) OPTIONAL,
  lastCheckedDate IA5String(SIZE (1..255)) OPTIONAL,
  geoidUsed IA5String(SIZE (1..255)) OPTIONAL,
- ... 
+ ...
 }
 
 DDateTime ::= SEQUENCE {
@@ -1205,7 +1204,7 @@ DDateTime ::= SEQUENCE {
  minute DMinute OPTIONAL,
  second DSecond OPTIONAL,
  offset DOffset OPTIONAL
- }
+}
 
 EnabledLaneList ::= SEQUENCE (SIZE (1..16)) OF LaneID
 
@@ -1220,8 +1219,8 @@ FullPositionVector ::= SEQUENCE {
  timeConfidence TimeConfidence OPTIONAL,
  posConfidence PositionConfidenceSet OPTIONAL,
  speedConfidence SpeedandHeadingandThrottleConfidence OPTIONAL,
- ... 
- }
+ ...
+}
 
 GenericLane ::= SEQUENCE {
  laneID LaneID,
@@ -1233,8 +1232,8 @@ GenericLane ::= SEQUENCE {
  nodeList NodeListXY,
  connectsTo ConnectsToList OPTIONAL,
  overlays OverlayLaneList OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-GenericLane } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-GenericLane } } OPTIONAL,
  ...
 }
 
@@ -1254,13 +1253,13 @@ IntersectionGeometry ::= SEQUENCE {
  speedLimits SpeedLimitList OPTIONAL,
  laneSet LaneList,
  preemptPriorityData PreemptPriorityList OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-IntersectionGeometry } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-IntersectionGeometry } } OPTIONAL,
+ ...
 }
 
 IntersectionGeometryList ::= SEQUENCE (SIZE (1..32)) OF IntersectionGeometry
- 
+
 IntersectionReferenceID ::= SEQUENCE {
  region RoadRegulatorID OPTIONAL,
  id IntersectionID
@@ -1276,9 +1275,9 @@ IntersectionState ::= SEQUENCE {
  enabledLanes EnabledLaneList OPTIONAL,
  states MovementList,
  maneuverAssistList ManeuverAssistList OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-IntersectionState } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-IntersectionState } } OPTIONAL,
+ ...
 }
 
 IntersectionStateList ::= SEQUENCE (SIZE (1..32)) OF IntersectionState
@@ -1297,8 +1296,8 @@ LaneDataAttribute ::= CHOICE {
  laneCrownPointRight RoadwayCrownAngle,
  laneAngle MergeDivergeNodeAngle,
  speedLimits SpeedLimitList,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-LaneDataAttribute } },
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-LaneDataAttribute } },
  ...
 }
 
@@ -1337,9 +1336,9 @@ MovementEvent ::= SEQUENCE {
  eventState MovementPhaseState,
  timing TimeChangeDetails OPTIONAL,
  speeds AdvisorySpeedList OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-MovementEvent } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-MovementEvent } } OPTIONAL,
+ ...
 }
 
 MovementEventList ::= SEQUENCE (SIZE (1..16)) OF MovementEvent
@@ -1351,9 +1350,9 @@ MovementState ::= SEQUENCE {
  signalGroup SignalGroupID,
  state-time-speed MovementEventList,
  maneuverAssistList ManeuverAssistList OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-MovementState } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-MovementState } } OPTIONAL,
+ ...
 }
 
 NodeAttributeSetXY ::= SEQUENCE {
@@ -1363,8 +1362,8 @@ NodeAttributeSetXY ::= SEQUENCE {
  data LaneDataAttributeList OPTIONAL,
  dWidth Offset-B10 OPTIONAL,
  dElevation Offset-B10 OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-NodeAttributeSetXY } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-NodeAttributeSetXY } } OPTIONAL,
  ...
 }
 
@@ -1441,7 +1440,7 @@ NodeOffsetPointXY ::= CHOICE {
 NodeXY ::= SEQUENCE {
  delta NodeOffsetPointXY,
  attributes NodeAttributeSetXY OPTIONAL,
- ... 
+ ...
 }
 
 NodeSetXY ::= SEQUENCE (SIZE (2..63)) OF NodeXY
@@ -1456,15 +1455,15 @@ PositionalAccuracy ::= SEQUENCE {
 
 PositionConfidenceSet ::= SEQUENCE {
  pos PositionConfidence,
- elevation ElevationConfidence 
- }
+ elevation ElevationConfidence
+}
 
 Position3D ::= SEQUENCE {
  lat Latitude,
  long Longitude,
  elevation Elevation OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-Position3D } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-Position3D } } OPTIONAL,
  ...
 }
 
@@ -1484,8 +1483,8 @@ RequesterDescription ::= SEQUENCE {
  transitStatus TransitVehicleStatus OPTIONAL,
  transitOccupancy TransitVehicleOccupancy OPTIONAL,
  transitSchedule DeltaTime OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-requesterDescription } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-requesterDescription } } OPTIONAL,
  ...
 }
 
@@ -1493,7 +1492,7 @@ RequesterPositionVector ::= SEQUENCE {
  position Position3D,
  heading Angle OPTIONAL,
  speed TransmissionAndSpeed OPTIONAL,
- ... 
+ ...
 }
 
 RequesterType ::= SEQUENCE {
@@ -1508,15 +1507,15 @@ RequesterType ::= SEQUENCE {
 
 RestrictionClassAssignment ::= SEQUENCE {
  id RestrictionClassID,
- users RestrictionUserTypeList 
+ users RestrictionUserTypeList
 }
 
 RestrictionClassList ::= SEQUENCE (SIZE (1..254)) OF RestrictionClassAssignment
 
 RestrictionUserType ::= CHOICE {
  basicType RestrictionAppliesTo,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-RestrictionUserType } },
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-RestrictionUserType } },
  ...
 }
 
@@ -1537,8 +1536,8 @@ RoadSegment ::= SEQUENCE {
  laneWidth LaneWidth OPTIONAL,
  speedLimits SpeedLimitList OPTIONAL,
  roadLaneSet RoadLaneSetList,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-RoadSegment } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-RoadSegment } } OPTIONAL,
  ...
 }
 
@@ -1547,7 +1546,7 @@ RoadSegmentList ::= SEQUENCE (SIZE (1..32)) OF RoadSegment
 RTCMheader ::= SEQUENCE {
  status GNSSstatus,
  offsetSet AntennaOffsetSet
- }
+}
 
 RTCMmessageList ::= SEQUENCE (SIZE (1..5)) OF RTCMmessage
 
@@ -1573,8 +1572,8 @@ SignalRequest ::= SEQUENCE {
  requestType PriorityRequestType,
  inBoundLane IntersectionAccessPoint,
  outBoundLane IntersectionAccessPoint OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-SignalRequest } } OPTIONAL,
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-SignalRequest } } OPTIONAL,
  ...
 }
 
@@ -1585,18 +1584,18 @@ SignalRequestPackage ::= SEQUENCE {
  minute MinuteOfTheYear OPTIONAL,
  second DSecond OPTIONAL,
  duration DSecond OPTIONAL,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-SignalRequestPackage } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-SignalRequestPackage } } OPTIONAL,
+ ...
 }
 
 SignalStatus ::= SEQUENCE {
  sequenceNumber MsgCount,
  id IntersectionReferenceID,
  sigStatus SignalStatusPackageList,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-SignalStatus } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-SignalStatus } } OPTIONAL,
+ ...
 }
 
 SignalStatusList ::= SEQUENCE (SIZE (1..32)) OF SignalStatus
@@ -1612,17 +1611,17 @@ SignalStatusPackage ::= SEQUENCE {
  second DSecond OPTIONAL,
  duration DSecond OPTIONAL,
  status PrioritizationResponseStatus,
- regional SEQUENCE (SIZE (1..4)) OF 
- RegionalExtension { {Reg-SignalStatusPackage } } OPTIONAL,
- ... 
+ regional SEQUENCE (SIZE (1..4)) OF
+          RegionalExtension { {Reg-SignalStatusPackage } } OPTIONAL,
+ ...
 }
 
 SpeedandHeadingandThrottleConfidence ::= SEQUENCE {
  heading SAEHeadingConfidence,
  speed SAESpeedConfidence,
- throttle SAEThrottleConfidence 
- }
- 
+ throttle SAEThrottleConfidence
+}
+
 SpeedLimitList ::= SEQUENCE (SIZE (1..9)) OF RegulatorySpeedLimit
 
 SpeedLimitType ::= ENUMERATED {
@@ -1651,7 +1650,7 @@ TimeChangeDetails ::= SEQUENCE {
  nextTime TimeMark OPTIONAL
 }
 
-TimeMark ::= INTEGER (0..36001) 
+TimeMark ::= INTEGER (0..36001)
 
 TransmissionAndSpeed ::= SEQUENCE {
  transmisson TransmissionState,
@@ -1668,7 +1667,7 @@ AdvisorySpeedType ::= ENUMERATED {
  greenwave (1),
  ecoDrive (2),
  transit (3),
- ... 
+ ...
 }
 
 AllowedManeuvers ::= BIT STRING {
@@ -1686,10 +1685,10 @@ AllowedManeuvers ::= BIT STRING {
  reserved1 (11)
 } (SIZE (12))
 
-Angle ::= INTEGER (0..28800) 
+Angle ::= INTEGER (0..28800)
 
 ApproachID ::= INTEGER (0..15)
- 
+
 BasicVehicleRole ::= ENUMERATED {
  basicVehicle (0),
  publicTransport (1),
@@ -1714,14 +1713,14 @@ BasicVehicleRole ::= ENUMERATED {
  pedestrian (20),
  nonMotorized (21),
  military (22),
- ... 
-} 
+ ...
+}
 
 DDay ::= INTEGER (0..31)
 
-DeltaAngle ::= INTEGER (-150..150) 
+DeltaAngle ::= INTEGER (-150..150)
 
-DeltaTime ::= INTEGER (-122 .. 121) 
+DeltaTime ::= INTEGER (-122 .. 121)
 
 DescriptiveName ::= IA5String (SIZE (1..63))
 
@@ -1733,9 +1732,9 @@ DMonth ::= INTEGER (0..12)
 
 DOffset ::= INTEGER (-840..840)
 
-DrivenLineOffsetLg ::= INTEGER (-32767..32767) 
+DrivenLineOffsetLg ::= INTEGER (-32767..32767)
 
-DrivenLineOffsetSm ::= INTEGER (-2047..2047) 
+DrivenLineOffsetSm ::= INTEGER (-2047..2047)
 
 DSecond ::= INTEGER (0..65535)
 
@@ -1767,20 +1766,20 @@ ElevationConfidence ::= ENUMERATED {
  elev-000-05 (13),
  elev-000-02 (14),
  elev-000-01 (15)
- }
+}
 
-FuelType ::= INTEGER (0..15) 
+FuelType ::= INTEGER (0..15)
  unknownFuel FuelType ::= 0
- gasoline FuelType ::= 1 
+ gasoline FuelType ::= 1
  ethanol FuelType ::= 2
  diesel FuelType ::= 3
- electric FuelType ::= 4 
+ electric FuelType ::= 4
  hybrid FuelType ::= 5
- hydrogen FuelType ::= 6 
+ hydrogen FuelType ::= 6
  natGasLiquid FuelType ::= 7
  natGasComp FuelType ::= 8
  propane FuelType ::= 9
- 
+
 GNSSstatus ::= BIT STRING {
  unavailable (0),
  isHealthy (1),
@@ -1790,7 +1789,7 @@ GNSSstatus ::= BIT STRING {
  inViewOfUnder5 (5),
  localCorrectionsPresent (6),
  networkCorrectionsPresent (7)
- } (SIZE (8))
+} (SIZE (8))
 
 SAEHeadingConfidence ::= ENUMERATED {
  unavailable (0),
@@ -1801,8 +1800,8 @@ SAEHeadingConfidence ::= ENUMERATED {
  prec0-05deg (5),
  prec0-01deg (6),
  prec0-0125deg (7)
- } 
- 
+}
+
 SAEHeading ::= INTEGER (0..28800)
 
 IntersectionID ::= INTEGER (0..65535)
@@ -1924,14 +1923,14 @@ LayerType ::= ENUMERATED {
  roadwaySectionData,
  parkingAreaData,
  sharedLaneData,
- ... 
+ ...
 }
- 
+
 LaneWidth ::= INTEGER (0..32767)
 
-MergeDivergeNodeAngle ::= INTEGER (-180..180) 
+MergeDivergeNodeAngle ::= INTEGER (-180..180)
 
-MinuteOfTheYear ::= INTEGER (0..527040) 
+MinuteOfTheYear ::= INTEGER (0..527040)
 
 MovementPhaseState ::= ENUMERATED {
  unavailable (0),
@@ -1962,7 +1961,7 @@ Offset-B14 ::= INTEGER (-8192..8191)
 
 Offset-B16 ::= INTEGER (-32768..32767)
 
-PedestrianBicycleDetect ::= BOOLEAN 
+PedestrianBicycleDetect ::= BOOLEAN
 
 PositionConfidence ::= ENUMERATED {
  unavailable (0),
@@ -1981,7 +1980,7 @@ PositionConfidence ::= ENUMERATED {
  a5cm (13),
  a2cm (14),
  a1cm (15)
- } 
+}
 
 PrioritizationResponseStatus ::= ENUMERATED {
  unknown (0),
@@ -2000,7 +1999,7 @@ PriorityRequestType ::= ENUMERATED {
  priorityRequest (1),
  priorityRequestUpdate (2),
  priorityCancellation (3),
- ... 
+ ...
 }
 
 RegionId ::= INTEGER (0..255)
@@ -2073,10 +2072,10 @@ RoadRegulatorID ::= INTEGER (0..65535)
 
 RoadSegmentID ::= INTEGER (0..65535)
 
-RoadwayCrownAngle ::= INTEGER (-128..127) 
+RoadwayCrownAngle ::= INTEGER (-128..127)
 
 RTCMmessage ::= OCTET STRING (SIZE (1..1023))
- 
+
 RTCM-Revision ::= ENUMERATED {
  unknown (0),
  rtcmRev2 (1),
@@ -2084,10 +2083,10 @@ RTCM-Revision ::= ENUMERATED {
  reserved (3),
  ...
 }
- 
+
 Scale-B12 ::= INTEGER (-2048..2047)
 
-SignalGroupID ::= INTEGER (0..255) 
+SignalGroupID ::= INTEGER (0..255)
 
 SegmentAttributeXY ::= ENUMERATED {
  reserved ,
@@ -2137,7 +2136,7 @@ SemiMajorAxisOrientation ::= INTEGER (0..65535)
 
 SemiMinorAxisAccuracy ::= INTEGER (0..255)
 
-SpeedAdvice ::= INTEGER (0..500) 
+SpeedAdvice ::= INTEGER (0..500)
 
 SAESpeedConfidence ::= ENUMERATED {
  unavailable (0),
@@ -2148,7 +2147,7 @@ SAESpeedConfidence ::= ENUMERATED {
  prec0-1ms (5),
  prec0-05ms (6),
  prec0-01ms (7)
- }
+}
 
 TemporaryID ::= OCTET STRING (SIZE (4))
 
@@ -2157,7 +2156,7 @@ SAEThrottleConfidence ::= ENUMERATED {
  prec10percent (1),
  prec1percent (2),
  prec0-5percent (3)
- }
+}
 
 TimeConfidence ::= ENUMERATED {
  unavailable (0),
@@ -2199,10 +2198,10 @@ TimeConfidence ::= ENUMERATED {
  time-000-000-000-000-1 (36),
  time-000-000-000-000-05 (37),
  time-000-000-000-000-02 (38),
- time-000-000-000-000-01 (39) 
+ time-000-000-000-000-01 (39)
 }
 
-TimeIntervalConfidence ::= INTEGER (0..15) 
+TimeIntervalConfidence ::= INTEGER (0..15)
 
 TransitVehicleOccupancy ::= ENUMERATED {
  occupancyUnknown (0),
@@ -2254,12 +2253,12 @@ VehicleType ::= ENUMERATED {
  axleCnt5MultiTrailer (13),
  axleCnt6MultiTrailer (14),
  axleCnt7MultiTrailer (15),
- ... 
-} 
+ ...
+}
 
 Velocity ::= INTEGER (0..8191)
 
-WaitOnStopline ::= BOOLEAN 
+WaitOnStopline ::= BOOLEAN
 
 ZoneLength ::= INTEGER (0..10000)
 
@@ -2270,7 +2269,7 @@ EuVehicleCategoryCode ::= CHOICE {
  euVehicleCategoryO EuVehicleCategoryO,
  euVehilcleCategoryT NULL,
  euVehilcleCategoryG NULL
- }
+}
 
 EuVehicleCategoryL ::= ENUMERATED { l1, l2, l3, l4, l5, l6, l7 }
 
@@ -2322,12 +2321,12 @@ Iso3833VehicleType ::= INTEGER {
  specialRoadTrain (38),
  moped (39),
  motorCycle (40)
- } (0..255)
- 
+} (0..255)
+
 IviStructure ::= SEQUENCE {
  mandatory IVIManagementContainer,
  optional SEQUENCE (SIZE (1..8,...)) OF IviContainer OPTIONAL
- }
+}
 
 --Definition of Containers
 
@@ -2338,7 +2337,7 @@ IviContainer ::= CHOICE {
  tc TextContainer,
  lac LayoutContainer,
  ...
- }
+}
 
 IVIManagementContainer ::= SEQUENCE {
  serviceProviderId Provider,
@@ -2349,8 +2348,8 @@ IVIManagementContainer ::= SEQUENCE {
  connectedIviStructures SEQUENCE (SIZE (1..8)) OF IviIdentificationNumber OPTIONAL,
  iviStatus IviStatus,
  ...
- }
- 
+}
+
 GeographicLocationContainer ::= SEQUENCE {
  referencePosition ReferencePosition,
  referencePositionTime TimestampIts OPTIONAL,
@@ -2358,7 +2357,7 @@ GeographicLocationContainer ::= SEQUENCE {
  referencePositionSpeed Speed OPTIONAL,
  parts SEQUENCE (SIZE (1..16,...)) OF GlcPart,
  ...
- }
+}
 
 GlcPart ::= SEQUENCE {
  zoneId Zid,
@@ -2366,10 +2365,10 @@ GlcPart ::= SEQUENCE {
  zoneExtension INTEGER (0..255) OPTIONAL,
  zoneHeading HeadingValue OPTIONAL,
  zone Zone OPTIONAL,
- ... 
- }
+ ...
+}
 
-GeneralIviContainer ::= SEQUENCE (SIZE (1..16,...)) OF GicPart 
+GeneralIviContainer ::= SEQUENCE (SIZE (1..16,...)) OF GicPart
 
 GicPart ::= SEQUENCE {
  detectionZoneIds SEQUENCE (SIZE (1..8,...)) OF Zid OPTIONAL,
@@ -2389,7 +2388,7 @@ GicPart ::= SEQUENCE {
  roadSignCodes SEQUENCE (SIZE (1..4,...)) OF RSCode,
  extraText SEQUENCE (SIZE (1..4,...)) OF Text OPTIONAL,
  ...
- }
+}
 
 RoadConfigurationContainer ::= SEQUENCE (SIZE (1..16,...)) OF RccPart
 
@@ -2398,7 +2397,7 @@ RccPart ::= SEQUENCE {
  roadType RoadType,
  laneConfiguration SEQUENCE (SIZE (1..16,...)) OF LaneInformation,
  ...
- }
+}
 
 TextContainer ::= SEQUENCE (SIZE (1..16,...)) OF TcPart
 
@@ -2414,26 +2413,26 @@ TcPart ::= SEQUENCE {
  text SEQUENCE (SIZE (1..4,...)) OF Text OPTIONAL,
  data OCTET STRING,
  ...
- }
+}
 
 LayoutContainer ::= SEQUENCE {
  layoutId INTEGER(1..4,...),
  height INTEGER(10..73) OPTIONAL,
  width INTEGER(10..265) OPTIONAL,
  layoutComponents SEQUENCE SIZE (1..4,...) OF LayoutComponent,
- ... 
- }
+ ...
+}
 
 AbsolutePosition ::= SEQUENCE {
  latitude Latitude,
  longitude Longitude
- }
+}
 
 AbsolutePositionWAltitude ::= SEQUENCE {
  latitude Latitude,
  longitude Longitude,
- altitude Altitude 
- }
+ altitude Altitude
+}
 
 AnyCatalogue ::= SEQUENCE {
  owner Provider,
@@ -2442,7 +2441,7 @@ AnyCatalogue ::= SEQUENCE {
  value INTEGER (0..65535) OPTIONAL,
  unit RSCUnit OPTIONAL,
  attributes ISO14823Attributes OPTIONAL
- } 
+}
 
 ComparisonOperator ::= INTEGER {
  greaterThan (0),
@@ -2455,44 +2454,44 @@ CompleteVehicleCharacteristics ::= SEQUENCE {
  tractor TractorCharacteristics OPTIONAL,
  trailer SEQUENCE (SIZE (1..3)) OF TrailerCharacteristics OPTIONAL,
  train TrainCharacteristics OPTIONAL
- }
+}
 
 ComputedSegment ::= SEQUENCE {
  zoneId Zid,
  laneNumber LanePosition,
  laneWidth IVILaneWidth,
  offsetDistance INTEGER (-32768..32767) OPTIONAL,
- offsetPosition DeltaReferencePosition OPTIONAL 
- }
+ offsetPosition DeltaReferencePosition OPTIONAL
+}
 
 DeltaPosition ::= SEQUENCE {
  deltaLatitude DeltaLatitude,
  deltaLongitude DeltaLongitude
- }
+}
 
 Direction ::= INTEGER {
  sameDirection (0),
  oppositeDirection (1),
  bothDirections (2),
  valueNotUsed (3)
- } (0..3)
+} (0..3)
 
 Distance ::= SEQUENCE {
  value INTEGER(1..16384),
  unit RSCUnit
- }
+}
 
 DistanceOrDuration ::= SEQUENCE {
  value INTEGER(1..16384),
  unit RSCUnit
- } 
+}
 
 DriverCharacteristics ::= INTEGER {
  unexperiencedDrivers (0),
  experiencedDrivers (1),
  rfu1 (2),
  rfu2 (3)
- } (0..3)
+} (0..3)
 
 GoodsType ::= INTEGER {
  ammunition (0),
@@ -2509,8 +2508,7 @@ GoodsType ::= INTEGER {
  perishableProducts (11),
  pharmaceutical (12),
  vehicles (13)
-
- } (0..15,...)
+} (0..15,...)
 
 ISO14823Attributes ::= SEQUENCE (SIZE (1..8,...)) OF ISO14823Attribute
 
@@ -2539,18 +2537,18 @@ AmbientOrRoadConditionPictogram ::= ENUMERATED { ambientCondition, roadCondition
 PictogramCategoryCode ::= SEQUENCE {
  nature INTEGER (1..9),
  serialNumber INTEGER (0..99)
- }
+}
 
 PictogramCode ::= SEQUENCE {
  countryCode OCTET STRING (SIZE (2)) OPTIONAL,
  serviceCategoryCode ServiceCategoryCode,
  pictogramCategoryCode PictogramCategoryCode
- }
+}
 
 ISO14823Code ::= SEQUENCE {
  pictogramCode PictogramCode,
- attributes ISO14823Attributes OPTIONAL 
- }
+ attributes ISO14823Attributes OPTIONAL
+}
 
 IviIdentificationNumber ::= INTEGER(1..32767,...)
 
@@ -2558,15 +2556,15 @@ IviPurpose ::= INTEGER {
  safety (0),
  environmental (1),
  trafficOptimisation (2)
- } (0..3) 
+} (0..3)
 
 IviStatus ::= INTEGER {
  new (0),
  update (1),
  cancellation (2),
- negation (3) 
+ negation (3)
 
- }(0..7)
+}(0..7)
 
 IviType ::= INTEGER {
  immediateDangerWarningMessages (0),
@@ -2575,7 +2573,7 @@ IviType ::= INTEGER {
  pollutionMessages (3),
  notTrafficRelatedInformationMessages (4)
 
- } (0..7)
+} (0..7)
 
 LaneInformation ::= SEQUENCE {
  laneNumber LanePosition,
@@ -2586,7 +2584,7 @@ LaneInformation ::= SEQUENCE {
  laneStatus LaneStatus,
  laneWidth IVILaneWidth OPTIONAL,
  ...
- }
+}
 
 LaneStatus ::= INTEGER {
  open (0),
@@ -2595,8 +2593,7 @@ LaneStatus ::= INTEGER {
  mergeL (3),
  mergeLR (4),
  provisionallyOpen (5),
- diverging (6) 
-
+ diverging (6)
 } (0..7, ...)
 
 LaneType ::= INTEGER {
@@ -2620,7 +2617,7 @@ LaneType ::= INTEGER {
  parking (17),
  emergency (18),
  verge (19)
- }(0..31)
+}(0..31)
 
 DeltaPositions ::= SEQUENCE (SIZE (1..32,...)) OF DeltaPosition
 
@@ -2639,13 +2636,13 @@ LayoutComponent ::= SEQUENCE {
  x INTEGER(10..265),
  y INTEGER(10..73),
  textScripting INTEGER (0..1)
- } 
+}
 
 LoadType ::= SEQUENCE {
  goodsType GoodsType,
  dangerousGoodsType DangerousGoodsBasic,
  specialTransportType SpecialTransportType
- }
+}
 
 PolygonalLine ::= CHOICE {
  deltaPositions DeltaPositions,
@@ -2653,20 +2650,20 @@ PolygonalLine ::= CHOICE {
  absolutePositions AbsolutePositions,
  absolutePositionsWithAltitude AbsolutePositionsWithAltitude,
  ...
- }
- 
+}
+
 Code ::= CHOICE {
  viennaConvention VcCode,
  iso14823 ISO14823Code,
  itisCodes INTEGER (0..65535),
  anyCatalogue AnyCatalogue,
  ...
- }
+}
 
 RSCode ::= SEQUENCE {
  layoutComponentId INTEGER(1..4,...) OPTIONAL,
  code Code
- }
+}
 
 RSCUnit ::= INTEGER {
  kmperh (0),
@@ -2683,31 +2680,30 @@ RSCUnit ::= INTEGER {
  hundredkg (11),
  pound (12), -- lbs
  rateOfIncline (13)
-
- } (0..15)
+} (0..15)
 
 Segment ::= SEQUENCE {
  line PolygonalLine,
  laneWidth IVILaneWidth OPTIONAL
- }
+}
 
 Text ::= SEQUENCE {
  layoutComponentId INTEGER(1..4,...) OPTIONAL,
  language BIT STRING (SIZE (10)),
  textContent UTF8String
- }
+}
 
 TractorCharacteristics ::= SEQUENCE {
  equalTo SEQUENCE (SIZE (1..4,...)) OF VehicleCharacteristicsFixValues OPTIONAL,
  notEqualTo SEQUENCE (SIZE (1..4,...)) OF VehicleCharacteristicsFixValues OPTIONAL,
  ranges SEQUENCE (SIZE (1..4,...)) OF VehicleCharacteristicsRanges OPTIONAL
 }
- 
+
 TrailerCharacteristics ::= SEQUENCE {
  equalTo SEQUENCE (SIZE (1..4,...)) OF VehicleCharacteristicsFixValues OPTIONAL,
  notEqualTo SEQUENCE (SIZE (1..4,...)) OF VehicleCharacteristicsFixValues  OPTIONAL,
- ranges SEQUENCE (SIZE (1..4,...)) OF VehicleCharacteristicsRanges  OPTIONAL 
- }
+ ranges SEQUENCE (SIZE (1..4,...)) OF VehicleCharacteristicsRanges  OPTIONAL
+}
 
 TrainCharacteristics ::= TractorCharacteristics
 
@@ -2720,7 +2716,7 @@ VcClass ::= INTEGER {
  classF (5),
  classG (6),
  classH (7)
- } (0..7)
+} (0..7)
 
 VcCode ::= SEQUENCE {
  roadSignClass VcClass,
@@ -2728,8 +2724,8 @@ VcCode ::= SEQUENCE {
  vcOption VcOption,
  validity SEQUENCE (SIZE (1..8,...)) OF DTM OPTIONAL,
  value INTEGER (0..65535) OPTIONAL,
- unit RSCUnit OPTIONAL 
- }
+ unit RSCUnit OPTIONAL
+}
 
 VcOption ::= INTEGER {
  none (0),
@@ -2740,7 +2736,7 @@ VcOption ::= INTEGER {
  e (5),
  f (6),
  g (7)
- } (0..7)
+} (0..7)
 
 VehicleCharacteristicsFixValues ::= CHOICE {
  simpleVehicleType StationType,
@@ -2750,7 +2746,8 @@ VehicleCharacteristicsFixValues ::= CHOICE {
  engineCharacteristics EngineCharacteristics,
  loadType LoadType,
  usage VehicleRole,
- ... }
+ ...
+}
 
 VehicleCharacteristicsRanges ::= SEQUENCE {
  comparisonOperator ComparisonOperator,
@@ -2772,7 +2769,7 @@ VehicleCharacteristicsRanges ::= SEQUENCE {
 Weight ::= SEQUENCE {
  value INTEGER(1..16384),
  unit RSCUnit
- } 
+}
 
 Zid ::= INTEGER (1..32,...)
 
@@ -2781,22 +2778,22 @@ Zone ::= CHOICE {
  area PolygonalLine,
  computedSegment ComputedSegment,
  ...
- }
+}
 
 DtmYear ::= SEQUENCE {
    syr INTEGER(2000..2127,...),
    eyr INTEGER(2000..2127,...)
- }
+}
 
  DtmMonthDay ::= SEQUENCE {
    smd MonthDay,
    emd MonthDay
- }
+}
 
  DtmHourMinutes ::= SEQUENCE {
    shm HoursMinutes,
    ehm HoursMinutes
- }
+}
 
 DTM ::= SEQUENCE {
  year DtmYear OPTIONAL,
@@ -2809,7 +2806,7 @@ DTM ::= SEQUENCE {
 
 MonthDay ::= SEQUENCE {
  month INTEGER (1..12),
- day INTEGER (1..31) 
+ day INTEGER (1..31)
 }
 
 PMD ::= BIT STRING { national-holiday (0), even-days(1), odd-days(2), market-day(3) } (SIZE (4))
@@ -2817,7 +2814,7 @@ PMD ::= BIT STRING { national-holiday (0), even-days(1), odd-days(2), market-day
 HoursMinutes ::= SEQUENCE {
  hours INTEGER (0..23),
  mins INTEGER (0..59)
- }
+}
 
 DayOfWeek ::= BIT STRING { unused(0), monday(1), tuesday(2), wednesday(3), thursday(4), friday(5), saturday(6), sunday(7) } (SIZE (8))
 
@@ -2832,31 +2829,31 @@ DFL ::= INTEGER {
  cLL (6),
  cRI (7),
  oVL (8)
- } (1..8) 
+} (1..8)
 
 VED ::= SEQUENCE {
  hei Distance OPTIONAL,
  wid Distance OPTIONAL,
  vln Distance OPTIONAL,
  wei Weight OPTIONAL
- }
+}
 
 SPE ::= SEQUENCE {
  spm INTEGER(0..250) OPTIONAL,
  mns INTEGER(0..250) OPTIONAL,
  unit RSCUnit
- }
+}
 
 ROI ::= INTEGER(1..32)
 
-DBV ::= Distance 
+DBV ::= Distance
 
 DDD ::= SEQUENCE {
  dcj INTEGER(1..128) OPTIONAL,
  dcr INTEGER(1..128) OPTIONAL,
  tpl INTEGER(1..128) OPTIONAL,
  ioList SEQUENCE (SIZE (1..8,...)) OF DDD-IO
- }
+}
 
 DDD-IO ::= SEQUENCE {
  drn INTEGER(0..7),
@@ -2866,8 +2863,8 @@ DDD-IO ::= SEQUENCE {
  stnId INTEGER(1..999) OPTIONAL,
  stnText UTF8String OPTIONAL,
  dcp DistanceOrDuration OPTIONAL,
- ddp DistanceOrDuration OPTIONAL 
- }
+ ddp DistanceOrDuration OPTIONAL
+}
 
 DestinationPlace ::= SEQUENCE {
  depType DDD-DEP,
@@ -2876,13 +2873,13 @@ DestinationPlace ::= SEQUENCE {
  depBlob OCTET STRING OPTIONAL,
  plnId INTEGER(1..999) OPTIONAL,
  plnText UTF8String OPTIONAL
- } 
+}
 
 DestinationRoad ::= SEQUENCE {
  derType DDD-DER,
  ronId INTEGER(1..999) OPTIONAL,
- ronText UTF8String OPTIONAL 
- }
+ ronText UTF8String OPTIONAL
+}
 
 DDD-DER ::= INTEGER {
  none (0),
@@ -2901,7 +2898,7 @@ DDD-DER ::= INTEGER {
  rfu2 (13),
  rfu3 (14),
  rfu4 (15)
- } (0..15, ...) 
+} (0..15, ...)
 
 DDD-DEP ::= INTEGER {
  none (0),
@@ -2920,8 +2917,8 @@ DDD-DEP ::= INTEGER {
  recommendedRoute (13),
  touristicAttraction (14),
  geographicArea (15)
- } (0..15, ...) 
- 
+} (0..15, ...)
+
 AttributeIdList ::= SEQUENCE (SIZE (0.. 127,...)) OF INTEGER(0..127,...)
 
 AxleWeightLimits ::= SEQUENCE {
@@ -2935,7 +2932,7 @@ AxleWeightLimits ::= SEQUENCE {
 Particulate ::= SEQUENCE {
  unitType UnitType,
  value INTEGER (0..32767)
- }
+}
 
 DieselEmissionValues ::= SEQUENCE {
  particulate Particulate,
@@ -3009,7 +3006,7 @@ PassengerCapacity ::= SEQUENCE {
 }
 
 CountryCode ::= BIT STRING(SIZE (10))
- 
+
 IssuerIdentifier ::= INTEGER(0 .. 16383)
 
 Provider ::= SEQUENCE {
@@ -3047,8 +3044,8 @@ CS5 ::= SEQUENCE {
 VarLengthNumber ::= CHOICE {
  content INTEGER(0..127),
  extension Ext1
- }
- 
+}
+
 Ext1 ::= CHOICE {
  content INTEGER(128..16511),
  extension Ext2
@@ -3057,7 +3054,7 @@ Ext1 ::= CHOICE {
 Ext2 ::= CHOICE {
  content INTEGER(16512..2113663),
  extension Ext3
- }
+}
 
 Ext3 ::= INTEGER(2113664..270549119,...)
 
@@ -3376,7 +3373,7 @@ ObjectClassChoice ::= CHOICE {
    person PersonSubclass,
    animal AnimalSubclass,
    other OtherSubclass
- }
+}
 
 ObjectClass ::= SEQUENCE {
  confidence ClassConfidence,
@@ -3552,6 +3549,7 @@ MCDM-LocationContainer ::= SEQUENCE {
  eventPosition ReferencePosition,
  ...
 }
+
 MCDM-ApplicationContainer ::= SEQUENCE {
  ...
 }
@@ -3563,17 +3561,17 @@ MultimediaDataUnit ::= CHOICE {
  mediaContentOctet OCTET STRING
 }
 
- VAM ::= SEQUENCE {
+VAM ::= SEQUENCE {
  header ItsPduHeader,
  vam VruAwareness
- }
+}
 
- VruAwareness ::= SEQUENCE {
+VruAwareness ::= SEQUENCE {
  generationDeltaTime GenerationDeltaTime,
  vamParameters VamParameters
- }
+}
 
- VamParameters ::= SEQUENCE {
+VamParameters ::= SEQUENCE {
  basicContainer BasicContainer,
  vruHighFrequencyContainer VruHighFrequencyContainer OPTIONAL,
  vruLowFrequencyContainer VruLowFrequencyContainer OPTIONAL,
@@ -3581,18 +3579,18 @@ MultimediaDataUnit ::= CHOICE {
  vruClusterOperationContainer VruClusterOperationContainer OPTIONAL,
  vruMotionPredictionContainer VruMotionPredictionContainer OPTIONAL,
  ...
- }
+}
 
- VruProfile ::= ENUMERATED {
+VruProfile ::= ENUMERATED {
  unavailable(0),
  pedestrian(1),
  cyclist(2),
  motorcyclist(3),
  animal(4),
  max(15)
- }
+}
 
- VruHighFrequencyContainer ::= SEQUENCE {
+VruHighFrequencyContainer ::= SEQUENCE {
  heading Heading,
  speed Speed,
  longitudinalAcceleration LongitudinalAcceleration,
@@ -3608,170 +3606,168 @@ MultimediaDataUnit ::= CHOICE {
  rollAngle VruRollAngle OPTIONAL,
  deviceUsage VruDeviceUsage OPTIONAL,
  ...
- }
+}
 
- VruLanePosition ::= CHOICE {
+VruLanePosition ::= CHOICE {
  offRoadLanePosition OffRoadLanePosition,
  vehicularLanePosition LanePosition,
  trafficIslandPosition TrafficIslandPosition,
  mapPosition MapPosition,
  ...
- }
+}
 
- OffRoadLanePosition ::= ENUMERATED {
+OffRoadLanePosition ::= ENUMERATED {
  unavailable(0), sidewalk(1), parkingLane(2), bikeLane(3),
  max(15)
- }
+}
 
- TrafficIslandPosition ::= SEQUENCE {
+TrafficIslandPosition ::= SEQUENCE {
  oneSide NonIslandLanePosition,
  otherSide NonIslandLanePosition
- }
+}
 
- NonIslandLanePosition ::= CHOICE {
+NonIslandLanePosition ::= CHOICE {
  offRoadLanePosition OffRoadLanePosition,
  vehicularLanePosition LanePosition,
  mapPosition MapPosition,
  ...
- }
+}
 
- MapPosition ::= SEQUENCE {
+MapPosition ::= SEQUENCE {
  intersectionId IntersectionReferenceID,
  lane LaneID
- }
+}
 
- VruEnvironment ::= ENUMERATED {
+VruEnvironment ::= ENUMERATED {
  unavailable (0), intersectionCrossing(1), zebraCrossing(2), sidewalk (3),
  onVehicleRoad(4), protectedGeographicArea(5), max (255)
-
- }
+}
 
  VruMovementControl ::= ENUMERATED {
  unavailable (0), braking(1), hardBraking(2), stopPedaling (3),
  noReaction(4), max (255)
 
- }
+}
 
- VruOrientation ::= Heading
+VruOrientation ::= Heading
 
- VruRollAngle ::= SteeringWheelAngle
+VruRollAngle ::= SteeringWheelAngle
 
- VruDeviceUsage ::= ENUMERATED {
+VruDeviceUsage ::= ENUMERATED {
  unavailable(0), other(1), idle(2), listeningToAudio(3), typing(4),
  calling(5), playingGames(6), reading(7), viewing(8), max(255)
 
- }
+}
 
- VruLowFrequencyContainer ::= SEQUENCE {
+VruLowFrequencyContainer ::= SEQUENCE {
  profileAndSubprofile VruProfileAndSubprofile OPTIONAL,
  exteriorLights VruExteriorLights OPTIONAL,
  sizeClass VruSizeClass OPTIONAL,
  ...
- }
+}
 
- VruProfileAndSubprofile ::= CHOICE {
+VruProfileAndSubprofile ::= CHOICE {
  pedestrian VruSubProfilePedestrian,
  bicyclist VruSubProfileBicyclist,
  motorcylist VruSubProfileMotorcyclist,
  animal VruSubProfileAnimal,
  ...
- }
+}
 
- VruSubProfilePedestrian ::= ENUMERATED {
+VruSubProfilePedestrian ::= ENUMERATED {
  unavailable(0), ordinary-pedestrian(1),
  road-worker(2), first-responder(3),
  max(15)
- }
+}
 
- VruSubProfileBicyclist ::= ENUMERATED {
+VruSubProfileBicyclist ::= ENUMERATED {
  unavailable(0), bicyclist(1), wheelchair-user(2), horse-and-rider(3),
  rollerskater(4), e-scooter(5), personal-transporter(6),
  pedelec(7), speed-pedelec(8),
  max(15)
- }
+}
 
- VruSubProfileMotorcyclist ::= ENUMERATED {
+VruSubProfileMotorcyclist ::= ENUMERATED {
  unavailable(0), moped(1), motorcycle(2), motorcycle-and-sidecar-right(3),
  motorcycle-and-sidecar-left(4), max(15)
- }
+}
 
- VruSubProfileAnimal ::= ENUMERATED {
+VruSubProfileAnimal ::= ENUMERATED {
  unavailable(0), max(15)
- }
+}
 
- VruExteriorLights ::= SEQUENCE {
+VruExteriorLights ::= SEQUENCE {
  vruSpecific VruSpecificExteriorLights,
  generic ExteriorLights
 
- }
+}
 
- VruSpecificExteriorLights ::= BIT STRING {
+VruSpecificExteriorLights ::= BIT STRING {
  unavailable (0),
  backFlashLight (1),
  helmetLight (2),
  armLight (3),
  legLight (4),
  wheelLight (5)
- } (SIZE (8))
+} (SIZE (8))
 
- VruSizeClass ::= ENUMERATED {
+VruSizeClass ::= ENUMERATED {
  unavailable (0), low(1), medium(2), high (3), max(15)
+}
 
- }
-
- VruClusterInformationContainer ::= SEQUENCE {
+VruClusterInformationContainer ::= SEQUENCE {
  clusterId ClusterId,
  clusterBoundingBoxShape ClusterBoundingBoxShape,
  clusterCardinalitySize INTEGER(0..255),
  clusterProfiles ClusterProfiles,
  ...
- }
+}
 
- ClusterId ::= INTEGER(0..255)
+ClusterId ::= INTEGER(0..255)
 
- ClusterBoundingBoxShape ::= CHOICE {
+ClusterBoundingBoxShape ::= CHOICE {
  clusterRectangle AreaRectangle,
  clusterCircle AreaCircular,
  clusterPolygon AreaPolygon,
  ...
- }
+}
 
- ClusterProfiles ::= BIT STRING {
+ClusterProfiles ::= BIT STRING {
  pedestrian(0),
  bicyclist(1),
  motorcyclist(2),
  animal(3)
- } (SIZE (4))
+} (SIZE (4))
 
- VruClusterOperationContainer ::= SEQUENCE {
+VruClusterOperationContainer ::= SEQUENCE {
  clusterJoinInfo ClusterJoinInfo OPTIONAL,
  clusterLeaveInfo ClusterLeaveInfo OPTIONAL,
  clusterBreakupInfo ClusterBreakupInfo OPTIONAL,
  clusterIdChangeInfo VruClusterOpTimestamp OPTIONAL,
  ...
- }
+}
 
- VruClusterOpTimestamp ::= INTEGER (1..255)
+VruClusterOpTimestamp ::= INTEGER (1..255)
 
- ClusterJoinInfo ::= SEQUENCE {
+ClusterJoinInfo ::= SEQUENCE {
  clusterId ClusterId,
  joinTime VruClusterOpTimestamp,
  ...
- }
+}
 
- ClusterLeaveInfo ::= SEQUENCE {
+ClusterLeaveInfo ::= SEQUENCE {
  clusterId ClusterId,
  clusterLeaveReason ClusterLeaveReason,
  ...
- }
+}
 
- ClusterBreakupInfo ::= SEQUENCE {
+ClusterBreakupInfo ::= SEQUENCE {
  clusterBreakupReason ClusterBreakupReason,
  breakupTime VruClusterOpTimestamp,
  ...
- }
+}
 
- ClusterLeaveReason ::= ENUMERATED {
+ClusterLeaveReason ::= ENUMERATED {
  notProvided (0),
  clusterLeaderLost (1),
  clusterDisbandedByLeader (2),
@@ -3779,17 +3775,17 @@ MultimediaDataUnit ::= CHOICE {
  outOfClusterSpeedRange (4),
  joiningAnotherCluster (5),
  max(15)
- }
+}
 
- ClusterBreakupReason ::= ENUMERATED {
+ClusterBreakupReason ::= ENUMERATED {
  notProvided (0),
  clusteringPurposeCompleted (1),
  leaderMovedOutOfClusterBoundingBox (2),
  joiningAnotherCluster (3),
  max(15)
- }
+}
 
- VruMotionPredictionContainer ::= SEQUENCE {
+VruMotionPredictionContainer ::= SEQUENCE {
  pathHistory PathHistory OPTIONAL,
  pathPrediction PathPrediction OPTIONAL,
  safeDistance SequenceOfVruSafeDistanceIndication OPTIONAL,
@@ -3798,50 +3794,48 @@ MultimediaDataUnit ::= CHOICE {
  headingChangeIndication HeadingChangeIndication OPTIONAL,
  stabilityChangeIndication StabilityChangeIndication OPTIONAL,
  ...
- }
+}
 
- PathPrediction ::= PathHistory
+PathPrediction ::= PathHistory
 
- SequenceOfVruSafeDistanceIndication ::= SEQUENCE(SIZE (0..8)) OF VruSafeDistanceIndication
+SequenceOfVruSafeDistanceIndication ::= SEQUENCE(SIZE (0..8)) OF VruSafeDistanceIndication
 
- VruSafeDistanceIndication ::= SEQUENCE {
+VruSafeDistanceIndication ::= SEQUENCE {
  subjectStation StationID OPTIONAL,
  stationSafeDistanceIndication BOOLEAN,
  timeToCollision ActionDeltaTime OPTIONAL,
  ...
- }
+}
 
- SequenceOfTrajectoryInterceptionIndication ::= SEQUENCE (SIZE (1..8)) OF TrajectoryInterceptionIndication
+SequenceOfTrajectoryInterceptionIndication ::= SEQUENCE (SIZE (1..8)) OF TrajectoryInterceptionIndication
 
- TrajectoryInterceptionIndication ::= SEQUENCE {
+TrajectoryInterceptionIndication ::= SEQUENCE {
  subjectStation StationID OPTIONAL,
  trajectoryInterceptionIndication BOOLEAN
- }
+}
 
- HeadingChangeIndication ::= SEQUENCE {
+HeadingChangeIndication ::= SEQUENCE {
  direction LeftOrRight,
  actionDeltaTime ActionDeltaTime
- }
+}
 
- LeftOrRight ::= ENUMERATED { left, right }
+LeftOrRight ::= ENUMERATED { left, right }
 
- ActionDeltaTime ::= INTEGER { zero(0), hundredMs(1), twoHundredMs(2),
- unavailable (127) } (0..127)
+ActionDeltaTime ::= INTEGER { zero(0), hundredMs(1), twoHundredMs(2), unavailable (127) } (0..127)
 
- AccelerationChangeIndication ::= SEQUENCE {
+AccelerationChangeIndication ::= SEQUENCE {
  accelOrDecel AccelOrDecel,
  actionDeltaTime ActionDeltaTime
- }
+}
 
- AccelOrDecel ::= ENUMERATED { accelerate, decelerate }
+AccelOrDecel ::= ENUMERATED { accelerate, decelerate }
 
- StabilityChangeIndication ::= SEQUENCE {
+StabilityChangeIndication ::= SEQUENCE {
  lossProbability StabilityLossProbability,
  actionDeltaTime ActionDeltaTime
- }
+}
 
- StabilityLossProbability ::= INTEGER { zero(0), twoPercent (1),
- fourPercent(2), unavailable (63) } (0..63)
+StabilityLossProbability ::= INTEGER { zero(0), twoPercent (1), fourPercent(2), unavailable (63) } (0..63)
 
 MotorcylistSpecialContainer ::= SEQUENCE {
  vruSubProfileMotorcyclist VruSubProfileMotorcyclist,
@@ -3875,13 +3869,13 @@ MedType ::= INTEGER {
 EXT-TYPE ::= CLASS {
  &extRef RefExt UNIQUE,
  &ExtValue
- }
- WITH SYNTAX { &ExtValue IDENTIFIED BY &extRef }
+}
+WITH SYNTAX { &ExtValue IDENTIFIED BY &extRef }
 
 Extension { EXT-TYPE : ExtensionTypes } ::= SEQUENCE {
  extensionId EXT-TYPE.&extRef( { ExtensionTypes } ),
  value EXT-TYPE.&ExtValue( { ExtensionTypes } {@.extensionId})
- }
+}
 
 RefExt ::= INTEGER (0..255)
 
@@ -3926,28 +3920,28 @@ LMchannelBusyRatio ::= INTEGER {
  onePercent (2),
  hundredPercent (200),
  unknown (201)
- }(0..255)
+}(0..255)
 
 RepeatRate ::= INTEGER (0..255)
 
 TwoDLocation ::= SEQUENCE {
  latitude SALatitude,
  longitude SALongitude
- }
+}
 
 ThreeDLocation ::= SEQUENCE {
  latitude SALatitude,
  longitude SALongitude,
  elevation SAElevation
- }
+}
 
 AdvertiserIdentifier ::= UTF8String (SIZE (1..32))
 
 CHINFO-TYPE ::= CLASS {
  &id MedType UNIQUE,
  &Type
- }
- WITH SYNTAX { &Type IDENTIFIED BY &id }
+}
+WITH SYNTAX { &Type IDENTIFIED BY &id }
 
 chInfoType-unknown MedType ::= unknown
 chInfoType-any MedType ::= any
@@ -3970,20 +3964,20 @@ ChInfoTypes CHINFO-TYPE ::= {
  { NULL IDENTIFIED BY chInfoType-any } |
  { ChannelInfo IDENTIFIED BY chInfoType-M5 } ,
  ...
- }
+}
 
 ExtendedChannelInfos ::= SEQUENCE OF ExtendedChannelInfo
 
 ExtendedChannelInfo ::= SEQUENCE {
  medId CHINFO-TYPE.&id( { ChInfoTypes } ),
  value CHINFO-TYPE.&Type( { ChInfoTypes } {@.medId})
- }
+}
 
 --ServiceInfo extension elements
 ProviderServiceContext ::= SEQUENCE {
  fillBit BIT STRING (SIZE (3)),
  psc OCTET STRING (SIZE (0..31))
- }
+}
 
 IPv6Address ::= OCTET STRING (SIZE (16))
 
@@ -3999,7 +3993,7 @@ WsaCountThreshold ::= INTEGER (0..255)
 
 WsaCountThresholdInterval ::= INTEGER (0..255)
 
-SAMapplicationData ::= OCTET STRING 
+SAMapplicationData ::= OCTET STRING
 
 --ChannelInfo extension elements
 EdcaParameterSet ::= SEQUENCE {
@@ -4007,7 +4001,7 @@ EdcaParameterSet ::= SEQUENCE {
  acbkRecord EdcaParameterRecord,
  acviRecord EdcaParameterRecord,
  acvoRecord EdcaParameterRecord
- }
+}
 
 EdcaParameterRecord ::= SEQUENCE {
  res INTEGER (0..1),
@@ -4017,13 +4011,13 @@ EdcaParameterRecord ::= SEQUENCE {
  ecwMax INTEGER (0..15),
  ecwMin INTEGER (0..15),
  txopLimit INTEGER (0..65535)
- }
+}
 
 ChannelAccess80211 ::= INTEGER {
  continuous (0),
  alternatingSCH (1),
  alternatingCCH (2)
- } (0..255)
+} (0..255)
 
 SecondaryDns ::= IPv6Address
 
@@ -4032,7 +4026,7 @@ GatewayMacAddress ::= MACaddress
 SALatitude ::= SEQUENCE {
  fillBit BIT STRING (SIZE (1)),
  lat INTEGER (-900000000..900000001)
- }
+}
 
 SALongitude ::= INTEGER (-1800000000..1800000001)
 
@@ -4042,12 +4036,12 @@ ITSaid ::= VarLengthNumber
 
 RsvAdvPrtVersion ::= INTEGER {
  c-rsvAdvPrtVersion2016 (3)
- }(0..15)
+}(0..15)
 
 Sam ::= SEQUENCE {
  version RsvAdvPrtVersion,
  body SamBody
- }
+}
 
 SamBody ::= SEQUENCE {
  changeCount SrvAdvChangeCount,
@@ -4055,12 +4049,12 @@ SamBody ::= SEQUENCE {
  serviceInfos ServiceInfos OPTIONAL,
  channelInfos ChannelInfos OPTIONAL,
  routingAdvertisement RoutingAdvertisement OPTIONAL
- }
+}
 
 SrvAdvChangeCount ::= SEQUENCE {
  saID SrvAdvID,
  contentCount SrvAdvContentCount
- }
+}
 
 SrvAdvID ::= INTEGER(0..15)
 
@@ -4077,28 +4071,28 @@ SrvAdvMsgHeaderExtTypes EXT-TYPE ::= {
  { AdvertiserIdentifier IDENTIFIED BY c-advertiserID } |
  { ExtendedChannelInfos IDENTIFIED BY c-ExtendedChannelInfos } ,
  ...
- }
+}
 
 ServiceInfos ::= SEQUENCE OF ServiceInfo
 
 ServiceInfo ::= SEQUENCE {
  serviceID ITSaid,
  channelIndex ChannelIndex,
- chOptions ChannelOptions 
- }
+ chOptions ChannelOptions
+}
 
 ChannelOptions ::= SEQUENCE {
  systemService SystemService OPTIONAL,
  serviceProviderPort ReplyAddress OPTIONAL,
- extensions ServiceInfoExts OPTIONAL 
- }
+ extensions ServiceInfoExts OPTIONAL
+}
 
 ChannelIndex ::= INTEGER {
  notUsed (0),
- firstEntry (1) 
- }(0..31)
+ firstEntry (1)
+}(0..31)
 
-ReplyAddress ::= PortNumber 
+ReplyAddress ::= PortNumber
 
 SystemService ::= SEQUENCE OF SystemServiceAndContext
 
@@ -4119,7 +4113,7 @@ ServiceInfoExtTypes EXT-TYPE ::= {
  { SAMapplicationData IDENTIFIED BY c-SAMapplicationData } |
  { ProtocolType IDENTIFIED BY c-ProtocolType } ,
  ...
- }
+}
 
 ChannelInfos ::= SEQUENCE OF ChannelInfo
 
@@ -4129,14 +4123,14 @@ ChannelInfo ::= SEQUENCE {
  powerLevel TXpower80211,
  dataRate WsaChInfoDataRate,
  extensions ChInfoOptions
- }
+}
 
 OperatingClass80211 ::= INTEGER (0..255)
 
 WsaChInfoDataRate ::= SEQUENCE {
  adaptable BIT STRING (SIZE (1)),
  dataRate INTEGER (0..127)
- }
+}
 
 ChInfoOptions ::= SEQUENCE {
  option1 NULL OPTIONAL,
@@ -4147,7 +4141,7 @@ ChInfoOptions ::= SEQUENCE {
  option6 NULL OPTIONAL,
  option7 NULL OPTIONAL,
  extensions ChannelInfoExts OPTIONAL
- } 
+}
 
 ChannelInfoExts ::= SEQUENCE OF ChannelInfoExt
 
@@ -4157,7 +4151,7 @@ ChannelInfoExtTypes EXT-TYPE ::= {
  { EdcaParameterSet IDENTIFIED BY c-EDCAparameterSet } |
  { ChannelAccess80211 IDENTIFIED BY c-ChannelAccess } ,
  ...
- }
+}
 
 RoutingAdvertisement ::= SEQUENCE {
  lifetime RouterLifetime,
@@ -4166,7 +4160,7 @@ RoutingAdvertisement ::= SEQUENCE {
  defaultGateway IPv6Address,
  primaryDns IPv6Address,
  extensions RoutAdvertExts
- }
+}
 
 RouterLifetime ::= INTEGER (0..65535)
 
@@ -4182,24 +4176,24 @@ RoutAdvertExtTypes EXT-TYPE ::= {
  { SecondaryDns IDENTIFIED BY c-SecondaryDNS } |
  { GatewayMacAddress IDENTIFIED BY c-GatewayMACaddress } ,
  ...
- }
+}
 
 Srm ::= SEQUENCE {
  header RsvAdvPrtVersion,
  body SrmBody
- }
+}
 
 SrmBody ::= SEQUENCE {
  extensions SRMextensions OPTIONAL,
  prvChannelsRq SrmPrivateChannelsRq OPTIONAL,
  contexts SrmContexts OPTIONAL,
- prvChannelsCf SrmPrvChAllocConf OPTIONAL 
- }
+ prvChannelsCf SrmPrvChAllocConf OPTIONAL
+}
 
 SrmPrivateChannelsRq ::= SEQUENCE {
  portDynSam PortNumber,
  allocReqs SrmPrvChAllocReq
- }
+}
 
 SrmPrvChAllocReq ::= SEQUENCE OF ITSaid
 
@@ -4208,25 +4202,25 @@ SrmContexts ::= SEQUENCE OF SrmContext
 SrmContext ::= SEQUENCE {
  context SamContext,
  clientPort PortNumber
- }
+}
 
 SrmPrvChAllocConf ::= SEQUENCE OF ITSaid
 
 SA-CONTEXT ::= CLASS {
  &itsaidCtxRef ItsAidCtxRef UNIQUE,
  &ContextInfo OPTIONAL
- }
- WITH SYNTAX { &ContextInfo IDENTIFIED BY &itsaidCtxRef }
+}
+WITH SYNTAX { &ContextInfo IDENTIFIED BY &itsaidCtxRef }
 
 SamContext ::= SEQUENCE {
  itsaidCtxRef SA-CONTEXT.&itsaidCtxRef( { AllsamContexts } ),
  context SA-CONTEXT.&ContextInfo( { AllsamContexts } {@itsaidCtxRef})
- }
+}
 
 ItsAidCtxRef ::= SEQUENCE {
  itsaid ITSaid,
  ctx CtxRef
- }
+}
 
 CtxRef ::= INTEGER(0..255)
 c-ctxRefNull CtxRef ::= 0
@@ -4242,7 +4236,7 @@ AllsamContexts SA-CONTEXT ::= {
  { NullCtx IDENTIFIED BY c-CtxTypeSystemNull } |
  { MandAppCtx IDENTIFIED BY c-CtxTypeSystemMandApp } ,
  ...
- }
+}
 
 SRMextensions ::= SEQUENCE OF SRMextension
 
@@ -4253,7 +4247,7 @@ SRMexts EXT-TYPE ::=  {
 -- { IDENTIFIED BY } |
 -- { IDENTIFIED BY } ,
  ...
- }
+}
 
 ProtocolType ::= VarLengthNumber
 
@@ -4264,58 +4258,60 @@ ITSRangingSAMAppData ::= SEQUENCE {
  ackResponseService ACKResponseService,
  groundAltitude Altitude OPTIONAL,
  roadAngles RoadAngles OPTIONAL,
- ... 
+ ...
 }
+
 ACKResponseService ::= SEQUENCE {
  ackRespDelayAdjust INTEGER (-32768..32767),
  ackRespDelayStdDev INTEGER (0..65535),
  ...
 }
+
 RoadAngles ::= SEQUENCE OF Heading
 
- WsaSsp ::= SEQUENCE {
+WsaSsp ::= SEQUENCE {
  version Uint8,
  advertiserPermissions AdvertiserPermissions OPTIONAL,
  providerPermissions ProviderPermissions OPTIONAL,
  ...
- }
- 
- AdvertiserPermissions ::= SEQUENCE OF ChannelIdentifier
+}
 
- ChannelIdentifier ::= SEQUENCE {
+AdvertiserPermissions ::= SEQUENCE OF ChannelIdentifier
+
+ChannelIdentifier ::= SEQUENCE {
  countryString OCTET STRING (SIZE (3)),
  operatingClass Uint8,
  channelNumber Uint8
- }
+}
 
- ProviderPermissions ::= SEQUENCE OF ChannelSpecificProviderPermission
+ProviderPermissions ::= SEQUENCE OF ChannelSpecificProviderPermission
 
- ChannelSpecificProviderPermission ::= SEQUENCE {
+ChannelSpecificProviderPermission ::= SEQUENCE {
  channelId ChannelIdentifier,
  permittedPsids SequenceOfPsid OPTIONAL,
  permittedEdcaParameters SequenceOfEdcaIdentifier OPTIONAL,
  maximumTransmitPower Uint8 OPTIONAL,
  ...
- }
+}
 
- EdcaIdentifier ::= CHOICE {
+EdcaIdentifier ::= CHOICE {
  enum EnumeratedEdcaIdentifier,
  explicit ExplicitEdcaIdentifier,
  ...
- }
+}
 
- EnumeratedEdcaIdentifier ::= ENUMERATED { us-j2945-bsm (0), ... }
+EnumeratedEdcaIdentifier ::= ENUMERATED { us-j2945-bsm (0), ... }
 
- ExplicitEdcaIdentifier ::= SEQUENCE {
+ExplicitEdcaIdentifier ::= SEQUENCE {
  qosInfo Uint8,
  reserved Uint8,
  set1 OCTET STRING (SIZE (4)),
  set2 OCTET STRING (SIZE (4)),
  set3 OCTET STRING (SIZE (4)),
  set4 OCTET STRING (SIZE (4))
- }
+}
 
- SequenceOfEdcaIdentifier ::= SEQUENCE OF EdcaIdentifier
+SequenceOfEdcaIdentifier ::= SEQUENCE OF EdcaIdentifier
 
 Uint3 ::= INTEGER (0..7)
 Uint8 ::= INTEGER (0..255)
@@ -4327,7 +4323,7 @@ SequenceOfUint8 ::= SEQUENCE OF Uint8
 SequenceOfUint16 ::= SEQUENCE OF Uint16
 
 Opaque ::= OCTET STRING
- 
+
 HashedId10 ::= OCTET STRING (SIZE (10))
 HashedId8 ::= OCTET STRING (SIZE (8))
 HashedId3 ::= OCTET STRING (SIZE (3))
@@ -4351,7 +4347,7 @@ Duration ::= CHOICE {
  hours Uint16,
  sixtyHours Uint16,
  years Uint16
-} 
+}
 
 --
 
@@ -4428,7 +4424,7 @@ NinetyDegreeInt ::= INTEGER {
 
 KnownLatitude ::= NinetyDegreeInt (min..max)
 UnknownLatitude ::= NinetyDegreeInt (unknown)
- 
+
 OneEightyDegreeInt ::= INTEGER {
  min (-1799999999),
  max (1800000000),
@@ -4437,7 +4433,7 @@ OneEightyDegreeInt ::= INTEGER {
 
 KnownLongitude ::= OneEightyDegreeInt (min..max)
 UnknownLongitude ::= OneEightyDegreeInt (unknown)
- 
+
 ElevInt ::= Uint16
 
 --
@@ -4465,8 +4461,8 @@ EccP256CurvePoint ::= CHOICE {
  compressed-y-0 OCTET STRING (SIZE (32)),
  compressed-y-1 OCTET STRING (SIZE (32)),
  uncompressedP256 SEQUENCE {
- x OCTET STRING (SIZE (32)),
- y OCTET STRING (SIZE (32))
+  x OCTET STRING (SIZE (32)),
+  y OCTET STRING (SIZE (32))
  }
 }
 
@@ -4476,8 +4472,8 @@ EccP384CurvePoint ::= CHOICE {
  compressed-y-0 OCTET STRING (SIZE (48)),
  compressed-y-1 OCTET STRING (SIZE (48)),
  uncompressedP384 SEQUENCE {
- x OCTET STRING (SIZE (48)),
- y OCTET STRING (SIZE (48))
+  x OCTET STRING (SIZE (48)),
+  y OCTET STRING (SIZE (48))
  }
 }
 
@@ -4500,7 +4496,7 @@ EciesP256EncryptedKey ::= SEQUENCE {
 
 EncryptionKey ::= CHOICE {
  public PublicEncryptionKey,
- symmetric SymmetricEncryptionKey 
+ symmetric SymmetricEncryptionKey
 }
 
 PublicEncryptionKey ::= SEQUENCE {
@@ -4560,14 +4556,14 @@ SspRange ::= CHOICE {
  ... ,
  bitmapSspRange BitmapSspRange
 }
- 
+
 BitmapSspRange ::= SEQUENCE {
  sspValue OCTET STRING (SIZE (1..32)),
  sspBitmask OCTET STRING (SIZE (1..32))
 }
 
-SequenceOfOctetString ::= SEQUENCE (SIZE (0..MAX)) OF 
- OCTET STRING (SIZE (0..MAX))
+SequenceOfOctetString ::= SEQUENCE (SIZE (0..MAX)) OF
+                          OCTET STRING (SIZE (0..MAX))
 
 --
 
@@ -4584,8 +4580,8 @@ GroupLinkageValue ::= SEQUENCE {
  jValue OCTET STRING (SIZE (4)),
  value OCTET STRING (SIZE (9))
 }
- 
-LaId ::= OCTET STRING (SIZE (2)) 
+
+LaId ::= OCTET STRING (SIZE (2))
 LinkageSeed ::= OCTET STRING (SIZE (16))
 
 END
