@@ -4,9 +4,7 @@
 //!
 //! ETSI types to common (SI) units
 
-use crate::standards::cdd_1_3_1_1;
-use crate::standards::cdd_2_2_1;
-use crate::standards::is_1_3_1;
+use crate::standards::{cdd_1_3_1_1, cdd_2_2_1, cpm_1, dsrc_2_2_1};
 
 /// Create conversions for ETSI type `t` and some "unavailable" value
 macro_rules! latlon_to_deg {
@@ -37,15 +35,11 @@ macro_rules! latlon_to_deg {
     };
 }
 
-latlon_to_deg!(is_1_3_1::etsi_schema::Longitude, 1_800_000_001);
-latlon_to_deg!(is_1_3_1::etsi_schema::Latitude, 900_000_001);
 latlon_to_deg!(cdd_1_3_1_1::its_container::Longitude, 1_800_000_001);
 latlon_to_deg!(cdd_1_3_1_1::its_container::Latitude, 900_000_001);
 latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::Longitude, 1_800_000_001);
 latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::Latitude, 900_000_001);
 
-// latlon_to_deg!(is_1_3_1::etsi_schema::DeltaLongitude, 131_072);
-// latlon_to_deg!(is_1_3_1::etsi_schema::DeltaLatitude, 131_072);
 latlon_to_deg!(cdd_1_3_1_1::its_container::DeltaLongitude, 131_072);
 latlon_to_deg!(cdd_1_3_1_1::its_container::DeltaLatitude, 131_072);
 latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::DeltaLongitude, 131_072);
@@ -102,19 +96,20 @@ macro_rules! etsi_to_meters {
     };
 }
 
-etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB09, i16, 100.);
-etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB10, i16, 100.);
-etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB11, i16, 100.);
-etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB12, i16, 100.);
-etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB13, i16, 100.);
-etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB14, i16, 100.);
-etsi_to_meters!(is_1_3_1::etsi_schema::OffsetB16, i16, 100.);
+etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB09, i16, 100.);
+etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB10, i16, 100.);
+etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB11, i16, 100.);
+etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB12, i16, 100.);
+etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB13, i16, 100.);
+etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB14, i16, 100.);
+etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB16, i16, 100.);
 
-etsi_to_meters!(is_1_3_1::etsi_schema::DistanceValue, i32, 100.);
-etsi_to_meters!(is_1_3_1::etsi_schema::ObjectDimensionValue, u16, 10.);
-etsi_to_meters!(is_1_3_1::etsi_schema::Radius, u16, 10.);
-etsi_to_meters!(is_1_3_1::etsi_schema::Range, u16, 10.);
-etsi_to_meters!(is_1_3_1::etsi_schema::SemiRangeLength, u16, 10.);
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::DistanceValue, i32, 100.);
+etsi_to_meters!(cdd_2_2_1::etsi_its_cdd::ObjectDimensionValue, u16, 10.);
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::ObjectDimensionValue, u16, 10.);
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::Radius, u16, 10.);
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::Range, u16, 10.);
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::SemiRangeLength, u16, 10.);
 
 /// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv` and some "unavailable" value
 macro_rules! etsi_to_mps {
@@ -176,10 +171,16 @@ macro_rules! etsi_to_mps {
     };
 }
 
-etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValueExtended, i16, 100., 16_383); // Unit: 0,01 m/s
-etsi_to_mps!(is_1_3_1::etsi_schema::SpeedValue, u16, 100., 16_383); // Unit: 0,01 m/s
+etsi_to_mps!(
+    cpm_1::cpm_pdu_descriptions::SpeedValueExtended,
+    i16,
+    100.,
+    16_383
+); // Unit: 0,01 m/s
+etsi_to_mps!(cdd_1_3_1_1::its_container::SpeedValue, u16, 100., 16_383); // Unit: 0,01 m/s
+etsi_to_mps!(cdd_2_2_1::etsi_its_cdd::SpeedValue, u16, 100., 16_383); // Unit: 0,01 m/s
 
-etsi_to_mps!(is_1_3_1::etsi_schema::Velocity, u16, 50., 8191); // Unit: 0.02 m/s
+etsi_to_mps!(dsrc_2_2_1::etsi_its_dsrc::Velocity, u16, 50., 8191); // Unit: 0.02 m/s
 
 /// Create conversions for ETSI type `t` with conversion factor `conv` and some "unavailable" value
 macro_rules! angle_to_deg {
@@ -242,12 +243,13 @@ macro_rules! angle_to_deg {
     };
 }
 
-angle_to_deg!(is_1_3_1::etsi_schema::CartesianAngleValue, 10., 3601); // Unit: 0,1 degrees
-angle_to_deg!(is_1_3_1::etsi_schema::WGS84AngleValue, 10., 3601); // Unit: 0,1 degrees
-angle_to_deg!(is_1_3_1::etsi_schema::Angle, 80., 28800); // Unit: 0.0125 degrees
+angle_to_deg!(cdd_2_2_1::etsi_its_cdd::CartesianAngleValue, 10., 3601); // Unit: 0,1 degrees
+angle_to_deg!(cpm_1::cpm_pdu_descriptions::CartesianAngleValue, 10., 3601); // Unit: 0,1 degrees
+angle_to_deg!(cpm_1::cpm_pdu_descriptions::WGS84AngleValue, 10., 3601); // Unit: 0,1 degrees
+angle_to_deg!(dsrc_2_2_1::etsi_its_dsrc::Angle, 80., 28800); // Unit: 0.0125 degrees
 
 // DeltaTime: unit 10 seconds, clamping to -121 for <-20 minutes and +120 for >+20 minutes, -122 for unavailable
-impl is_1_3_1::etsi_schema::DeltaTime {
+impl dsrc_2_2_1::etsi_its_dsrc::DeltaTime {
     /// convert ETSI DeltaTime to seconds
     #[must_use]
     pub fn as_sec(&self) -> i16 {
@@ -273,19 +275,19 @@ impl is_1_3_1::etsi_schema::DeltaTime {
     }
 }
 
-impl From<&is_1_3_1::etsi_schema::DeltaTime> for i16 {
-    fn from(other: &is_1_3_1::etsi_schema::DeltaTime) -> i16 {
+impl From<&dsrc_2_2_1::etsi_its_dsrc::DeltaTime> for i16 {
+    fn from(other: &dsrc_2_2_1::etsi_its_dsrc::DeltaTime) -> i16 {
         other.as_sec()
     }
 }
-impl From<is_1_3_1::etsi_schema::DeltaTime> for i16 {
-    fn from(other: is_1_3_1::etsi_schema::DeltaTime) -> i16 {
+impl From<dsrc_2_2_1::etsi_its_dsrc::DeltaTime> for i16 {
+    fn from(other: dsrc_2_2_1::etsi_its_dsrc::DeltaTime) -> i16 {
         other.as_sec()
     }
 }
 
 // DSecond: unit milliseconds, 65535 for unavailable
-impl is_1_3_1::etsi_schema::DSecond {
+impl dsrc_2_2_1::etsi_its_dsrc::DSecond {
     /// convert ETSI DeltaTime to milliseconds
     #[must_use]
     pub fn as_millis(&self) -> u16 {
@@ -319,19 +321,19 @@ impl is_1_3_1::etsi_schema::DSecond {
     }
 }
 
-impl From<&is_1_3_1::etsi_schema::DSecond> for u16 {
-    fn from(other: &is_1_3_1::etsi_schema::DSecond) -> u16 {
+impl From<&dsrc_2_2_1::etsi_its_dsrc::DSecond> for u16 {
+    fn from(other: &dsrc_2_2_1::etsi_its_dsrc::DSecond) -> u16 {
         other.as_millis()
     }
 }
-impl From<is_1_3_1::etsi_schema::DSecond> for u16 {
-    fn from(other: is_1_3_1::etsi_schema::DSecond) -> u16 {
+impl From<dsrc_2_2_1::etsi_its_dsrc::DSecond> for u16 {
+    fn from(other: dsrc_2_2_1::etsi_its_dsrc::DSecond) -> u16 {
         other.as_millis()
     }
 }
 
 // MinuteOfTheYear: unit minute, 527040 for invalid
-impl is_1_3_1::etsi_schema::MinuteOfTheYear {
+impl dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear {
     /// create ETSI MinuteOfTheYear with "invalid" value
     pub fn invalid() -> Self {
         Self(527040)
@@ -344,24 +346,24 @@ impl is_1_3_1::etsi_schema::MinuteOfTheYear {
 }
 
 // MsgCount 0..127
-impl crate::standards::is_1_3_1::etsi_schema::MsgCount {
+impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::MsgCount {
     pub fn increment(&self) -> Self {
         Self((self.0 + 1) % 128)
     }
 }
-impl From<u8> for is_1_3_1::etsi_schema::MsgCount {
+impl From<u8> for dsrc_2_2_1::etsi_its_dsrc::MsgCount {
     fn from(value: u8) -> Self {
         Self(value % 128)
     }
 }
 
 // RequestID 0..255
-impl crate::standards::is_1_3_1::etsi_schema::RequestID {
+impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::RequestID {
     pub fn increment(&self) -> Self {
         Self(self.0.wrapping_add(1))
     }
 }
-impl From<u8> for is_1_3_1::etsi_schema::RequestID {
+impl From<u8> for dsrc_2_2_1::etsi_its_dsrc::RequestID {
     // for convenience and interface unification only
     fn from(value: u8) -> Self {
         Self(value)
@@ -369,11 +371,11 @@ impl From<u8> for is_1_3_1::etsi_schema::RequestID {
 }
 
 // convenience getter
-impl is_1_3_1::etsi_schema::SpeedLimitList {
+impl dsrc_2_2_1::etsi_its_dsrc::SpeedLimitList {
     /// Extracts a certain speed limit in m/s, if existing
     pub fn get_speed_limit_mps(
         &self,
-        limit_type: is_1_3_1::etsi_schema::SpeedLimitType,
+        limit_type: dsrc_2_2_1::etsi_its_dsrc::SpeedLimitType,
     ) -> Option<f32> {
         self.0.iter().find_map(|item| {
             if item.r_type == limit_type {

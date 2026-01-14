@@ -1,27 +1,3 @@
-/** draft 005 of the CCD module for TS 102 894-2 V2.2.1 integrating:
-- ITSWG1(23)062003   Update VAM parameters definitions in ITS Common Data Dictionary
-- ITSWG1(23)063016   CPM ASN.1 format (CDD+CPS)
-- ITSWG1(23)063017   Generalize the opening angles of the radial shape options
-- ITSWG1(23)063018   Generalize the orientation of the DF Shape
-- ITSWG1(23)063012   CDD extension to enable Road Configuration Container in DENMs
-- ITSWG1(23)000078   CDD extension to enable Road Configuration Container in DENMs with JTI changes
-- ITSWG1(23)063001r2 Extend LaneInformation to cover more scenarios
-- ITSWG1(23)063005r1 Add DEs and DFs to allow referring to IVIMs and MAPEMs
-- ITSWG1(23)063005r1 Add DE and DFs to support traces leading to any eventZone point.
-- ITSWG1(23)000088   Add SubCauseCodes to CauseCode 5 (Impassability)
-- ITSWG1(23)000118   CDD extension to enable Proposal for encoding areas in location container in DENMs through predicted paths
-- ITSWG1(23)063005r1 Define CauseCode 28 for “public transport vehicle approaching
-- ITSWG1(23)063005r1 Add subCauseCodes to causeCode 15 RescueAndRecoveryWorkInProgress
-- ITSWG1(23)063005r1 Extend the DE PositioningSolution
-- ITSWG1(23)063009   Adding one option in CDD at the level of DE PositioningSolutionType
-- ITSWG1(23)063005r1 Align definition of CauseCode 95  with the existing subCauseCodes
-- ITSWG1(23)063005r1 Extend the DE TrafficRule
-- ITSWG1(23)000132   Clarify and Add SubCauseCodes to CauseCode 1 TrafficCondition
-- ITSWG1(23)000132   Add subCauseCodes to causeCode 11 HazardousLocation-AnimalOnTheRoad
-- ITSWG1(23)000132   Add subCauseCodes to causeCode 12 humanPresenceOnTheRoad
-- ITSWG1(23)000134   Relative event position using road configuration container in DENM
-*/
-
 --! @options: no-fields-header
 
 ETSI-ITS-CDD {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) 102894 cdd (2) major-version-4 (4) minor-version-1 (1)}
@@ -656,7 +632,7 @@ CartesianAngularVelocityComponentValue ::= INTEGER {
  * - 101-255                                               - are reserved for future usage.
  *
  * @category: Traffic information
- * @revision: V1.3.1, value 28 added in V2.2.1, definition of values 12 and 95 changed on V2.2.1
+ * @revision: V1.3.1, value 28 added in V2.2.1, definition of values 12 and 95 changed in V2.2.1
  */
 CauseCodeType ::= INTEGER {
     trafficCondition                                (1),
@@ -808,24 +784,30 @@ ClusterLeaveReason ::= INTEGER {
  * This DE represents the sub cause codes of the @ref CauseCode `collisionRisk`.
  * 
  * The value shall be set to:
- * - 0 - `unavailable`              - in case information on the type of collision risk is unavailable,
- * - 1 - `longitudinalCollisionRisk`- in case the type of detected collision risk is longitudinal collision risk, 
- *                                       e.g. forward collision or face to face collision,
- * - 2 - `crossingCollisionRisk`    - in case the type of detected collision risk is crossing collision risk,
- * - 3 - `lateralCollisionRisk`     - in case the type of detected collision risk is lateral collision risk,
- * - 4 - `vulnerableRoadUser`       - in case the type of detected collision risk involves vulnerable road users
- *                                       e.g. pedestrians or bicycles.
- * - 5-255                          - are reserved for future usage.
+ * - 0 - `unavailable`                    - in case information on the type of collision risk is unavailable,
+ * - 1 - `longitudinalCollisionRisk`      - in case the type of detected collision risk is longitudinal collision risk, 
+ *                                          e.g. forward collision or face to face collision,
+ * - 2 - `crossingCollisionRisk`          - in case the type of detected collision risk is crossing collision risk,
+ * - 3 - `lateralCollisionRisk`           - in case the type of detected collision risk is lateral collision risk,
+ * - 4 - `vulnerableRoadUser`             - in case the type of detected collision risk involves vulnerable road users
+ *                                          e.g. pedestrians or bicycles.
+ * - 5 - `collisionRiskWithPedestrian`    - in case the type of detected collision risk involves at least one pedestrian, 
+ * - 6 - `collisionRiskWithCyclist`       - in case the type of detected collision risk involves at least one cyclist (and no pedestrians),
+ * - 7 - `collisionRiskWithMotorVehicle`  - in case the type of detected collision risk involves at least one motor vehicle (and no pedestrians or cyclists),
+ * - 8-255                                - are reserved for future usage.
  *
  * @category: Traffic information
- * @revision: V1.3.1
+ * @revision: V1.3.1, values 5-7 assigned in V2.2.1
  */
 CollisionRiskSubCauseCode ::= INTEGER {
-    unavailable               (0), 
-    longitudinalCollisionRisk (1), 
-    crossingCollisionRisk     (2), 
-    lateralCollisionRisk      (3), 
-    vulnerableRoadUser        (4)
+    unavailable                   (0), 
+    longitudinalCollisionRisk     (1), 
+    crossingCollisionRisk         (2), 
+    lateralCollisionRisk          (3), 
+    vulnerableRoadUser            (4),
+    collisionRiskWithPedestrian   (5), 
+    collisionRiskWithCyclist      (6), 
+    collisionRiskWithMotorVehicle (7) 
 }(0..255)
 
 /** 
@@ -1192,7 +1174,7 @@ DeltaTimeSecond ::= INTEGER  (0..86400)
  *
  * The value shall be set to:
  * - `-0` for a difference in time of 0 seconds. 
- * - `n` (`n > 0` and `n <= 128`) to indicate a time value equal to or less than n x 10 s, and greater than (n-1) x 10 s,
+ * - `n` (`n > 0` and `n < 128`) to indicate a time value equal to or less than n x 10 s, and greater than (n-1) x 10 s,
  *
  * @unit: 10 s
  * @category: Basic information
@@ -1716,7 +1698,18 @@ Identifier2B ::= INTEGER (0..65535)
  * - 4 `landslips`                - in case the road is affected by landslips,
  * - 5 `chemicalSpillage`         - in case the road is affected by chemical spillage,
  * - 6 `winterClosure`            - in case the road is impassable due to a winter closure.
- * - 7-255                        - are reserved for future usage.
+ * - 7 `sinkhole`                 - in case the road is impassable due to large holes in the road surface.
+ * - 8 `earthquakeDamage`         - in case the road is obstructed or partially obstructed because of damage caused by an earthquake.
+ * - 9 `fallenTrees`              - in case the road is obstructed or partially obstructed by one or more fallen trees. 
+ * - 10 `rockfalls`               - in case the road is obstructed or partially obstructed due to fallen rocks.
+ * - 11 `sewerOverflow`           - in case the road is obstructed or partially obstructed by overflows from one or more sewers. 
+ * - 12 `stormDamage`             - in case the road is obstructed or partially obstructed by debris caused by strong winds.
+ * - 13 `subsidence`              - in case the road surface has sunken or collapsed in places.
+ * - 14 `burstPipe`               - in case the road surface has sunken or collapsed in places due to burst pipes.
+ * - 15 `burstWaterMain`          - in case the road is obstructed due to local flooding and/or subsidence. 
+ * - 16 `fallenPowerCables`       - in case the road is obstructed or partly obstructed by one or more fallen power cables.
+ * - 17 `snowDrifts`              - in case the road is obstructed or partially obstructed by snow drifting in progress or patches of deep snow due to earlier drifting.
+ * - 15-255                       - are reserved for future usage.
  *
  * @category: Traffic information
  * @revision: Created in V2.2.1
@@ -1728,7 +1721,18 @@ ImpassabilitySubCauseCode ::= INTEGER {
     blastingOfAvalanches      (3), 
     landslips                 (4), 
     chemicalSpillage          (5),
-    winterClosure             (6)
+    winterClosure             (6),
+    sinkhole                  (7),
+    earthquakeDamage          (8),
+    fallenTrees               (9),
+    rockfalls                 (10),
+    sewerOverflow             (11),
+    stormDamage               (12),
+    subsidence                (13),
+    burstPipe                 (14),
+    burstWaterMain            (15),
+    fallenPowerCables         (16),
+    snowDrifts                (17)
 } (0..255)
 
 /**
@@ -2184,12 +2188,12 @@ MatrixIncludedComponents::= BIT STRING{
  *  The value shall be set to:
  *	- 1  - `denm`              - for Decentralized Environmental Notification Message (DENM) as specified in ETSI EN 302 637-3 [2],
  *  - 2  - `cam`               - for Cooperative Awareness Message (CAM) as specified in ETSI EN 302 637-2 [1],
- *  - 3  - `poi`               - for Point of Interest message as specified in ETSI TS 101 556-1 [9],
+ *  - 3  - `poim`              - for Point of Interest message as specified in ETSI TS 103 916 [9],
  *  - 4  - `spatem`            - for Signal Phase And Timing Extended Message (SPATEM) as specified in ETSI TS 103 301 [15],
  *  - 5  - `mapem`             - for MAP Extended Message (MAPEM) as specified in ETSI TS 103 301 [15],
  *  - 6  - `ivim`              - for in Vehicle Information Message (IVIM) as specified in ETSI TS 103 301 [15],
- *  - 7  - `ev-rsr`            - for Electric vehicle recharging spot reservation message, as defined in ETSI TS 101 556-3 [11],
- *  - 8  - `tistpgtransaction` - for messages for Tyre Information System (TIS) and Tyre Pressure Gauge (TPG) interoperability, as specified in ETSI TS 101 556-2 [10],
+ *  - 7  - `rfu1`              - reserved for future usage,
+ *  - 8  - `rfu2`              - reserved for future usage,
  *  - 9  - `srem`              - for Signal Request Extended Message as specified in ETSI TS 103 301 [15],
  *  - 10 - `ssem`              - for Signal request Status Extended Message as specified in ETSI TS 103 301 [15],
  *  - 11 - `evcsn`             - for Electrical Vehicle Charging Spot Notification message as specified in ETSI TS 101 556-1 [9],
@@ -2206,17 +2210,17 @@ MatrixIncludedComponents::= BIT STRING{
  *  - 22-255                   - reserved for future usage.
  *
  * @category: Communication information
- * @revision: Created in V2.1.1 from @ref ItsPduHeader.
+ * @revision: Created in V2.1.1 from @ref ItsPduHeader. Value 3 re-assigned to poim and value 7 and 8 reserved in V2.2.1
  */
 MessageId::= INTEGER { 
     denm              (1),  
     cam               (2), 
-    poi               (3), 
+    poim              (3), 
     spatem            (4), 
     mapem             (5), 
     ivim              (6), 
-    ev-rsr            (7), 
-    tistpgtransaction (8), 
+    rfu1              (7), 
+    rfu2              (8), 
     srem              (9), 
     ssem              (10), 
     evcsn             (11), 
@@ -3001,19 +3005,20 @@ SensorType ::= INTEGER {
  * @revision: created in V2.2.1
 */
 SensorTypes ::= BIT STRING {
-    undefined       (0),
-    radar           (1),
-    lidar           (2),
-    monovideo       (3),
-    stereovision    (4),
-    nightvision     (5),
-    ultrasonic      (6),
-    pmd             (7),
-    fusion          (8), 
-    inductionloop   (9),
-    sphericalCamera (10),
-    itssaggregation (11), 
-	uwb             (12)
+    undefined         (0),
+    radar             (1),
+    lidar             (2),
+    monovideo         (3),
+    stereovision      (4),
+    nightvision       (5),
+    ultrasonic        (6),
+    pmd               (7),
+    inductionLoop     (8),
+    sphericalCamera   (9),
+    uwb               (10),
+    acoustic          (11),
+    localAggregation  (12),
+    itsAggregation    (13)
 } (SIZE (16,... ))
 
 /**
@@ -3162,7 +3167,7 @@ SpeedValue ::= INTEGER {
  * - `2` dynamicDb        - in case the stored information type is a dynamic database
  * - `3` realTimeDb       - in case the stored information type is a real time updated database.
  * - `4` map              - in case the stored information type is a road topology map.
- * - Bits 5 to 7          - are reserved for future use
+ * - Bits 5 to 7          - are reserved for future use.
  *
  * @note: If all bits are set to 0, then no stored information type is used
  *
@@ -3175,7 +3180,7 @@ StoredInformationType::= BIT STRING {
     dynamicDb   	(2),
     realTimeDb  	(3),
     map		    	(4)	
-} (SIZE (1..168,... )) 
+} (SIZE (8,... )) 
 
 /** 
  * This DE represents the value of a velocity component in a defined coordinate system.
@@ -3514,7 +3519,7 @@ TrafficConditionSubCauseCode ::= INTEGER {
     trafficJamSlowlyIncreasing   (2),
     trafficJamIncreasing         (3),
     trafficJamStronglyIncreasing (4),
-    trafficjamStationary         (5),
+    trafficJam                   (5),
     trafficJamSlightlyDecreasing (6),
     trafficJamDecreasing         (7),
     trafficJamStronglyDecreasing (8),
@@ -3522,27 +3527,24 @@ TrafficConditionSubCauseCode ::= INTEGER {
 } (0..255)
 
 /**
- * This DE indicates a traffic direction that is relevant to information indicated in a message.
+ * This DE indicates a direction of traffic with respect to a reference direction, and a portion of that traffic with respect to a reference position.
  * 
  * The value shall be set to:
- * - 0 `allTrafficDirections` - for all traffic directions, 
- * - 1 `upstreamTraffic`      - for upstream traffic, 
- * - 2 `downstreamTraffic`    - for downstream traffic, 
- * - 3 `oppositeTraffic`      - for traffic in the opposite direction. 
+ * - 0 `allTrafficDirections`                                    - for all directions of traffic, 
+ * - 1 `sameAsReferenceDirection-upstreamOfReferencePosition`    - for the direction of traffic according to the reference direction, and the portion of traffic upstream of the reference position, 
+ * - 2 `sameAsReferenceDirection-downstreamOfReferencePosition`  - for the direction of traffic according to the reference direction, and the portion of traffic downstream of the reference position, 
+ * - 3 `oppositeToReferenceDirection`                            - for the direction of traffic opposite to the reference direction. 
  *
- * The terms `upstream`, `downstream` and `oppositeTraffic` are relative to the event position.
- *
- * @note: Upstream traffic corresponds to the incoming traffic towards the event position,
- * and downstream traffic to the departing traffic away from the event position.
- *
+ * @note: Upstream traffic corresponds to the incoming traffic towards the event position, and downstream traffic to the departing traffic away from the event position.
  * @category: GeoReference information
- * @revision: Created in V2.1.1 from RelevanceTrafficDirection
+ * @revision: Created in V2.1.1 from RelevanceTrafficDirection, description and naming of values changed in V2.2.1
+ *
  */
-TrafficDirection ::= ENUMERATED {
-    allTrafficDirections (0), 
-    upstreamTraffic      (1), 
-    downstreamTraffic    (2), 
-    oppositeTraffic      (3)
+ TrafficDirection ::= ENUMERATED {
+    allTrafficDirections(0), 
+    sameAsReferenceDirection-upstreamOfReferencePosition(1), 
+    sameAsReferenceDirection-downstreamOfReferencePosition(2), 
+    oppositeToReferenceDirection(3)
 }
 
 /**
@@ -3881,13 +3883,13 @@ VehicleMass ::= INTEGER {
  * - 9 `commercial`       - to indicate that the vehicle is used for transportation of commercial goods,
  * - 10 `military`        - to indicate that the vehicle is used for military purpose, 
  * - 11 `roadOperator`    - to indicate that the vehicle is used in road operator missions,
- * - 12 `taxi`            - to indicate that the vehicle is used to provide an authorized taxi service.
- * - 13 `reserved`        - is reserved for future usage.
- * - 14 `reserved`        - is reserved for future usage.
- * - 15 `reserved`        - is reserved for future usage.
+ * - 12 `taxi`            - to indicate that the vehicle is used to provide an authorized taxi service,
+ * - 13 `uvar`            - to indicate that the vehicle is authorized to enter a zone according to the applicable Urban Vehicle Access Restrictions.
+ * - 14 `rfu1`            - is reserved for future usage.
+ * - 15 `rfu2`            - is reserved for future usage.
  * 
  * @category: Vehicle Information
- * @revision: Description updated in V2.1.1 (removed reference to CEN/TS 16157-3)
+ * @revision: Description updated in V2.1.1 (removed reference to CEN/TS 16157-3), value 13 assigned in V2.2.1
  */
 VehicleRole ::= ENUMERATED {
     default         (0), 
@@ -3903,9 +3905,9 @@ VehicleRole ::= ENUMERATED {
     military        (10), 
     roadOperator    (11), 
     taxi            (12), 
-    reserved1       (13), 
-    reserved2       (14), 
-    reserved3       (15)
+    uvar            (13), 
+    rfu1            (14), 
+    rfu2            (15)
 }
 
 /**
@@ -4076,18 +4078,20 @@ VruSubProfilePedestrian ::= INTEGER {
  *
  * The value shall be set to:
  * - 0 `unavailable`           - to indicate that the information  is unavailable,
- * - 1 `bicyclist `            - to indicate a cycle and bicyclist,
+ * - 1 `bicyclist `            - to indicate a cycle and bicyclist to which no more-specific profile applies, 
  * - 2 `wheelchair-user`       - to indicate a wheelchair and its user,
  * - 3 `horse-and-rider`       - to indicate a horse and rider,
- * - 4 `rollerskater`          - to indicate a rolleskater and skater,
+ * - 4 `rollerskater`          - to indicate a roller-skater and skater,
  * - 5 `e-scooter`             - to indicate an e-scooter and rider,
  * - 6 `personal-transporter`  - to indicate a personal-transporter and rider,
- * - 7 `pedelec`               - to indicate a pedelec and rider,
+ * - 7 `pedelec`               - to indicate a pedelec and rider to which no more-specific profile applies,
  * - 8 `speed-pedelec`         - to indicate a speed-pedelec and rider.
- * - 9 to 15                   - are reserved for future usage. 
+ * - 9 `roadbike`              - to indicate a road bicycle (or road pedelec) and rider,
+ * - 10 `childrensbike`        - to indicate a children�s bicycle (or children�s pedelec) and rider,
+ * - 11 to 15                  - are reserved for future usage. 
  *
  * @category: VRU information
- * @revision: Created in V2.1.1
+ * @revision: Created in V2.1.1, values 9 and 10 assigned in V2.2.1
  */
 VruSubProfileBicyclist ::= INTEGER {
     unavailable          (0), 
@@ -4098,7 +4102,9 @@ VruSubProfileBicyclist ::= INTEGER {
     e-scooter            (5), 
     personal-transporter (6),
     pedelec              (7), 
-    speed-pedelec        (8)
+    speed-pedelec        (8),
+    roadbike             (9),
+    childrensbike        (10)
 }(0..15)
 
 /**
@@ -4893,12 +4899,13 @@ CauseCodeChoice::= CHOICE {
  * It shall include the following components: 
  *
  * @field ccAndScc: the main cause of a detected event. Each entry is of a different type and represents the sub cause code.
+
+ * The semantics of the entire DF are completely defined by the choice value which represents the cause code value. 
+ * The interpretation of the sub cause code value may provide additional information that is not strictly necessary to understand 
+ * the cause code itself, and is therefore optional.
  *
- * The semantics of the entire DF are completely defined by the component causeCode. The interpretation of the subCauseCode may 
- * provide additional information that is not strictly necessary to understand the causeCode itself, and is therefore optional.
- * 
  * @category: Traffic information
- * @revision: Created in V2.1.1, 
+ * @revision: Created in V2.1.1, description amended in V2.2.1
  */
 CauseCodeV2 ::= SEQUENCE {
     ccAndScc    CauseCodeChoice,
@@ -5312,7 +5319,7 @@ GeneralizedLanePosition ::= SEQUENCE {
 }
 
 /**
- * This DF represents transversal position information w.r.t the road, at an externally defined reference position. It shall contain a set of up to `4` @ref GeneralizedLanePosition.
+ * This DF represents transversal position information with respect to the road, at an externally defined reference position. It shall contain a set of up to `4` @ref GeneralizedLanePosition.
  * Multiple entries can be used to describe several lane positions with the associated confidence, in cases where the reference position cannot be mapped to a single lane.
  *
  * @category: Road Topology information
@@ -5416,7 +5423,8 @@ InterferenceManagementZoneDefinition::= SEQUENCE{
     interferenceManagementZoneLatitude     Latitude, 
     interferenceManagementZoneLongitude    Longitude, 
     interferenceManagementZoneId           ProtectedZoneId OPTIONAL,
-    interferenceManagementZoneShape        Shape (WITH COMPONENTS{..., radial ABSENT, radialShapes ABSENT}) OPTIONAL,
+    interferenceManagementZoneShape        Shape 
+   (WITH COMPONENTS{..., radial ABSENT, radialShapes ABSENT}) OPTIONAL,
     ...
 }
 
@@ -5601,9 +5609,7 @@ LanePositionOptions ::= CHOICE {
  * @revision: Created in V2.2.1
  */
 LanePositionWithLateralDetails ::= SEQUENCE {
-    transversalPosition         LanePosition,
-    laneType                    LaneType DEFAULT traffic,
-    direction                   Direction DEFAULT sameDirection,
+    COMPONENTS OF               LanePositionAndType,
     distanceToLeftBorder        StandardLength9b,
     distanceToRightBorder       StandardLength9b,
     ...
@@ -5743,7 +5749,7 @@ MapemLaneList ::=  SEQUENCE (SIZE(1..8,...)) OF Identifier1B
 
 /** 
  * This DF provides references to MAPEM connections using a list of @ref Identifier1B.
- * Note: connections are  allowed “maneuvers” (e.g. an ingress / egress relation) on an intersection.
+ * Note: connections are  allowed �maneuvers� (e.g. an ingress / egress relation) on an intersection.
  *
  * @category: Road topology information
  * @revision: Created in V2.2.1
@@ -5847,7 +5853,7 @@ MessageSegmentationInfo ::= SEQUENCE {
  * 
  * @field usedDetectionInformation: the type of sensor(s) that is used to provide the detection information.
  * 
- * @field usedStoredInformation: the type of source of the stored information 
+ * @field usedStoredInformation: the type of source of the stored information. 
  *
  * @field confidenceValue: an optional confidence value associated to the information. 
  * 
@@ -5922,7 +5928,8 @@ MitigationPerTechnologyClass ::= SEQUENCE {
 ObjectClass ::= CHOICE {
     vehicleSubClass      TrafficParticipantType (unknown|passengerCar..tram|agricultural),
     vruSubClass          VruProfileAndSubprofile,
-    groupSubClass        VruClusterInformation (WITH COMPONENTS{..., clusterBoundingBoxShape ABSENT}),
+    groupSubClass        VruClusterInformation 
+    (WITH COMPONENTS{..., clusterBoundingBoxShape ABSENT}),
     otherSubClass        OtherSubClass,
     ...
 }
@@ -6023,11 +6030,12 @@ Path::= SEQUENCE (SIZE(0..40)) OF PathPoint
  * @field deltaTimeBigRange: delta time with precision of 10 s.
  *
  * @category: Basic information
- * @revision: V2.2.1
+ * @revision: Created in V2.2.1
  */
 PathDeltaTimeChoice::= CHOICE {
     deltaTimeHighPrecision	DeltaTimeTenthOfSecond,
-    deltaTimeBigRange	    DeltaTimeTenSeconds
+    deltaTimeBigRange	    DeltaTimeTenSeconds,
+    ...
 }
 
 /** 
@@ -6063,13 +6071,13 @@ PathHistory::= SEQUENCE (SIZE(0..40)) OF PathPoint
 
 /**
  * This DF represents a predicted path or trajectory with a set of predicted points and optional information to generate a shape which is estimated to contain the real path. 
- * It shall contain up to `16` @ref PathPoint. 
+ * It shall contain up to `16` @ref PathPointPredicted. 
  * 
  * The first PathPoint presents an offset delta position with regards to an external reference position.
  * Each other PathPoint presents an offset delta position and optionally an offset travel time with regards to the previous PathPoint. 
  *
  * @category: GeoReference information
- * @revision: created in V2.1.1 , size constraint changed to SIZE(1..16) in V2.2.1
+ * @revision: created in V2.1.1 , size constraint changed to SIZE(1..16, ...) in V2.2.1
  */
 PathPredicted::= SEQUENCE (SIZE(1..16,...)) OF PathPointPredicted
 
@@ -6082,13 +6090,17 @@ PathPredicted::= SEQUENCE (SIZE(1..16,...)) OF PathPointPredicted
  *
  * @field usageIndication: an indication of how the predicted path will be used. 
  *
- * @field confidenceLevel: the confidence that the path/trajectory in pathPredicted will occur as predicted
+ * @field confidenceLevel: the confidence that the path/trajectory in pathPredicted will occur as predicted.
  *
  * @category: GeoReference information
  * @revision: created in V2.2.1
  */
 PathPredicted2::= SEQUENCE{
-    pathPredicted     PathPredicted,
+    pathPredicted     PathPredicted
+   ((WITH COMPONENT (WITH COMPONENTS {..., pathDeltaTime ABSENT, symmetricAreaOffset ABSENT})) |
+    (WITH COMPONENT (WITH COMPONENTS {..., pathDeltaTime PRESENT, symmetricAreaOffset ABSENT})) |
+    (WITH COMPONENT (WITH COMPONENTS {..., pathDeltaTime ABSENT, symmetricAreaOffset PRESENT})) |
+    (WITH COMPONENT (WITH COMPONENTS {..., pathDeltaTime PRESENT, symmetricAreaOffset PRESENT}))),
     usageIndication   UsageIndication,
     confidenceLevel   ConfidenceLevel,   
     ...
@@ -6135,23 +6147,11 @@ PathPoint ::= SEQUENCE {
  *
  * @field altitudeConfidence: the optional confidence value associated to the altitude value of the geographical position, with default value unavailable.
  * 
- * @field pathDeltaTime: the optional travel time separated from the waypoint to the predefined reference position.
+ * @field pathDeltaTime: the optional travel time to the waypoint from the predefined reference position.
 
- * @field symmetricAreaOffset: the optional symmetric offset applied to the position in order to generate a shape.
- * if the component asymmetricAreaOffset is absent, the symmetricAreaOffset is applied to both sides of the position (left and right)
- * If the component asymmetricAreaOffset is present, the symmetricAreaOffset is applied to the enclosed side of a curve. 
- * If the curvature of the path is 0 the offset is applied to the left handside of the path. 
- * To determine how the lateral offset is to be applied to the path, the following steps are executed: 
- * - For each nth pathPointPredicted (ppp_n), vectors v_(n-) and v_(n+) from ppp_n to ppp_(n-1) and from ppp_n to ppp_(n+1) are created. 
- * - v^_(n-) and v^_(n+), the normalized vectors of vectors v_(n-) and v_(n+) are created.  
- * - v^_o the normalized sum of the vectors v^_(n-) and v^_(n+) is calculated. 
- * The symmetrical border offset spans a vector in the direction of both v^_o and -v^_o, if the asymmetrical border offset is ABSENT.
- * The symmetrical border offset spans a vector in the direction of v^_o if the asymmetrical border offset is PRESENT.
- * The ends of the border offsets vectors of ppp_n for each side are connected to the border offsets vectors of the endings of ppp_(n-1) and ppp_(n+1) to create the indicated zone. 
- * If @ref PathPredicted has only one element, the encoded area represents a circle with the asymmetricAreaOffset as the defining radius.
+ * @field symmetricAreaOffset: the optional symmetric offset to generate a shape, see Annex D for details.
  *  
- * @field asymmetricAreaOffset: the optional asymmetric offset applied to the outer curve of the path in order to generate a shape. 
- * The asymmetrical border offset spans a vector in the direction of -v^_o
+ * @field asymmetricAreaOffset: the optional asymmetric offset to generate a shape, see Annex D for details. 
  *
  * @category GeoReference information
  * @revision: Created in V2.1.1, type of pathDeltaTime changed and optionality added, fields symmetricAreaOffset and asymmetricAreaOffset added in V2.2.1
@@ -6162,7 +6162,7 @@ PathPointPredicted::= SEQUENCE {
   horizontalPositionConfidence  PosConfidenceEllipse OPTIONAL,   
   deltaAltitude                 DeltaAltitude DEFAULT unavailable, 
   altitudeConfidence            AltitudeConfidence DEFAULT unavailable,
-  pathDeltaTime                 PathDeltaTimeChoice,
+  pathDeltaTime                 PathDeltaTimeChoice OPTIONAL,
   symmetricAreaOffset           StandardLength9b OPTIONAL, 
   asymmetricAreaOffset          StandardLength9b OPTIONAL, 
   ... 
@@ -6434,7 +6434,7 @@ PtActivation ::= SEQUENCE {
 }
 
 /**
- * This DF describes a radial shape. The circular sector or cone is constructed by sweeping      
+ * This DF describes a radial shape. The circular or spherical sector is constructed by sweeping      
  * the provided range about the reference position specified outside of the context of this DF or 
  * about the optional shapeReferencePoint. The range is swept between a horizontal start and a 
  * horizontal end angle in the X-Y plane of a cartesian coordinate system specified outside of the 
@@ -6676,15 +6676,15 @@ RoadConfigurationSectionList::=  SEQUENCE (SIZE(1..8,...))  OF RoadConfiguration
  * @field lengthOfSection: the optional length of the section along the road profile (i.e. including curves).
  * 
  * @field endingPointSection: the optional position of the ending point of the section. 
- * If this component is absent, the ending position is implicitly defined by other means, e.g. the starting point of the next RoadConfigurationSection, or the section’s length.
+ * If this component is absent, the ending position is implicitly defined by other means, e.g. the starting point of the next RoadConfigurationSection, or the section�s length.
  *
- * @field connectedPaths: the identifier(s) of the path(s) having one or an ordered subset of waypoints located upstream of the RoadConfigurationSection’ starting point. 
+ * @field connectedPaths: the identifier(s) of the path(s) having one or an ordered subset of waypoints located upstream of the RoadConfigurationSection� starting point. 
  * 
- * @field includedPaths: the identifier(s) of the trace(s) that covers (either with all its length or with a part of it) a RoadConfigurationSection. 
+ * @field includedPaths: the identifier(s) of the path(s) that covers (either with all its length or with a part of it) a RoadConfigurationSection. 
  *
  * @field isEventZoneIncluded: indicates, if set to TRUE, that the @ref EventZone incl. its reference position covers a RoadConfigurationSection (either with all its length or with a part of it). 
  * 
- * @field isEventZoneConnected: indicates, if set to TRUE, that the @ref EventZone incl. its reference position has one or an ordered subset of waypoints located upstream of the RoadConfigurationSection’ starting point.
+ * @field isEventZoneConnected: indicates, if set to TRUE, that the @ref EventZone incl. its reference position has one or an ordered subset of waypoints located upstream of the RoadConfigurationSection� starting point.
  *
  * @category: Road topology information
  * @revision: Created in V2.2.1
@@ -7127,7 +7127,7 @@ VelocityPolarWithZ::= SEQUENCE {
  *
  * It shall include the following components: 
  *
- * @field clusterId: optional identifier of a VRU cluster .
+ * @field clusterId: optional identifier of a VRU cluster.
  *
  * @field clusterBoundingBoxShape: optionally indicates the shape of the cluster bounding box, per default inside an East-North-Up coordinate system 
  * centered around a reference point defined outside of the context of this DF.
@@ -7237,9 +7237,9 @@ YawRate::= SEQUENCE {
  * 6.   ISO 3779 (2011-07): "Road vehicles - Vehicle identification number (VIN) Content and structure".
  * 7.   VDV recommendation 420 (1992): "Technical Requirements for Automatic Vehicle Location / Control Systems - Radio Data Transmission (BON Version) with Supplement 1 and Supplement 2".
  * 8.   ISO 1176:1990: "Road vehicles - Masses - Vocabulary and codes".
- * 9.   ETSI TS 101 556-1: "Intelligent Transport Systems (ITS); Infrastructure to Vehicle Communication; Electric Vehicle Charging Spot Notification Specification".
- * 10.  ETSI TS 101 556-2: "Intelligent Transport Systems (ITS); Infrastructure to Vehicle Communication; Part 2: Communication system specification to support application requirements for Tyre Information System (TIS) and Tyre Pressure Gauge (TPG) interoperability".
- * 11.  ETSI TS 101 556-3: "Intelligent Transport Systems (ITS); Infrastructure to Vehicle Communications; Part 3: Communications system for the planning and reservation of EV energy supply using wireless networks".
+ * 9.   ETSI TS 103 916 Intelligent Transport Systems (ITS); Parking Availability Service Specification; Release 2
+ * 10.  void
+ * 11.  void
  * 12.  ETSI TS 103 300-3: "Intelligent Transport Systems (ITS);  Vulnerable Road Users (VRU) awareness;  Part 3: Specification of VRU awareness basic service; Release 2"
  * 13.  ETSI TS 103 724: "Intelligent Transport Systems (ITS); Facilities layer  function; Interference Management Zone Message (IMZM); Release 2"
  * 14.	ETSI TS 102 792: "Intelligent Transport Systems (ITS); Mitigation techniques to avoid interference between European CEN Dedicated Short Range Communication (CEN DSRC) equipment and Intelligent Transport Systems (ITS) operating in the 5 GHz frequency range".
@@ -7251,394 +7251,10 @@ YawRate::= SEQUENCE {
  * 20.	ETSI EN 302 571: "Intelligent Transport Systems (ITS); Radiocommunications equipment operating in the 5 855 MHz to 5 925 MHz frequency  band; Harmonised Standard  covering  the essential  requirements of article 3.2 of  Directive 2014/53/EU"
  * 21.	ISO 8855: "Road vehicles - Vehicle dynamics and road-holding ability - Vocabulary".
  * 22.  ISO 3833: "Road vehicles - Types - Terms and definitions".
- * 23.  ISO 14816:2015 + Amd1:2019: " Road transport and traffic telematics — Automatic vehicle and equipment identification — Numbering and data structure"
- * 24.  ISO 17573-3: "Electronic fee collection — System architecture for vehicle-related tolling — Part 3: Data dictionary"
- * 25.  ISO 3166-1: "Codes for the representation of names of countries and their subdivisions — Part 1: Country code" 
+ * 23.  ISO 14816:2015 + Amd1:2019: " Road transport and traffic telematics � Automatic vehicle and equipment identification � Numbering and data structure"
+ * 24.  ISO 17573-3: "Electronic fee collection � System architecture for vehicle-related tolling � Part 3: Data dictionary"
+ * 25.  ISO 3166-1: "Codes for the representation of names of countries and their subdivisions � Part 1: Country code" 
 */
 
 END
 
-
-/** draft 004 of the DENM module for TS 103 831 V2.2.1 integrating:
-- ITSWG1(23)000082   Proposal for Road Configuration Container in DENMs
-- ITSWG1(23)063002r2 Extend LaneInformation to cover more scenarios
-- ITSWG1(23)063004   Provide possibility to link a DENM to other DENMs
-- ITSWG1(23)063004   Provide possibility to link DENMs to other C-ITS messages
-- ITSWG1(23)063004   Add the possibility to support traces leading to any eventZone point.
-- ITSWG1(23)000117   Proposal for encoding areas in location Container in DENMs through predicted paths
-- ITSWG1(23)063013   Add PreCrashContainer as proposed by TR 103 832
-- ITSWG1(23)000134   Relative event position using road configuration container in DENM
-*/
-
---! @options: no-fields-header
-
-DENM-PDU-Description {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) denmPduRelease2 (103831) major-version-2 (2) minor-version-2 (2)} 
-
-DEFINITIONS AUTOMATIC TAGS ::=
-
-BEGIN
-
-IMPORTS 
- 
-ActionId, ActionIdList, CauseCodeV2, ClosedLanes, DangerousGoodsExtended, DeltaReferencePosition, DeltaTimeMilliSecondPositive, DeltaTimeSecond, EnergyStorageType, 
-EventZone, GeneralizedLanePositions, HeightLonCarr, InformationQuality, ItsPduHeader, IvimReferences, LanePosition, LightBarSirenInUse, ItineraryPath, MapReferences, 
-MetaInformation, NumberOfOccupants, ObjectFace, OccupiedLanesWithConfidence, PerceivedObject, Position1d, PosLonCarr, PosCentMass, PositionOfPillars, PositioningSolutionType, 
-PosFrontAx, PositionOfOccupants, PathPredictedList, RequestResponseIndication, ReferencePosition, RestrictedTypes, RoadConfigurationSectionList, RoadType, StandardLength3b, 
-StandardLength12b, StationType, Speed, SpeedLimit, StationId, StationarySince, TimestampIts, Traces, TracesExtended, TrafficDirection, TrafficRule, TurningRadius, 
-Temperature, VehicleMass, VehicleIdentification, Wgs84Angle, WheelBaseVehicle 
-   
-FROM ETSI-ITS-CDD {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (102894) cdd (2) major-version-4 (4) minor-version-1 (1)} WITH SUCCESSORS
-;
-
-/** 
- * This type represents the DENM PDU.
- *
- * It shall include the following components: 
- *
- * @field header: the header of the DENM PDU.
- *
- * @field denm: the payload of the DENM PDU.
-*/
-DENM ::= SEQUENCE {
-	header ItsPduHeader (WITH COMPONENTS {... , protocolVersion (2), messageId(denm)}),
-	denm   DenmPayload
-}
-
-/** 
- * This type represents the DENM payload.
- *
- * It shall include the following components: 
- *
- * @field management: the Management Container.
- *
- * @field situation: the optional Situation Container.
- *
- * @field location: the optional Location Container.
- *
- * @field alacarte: the optional À La Carte Container .
- *
-*/
-DenmPayload ::= SEQUENCE {
-    management ManagementContainer,
-    situation  SituationContainer OPTIONAL,
-    location   LocationContainer OPTIONAL,
-    alacarte   AlacarteContainer OPTIONAL
-}
-((WITH COMPONENTS {..., management (WITH COMPONENTS {..., termination ABSENT}), situation PRESENT, location PRESENT}) |
- (WITH COMPONENTS {..., management (WITH COMPONENTS {..., termination PRESENT}), situation ABSENT, location ABSENT, alacarte ABSENT}))
-
-/** 
- * This type represents the Management Container.
- *
- * It shall include the following components: 
- *
- * @field actionId: the identifier of the DENM.
- *
- * @field detectionTime: the time at which the event is detected.
- *
- * @field referenceTime: the time at which a new DENM, an update DENM or a cancellation DENM is generated
- *
- * @field termination: the optional termination type of the DENM.
- *
- * @field eventPosition: the geographical position used in the definition of the awareness area / relevance zone, see clause 6.1.3.
- *
- * @field awarenessDistance: the optional radius of the circular awareness area, with centre at the event position or at any of the event history points as defined in clause 6.1.3.1.
- *
- * @field awarenessTrafficDirection: the optional traffic direction along which the receiving ITS-S may encounter the event, as defined in clause 6.1.3.1.
- *
- * @field validityDuration: the validity duration of a DENM. This component represents a time offset in the unit of second since detectionTime.
- *
- * @field transmissionInterval: the optional time interval for DENM transmission as defined by the originating ITS-S. If the component is not present in DENM, a default value defaultValidity is assumed.
- *
- * @field stationType: the station type information of the originating ITS-S.
- *
-*/
-ManagementContainer ::= SEQUENCE {
-    actionId                  ActionId,
-    detectionTime             TimestampIts,
-    referenceTime             TimestampIts,
-    termination               Termination OPTIONAL,
-    eventPosition             ReferencePosition,
-    awarenessDistance         StandardLength3b OPTIONAL,
-    awarenessTrafficDirection TrafficDirection OPTIONAL,
-    validityDuration          DeltaTimeSecond DEFAULT defaultValidity, 
-    transmissionInterval      DeltaTimeMilliSecondPositive OPTIONAL,
-    stationType               StationType,
-    ...
-}
-
-/** 
- * This type represents the situation container.
- *
- * It shall include the following components: 
- *
- * @field informationQuality: the quality level of the information provided by the ITS-S application of the originating ITS-S. 
- * It indicates the probability of the detected event being truly existent at the event position.
- *
- * @field eventType: the event type, including direct cause and sub cause.
- *
- * @field linkedCause: the optional type of a linked event co-existing at the same time and the same place (same event zone), including direct cause and sub cause of the linked event, 
- * for which no other DENM is sent out.
- *
- * @field eventZone: an optional list of EventPoint, using the position indicated in the component eventPosition of the Management container as the reference position for the first EventPoint.
- *
- * @field linkedDenms: the optional list of DF ActionId, pointing to DENMs that are semantically connected because applying to consecutive event zones at the same time.
- *
- * @field eventEnd: the end position of the event along the road that is affected by the event w.r.t. the component eventPosition of the Management container. 
- * This end position is represented by the length of the event along the road. 
- *
-*/
-SituationContainer ::= SEQUENCE {
-    informationQuality InformationQuality,
-    eventType          CauseCodeV2,
-    linkedCause        CauseCodeV2 OPTIONAL,
-    eventZone          EventZone OPTIONAL,
-    ...,
-[[  linkedDenms        ActionIdList OPTIONAL,
-    eventEnd           Position1d OPTIONAL ]]   
-}
-  ((WITH COMPONENTS {..., eventZone PRESENT, eventEnd ABSENT}) |
-   (WITH COMPONENTS {..., eventZone ABSENT, eventEnd PRESENT})) 
- 
-
-
-/** 
- * This type represents the Location Container.
- *
- * It shall include the following components: 
- *
- * @field eventSpeed: optional speed of a detected dynamic event and the confidence of the speed information. 
- *
- * @field eventPositionHeading: the optional heading of a dynamic event and the confidence of the heading information.
- *
- * @field detectionZonesToEventPosition: the detection zone information approaching the event position.
- *
- * @field roadType: the optional road type information at the event position. 
- *
- * @field lanePositions: the optional lane(s) where the event is located, at the position indicated by the component eventPosition of the Management container.
- *
- * @field occupiedLanes: the optional lane(s) that are fully or partially occupied by the event, at the position indicated by the component eventPosition of the Management container.
- *
- * @field linkedIvims: the optional list of DF IvimReference, pointing to IVIMs that are semantically connected because providing information 
- * applying to the road segment(s) covered by the components detectionZonesToEventPosition, detectionZonesToSpecifiedEventPoint and the SituationContainer component eventZone.
- *
- * @field linkedMapem: the optional list of DF Mapreference, pointing to MAPEMs that are semantically connected because providing information 
- * applying to the road segment(s) covered by the component detectionZonesToEventPosition, detectionZonesToSpecifiedEventPoint and the SituationContainer component eventZone.
- *
- * @field detectionZonesToSpecifiedEventPoint: the optional detection zone information approaching towards a specified event point. 
- *
- * @field predictedPaths: the optional list of future paths or trajectories that the event may move along or zones that the event may occupy. 
- *
-*/
-LocationContainer ::= SEQUENCE {
-    eventSpeed                            Speed OPTIONAL,
-    eventPositionHeading                  Wgs84Angle OPTIONAL,
-    detectionZonesToEventPosition         Traces,
-    roadType                              RoadType OPTIONAL,
-    ...,
-[[	lanePositions                         GeneralizedLanePositions OPTIONAL,
-    occupiedLanes                         OccupiedLanesWithConfidence OPTIONAL,
-    linkedIvims                           IvimReferences OPTIONAL, 
-    linkedMapems                          MapReferences OPTIONAL, 
-    detectionZonesToSpecifiedEventPoint   TracesExtended OPTIONAL,
-    predictedPaths	          	          PathPredictedList OPTIONAL ]]
-}
-
-/** 
- * This type contains detailed information about the vehicle in which the originating ITS-S is mounted, for mitigating the consequences of a collision.
- *
- * It shall include the following components: 
- *
- * @field heightLonCarrLeft: the height of the left longitudinal carrier of the vehicle from base to top.
- *
- * @field heightLonCarrRight: the height of the right longitudinal carrier of the vehicle from base to top.
- *
- * @field posLonCarrLeft: the position of the left longitudinal carrier of vehicle.
- *
- * @field posLonCarrRight: the position of the right longitudinal carrier of vehicle.
- *
- * @field positionOfPillars: information about the vertical support of the vehicle in which the originating ITS-S is mounted. It shall be included for passenger vehicles only.
- *
- * @field posCentMass: the position of the centre of mass of the vehicle.
- *
- * @field wheelBaseVehicle: the wheel base of the vehicle.
- *
- * @field turningRadius: the turning radius of the vehicle.
- *
- * @field posFrontAx: the position of the front axle of the vehicle.
- *
- * @field positionOfOccupants: indicates whether an in-vehicle seat is occupied at the moment of generation of the message.
- *
- * @field vehicleMass: the mass of the unloaded vehicle
- *
- * @field requestResponseIndication: indicates whether the originating ITS-S transmitting the impactReduction component is requesting the receiving ITS-S to provide also its impactReduction component.
- *
-*/
-ImpactReductionContainer ::= SEQUENCE {
-    heightLonCarrLeft         HeightLonCarr,
-    heightLonCarrRight        HeightLonCarr,
-    posLonCarrLeft            PosLonCarr,
-    posLonCarrRight           PosLonCarr,
-    positionOfPillars         PositionOfPillars,
-    posCentMass               PosCentMass,
-    wheelBaseVehicle          WheelBaseVehicle,
-    turningRadius             TurningRadius,
-    posFrontAx                PosFrontAx,
-    positionOfOccupants       PositionOfOccupants,
-    vehicleMass               VehicleMass,
-    requestResponseIndication RequestResponseIndication
-}
-
-/** 
- * This type contains detailed information about an object with which a vehicle and/or the traffic is likely to collide.
- *
- * It shall include the following components: 
- *
- * @field perceivedPreCrashObject: information about a perceived object in the East, North, Up reference frame.
- *
- * @field objectStationId: the optional station Id of the object for which the information is provided.
- *
- * @field timeToCollision: the optional estimated time to collision of a vehicle with the object. 
- *
- * @field impactSection: indication of the objects section where the impact will most likely occur. 
- * When the target object is likely to be a vehicle, then this component should be present, otherwise it should not be provided.  
- *
- * @field estimatedBrakingDistance: the optional estimated distance in which the vehicle would need to come to a complete hold, if no obstruction was in the way. 
-*/
-PreCrashContainer ::= SEQUENCE { 
-    perceivedPreCrashObject   PerceivedObject, 
-    objectStationId           StationId OPTIONAL, 
-    timeToCollision           DeltaTimeMilliSecondPositive OPTIONAL, 
-    impactSection             ObjectFace OPTIONAL, 
-    estimatedBrakingDistance  StandardLength12b OPTIONAL,
-    ... 
-}
-
-/** 
- * This type contains detailed information about the configuration of road section(s) that are geographically related to the event.
- *
- * It shall include the following components: 
- *
- * @field roadConfigurationConfidence: information about the source of the road configuration and the confidence in the information.
- *
- * @field roadConfigurationSectionList: a list of road configuration information per applicable road section. 
-*
-*/
-RoadConfigurationContainer ::=  SEQUENCE {
-    roadConfigurationConfidence     MetaInformation,
-    roadConfigurationSectionList    RoadConfigurationSectionList,
-    ...
-} 
-
-/** 
- * This type contains detailed information of a roadwork zone and specific access conditions.
- *
- * It shall include the following components: 
- *
- * @field lightBarSirenInUse: optionally indicates whether a roadwork vehicle has switched on the light bar or siren. It is used when the roadwork involves a specific roadwork vehicle
- *
- * @field closedLanes: optionally indicates whether the roadwork has caused the closure of one or several driving lanes. 
- * Optionally, it may indicate whether a hard shoulder lane is closed to traffic or can be used for specific usage (e.g. for stopping).
- *
- * @field restriction: the optional type(s) of vehicles that are restricted to access the road work zone. More than one vehicle types may be provided by this component if the restriction apply to multiple vehicle types. 
- *
- * @field speedLimit: the optional speed limitation applied to the roadwork zone.
- *
- * @field incidentIndication: the optional incident related to the roadworks to provide additional information of the roadworks zone.
- *
- * @field recommendedPath: the optional recommended itinerary in order to contour the roadworks zone.
- * If present, a recommended path shall be a list of path points in the order from the starting point closest to the roadworks zone to the end point of the recommended path. 
- *
- * @field startingPointSpeedLimit: the optional effective starting position of a speed limit being applied to the roadwork zone, w.r.t. the component eventPosition on the Management Container.
- * This component shall be present if the speed limit is applied at a certain distance prior to the roadwork zone starting position.
- *
- * @field trafficFlowRule: optionally indicates the side of the road to which the traffic should flow around a roadwork.
- *
- * @field referenceDenms: an optional sequence of actionIds for different DENMs that describe the same event. If it is available, it indicates the actionIds of all other DENMs describing this event.
- *
-*/
-RoadWorksContainerExtended ::= SEQUENCE {
-    lightBarSirenInUse      LightBarSirenInUse OPTIONAL,
-    closedLanes             ClosedLanes OPTIONAL,
-    restriction             RestrictedTypes OPTIONAL,
-    speedLimit              SpeedLimit OPTIONAL,
-    incidentIndication      CauseCodeV2 OPTIONAL,
-    recommendedPath         ItineraryPath OPTIONAL,
-    startingPointSpeedLimit DeltaReferencePosition OPTIONAL,
-    trafficFlowRule         TrafficRule OPTIONAL,
-    referenceDenms          ActionIdList OPTIONAL
-}
-
-/** 
- * This type contains detailed information about a stationary vehicle.
- *
- * It shall include the following components: 
- *
- * @field stationarySince: the optional time duration of the stationary vehicle being stationary.
- *
- * @field stationaryCause: optional additional information to describe causes of the stationary vehicle event such as human problem.
- *
- * @field carryingDangerousGoods: optional information on the type of dangerous goods, the required emergency action and other information.
- *
- * @field numberOfOccupants: the optional estimated number of occupants involved in the stationary vehicle event.
- *
- * @field vehicleIdentification: the optional identification of the stationary vehicle.
- *
- * @field energyStorageType: the optional vehicle energy storage type information of the stationary vehicle, such as electric, diesel, etc.
- *
-*/
-StationaryVehicleContainer ::= SEQUENCE {
-    stationarySince        StationarySince OPTIONAL, 
-    stationaryCause        CauseCodeV2 OPTIONAL,
-    carryingDangerousGoods DangerousGoodsExtended OPTIONAL,
-    numberOfOccupants      NumberOfOccupants OPTIONAL,
-    vehicleIdentification  VehicleIdentification OPTIONAL,
-    energyStorageType      EnergyStorageType OPTIONAL
-}
-
-/** 
- * This type represents the À La Carte Container.
- *
- * It shall include the following components: 
- *
- * @field lanePosition: the optional lane position of the event.
- *
- * @field impactReduction: optional vehicle data for collision mitigation.
- *
- * @field externalTemperature: optional the ambient temperature at the event position.
- *
- * @field roadWorks: optional information of the roadwork zone.
- *
- * @field positioningSolution: optionally indicates the technical solution being used by the originating ITS-S to estimate the event position.
- *
- * @field stationaryVehicle: optional information about a stationary vehicle.
- *
- * @field roadConfiguration: optional information about the configuration of the road.
- *
- * @field precrash: the optional information about perceived objects that represent hazards and/or could be subject of collisions. 
- *
-*/
-AlacarteContainer ::= SEQUENCE {
-    lanePosition        LanePosition OPTIONAL,
-    impactReduction     ImpactReductionContainer OPTIONAL,
-    externalTemperature Temperature OPTIONAL,
-    roadWorks           RoadWorksContainerExtended OPTIONAL,
-    positioningSolution PositioningSolutionType OPTIONAL,
-    stationaryVehicle   StationaryVehicleContainer OPTIONAL,
-    ...,
-[[  roadConfiguration 	RoadConfigurationContainer OPTIONAL,
-    precrash            PreCrashContainer OPTIONAL ]]
-}
-
-/** 
- * This type specifies the default value for DENM validity duration used for DENM protocol operation.
-*/
-defaultValidity INTEGER ::= 600
-
-/**
-  * This indicates the termination type of generated DENM, i.e. if it is a cancellation DENM or a negation DENM
-*/
-
-Termination ::= ENUMERATED {isCancellation(0), isNegation (1)}
-
-END

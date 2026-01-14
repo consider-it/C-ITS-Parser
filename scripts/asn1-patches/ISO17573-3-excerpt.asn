@@ -1,0 +1,172 @@
+
+-- Excerpt of https://standards.iso.org/iso/17573/-3/ed-1/en/ISO17573-3(2023)EfcDataDictionaryV1.3.asn
+-- only containing values which are actually used by IVI {iso (1) standard (0) ivi (19321) major-version-3 (3) minor-version-1 (1)}
+
+EfcDataDictionary {iso(1) standard(0) 17573 dd(3) version1(1) minorVersion3(3)}
+DEFINITIONS AUTOMATIC TAGS
+::= BEGIN EXPORTS ALL;
+
+-- useful subtypes (with no semantics associated)
+
+Int1Unsigned ::= INTEGER (0..255)
+
+-- Int1Signed ::= INTEGER (-128..127)
+
+Int2Unsigned ::= INTEGER (0..65535)
+
+-- Int2Signed ::=	INTEGER (-32768..32767)
+
+-- Int3Unsigned ::= INTEGER (0..16777215)
+
+-- Int4Unsigned ::= INTEGER (0..4294967295)
+
+-- Int4Signed ::= INTEGER (-2147483648..2147483647)
+
+-- 5.2	Subtypes of simple data types
+
+CopValue ::= INTEGER {
+	noEntry			(0),
+	co2Class1		(1),
+	co2Class2		(2),
+	co2Class3		(3),
+	co2Class4		(4),
+	co2Class5		(5),
+	co2Class6		(6),
+	co2Class7		(7)
+	-- (8-15) are reserved for future CEN and ISO use
+} (0..15)
+
+EmissionUnit ::= INTEGER {
+	mgPerKm		(0),
+	mgPerKwh	(1)
+} (0..1)
+
+EngineCharacteristics ::= INTEGER {
+	noEntry										(0),
+	noEngine									(1),
+	petrolUnleaded								(2),
+	petrolLeaded								(3),
+	diesel										(4),
+	lpg											(5),
+	battery										(6),
+	solar										(7),
+	hybrid										(8),
+	hydrogen									(9),
+	multiFuel									(10),
+	bivalentPetrolLpg							(11),
+	bivalentPetrolCng							(12),
+	combinedPetrolElectric						(13),
+	cng											(14),
+	lng											(15),
+	combinedDieselElectric						(16),
+	combinedHydrogenElectric					(17),
+	bivalentHydrogenPetrol						(18),
+	bivalentHydrogenPetrolElectricEngine		(19),
+	fuelCellHydrogen							(20),
+	fuelCellPetrol								(21),
+	fuelCellMethanol							(22),
+	fuelCellEthanol								(23),
+	fuelCellDiesel								(24),
+	combinedMultiFuelElectricEngine				(25),
+	combinedCngElectricEngine					(26),
+	combinedLngElectricEngine					(27),
+	petrolEthanol								(28),
+	combinedLpgElectricEngine					(29),
+	hybridPetrolExternalBattery					(30),
+	hybridDieselExternalBattery					(31),
+	hybridLpgExternalBattery					(32),
+	hybridHydrogenExternalBattery				(33),
+	hybridMultiFuelExternalBattery				(34),
+	hybridCngExternalBattery					(35),
+	hybridLngExternalBattery					(36),
+	hybridBivalentHydrogenPetrolExternalBattery (37),
+	hydrogenCng									(38),
+	hydrogenLng									(39),
+	hybridHydrogenCngExternalBattery			(40),
+	hybridHydrogenLngExternalBattery			(41),
+	ethanol										(42),
+	hybridFuelCellHydrogen						(43),
+	hybridFuelCellHydrogenExternalBattery		(44),
+	dualFuelLngDiesel							(45),
+	electricExternal							(46),
+	biogas										(47),
+	bioDiesel									(48),
+	bioPetrol									(49),
+	bivalentPetrolBiogas						(50),
+	combinedBiogasElectricEngine				(51),
+	dualFuelCngDiesel							(52),
+	-- (53-254) are reserved for future CEN and ISO use
+	other										(255)
+} (0..255)
+
+EuroValue ::= INTEGER {
+	noEntry		(0),
+	euro1		(1),
+	euro2		(2),
+	euro3		(3),
+	euro4		(4),
+	euro5		(5),
+	euro6		(6),
+	euro7		(7),
+	-- (8-14) are reserved for future CEN and ISO use
+	eev		(15)
+}(0..15)
+
+-- Clause 5.3	Single level data types
+
+AxleWeightLimits ::= SEQUENCE {
+	maxLadenWeightOnAxle1		Int2Unsigned,
+	maxLadenWeightOnAxle2		Int2Unsigned,
+	maxLadenWeightOnAxle3		Int2Unsigned,
+	maxLadenWeightOnAxle4		Int2Unsigned,
+	maxLadenWeightOnAxle5		Int2Unsigned
+}
+
+DieselEmissionValues ::= SEQUENCE {
+	particulate			Particulate,
+	absorptionCoeff		Int2Unsigned
+}
+
+ExhaustEmissionValues ::= SEQUENCE {
+	unitType		EmissionUnit,
+	emissionCo		INTEGER (0..32767),
+	emissionHc		Int2Unsigned,
+	emissionNox		Int2Unsigned,
+	emissionHcNox	Int2Unsigned
+}
+
+Particulate ::= SEQUENCE {
+	unitType	EmissionUnit,
+	value		INTEGER (0..32767)
+}
+
+PassengerCapacity ::= SEQUENCE {
+	numberOfSeats			Int1Unsigned,
+	numberOfStandingPlaces	Int1Unsigned
+}
+
+SoundLevel ::= SEQUENCE {
+	soundStationary		Int1Unsigned,
+	soundDriveBy		Int1Unsigned
+}
+
+-- Clause 5.4	Two level data types
+
+EnvironmentalCharacteristics::= SEQUENCE {
+	euroValue	EuroValue,
+	copValue	CopValue
+}
+
+VehicleDimensions ::= SEQUENCE {
+	vehicleLengthOverall	Int1Unsigned,
+	vehicleHeightOverall	Int1Unsigned,
+	vehicleWidthOverall		Int1Unsigned
+}
+
+VehicleWeightLimits ::= SEQUENCE {
+	vehicleMaxLadenWeight		Int2Unsigned,
+	vehicleTrainMaximumWeight	Int2Unsigned,
+	vehicleWeightUnladen		Int2Unsigned
+}
+
+END

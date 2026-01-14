@@ -12,8 +12,8 @@
 pub fn moy_and_dsecond(
     time: chrono::DateTime<chrono::Utc>,
 ) -> (
-    crate::standards::is_1_3_1::etsi_schema::MinuteOfTheYear,
-    crate::standards::is_1_3_1::etsi_schema::DSecond,
+    crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear,
+    crate::standards::dsrc_2_2_1::etsi_its_dsrc::DSecond,
 ) {
     use chrono::{Datelike, Timelike};
 
@@ -32,8 +32,8 @@ pub fn moy_and_dsecond(
     #[allow(clippy::cast_possible_truncation, reason = "max of 60000 fits in u16")]
     let millis = (naive_time.second() * 1000 + naive_time.nanosecond() / 1_000_000) as u16;
 
-    let moy = crate::standards::is_1_3_1::etsi_schema::MinuteOfTheYear(minutes);
-    let dsec = crate::standards::is_1_3_1::etsi_schema::DSecond::from_millis(millis)
+    let moy = crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear(minutes);
+    let dsec = crate::standards::dsrc_2_2_1::etsi_its_dsrc::DSecond::from_millis(millis)
         .expect("DSecond suddenly out of range");
     (moy, dsec)
 }
@@ -46,8 +46,8 @@ pub fn moy_and_dsecond(
 #[cfg(feature = "etsi")]
 #[must_use]
 pub fn time_from_moy_and_dsecond(
-    moy: &crate::standards::is_1_3_1::etsi_schema::MinuteOfTheYear,
-    second: &crate::standards::is_1_3_1::etsi_schema::DSecond,
+    moy: &crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear,
+    second: &crate::standards::dsrc_2_2_1::etsi_its_dsrc::DSecond,
     year: i32,
 ) -> chrono::DateTime<chrono::Utc> {
     // build start of year timestamp
@@ -132,17 +132,13 @@ fn its_offset_ms(unix_time_ms: u64) -> u16 {
     }
 }
 
-// used by DENM 2.2.1
+// used by DENM 1.3.1
 #[cfg(feature = "etsi")]
-timestampits_conv_datetime!(crate::standards::denm_2_1_1::etsi_its_cdd::TimestampIts);
+timestampits_conv_datetime!(crate::standards::cdd_1_3_1_1::its_container::TimestampIts);
 
-// used by IVIM from IS 1.3.1
+// used by DENM 2.2.1 and IVIM 2.2.1
 #[cfg(feature = "etsi")]
-timestampits_conv_datetime!(crate::standards::is_1_3_1::etsi_schema::TimestampIts);
-
-// used by IVIM 2.2.1
-#[cfg(feature = "etsi")]
-timestampits_conv_datetime!(crate::standards::ivim_2_2_1::ivim_pdu_descriptions::TimestampIts);
+timestampits_conv_datetime!(crate::standards::cdd_2_2_1::etsi_its_cdd::TimestampIts);
 
 #[cfg(all(test, feature = "etsi"))]
 mod tests {
@@ -184,8 +180,8 @@ mod tests {
 
     #[test]
     fn moy_and_dsecond_to_time() {
-        use crate::standards::is_1_3_1::etsi_schema::DSecond;
-        use crate::standards::is_1_3_1::etsi_schema::MinuteOfTheYear;
+        use crate::standards::dsrc_2_2_1::etsi_its_dsrc::DSecond;
+        use crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear;
         use crate::time_utils::time_from_moy_and_dsecond;
 
         // year 2026, moy 0, dsecond 0 shall give 2026-01-01 00:00:00
@@ -219,7 +215,7 @@ mod tests {
 
     #[test]
     fn utc_to_its_timestamp() {
-        use crate::standards::is_1_3_1::etsi_schema::TimestampIts;
+        use crate::standards::cdd_2_2_1::etsi_its_cdd::TimestampIts;
 
         // From ASN.1 definition: "The value for TimestampIts for 1 January 2007 00:00:00.000 UTC is `94 694 401 000` milliseconds"
         let ref_date = chrono::NaiveDate::from_ymd_opt(2007, 1, 1)
@@ -233,7 +229,7 @@ mod tests {
 
     #[test]
     fn its_to_utc_timestamp() {
-        use crate::standards::is_1_3_1::etsi_schema::TimestampIts;
+        use crate::standards::cdd_2_2_1::etsi_its_cdd::TimestampIts;
 
         // From ASN.1 definition: "The value for TimestampIts for 1 January 2007 00:00:00.000 UTC is `94 694 401 000` milliseconds"
         let ref_date = chrono::NaiveDate::from_ymd_opt(2007, 1, 1)

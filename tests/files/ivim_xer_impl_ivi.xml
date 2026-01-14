@@ -1,8 +1,8 @@
 <IVIM>
   <header>
     <protocolVersion>2</protocolVersion>
-    <messageID>6</messageID>
-    <stationID>1183964</stationID>
+    <messageId>6</messageId>
+    <stationId>1183964</stationId>
   </header>
   <ivi>
     <mandatory>
@@ -35,7 +35,7 @@
             <zoneId>1</zoneId>
             <zoneHeading>3601</zoneHeading>
             <zone>
-              <segment>
+              <segment-carriagewayOrLane>
                 <line>
                   <deltaPositions>
                     <DeltaPosition>
@@ -53,14 +53,14 @@
                   </deltaPositions>
                 </line>
                 <laneWidth>350</laneWidth>
-              </segment>
+              </segment-carriagewayOrLane>
             </zone>
           </GlcPart>
           <GlcPart>
             <zoneId>2</zoneId>
             <zoneHeading>3601</zoneHeading>
             <zone>
-              <segment>
+              <segment-carriagewayOrLane>
                 <line>
                   <deltaPositions>
                     <DeltaPosition>
@@ -74,7 +74,7 @@
                   </deltaPositions>
                 </line>
                 <laneWidth>350</laneWidth>
-              </segment>
+              </segment-carriagewayOrLane>
             </zone>
           </GlcPart>
         </parts>

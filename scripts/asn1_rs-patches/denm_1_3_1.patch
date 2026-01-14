@@ -1,0 +1,24 @@
+diff --git a/src/standards/denm_1_3_1.rs b/src/standards/denm_1_3_1.rs
+index 4a79610..16e047b 100644
+--- a/src/standards/denm_1_3_1.rs
++++ b/src/standards/denm_1_3_1.rs
+@@ -234,7 +234,7 @@ pub mod denm_pdu_descriptions {
+         }
+     }
+     fn management_container_validity_duration_default() -> ValidityDuration {
+-        DEFAULT_VALIDITY
++        DEFAULT_VALIDITY.clone()
+     }
+     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+     #[rasn(delegate, size("1..=8", extensible))]
+diff --git a/src/standards/denm_1_3_1.rs b/src/standards/denm_1_3_1.rs
+index 82a00c4..4a79610 100644
+--- a/src/standards/denm_1_3_1.rs
++++ b/src/standards/denm_1_3_1.rs
+@@ -354,5 +354,5 @@ pub mod denm_pdu_descriptions {
+         isCancellation = 0,
+         isNegation = 1,
+     }
+-    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600i128));
++    pub static DEFAULT_VALIDITY: ValidityDuration = ValidityDuration(600);
+ }

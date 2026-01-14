@@ -1,0 +1,229 @@
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- ISO TS 14906 App
+--
+-- Excerpt of https://forge.etsi.org/rep/ITS/asn1/is_ts103301/-/raw/v2.1.1/iso-patched/ISO14906(2018)EfcDsrcApplicationv6-patched.asn
+-- only containing values which are actually used by IVI {iso (1) standard (0) ivi (19321) version2 (2)}
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+EfcDsrcApplication {iso(1) standard(0) 14906 application(0) version6(6)}
+DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+EXPORTS ALL;
+IMPORTS
+CountryCode, CS5, IssuerIdentifier
+FROM AVIAEINumberingAndDataStructures {iso(1) standard(0) iso14816(14816) asnm1(1) version1(1) };
+-- defined in ISO 14816 --
+-- NOTE: The following are the definitions of the action and response
+-- parameters
+AxleWeightLimits ::= SEQUENCE{
+maxLadenweightOnAxle1 Int2,
+maxLadenweightOnAxle2 Int2,
+maxLadenweightOnAxle3 Int2,
+maxLadenweightOnAxle4 Int2,
+maxLadenweightOnAxle5 Int2
+}
+-- NOTE: The following are the definitions of EFC attributes
+DateCompact::= SEQUENCE {
+year INTEGER (1990..2117),
+month INTEGER (0..12), -- Value zero shall not be used
+-- except with 1990 - see below.
+day INTEGER (0..31) -- Value zero shall not be used
+-- except with 1990 � see below.
+}
+-- The value "{year 1990, month 0, day 0}" is a 16-bit all-zero
+-- encoding, and is used to represent "no date".
+DieselEmissionValues::= SEQUENCE {
+particulate SEQUENCE {
+unitType UnitType,
+value INTEGER (0..32767)
+},
+absorptionCoeff Int2 }
+EnvironmentalCharacteristics::= SEQUENCE {
+euroValue EuroValue,
+copValue CopValue
+}
+EuroValue::= ENUMERATED {
+noEntry (0),
+euro-1 (1),
+euro-2 (2),
+euro-3 (3),
+euro-4 (4),
+euro-5 (5),
+euro-6 (6),
+reservedForUse1 (7),
+reservedForUse2 (8),
+reservedForUse3 (9),
+reservedForUse4 (10),
+reservedForUse5 (11),
+reservedForUse6 (12),
+reservedForUse7 (13),
+reservedForUse8 (14),
+eev (15)
+} -- 4 bits, EURO-Classes as defined in EC directive 88/77/EEC, annex 1
+-- and in 91/542/EEC, 96/1/EC, 1999/96/EC, 2001/27/EC, regulation No 595/2009
+-- and for EEV in Section 6.2.1 of Annex I in EC directive 2005/55/EC
+-- EUR-Class VI as defined in Regulation (EC) No 595/2009
+CopValue::= ENUMERATED {
+noEntry (0),
+co2class1 (1), -- below 101 g/km
+co2class2 (2), -- 101 to 120 g/km
+co2class3 (3), -- 121 to 140 g/km
+co2class4 (4), -- 141 to 160 g/km
+co2class5 (5), -- 161 to 200 g/km
+co2class6 (6), -- 201 to 250 g/km
+co2class7 (7), -- above 250 g/km
+reservedforUse (8) -- reserved for future CEN and ISO use
+} -- 4 bits, reserved for carbon dioxide pollution values as defined in
+-- EC directive 2003/127/EC'
+EngineCharacteristics::= INTEGER {
+noEntry (0),
+noEngine (1),
+petrolUnleaded (2),
+petrolLeaded (3),
+diesel (4),
+lPG (5),
+battery (6),
+solar (7),
+hybrid (8),
+hydrogen (9)
+-- (10-255) are reserved for future CEN use
+} (0..255)
+ExhaustEmissionValues ::= SEQUENCE {
+unitType UnitType,
+emissionCO INTEGER (0..32767),
+emissionHC Int2,
+emissionNOX Int2,
+emissionHCNOX Int2
+}
+Int1 ::= INTEGER(0..255)
+Int2 ::= INTEGER(0..65535)
+Int3 ::= INTEGER(0..16777215)
+Int4 ::= INTEGER(0..4294967295)
+
+LPN::= SEQUENCE {
+countryCode CountryCode,
+alphabetIndicator ENUMERATED {
+latinAlphabetNo1 (1), -- encoded as 00 00 00'B
+latinAlphabetNo2 (2), -- encoded as 00 00 01'B etc
+latinAlphabetNo3 (3),
+latinAlphabetNo4 (4),
+latinCyrillicAlphabet (5),
+latinArabicAlphabet (6),
+latinGreekAlphabet (7),
+latinHebrewAlphabet (8),
+latinAlphabetNo5 (9),
+latinAlphabetNo6 (10),
+twoOctetBMP (11),
+fourOctetCanonical (12),
+reservedForUse1 (13),
+reservedForUse2 (14),
+reservedForUse3 (15),
+reservedForUse4 (16),
+reservedForUse5 (17),
+reservedForUse6 (18),
+reservedForUse7 (19),
+reservedForUse8 (20),
+reservedForUse9 (21),
+reservedForUse10 (22),
+reservedForUse11 (23),
+reservedForUse12 (24),
+reservedForUse13 (25),
+reservedForUse14 (26),
+reservedForUse15 (27),
+reservedForUse16 (28),
+reservedForUse17 (29),
+reservedForUse18 (30),
+reservedForUse19 (31),
+reservedForUse20 (32),
+reservedForUse21 (33)
+} -- 6 bits, latinAlphabetNo1 recommended -- ,
+-- refer to Annex E for conversion from LatinAlphabetNo 2
+-- and 5 to Latin AlphabetNo1
+licencePlateNumber OCTET STRING
+}
+PassengerCapacity ::= SEQUENCE{
+numberOfSeats Int1,
+numberOfStandingPlaces Int1
+}
+
+
+SignedValue ::= CHOICE {
+positive INTEGER (0..8388607),
+negative INTEGER (-8388608..-1)
+}
+-- corresponds to a �3 octets Signed Integer�, associated with the following
+-- examples of line codes:
+-- -8'388'608 : 80 00 00'H
+-- -1 : FF FF FF'H
+-- 0 : 00 00 00'H
+-- 1 : 00 00 01�H
+-- 8'388'607 : 7F FF FF'H
+PaymentMeansUnit ::= PayUnit
+PaymentSecurityData ::= OCTET STRING
+PayUnit ::= OCTET STRING (SIZE(2))
+-- The unique designation of a Currency as defined in ISO 4217
+-- using the ISO numeric binary coded decimal representation.
+-- The code can also express a company specific token or a
+-- "charging unit code" as used in the freight.unit in which
+-- the fee is expressed.
+-- Value Assignment :
+-- '0xxx'H Currency in main units
+-- '1xxx'H Currency in minor units of 10 :1 ('dime')
+-- '2xxx'H Currency in minor units of 100 :1 ('cents')
+-- '3xxx'H Currency in minor units of 1000 :1
+-- '4xxx'H Currency in 'major' units / 10
+-- (e.g. 10 Belgian Francs)
+-- '5xxx'H Currency in 'major' units / 100
+-- (e.g. 100 Italian Lire)
+-- '6xxx'H Currency in 'major' units / 1000
+-- '7xxx'H Currency in 'major' units / 10000
+-- '8xxx'H Currency in 'major' units / 100000
+-- where xxx is the BCD representation of "Currency"
+-- as defined in ISO 4217
+-- '9xxx'H Tokens
+-- where xxx is Purse Provider specific coding.
+-- 'Axxx'H Charging Unit Codes,
+-- denoting quantification of the service provided
+-- (e.g. man-hours)
+PersonalAccountNumber ::= OCTET STRING (SIZE(10))
+-- Personal account number structure � according to ISO/IEC 7812-1
+-- Issuer identifier number (�BIN�)
+-- Major industry identifier (MII, 1 binary coded decimal, BCD)
+-- 0 : reserved for future use by ISO/TC68
+-- 1 : airline sector
+-- 2 : extended airline sector
+-- 3 : travel and tourism sector
+-- 4 : financial banking sector
+-- 5 : financial banking sector
+-- 6 : commerce and banking sector
+-- 7 : petrol industry sector
+-- 8 : telecommunication sector
+-- 9 : reserved for national use
+-- Issuer identifier (5 BCD in the second edition of ISO/IEC 7812-1)
+-- Account number (max 12 BCD)
+-- Control digit (1 BCD)
+-- Padding bits, set to 1'B, in order to accomplish a
+-- total length of 10 octets.
+
+Provider ::= SEQUENCE {
+countryCode CountryCode,
+providerIdentifier IssuerIdentifier
+}
+SoundLevel ::= SEQUENCE{
+soundstationary Int1,
+sounddriveby Int1
+}
+UnitType::= ENUMERATED {
+mg-km (0),
+mg-kWh (1)
+}
+VehicleDimensions ::= SEQUENCE {
+vehicleLengthOverall Int1,
+vehicleHeigthOverall Int1,
+vehicleWidthOverall Int1
+}
+VehicleWeightLimits ::= SEQUENCE {
+vehicleMaxLadenWeight Int2,
+vehicleTrainMaximumWeight Int2,
+vehicleWeightUnladen Int2
+}
+END
