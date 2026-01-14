@@ -1,6 +1,6 @@
 [package]
 name = "etsi-web"
-version = "0.7.7"
+version = "0.8.0"
 edition = "2021"
 authors = ["consider it GmbH"]
 description = "Tools for encoding and decoding ETSI messages (GN + Transport + CAM/DENM/IVIM/SSEM/SREM/MAPEM/SPATEM)"
