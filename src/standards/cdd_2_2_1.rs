@@ -821,6 +821,65 @@ pub mod etsi_its_cdd {
             }
         }
     }
+    #[doc = "* "]
+    #[doc = " * This DF provides information about the configuration of a road section in terms of lanes using a list of @ref LanePositionAndType ."]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=16", extensible))]
+    pub struct BasicLaneConfiguration(pub SequenceOf<BasicLaneInformation>);
+    #[doc = "* "]
+    #[doc = " * This DF provides basic information about a single lane of a road segment."]
+    #[doc = " * It includes the following components: "]
+    #[doc = " * "]
+    #[doc = " * @field laneNumber: the number associated to the lane that provides a transversal identification. "]
+    #[doc = " * "]
+    #[doc = " * @field direction: the direction of traffic flow allowed on the lane. "]
+    #[doc = " * "]
+    #[doc = " * @field laneWidth: the optional width of the lane."]
+    #[doc = " *"]
+    #[doc = " * @field connectingLane: the number of the connecting lane in the next road section, i.e. the number of the lane which the vehicle will use when travelling from one section to the next,"]
+    #[doc = " * if it does not actively change lanes. If this component is absent, the lane name number remains the same in the next section."]
+    #[doc = " *"]
+    #[doc = " * @field connectingRoadSection: the identifier of the next road section in direction of traffic, that is connecting to the current road section. "]
+    #[doc = " * If this component is absent, the connecting road section is the one following the instance where this DF is placed in the @ref RoadConfigurationSectionList."]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BasicLaneInformation {
+        #[rasn(identifier = "laneNumber")]
+        pub lane_number: LanePosition,
+        pub direction: Direction,
+        #[rasn(identifier = "laneWidth")]
+        pub lane_width: Option<LaneWidth>,
+        #[rasn(identifier = "connectingLane")]
+        pub connecting_lane: Option<LanePosition>,
+        #[rasn(identifier = "connectingRoadSection")]
+        pub connecting_road_section: Option<RoadSectionId>,
+    }
+    impl BasicLaneInformation {
+        pub fn new(
+            lane_number: LanePosition,
+            direction: Direction,
+            lane_width: Option<LaneWidth>,
+            connecting_lane: Option<LanePosition>,
+            connecting_road_section: Option<RoadSectionId>,
+        ) -> Self {
+            Self {
+                lane_number,
+                direction,
+                lane_width,
+                connecting_lane,
+                connecting_road_section,
+            }
+        }
+    }
     #[doc = "*"]
     #[doc = " * This DE indicates the cardinal number of bogies of a train."]
     #[doc = " *"]
@@ -883,13 +942,13 @@ pub mod etsi_its_cdd {
     #[doc = " *"]
     #[doc = " * The value shall be set to: "]
     #[doc = " * - `n` (`n >= 0` and `n < 3600`) if the angle is equal to or less than n x 0,1 degrees, and greater than (n-1) x 0,1 degrees,"]
-    #[doc = " * - `36001` if the accuracy information is not available."]
+    #[doc = " * - `3601` if the information is not available."]
     #[doc = " *"]
     #[doc = " * The value 3600 shall not be used. "]
     #[doc = " * "]
     #[doc = " * @unit 0,1 degrees"]
     #[doc = " * @category: Basic information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, description and value for 3601 corrected in V2.2.1"]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=3601"))]
@@ -1160,9 +1219,51 @@ pub mod etsi_its_cdd {
     #[doc = "*"]
     #[doc = " * This DF is a representation of the cause code value and associated sub cause code value of a traffic event. "]
     #[doc = " *"]
+    #[doc = " * The following options are available:"]
+    #[doc = " * - 0                                                        - reserved for future use,"]
+    #[doc = " * - 1  - `trafficCondition1`                                 - in case the type of event is an abnormal traffic condition,"]
+    #[doc = " * - 2  - `accident2`                                         - in case the type of event is a road accident,"]
+    #[doc = " * - 3  - `roadworks3`                                        - in case the type of event is roadwork,"]
+    #[doc = " * - 4                                                        - reserved for future usage,"]
+    #[doc = " * - 5  - `impassability5`                                    - in case the  type of event is unmanaged road blocking, referring to any"]
+    #[doc = " *                                                              blocking of a road, partial or total, which has not been adequately secured and signposted,"]
+    #[doc = " * - 6  - `adverseWeatherCondition-Adhesion6`                 - in case the  type of event is low adhesion,"]
+    #[doc = " * - 7  - `aquaplaning7`                                      - danger of aquaplaning on the road,"]
+    #[doc = " * - 8                                                        - reserved for future usage,"]
+    #[doc = " * - 9  - `hazardousLocation-SurfaceCondition9`               - in case the type of event is abnormal road surface condition,"]
+    #[doc = " * - 10 - `hazardousLocation-ObstacleOnTheRoad10`             - in case the type of event is obstacle on the road,"]
+    #[doc = " * - 11 - `hazardousLocation-AnimalOnTheRoad11`               - in case the type of event is animal on the road,"]
+    #[doc = " * - 12 - `humanPresenceOnTheRoad`                            - in case the type of event is presence of human vulnerable road user on the road,"]
+    #[doc = " * - 13                                                       - reserved for future usage,"]
+    #[doc = " * - 14 - `wrongWayDriving14`                                 - in case the type of the event is vehicle driving in wrong way,"]
+    #[doc = " * - 15 - `rescueAndRecoveryWorkInProgress15`                 - in case the type of event is rescue and recovery work for accident or for a road hazard in progress,"]
+    #[doc = " * - 16                                                       - reserved for future usage,"]
+    #[doc = " * - 17 - `adverseWeatherCondition-ExtremeWeatherCondition17` - in case the type of event is extreme weather condition,"]
+    #[doc = " * - 18 - `adverseWeatherCondition-Visibility18`              - in case the type of event is low visibility,"]
+    #[doc = " * - 19 - `adverseWeatherCondition-Precipitation19`           - in case the type of event is precipitation,"]
+    #[doc = " * - 20 - `violence20`                                        - in case the the type of event is human violence on or near the road,"]
+    #[doc = " * - 21-25                                                    - reserved for future usage,"]
+    #[doc = " * - 26 - `slowVehicle26`                                     - in case the type of event is slow vehicle driving on the road,"]
+    #[doc = " * - 27 - `dangerousEndOfQueue27`                             - in case the type of event is dangerous end of vehicle queue,"]
+    #[doc = " * - 28 - `publicTransportVehicleApproaching                  - in case the type of event is a public transport vehicle approaching, with a priority defined by applicable traffic regulations,"]
+    #[doc = " * - 29-90                                                    - are reserved for future usage,"]
+    #[doc = " * - 91 - `vehicleBreakdown91`                                - in case the type of event is break down vehicle on the road,"]
+    #[doc = " * - 92 - `postCrash92`                                       - in case the type of event is a detected crash,"]
+    #[doc = " * - 93 - `humanProblem93`                                    - in case the type of event is human health problem in vehicles involved in traffic,"]
+    #[doc = " * - 94 - `stationaryVehicle94`                               - in case the type of event is stationary vehicle,"]
+    #[doc = " * - 95 - `emergencyVehicleApproaching95`                     - in case the type of event is an approaching vehicle operating on a mission for which the "]
+    #[doc = "                                                                applicable traffic regulations provide it with defined priority rights in traffic. "]
+    #[doc = " * - 96 - `hazardousLocation-DangerousCurve96`                - in case the type of event is dangerous curve,"]
+    #[doc = " * - 97 - `collisionRisk97`                                   - in case the type of event is a collision risk,"]
+    #[doc = " * - 98 - `signalViolation98`                                 - in case the type of event is signal violation,"]
+    #[doc = " * - 99 - `dangerousSituation99`                              - in case the type of event is dangerous situation in which autonomous safety system in vehicle "]
+    #[doc = " *                                                              is activated,"]
+    #[doc = " * - 100 - `railwayLevelCrossing100`                          - in case the type of event is a railway level crossing. "]
+    #[doc = " * - 101-255                                                  - are reserved for future usage."]
+    #[doc = " *"]
     #[doc = " * @note: this DF is defined for use as part of CauseCodeV2. It is recommended to use CauseCodeV2."]
     #[doc = " * @category: Traffic information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, the type of impassability5 changed to ImpassabilitySubCauseCode in V2.2.1, value 28 added in V2.2.1, definition of value 12 and 95 changed in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
@@ -1172,7 +1273,7 @@ pub mod etsi_its_cdd {
         accident2(AccidentSubCauseCode),
         roadworks3(RoadworksSubCauseCode),
         reserved4(SubCauseCodeType),
-        impassability5(SubCauseCodeType),
+        impassability5(ImpassabilitySubCauseCode),
         #[rasn(identifier = "adverseWeatherCondition-Adhesion6")]
         adverseWeatherCondition_Adhesion6(AdverseWeatherConditionAdhesionSubCauseCode),
         aquaplaning7(SubCauseCodeType),
@@ -1204,7 +1305,7 @@ pub mod etsi_its_cdd {
         reserved25(SubCauseCodeType),
         slowVehicle26(SlowVehicleSubCauseCode),
         dangerousEndOfQueue27(DangerousEndOfQueueSubCauseCode),
-        reserved28(SubCauseCodeType),
+        publicTransportVehicleApproaching28(SubCauseCodeType),
         reserved29(SubCauseCodeType),
         reserved30(SubCauseCodeType),
         reserved31(SubCauseCodeType),
@@ -1325,7 +1426,7 @@ pub mod etsi_its_cdd {
     #[doc = " * - 9  - `hazardousLocation-SurfaceCondition`             - in case the type of event is abnormal road surface condition,"]
     #[doc = " * - 10 - `hazardousLocation-ObstacleOnTheRoad`            - in case the type of event is obstacle on the road,"]
     #[doc = " * - 11 - `hazardousLocation-AnimalOnTheRoad`              - in case the type of event is animal on the road,"]
-    #[doc = " * - 12 - `humanPresenceOnTheRoad`                         - in case the type of event is human presence on the road,"]
+    #[doc = " * - 12 - `humanPresenceOnTheRoad`                         - in case the type of event is presence of human vulnerable road user on the road,"]
     #[doc = " * - 13                                                    - reserved for future usage,"]
     #[doc = " * - 14 - `wrongWayDriving`                                - in case the type of the event is vehicle driving in wrong way,"]
     #[doc = " * - 15 - `rescueAndRecoveryWorkInProgress`                - in case the type of event is rescue and recovery work for accident or for a road hazard in progress,"]
@@ -1337,12 +1438,14 @@ pub mod etsi_its_cdd {
     #[doc = " * - 21-25                                                 - reserved for future usage,"]
     #[doc = " * - 26 - `slowVehicle`                                    - in case the type of event is slow vehicle driving on the road,"]
     #[doc = " * - 27 - `dangerousEndOfQueue`                            - in case the type of event is dangerous end of vehicle queue,"]
-    #[doc = " * - 28-90                                                 - are reserved for future usage,"]
+    #[doc = " * - 28 - `publicTransportVehicleApproaching               - in case the type of event is a public transport vehicle approaching, with a priority defined by applicable traffic regulations,"]
+    #[doc = " * - 29-90                                                 - are reserved for future usage,"]
     #[doc = " * - 91 - `vehicleBreakdown`                               - in case the type of event is break down vehicle on the road,"]
     #[doc = " * - 92 - `postCrash`                                      - in case the type of event is a detected crash,"]
     #[doc = " * - 93 - `humanProblem`                                   - in case the type of event is human health problem in vehicles involved in traffic,"]
     #[doc = " * - 94 - `stationaryVehicle`                              - in case the type of event is stationary vehicle,"]
-    #[doc = " * - 95 - `emergencyVehicleApproaching`                    - in case the type of event is approaching vehicle operating emergency mission,"]
+    #[doc = " * - 95 - `emergencyVehicleApproaching`                    - in case the type of event is an approaching vehicle operating on a mission for which the applicable "]
+    #[doc = "                                                             traffic regulations provide it with defined priority rights in traffic. "]
     #[doc = " * - 96 - `hazardousLocation-DangerousCurve`               - in case the type of event is dangerous curve,"]
     #[doc = " * - 97 - `collisionRisk`                                  - in case the type of event is a collision risk,"]
     #[doc = " * - 98 - `signalViolation`                                - in case the type of event is signal violation,"]
@@ -1352,7 +1455,7 @@ pub mod etsi_its_cdd {
     #[doc = " * - 101-255                                               - are reserved for future usage."]
     #[doc = " *"]
     #[doc = " * @category: Traffic information"]
-    #[doc = " * @revision: V1.3.1"]
+    #[doc = " * @revision: V1.3.1, value 28 added in V2.2.1, definition of values 12 and 95 changed in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
@@ -1363,12 +1466,13 @@ pub mod etsi_its_cdd {
     #[doc = " * It shall include the following components: "]
     #[doc = " *"]
     #[doc = " * @field ccAndScc: the main cause of a detected event. Each entry is of a different type and represents the sub cause code."]
+    #[doc = ""]
+    #[doc = " * The semantics of the entire DF are completely defined by the choice value which represents the cause code value. "]
+    #[doc = " * The interpretation of the sub cause code value may provide additional information that is not strictly necessary to understand "]
+    #[doc = " * the cause code itself, and is therefore optional."]
     #[doc = " *"]
-    #[doc = " * The semantics of the entire DF are completely defined by the component causeCode. The interpretation of the subCauseCode may "]
-    #[doc = " * provide additional information that is not strictly necessary to understand the causeCode itself, and is therefore optional."]
-    #[doc = " * "]
     #[doc = " * @category: Traffic information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, description amended in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -1555,19 +1659,11 @@ pub mod etsi_its_cdd {
     #[doc = " * - 6 to 15                                    - are reserved for future use.                                    "]
     #[doc = " *"]
     #[doc = " * @category: Cluster information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1"]
     #[doc = ""]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum ClusterBreakupReason {
-        notProvided = 0,
-        clusteringPurposeCompleted = 1,
-        leaderMovedOutOfClusterBoundingBox = 2,
-        joiningAnotherCluster = 3,
-        enteringLowRiskAreaBasedOnMaps = 4,
-        receptionOfCpmContainingCluster = 5,
-        max = 15,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct ClusterBreakupReason(pub u8);
     #[doc = "*"]
     #[doc = " * This DF provides information about the joining of a cluster."]
     #[doc = " *"]
@@ -1642,37 +1738,29 @@ pub mod etsi_its_cdd {
     #[doc = " * - 9 to 15                            - are reserved for future use                             "]
     #[doc = " *"]
     #[doc = " * @category: Cluster information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum ClusterLeaveReason {
-        notProvided = 0,
-        clusterLeaderLost = 1,
-        clusterDisbandedByLeader = 2,
-        outOfClusterBoundingBox = 3,
-        outOfClusterSpeedRange = 4,
-        joiningAnotherCluster = 5,
-        cancelledJoin = 6,
-        failedJoin = 7,
-        safetyCondition = 8,
-        max = 15,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct ClusterLeaveReason(pub u8);
     #[doc = "*"]
     #[doc = " * This DE represents the sub cause codes of the @ref CauseCode `collisionRisk`."]
     #[doc = " * "]
     #[doc = " * The value shall be set to:"]
-    #[doc = " * - 0 - `unavailable`              - in case information on the type of collision risk is unavailable,"]
-    #[doc = " * - 1 - `longitudinalCollisionRisk`- in case the type of detected collision risk is longitudinal collision risk, "]
-    #[doc = " *                                       e.g. forward collision or face to face collision,"]
-    #[doc = " * - 2 - `crossingCollisionRisk`    - in case the type of detected collision risk is crossing collision risk,"]
-    #[doc = " * - 3 - `lateralCollisionRisk`     - in case the type of detected collision risk is lateral collision risk,"]
-    #[doc = " * - 4 - `vulnerableRoadUser`       - in case the type of detected collision risk involves vulnerable road users"]
-    #[doc = " *                                       e.g. pedestrians or bicycles."]
-    #[doc = " * - 5-255                          - are reserved for future usage."]
+    #[doc = " * - 0 - `unavailable`                    - in case information on the type of collision risk is unavailable,"]
+    #[doc = " * - 1 - `longitudinalCollisionRisk`      - in case the type of detected collision risk is longitudinal collision risk, "]
+    #[doc = " *                                          e.g. forward collision or face to face collision,"]
+    #[doc = " * - 2 - `crossingCollisionRisk`          - in case the type of detected collision risk is crossing collision risk,"]
+    #[doc = " * - 3 - `lateralCollisionRisk`           - in case the type of detected collision risk is lateral collision risk,"]
+    #[doc = " * - 4 - `vulnerableRoadUser`             - in case the type of detected collision risk involves vulnerable road users"]
+    #[doc = " *                                          e.g. pedestrians or bicycles."]
+    #[doc = " * - 5 - `collisionRiskWithPedestrian`    - in case the type of detected collision risk involves at least one pedestrian, "]
+    #[doc = " * - 6 - `collisionRiskWithCyclist`       - in case the type of detected collision risk involves at least one cyclist (and no pedestrians),"]
+    #[doc = " * - 7 - `collisionRiskWithMotorVehicle`  - in case the type of detected collision risk involves at least one motor vehicle (and no pedestrians or cyclists),"]
+    #[doc = " * - 8-255                                - are reserved for future usage."]
     #[doc = " *"]
     #[doc = " * @category: Traffic information"]
-    #[doc = " * @revision: V1.3.1"]
+    #[doc = " * @revision: V1.3.1, values 5-7 assigned in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
@@ -1737,6 +1825,15 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=13", extensible))]
     pub struct CorrelationColumn(pub SequenceOf<CorrelationCellValue>);
+    #[doc = "* "]
+    #[doc = " * This DE represents an ISO 3166-1 [25] country code encoded using ITA-2 encoding."]
+    #[doc = " *"]
+    #[doc = " * @category: Basic information"]
+    #[doc = " * @revision: Created in V2.2.1 based on ISO 14816 [23]"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CountryCode(pub FixedBitString<10usize>);
     #[doc = "*"]
     #[doc = " * This DF represents the curvature of the vehicle trajectory and the associated confidence value."]
     #[doc = " * The curvature detected by a vehicle represents the curvature of actual vehicle trajectory."]
@@ -2151,6 +2248,20 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=86400"))]
     pub struct DeltaTimeSecond(pub u32);
+    #[doc = "*"]
+    #[doc = " * This DE represents a difference in time with respect to a reference time."]
+    #[doc = " *"]
+    #[doc = " * The value shall be set to:"]
+    #[doc = " * - `-0` for a difference in time of 0 seconds. "]
+    #[doc = " * - `n` (`n > 0` and `n < 128`) to indicate a time value equal to or less than n x 10 s, and greater than (n-1) x 10 s,"]
+    #[doc = " *"]
+    #[doc = " * @unit: 10 s"]
+    #[doc = " * @category: Basic information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=127"))]
+    pub struct DeltaTimeTenSeconds(pub u8);
     #[doc = "* "]
     #[doc = " * This DE represents a difference in time with respect to a reference time."]
     #[doc = " *"]
@@ -2229,23 +2340,28 @@ pub mod etsi_its_cdd {
     pub struct DrivingLaneStatus(pub BitString);
     #[doc = "* "]
     #[doc = " * "]
-    #[doc = " * This DF represents the shape of an elliptical area or right elliptical cylinder that is centred on the shape's reference point. "]
+    #[doc = " * This DF represents the shape of an elliptical area or right elliptical cylinder that is centred "]
+    #[doc = " * on the shape's reference point defined outside of the context of this DF and oriented w.r.t. a  "]
+    #[doc = " * cartesian coordinate system defined outside of the context of this DF. "]
     #[doc = " *"]
     #[doc = " * It shall include the following components: "]
     #[doc = " * "]
-    #[doc = " * @field shapeReferencePoint: optional reference point which represents the centre of the ellipse, relative to an externally specified reference position. "]
-    #[doc = " * If this component is absent, the externally specified reference position represents the shape's  reference point. "]
+    #[doc = " * @field shapeReferencePoint: optional reference point which represents the centre of the ellipse, "]
+    #[doc = " * relative to an externally specified reference position. If this component is absent, the "]
+    #[doc = " * externally specified reference position represents the shape's reference point. "]
     #[doc = " *"]
-    #[doc = " * @field semiMajorAxisLength: half length of the major axis of the ellipse."]
+    #[doc = " * @field semiMajorAxisLength: half length of the major axis of the ellipse located in the X-Y Plane."]
     #[doc = " * "]
-    #[doc = " * @field semiMinorAxisLength: half length of the minor axis of the ellipse."]
+    #[doc = " * @field semiMinorAxisLength: half length of the minor axis of the ellipse located in the X-Y Plane."]
     #[doc = " *"]
-    #[doc = " * @field orientation: the optional orientation of the major axis of the ellipse in the WGS84 coordinate system."]
+    #[doc = " * @field orientation: the optional orientation of the major axis of the ellipse, measured with "]
+    #[doc = " * positive values turning around the z-axis using the right-hand rule, starting from the X-axis. "]
     #[doc = " * "]
-    #[doc = " * @field height: the optional height, present if the shape is a right elliptical cylinder extending in the positive z-axis."]
+    #[doc = " * @field height: the optional height, present if the shape is a right elliptical cylinder extending "]
+    #[doc = " * in the positive Z-axis."]
     #[doc = " *"]
     #[doc = " * @category: GeoReference information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, the type of the field orientation changed and the description revised in V2.2.1"]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -2256,7 +2372,7 @@ pub mod etsi_its_cdd {
         pub semi_major_axis_length: StandardLength12b,
         #[rasn(identifier = "semiMinorAxisLength")]
         pub semi_minor_axis_length: StandardLength12b,
-        pub orientation: Option<Wgs84AngleValue>,
+        pub orientation: Option<CartesianAngleValue>,
         pub height: Option<StandardLength12b>,
     }
     impl EllipticalShape {
@@ -2264,7 +2380,7 @@ pub mod etsi_its_cdd {
             shape_reference_point: Option<CartesianPosition3d>,
             semi_major_axis_length: StandardLength12b,
             semi_minor_axis_length: StandardLength12b,
-            orientation: Option<Wgs84AngleValue>,
+            orientation: Option<CartesianAngleValue>,
             height: Option<StandardLength12b>,
         ) -> Self {
             Self {
@@ -2574,31 +2690,61 @@ pub mod etsi_its_cdd {
     #[rasn(delegate)]
     pub struct ExteriorLights(pub FixedBitString<8usize>);
     #[doc = "*"]
-    #[doc = " * This DF indicates a transversal position in relation to the different lanes of the road. "]
-    #[doc = " * It is an extension of DE_LanePosition to cover locations (sidewalks, bicycle paths), where Vehicle ITS-S would normally not be present. "]
+    #[doc = " * This DF represents the top-level DF to represent a lane position. A lane position is a transversal position on the carriageway at a specific longitudinal position, in resolution of lanes of the carriageway."]
     #[doc = " *"]
-    #[doc = " * The following options are available:"]
+    #[doc = " * @note: This DF is the most general way to represent a lane position: it provides a complete set of information regarding a transversal (dimensionless) position on the carriageway at a specific "]
+    #[doc = " * reference position, i.e. it provides different options and synonyms to represent the lane at which the reference position (the point) is located. A confidence is used to describe the probability "]
+    #[doc = " * that the object is located in the provided lane. The dimension of the object or extension of an area are not considered: See @ref OccupiedLanesWithConfidence for describing the occupation of lanes, "]
+    #[doc = " * where the dimensions of an object or the extension of an area is considered."]
     #[doc = " *"]
-    #[doc = " * @field trafficLanePosition: a position on a traffic lane. "]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " *"]
+    #[doc = " * @field lanePositionBased: lane position information for a defined reference position."]
     #[doc = " * "]
-    #[doc = " * @field nonTrafficLanePosition: a position on a lane which is not a traffic lane."]
+    #[doc = " * @field mapBased: optional lane position information described in the context of a MAPEM as specified in ETSI TS 103 301 [15]. "]
+    #[doc = " * If present, it shall describe the same reference position using the lane identification in the MAPEM. This component can be used only if a MAPEM is available for the reference position "]
+    #[doc = " * (e.g. on an intersection): In this case it is used as a synonym to the mandatory component lanePositionBased. "]
     #[doc = " * "]
-    #[doc = " * @field trafficIslandPosition: a position on a traffic island"]
-    #[doc = " * "]
-    #[doc = " * @field mapPosition: a position on a lane identified in a MAPEM."]
-    #[doc = " *  "]
+    #[doc = " * @field confidence: confidence information for expressing the probability that the object is located at the indicated lane.  "]
+    #[doc = " * If the value of the component lanePositionBased is generated directly from the absolute reference position and reference topology information, "]
+    #[doc = " * no sensor shall be indicated in the component usedDetectionInformation of the @ref MetaInformation."]
+    #[doc = " *"]
     #[doc = " * @category: Road Topology information"]
-    #[doc = " * @revision: created in V2.1.1"]
+    #[doc = " * @revision: newly created in V2.2.1. The previous DF GeneralizedLanePosition is now renamed to @ref LanePositionOptions. "]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, automatic_tags)]
+    #[rasn(automatic_tags)]
     #[non_exhaustive]
-    pub enum GeneralizedLanePosition {
-        trafficLanePosition(LanePosition),
-        nonTrafficLanePosition(LanePositionAndType),
-        trafficIslandPosition(TrafficIslandPosition),
-        mapPosition(MapPosition),
+    pub struct GeneralizedLanePosition {
+        #[rasn(identifier = "lanePositionBased")]
+        pub lane_position_based: LanePositionOptions,
+        #[rasn(identifier = "mapBased")]
+        pub map_based: Option<MapPosition>,
+        pub confidence: MetaInformation,
     }
+    impl GeneralizedLanePosition {
+        pub fn new(
+            lane_position_based: LanePositionOptions,
+            map_based: Option<MapPosition>,
+            confidence: MetaInformation,
+        ) -> Self {
+            Self {
+                lane_position_based,
+                map_based,
+                confidence,
+            }
+        }
+    }
+    #[doc = "*"]
+    #[doc = " * This DF represents transversal position information with respect to the road, at an externally defined reference position. It shall contain a set of up to `4` @ref GeneralizedLanePosition."]
+    #[doc = " * Multiple entries can be used to describe several lane positions with the associated confidence, in cases where the reference position cannot be mapped to a single lane."]
+    #[doc = " *"]
+    #[doc = " * @category: Road Topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=4"))]
+    pub struct GeneralizedLanePositions(pub SequenceOf<GeneralizedLanePosition>);
     #[doc = "*"]
     #[doc = " * This DE represents a timestamp based on TimestampIts modulo 65 536."]
     #[doc = " * This means that generationDeltaTime = TimestampIts mod 65 536."]
@@ -2609,6 +2755,38 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=65535"))]
     pub struct GenerationDeltaTime(pub u16);
+    #[doc = "* "]
+    #[doc = " * This DF indicates a geographical position."]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " *"]
+    #[doc = " * @field latitude: the latitude of the geographical position."]
+    #[doc = " *"]
+    #[doc = " * @field longitude: the longitude of the geographical position."]
+    #[doc = " *"]
+    #[doc = " * @field altitude: the altitude of the geographical position with default value unavailable."]
+    #[doc = " *"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GeoPosition {
+        pub latitude: Latitude,
+        pub longitude: Longitude,
+        #[rasn(default = "geo_position_altitude_default")]
+        pub altitude: AltitudeValue,
+    }
+    impl GeoPosition {
+        pub fn new(latitude: Latitude, longitude: Longitude, altitude: AltitudeValue) -> Self {
+            Self {
+                latitude,
+                longitude,
+                altitude,
+            }
+        }
+    }
+    fn geo_position_altitude_default() -> AltitudeValue {
+        AltitudeValue(800001)
+    }
     #[doc = "*"]
     #[doc = " * This DE indicates the current status of a hard shoulder: whether it is available for special usage"]
     #[doc = " * (e.g. for stopping or for driving) or closed for all vehicles."]
@@ -2632,15 +2810,20 @@ pub mod etsi_its_cdd {
     #[doc = " * This DE represents the value of the sub cause code of the @ref CauseCode `hazardousLocation-AnimalOnTheRoad`."]
     #[doc = " * "]
     #[doc = " * The value shall be set to:"]
-    #[doc = " * - 0 - `unavailable`  - in case further detailed information on the animal on the road event is unavailable,"]
-    #[doc = " * - 1 - `wildAnimals`  - in case wild animals are detected on the road,"]
-    #[doc = " * - 2 - `herdOfAnimals`- in case herd of animals are detected on the road,"]
-    #[doc = " * - 3 - `smallAnimals` - in case small size animals are detected on the road,"]
-    #[doc = " * - 4 - `largeAnimals` - in case large size animals are detected on the road."]
-    #[doc = " * - 5-255              - are reserved for future usage."]
+    #[doc = " * - 0 - `unavailable`          - in case further detailed information on the animal(s) on the road is unavailable,"]
+    #[doc = " * - 1 - `wildAnimals`          - in case wild animals of unknown size are present on the road,"]
+    #[doc = " * - 2 - `herdOfAnimals`        - in case a herd of animals is present on the road,"]
+    #[doc = " * - 3 - `smallAnimals`         - in case small size animals of unknown type are present on the road,"]
+    #[doc = " * - 4 - `largeAnimals`         - in case large size animals of unknown type are present on the road,"]
+    #[doc = " * - 5 - `wildAnimalsSmall`     - in case small size wild animal(s) are present on the road,"]
+    #[doc = " * - 6 - `wildAnimalsLarge`     - in case large size wild animal(s) are present on the road,"]
+    #[doc = " * - 7 - `domesticAnimals`      - in case domestic animal(s) of unknown size are detected on the road,"]
+    #[doc = " * - 8 - `domesticAnimalsSmall` - in case small size domestic animal(s) are present on the road,"]
+    #[doc = " * - 9 - `domesticAnimalsLarge` - in case large size domestic animal(s) are present on the road."]
+    #[doc = " * - 10-255                     - are reserved for future usage."]
     #[doc = " *"]
     #[doc = " * @category: Traffic information"]
-    #[doc = " * @revision: V1.3.1"]
+    #[doc = " * @revision: V1.3.1, named values 5 to 9 added in V2.2.1 "]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(
@@ -2842,14 +3025,32 @@ pub mod etsi_its_cdd {
     #[doc = " * This DE represents the value of the sub cause code of the @ref CauseCode `humanPresenceOnTheRoad`."]
     #[doc = " * "]
     #[doc = " * The value shall be set to:"]
-    #[doc = " * - 0 - `unavailable`          - in case further detailed information on human presence on the road is unavailable,"]
-    #[doc = " * - 1 - `childrenOnRoadway`    - in case children are detected on the road,"]
-    #[doc = " * - 2 - `cyclistOnRoadway`     - in case cyclist presence is detected on the road,"]
-    #[doc = " * - 3 - `motorcyclistOnRoadway`- in case motorcyclist presence is detected on the road."]
-    #[doc = " * - 4-255                      - are reserved for future usage."]
+    #[doc = " * - 0 - `unavailable`                    - in case further detailed information abou the human presence on the road is unavailable,"]
+    #[doc = " * - 1 - `childrenOnRoadway`              - in case children are present on the road,"]
+    #[doc = " * - 2 - `cyclistOnRoadway`               - in case cyclist(s) are present on the road,"]
+    #[doc = " * - 3 - `motorcyclistOnRoadway`          - in case motorcyclist(s) are present on the road,"]
+    #[doc = " * - 4 - `pedestrian`                     - in case pedestrian(s) of any type are present on the road,"]
+    #[doc = " * - 5 - `ordinary-pedestrian`            - in case pedestrian(s) to which no more-specific profile applies are present on the road,"]
+    #[doc = " * - 6 - `road-worker`                    - in case pedestrian(s) with the role of a road worker applies are present on the road,"]
+    #[doc = " * - 7 - `first-responder`                - in case pedestrian(s) with the role of a first responder applies are present on the road,  "]
+    #[doc = " * - 8 - `lightVruVehicle                 - in case light vru vehicle(s) of any type are present on the road,"]
+    #[doc = " * - 9 - `bicyclist `                     - in case cycle(s) and their bicyclist(s) are present on the road,"]
+    #[doc = " * - 10 - `wheelchair-user`               - in case wheelchair(s) and their user(s) are present on the road,"]
+    #[doc = " * - 11 - `horse-and-rider`               - in case horse(s) and rider(s) are present on the road,"]
+    #[doc = " * - 12 - `rollerskater`                  - in case rolleskater(s) and skater(s) are present on the road,"]
+    #[doc = " * - 13 - `e-scooter`                     - in case e-scooter(s) and rider(s) are present on the road,"]
+    #[doc = " * - 14 - `personal-transporter`          - in case personal-transporter(s) and rider(s) are present on the road,"]
+    #[doc = " * - 15 - `pedelec`                       - in case pedelec(s) and rider(s) are present on the road,"]
+    #[doc = " * - 16 - `speed-pedelec`                 - in case speed-pedelec(s) and rider(s) are present on the road,"]
+    #[doc = " * - 17 - `ptw`                           - in case powered-two-wheeler(s) of any type are present on the road,"]
+    #[doc = " * - 18 - `moped`                         - in case moped(s) and rider(s) are present on the road,"]
+    #[doc = " * - 19 - `motorcycle`                    - in case motorcycle(s) and rider(s) are present on the road,"]
+    #[doc = " * - 20 - `motorcycle-and-sidecar-right`  - in case motorcycle(s) with sidecar(s) on the right and rider are present on the road,"]
+    #[doc = " * - 21 - `motorcycle-and-sidecar-left`   - in case motorcycle(s) with sidecar(s) on the left and rider are present on the road."]
+    #[doc = " * - 22-255                               - are reserved for future usage."]
     #[doc = " *"]
     #[doc = " * @category: Traffic information"]
-    #[doc = " * @revision: editorial revision in V2.1.1"]
+    #[doc = " * @revision: editorial revision in V2.1.1, named values 4-21 added in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
@@ -2887,6 +3088,36 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=65535"))]
     pub struct Identifier2B(pub u16);
+    #[doc = "*"]
+    #[doc = " * This DE represents the value of the sub cause codes of the @ref CauseCode `impassability`"]
+    #[doc = " * "]
+    #[doc = " * The value shall be set to:"]
+    #[doc = " * - 0 `unavailable`              - in case further detailed information about the unmanaged road blockage is unavailable,"]
+    #[doc = " * - 1 `flooding          `       - in case the road is affected by flooding,"]
+    #[doc = " * - 2 `dangerOfAvalanches`       - in case the road is at risk of being affected or blocked by avalanches,"]
+    #[doc = " * - 3 `blastingOfAvalanches`     - in case there is an active blasting of avalanches on or near the road,"]
+    #[doc = " * - 4 `landslips`                - in case the road is affected by landslips,"]
+    #[doc = " * - 5 `chemicalSpillage`         - in case the road is affected by chemical spillage,"]
+    #[doc = " * - 6 `winterClosure`            - in case the road is impassable due to a winter closure."]
+    #[doc = " * - 7 `sinkhole`                 - in case the road is impassable due to large holes in the road surface."]
+    #[doc = " * - 8 `earthquakeDamage`         - in case the road is obstructed or partially obstructed because of damage caused by an earthquake."]
+    #[doc = " * - 9 `fallenTrees`              - in case the road is obstructed or partially obstructed by one or more fallen trees. "]
+    #[doc = " * - 10 `rockfalls`               - in case the road is obstructed or partially obstructed due to fallen rocks."]
+    #[doc = " * - 11 `sewerOverflow`           - in case the road is obstructed or partially obstructed by overflows from one or more sewers. "]
+    #[doc = " * - 12 `stormDamage`             - in case the road is obstructed or partially obstructed by debris caused by strong winds."]
+    #[doc = " * - 13 `subsidence`              - in case the road surface has sunken or collapsed in places."]
+    #[doc = " * - 14 `burstPipe`               - in case the road surface has sunken or collapsed in places due to burst pipes."]
+    #[doc = " * - 15 `burstWaterMain`          - in case the road is obstructed due to local flooding and/or subsidence. "]
+    #[doc = " * - 16 `fallenPowerCables`       - in case the road is obstructed or partly obstructed by one or more fallen power cables."]
+    #[doc = " * - 17 `snowDrifts`              - in case the road is obstructed or partially obstructed by snow drifting in progress or patches of deep snow due to earlier drifting."]
+    #[doc = " * - 15-255                       - are reserved for future usage."]
+    #[doc = " *"]
+    #[doc = " * @category: Traffic information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct ImpassabilitySubCauseCode(pub u8);
     #[doc = "*"]
     #[doc = " * This DE represents the quality level of provided information."]
     #[doc = " * "]
@@ -3184,6 +3415,15 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct Iso3833VehicleType(pub u8);
+    #[doc = "* "]
+    #[doc = " * This DE represent the identifier of an organization according to the applicable registry."]
+    #[doc = " *"]
+    #[doc = " * @category: Basic information"]
+    #[doc = " * @revision: Created in V2.2.1 based on ISO 14816 [23]"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16383"))]
+    pub struct IssuerIdentifier(pub u16);
     #[doc = "*"]
     #[doc = " * This DF shall contain  a list of waypoints @ref ReferencePosition."]
     #[doc = " *"]
@@ -3231,6 +3471,55 @@ pub mod etsi_its_cdd {
             }
         }
     }
+    #[doc = "* "]
+    #[doc = " * This DE represents the identifier of the IVIM."]
+    #[doc = " *"]
+    #[doc = " * @category: Basic information"]
+    #[doc = " * @revision: Created in V2.2.1 based on ETSI TS 103 301 [15]"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=32767", extensible))]
+    pub struct IviIdentificationNumber(pub Integer);
+    #[doc = "*"]
+    #[doc = " * This DF provides the reference to the information contained in a IVIM according to ETSI TS 103 301 [15]. "]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " * "]
+    #[doc = " * @field serviceProviderId: identifier of the organization that provided the IVIM."]
+    #[doc = " *"]
+    #[doc = " * @field iviIdentificationNumber: identifier of the IVIM, as assigned by the organization identified in serviceProviderId."]
+    #[doc = " *"]
+    #[doc = " * @category: Communication information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IvimReference {
+        #[rasn(identifier = "serviceProviderId")]
+        pub service_provider_id: Provider,
+        #[rasn(identifier = "iviIdentificationNumber")]
+        pub ivi_identification_number: IviIdentificationNumber,
+    }
+    impl IvimReference {
+        pub fn new(
+            service_provider_id: Provider,
+            ivi_identification_number: IviIdentificationNumber,
+        ) -> Self {
+            Self {
+                service_provider_id,
+                ivi_identification_number,
+            }
+        }
+    }
+    #[doc = "*"]
+    #[doc = " * This DF shall contain a list of @ref IvimReference."]
+    #[doc = " *"]
+    #[doc = " * @category: Communication information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=8", extensible))]
+    pub struct IvimReferences(pub SequenceOf<IvimReference>);
     #[doc = "*"]
     #[doc = " * This DE indicates a transversal position on the carriageway at a specific longitudinal position, in resolution of lanes of the carriageway. "]
     #[doc = " *"]
@@ -3245,30 +3534,38 @@ pub mod etsi_its_cdd {
     #[doc = " * - `0` if the position is on the inner hard shoulder, i.e. the hard should adjacent to the rightmost lane,"]
     #[doc = " * - `n` (`n > 0` and `n < 14`), if the position is on the n-th driving lane counted from the rightmost lane to the leftmost lane of a specific traffic direction,"]
     #[doc = " * - `14` if the position is on the outer hard shoulder, i.e. the hard should adjacent to leftmost lane (if present)."]
-    #[doc = ""]
+    #[doc = " *"]
     #[doc = " *  @note: in practice this means that the position is counted from \"inside\" to \"outside\" no matter which traffic practice is used."]
     #[doc = " *"]
     #[doc = " * If the carriageway allows only traffic in one direction (e.g. in case of dual or multiple carriageway roads), the position is counted from the physical border of the carriageway. "]
     #[doc = " * If the carriageway allows traffic in both directions and there is no physical delimitation between traffic directions (e.g. on a single carrriageway road), "]
     #[doc = " * the position is counted from the legal (i.e. optical) separation between traffic directions (horizontal marking). "]
-    #[doc = ""]
+    #[doc = " *"]
+    #[doc = " * If not indicated otherwise (by lane markings or traffic signs), the legal separation on carriageways allowing traffic on both directions is identified as follows:"]
+    #[doc = " * - If the total number of lanes N is even, the lanes are divided evenly between the traffic directions starting from the outside of the carriageway on both sides and the "]
+    #[doc = " *   imaginary separation between traffic directions is on the border between the even number of lanes N/2."]
+    #[doc = " * - If the total number of lanes N is odd, the lanes are divided evenly between traffic direction starting from the outside of the carriageway on both sides. "]
+    #[doc = " *   The remaining middle lane is assigned to both traffic directions as innermost lane."]
+    #[doc = " *"]
     #[doc = " * @category: Road topology information"]
-    #[doc = " * @revision: Description revised in V2.1.1"]
+    #[doc = " * @revision: Description of the legal separation of carriageways added in V2.2.1"]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("-1..=14"))]
     pub struct LanePosition(pub i8);
     #[doc = "*"]
-    #[doc = " * This DF indicates a transversal position in resolution of lanes and the associated lane type."]
+    #[doc = " * This DF indicates a transversal position in resolution of lanes and other associated details."]
     #[doc = " *"]
     #[doc = " * It shall include the following components: "]
     #[doc = " * "]
     #[doc = " * @field transversalPosition: the transversal position."]
     #[doc = " * "]
-    #[doc = " * @field laneType: the type of the lane identified in the component transversalPosition."]
-    #[doc = " * "]
+    #[doc = " * @field laneType: the type of the lane identified in the component transversalPosition. By default set to `traffic`."]
+    #[doc = " *"]
+    #[doc = " * @field direction: the traffic direction for the lane position relative to a defined reference direction. By default set to `sameDirection`, i.e. following the reference direction."]
+    #[doc = " *"]
     #[doc = " * @category Road topology information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: direction added in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -3276,16 +3573,115 @@ pub mod etsi_its_cdd {
     pub struct LanePositionAndType {
         #[rasn(identifier = "transversalPosition")]
         pub transversal_position: LanePosition,
-        #[rasn(identifier = "laneType")]
+        #[rasn(
+            default = "lane_position_and_type_lane_type_default",
+            identifier = "laneType"
+        )]
         pub lane_type: LaneType,
+        #[rasn(default = "lane_position_and_type_direction_default")]
+        pub direction: Direction,
     }
     impl LanePositionAndType {
-        pub fn new(transversal_position: LanePosition, lane_type: LaneType) -> Self {
+        pub fn new(
+            transversal_position: LanePosition,
+            lane_type: LaneType,
+            direction: Direction,
+        ) -> Self {
             Self {
                 transversal_position,
                 lane_type,
+                direction,
             }
         }
+    }
+    fn lane_position_and_type_lane_type_default() -> LaneType {
+        LaneType(0)
+    }
+    fn lane_position_and_type_direction_default() -> Direction {
+        Direction(0)
+    }
+    #[doc = "*"]
+    #[doc = " * This DF represents a set of options to describe a lane position and is the second level DF to represent a lane position. The top-level DFs are @ref GeneralizedLanePosition or @ref OccupiedLanesWithConfidence. "]
+    #[doc = " * A lane position is a transversal position on the carriageway at a specific longitudinal position, in resolution of lanes of the carriageway."]
+    #[doc = " *"]
+    #[doc = " * The following options are available:"]
+    #[doc = " *"]
+    #[doc = " * @field simplelanePosition: a single lane position without any additional context information."]
+    #[doc = " *"]
+    #[doc = " * @field simpleLaneType: a lane type, to be used when the lane position is unknown but the type of lane is known. This can be used in scenarios where a certain confidence about the used lane type is given "]
+    #[doc = " * but no or limited knowledge about the absolute lane number is available. For example, a cyclist on a cycle-lane or vehicles on a specific lane that is unique for the part of the road (e.g. a bus lane)."]
+    #[doc = " * "]
+    #[doc = " * @field detailedlanePosition: a single lane position with additional lane details."]
+    #[doc = " * "]
+    #[doc = " * @field lanePositionWithLateralDetails: a single lane position with additional details and the lateral position within the lane."]
+    #[doc = " *"]
+    #[doc = " * @field trafficIslandPosition: a position on a traffic island, i.e. between two lanes. "]
+    #[doc = " *"]
+    #[doc = " * @category: Road Topology information"]
+    #[doc = " * @revision: Created in V2.2.1 from the DF GeneralizedLanePosition of V2.1.1. "]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum LanePositionOptions {
+        simplelanePosition(LanePosition),
+        simpleLaneType(LaneType),
+        detailedlanePosition(LanePositionAndType),
+        lanePositionWithLateralDetails(LanePositionWithLateralDetails),
+        trafficIslandPosition(TrafficIslandPosition),
+    }
+    #[doc = "*"]
+    #[doc = " * This DF is a third-level DF that represents a lane position and is an extended version of @ref LanePositionAndType that adds the distances to the left and right lane border."]
+    #[doc = " *"]
+    #[doc = " * It shall additionally include the following components: "]
+    #[doc = " *"]
+    #[doc = " * @field distanceToLeftBorder: the distance of the transversal position to the left lane border. The real value shall be rounded to the next lower encoding-value."]
+    #[doc = " *"]
+    #[doc = " * @field distanceToRightBorder: the distance of the transversal position to the right lane border. The real value shall be rounded to the next lower encoding-value."]
+    #[doc = " * "]
+    #[doc = " * @category: Road Topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct LanePositionWithLateralDetails {
+        #[rasn(identifier = "distanceToLeftBorder")]
+        pub distance_to_left_border: StandardLength9b,
+        #[rasn(identifier = "distanceToRightBorder")]
+        pub distance_to_right_border: StandardLength9b,
+        #[rasn(identifier = "transversalPosition")]
+        pub transversal_position: LanePosition,
+        #[rasn(
+            default = "lane_position_with_lateral_details_lane_type_default",
+            identifier = "laneType"
+        )]
+        pub lane_type: LaneType,
+        #[rasn(default = "lane_position_with_lateral_details_direction_default")]
+        pub direction: Direction,
+    }
+    impl LanePositionWithLateralDetails {
+        pub fn new(
+            distance_to_left_border: StandardLength9b,
+            distance_to_right_border: StandardLength9b,
+            transversal_position: LanePosition,
+            lane_type: LaneType,
+            direction: Direction,
+        ) -> Self {
+            Self {
+                distance_to_left_border,
+                distance_to_right_border,
+                transversal_position,
+                lane_type,
+                direction,
+            }
+        }
+    }
+    fn lane_position_with_lateral_details_lane_type_default() -> LaneType {
+        LaneType(0)
+    }
+    fn lane_position_with_lateral_details_direction_default() -> Direction {
+        Direction(0)
     }
     #[doc = "*"]
     #[doc = " * This DE represents the type of a lane. "]
@@ -3313,11 +3709,12 @@ pub mod etsi_its_cdd {
     #[doc = " * - 18\t- `emergency`          - Lane dedicated to vehicles in breakdown or to emergency vehicles also called hard shoulder,"]
     #[doc = " * - 19\t- `verge`              - Lane representing the verge, i.e. a narrow strip of grass or plants and sometimes also trees located between "]
     #[doc = "                                 the road surface edge and the boundary of a road,"]
-    #[doc = " * - 20\t`minimumRiskManoeuvre` - Lane dedicated to automated vehicles making a minimum risk manoeuvre."]
-    #[doc = " * - values 21 to 30             reserved for future use. "]
+    #[doc = " * - 20\t`minimumRiskManoeuvre` - Lane dedicated to automated vehicles making a minimum risk manoeuvre,"]
+    #[doc = " * - 21\t`separatedCycleLane`   - Lane dedicated to exclusive or preferred use by bicycles that is phyisically separated from the vehicle-traffic lanes, e.g. by a verge."]
+    #[doc = " * - values 22 to 30             reserved for future use. "]
     #[doc = " *"]
     #[doc = " * @category: Road topology information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, named value 21 added in V2.2.1"]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=31"))]
@@ -3503,16 +3900,16 @@ pub mod etsi_its_cdd {
     #[rasn(delegate, value("-160..=161"))]
     pub struct LongitudinalAccelerationValue(pub i16);
     #[doc = "* "]
-    #[doc = " * This DF represents the estimated position along the longitudinal length of a particular lane. "]
+    #[doc = " * This DF represents the estimated position along the longitudinal extension of a carriageway or lane. "]
     #[doc = " *"]
     #[doc = " * It shall include the following components: "]
     #[doc = " *"]
-    #[doc = " * @field  longitudinalLanePositionValue: the mean value of the longitudinal position within a particular length."]
+    #[doc = " * @field  longitudinalLanePositionValue: the mean value of the longitudinal position along the carriageway or lane w.r.t. an externally defined start position."]
     #[doc = " *"]
     #[doc = " * @field  longitudinalLanePositionConfidence: The confidence value associated to the value."]
     #[doc = " *"]
     #[doc = " * @category: Road topology information"]
-    #[doc = " * @revision: created in V2.1.1"]
+    #[doc = " * @revision: created in V2.1.1, description revised in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -3615,10 +4012,10 @@ pub mod etsi_its_cdd {
     #[doc = " * Given a matrix \"A\" of size n x n, the number of @ref CorrelationColumn to be included in the lower triangular matrix is k=n-1."]
     #[doc = " *"]
     #[doc = " * @category: Sensing information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, extension indicator added in V2.2.1"]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=13"))]
+    #[rasn(delegate, size("1..=13", extensible))]
     pub struct LowerTriangularPositiveSemidefiniteMatrixColumns(pub SequenceOf<CorrelationColumn>);
     #[doc = "*"]
     #[doc = " * This DF indicates a position on a topology description transmitted in a MAPEM according to ETSI TS 103 301 [15]."]
@@ -3633,10 +4030,10 @@ pub mod etsi_its_cdd {
     #[doc = " * @field connectionId: optionally identifies the connection inside the conflict area of an intersection, i.e. it identifies a trajectory for travelling through the"]
     #[doc = " * conflict area of an intersection which connects e.g an ingress with an egress lane."]
     #[doc = " *"]
-    #[doc = " * @field longitudinalLanePosition: optionally indicates the longitudinal offset of the map-matched position of the object along the lane or connection."]
+    #[doc = " * @field longitudinalLanePosition: optionally indicates the longitudinal offset of the map-matched position of the object along the lane or connection measured from the start of the lane/connection, along the lane."]
     #[doc = " * "]
     #[doc = " * @category: Road topology information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, definition of longitudinalLanePosition amended in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -3685,6 +4082,81 @@ pub mod etsi_its_cdd {
         intersection(IntersectionReferenceId),
     }
     #[doc = "*"]
+    #[doc = " * This DF shall contain a list of @ref MapReference."]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=8", extensible))]
+    pub struct MapReferences(pub SequenceOf<MapReference>);
+    #[doc = "* "]
+    #[doc = " * This DF provides information about the configuration of a road section in terms of MAPEM lanes or connections using a list of @ref MapemExtractedElementReference. "]
+    #[doc = ""]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=16", extensible))]
+    pub struct MapemConfiguration(pub SequenceOf<MapemElementReference>);
+    #[doc = "* "]
+    #[doc = " * This DF provides references to MAPEM connections using a list of @ref Identifier1B."]
+    #[doc = " * Note: connections are  allowed �maneuvers� (e.g. an ingress / egress relation) on an intersection."]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=8", extensible))]
+    pub struct MapemConnectionList(pub SequenceOf<Identifier1B>);
+    #[doc = "* "]
+    #[doc = " * This DF provides references to an element described in a MAPEM according to ETSI TS 103 301 [i.15], such as a lane or connection at a specific intersection or road segment. "]
+    #[doc = " * "]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " * "]
+    #[doc = " * @field mapReference: the optional reference to a MAPEM that describes the intersection or road segment. It is absent if the MAPEM topology is known from the context."]
+    #[doc = " * "]
+    #[doc = " * @field laneIds: the optional list of the identifiers of the lanes to be referenced. "]
+    #[doc = " * "]
+    #[doc = " * @field connectionIds: the optional list of the identifiers of the connections to be referenced. "]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MapemElementReference {
+        #[rasn(identifier = "mapReference")]
+        pub map_reference: Option<MapReference>,
+        #[rasn(identifier = "laneIds")]
+        pub lane_ids: Option<MapemLaneList>,
+        #[rasn(identifier = "connectionIds")]
+        pub connection_ids: Option<MapemConnectionList>,
+    }
+    impl MapemElementReference {
+        pub fn new(
+            map_reference: Option<MapReference>,
+            lane_ids: Option<MapemLaneList>,
+            connection_ids: Option<MapemConnectionList>,
+        ) -> Self {
+            Self {
+                map_reference,
+                lane_ids,
+                connection_ids,
+            }
+        }
+    }
+    #[doc = "* "]
+    #[doc = " * This DF provides references to MAPEM lanes using a list of @ref Identifier1B."]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in 2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=8", extensible))]
+    pub struct MapemLaneList(pub SequenceOf<Identifier1B>);
+    #[doc = "*"]
     #[doc = " * This DE indicates the components of an @ref PerceivedObject that are included in the @ref LowerTriangularPositiveSemidefiniteMatrix."]
     #[doc = " *"]
     #[doc = " * The corresponding bit shall be set to 1 if the component is included:"]
@@ -3716,12 +4188,12 @@ pub mod etsi_its_cdd {
     #[doc = " *  The value shall be set to:"]
     #[doc = " *\t- 1  - `denm`              - for Decentralized Environmental Notification Message (DENM) as specified in ETSI EN 302 637-3 [2],"]
     #[doc = " *  - 2  - `cam`               - for Cooperative Awareness Message (CAM) as specified in ETSI EN 302 637-2 [1],"]
-    #[doc = " *  - 3  - `poi`               - for Point of Interest message as specified in ETSI TS 101 556-1 [9],"]
+    #[doc = " *  - 3  - `poim`              - for Point of Interest message as specified in ETSI TS 103 916 [9],"]
     #[doc = " *  - 4  - `spatem`            - for Signal Phase And Timing Extended Message (SPATEM) as specified in ETSI TS 103 301 [15],"]
     #[doc = " *  - 5  - `mapem`             - for MAP Extended Message (MAPEM) as specified in ETSI TS 103 301 [15],"]
     #[doc = " *  - 6  - `ivim`              - for in Vehicle Information Message (IVIM) as specified in ETSI TS 103 301 [15],"]
-    #[doc = " *  - 7  - `ev-rsr`            - for Electric vehicle recharging spot reservation message, as defined in ETSI TS 101 556-3 [11],"]
-    #[doc = " *  - 8  - `tistpgtransaction` - for messages for Tyre Information System (TIS) and Tyre Pressure Gauge (TPG) interoperability, as specified in ETSI TS 101 556-2 [10],"]
+    #[doc = " *  - 7  - `rfu1`              - reserved for future usage,"]
+    #[doc = " *  - 8  - `rfu2`              - reserved for future usage,"]
     #[doc = " *  - 9  - `srem`              - for Signal Request Extended Message as specified in ETSI TS 103 301 [15],"]
     #[doc = " *  - 10 - `ssem`              - for Signal request Status Extended Message as specified in ETSI TS 103 301 [15],"]
     #[doc = " *  - 11 - `evcsn`             - for Electrical Vehicle Charging Spot Notification message as specified in ETSI TS 101 556-1 [9],"]
@@ -3738,7 +4210,7 @@ pub mod etsi_its_cdd {
     #[doc = " *  - 22-255                   - reserved for future usage."]
     #[doc = " *"]
     #[doc = " * @category: Communication information"]
-    #[doc = " * @revision: Created in V2.1.1 from @ref ItsPduHeader."]
+    #[doc = " * @revision: Created in V2.1.1 from @ref ItsPduHeader. Value 3 re-assigned to poim and value 7 and 8 reserved in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
@@ -3770,16 +4242,17 @@ pub mod etsi_its_cdd {
         }
     }
     #[doc = "*"]
-    #[doc = " * This DF provides information about a message with respect to the segmentation process at the sender."]
+    #[doc = " * This DF provides information about a message with respect to the segmentation process on facility layer at the sender."]
     #[doc = " *"]
     #[doc = " * It shall include the following components: "]
     #[doc = " * "]
-    #[doc = " * @field totalMsgNo: indicates the total number of messages that has been used on the transmitter side to encode the information."]
+    #[doc = " * @field totalMsgNo: indicates the total number of messages that have been assembled on the transmitter side to encode the information "]
+    #[doc = " * during the same messsage generation process."]
     #[doc = " *"]
-    #[doc = " * @field thisMsgNo: indicates the position of the message within of the total set of messages."]
+    #[doc = " * @field thisMsgNo: indicates the position of the message within of the total set of messages generated during the same message generation process."]
     #[doc = " *"]
     #[doc = " * @category: Communication information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, description revised in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -3794,6 +4267,44 @@ pub mod etsi_its_cdd {
             Self {
                 total_msg_no,
                 this_msg_no,
+            }
+        }
+    }
+    #[doc = "* "]
+    #[doc = " * This DF provides information about the source of and confidence in information."]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " * "]
+    #[doc = " * @field usedDetectionInformation: the type of sensor(s) that is used to provide the detection information."]
+    #[doc = " * "]
+    #[doc = " * @field usedStoredInformation: the type of source of the stored information. "]
+    #[doc = " *"]
+    #[doc = " * @field confidenceValue: an optional confidence value associated to the information. "]
+    #[doc = " * "]
+    #[doc = " * @category: Basic information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MetaInformation {
+        #[rasn(identifier = "usedDetectionInformation")]
+        pub used_detection_information: SensorTypes,
+        #[rasn(identifier = "usedStoredInformation")]
+        pub used_stored_information: StoredInformationType,
+        #[rasn(identifier = "confidenceValue")]
+        pub confidence_value: Option<ConfidenceLevel>,
+    }
+    impl MetaInformation {
+        pub fn new(
+            used_detection_information: SensorTypes,
+            used_stored_information: StoredInformationType,
+            confidence_value: Option<ConfidenceLevel>,
+        ) -> Self {
+            Self {
+                used_detection_information,
+                used_stored_information,
+                confidence_value,
             }
         }
     }
@@ -4034,6 +4545,54 @@ pub mod etsi_its_cdd {
     #[rasn(delegate, value("0..=15"))]
     pub struct ObjectPerceptionQuality(pub u8);
     #[doc = "*"]
+    #[doc = " * This DF represents a set of lanes which are partially or fully occupied by an object or event at an externally defined reference position. "]
+    #[doc = " *"]
+    #[doc = " * @note: In contrast to @ref GeneralizedLanePosition, the dimension of the object or event area (width and length) is taken into account to determine the occupancy, "]
+    #[doc = " * i.e. this DF describes the lanes which are blocked by an object or event and not the position of the object / event itself. A confidence is used to describe the "]
+    #[doc = " * probability that exactly all the provided lanes are occupied. "]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " *"]
+    #[doc = " * @field lanePositionBased: a set of up to `4` lanes that are partially or fully occupied by an object or event, ordered by increasing value of @ref LanePosition. "]
+    #[doc = " * Lanes that are partially occupied can be described using the component lanePositionWithLateralDetails of @ref  Options, with the following constraints: "]
+    #[doc = " * The distance to lane borders which are covered by the object / event shall be set to 0. Only the distances to the leftmost and/or rightmost border which are not covered by "]
+    #[doc = " * the object / event shall be provided with values > 0. Those values shall be added to the respective instances of @ref LanePositionOptions, i.e. the first entry shall contain the component distanceToLeftBorder > 0 , "]
+    #[doc = " * and/or the last entry shall contain the component distanceToRightBorder > 0; the respective other components of these entries shall be set to 0."]
+    #[doc = " * "]
+    #[doc = " * @field mapBased: optional lane information described in the context of a MAPEM as specified in ETSI TS 103 301 [15]. "]
+    #[doc = " * If present, it shall describe the same lane(s) as listed in the component lanePositionBased, but using the lane identification of the MAPEM. This component can be used only if a "]
+    #[doc = " * MAPEM is available for the reference position (e.g. on an intersection): In this case it is used as a synonym to the mandatory component lanePositionBased. "]
+    #[doc = " *"]
+    #[doc = " * @field confidence: mandatory confidence information for expressing the probability that all the provided lanes are occupied. It also provides information on how the lane "]
+    #[doc = " * information were generated. If none of the sensors were used, the lane information is assumed to be derived directly from the absolute reference position and the related dimension."]
+    #[doc = " *"]
+    #[doc = " * @category: Road Topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct OccupiedLanesWithConfidence {
+        #[rasn(size("1..=4"), identifier = "lanePositionBased")]
+        pub lane_position_based: SequenceOf<LanePositionOptions>,
+        #[rasn(size("1..=4"), identifier = "mapBased")]
+        pub map_based: Option<SequenceOf<MapPosition>>,
+        pub confidence: MetaInformation,
+    }
+    impl OccupiedLanesWithConfidence {
+        pub fn new(
+            lane_position_based: SequenceOf<LanePositionOptions>,
+            map_based: Option<SequenceOf<MapPosition>>,
+            confidence: MetaInformation,
+        ) -> Self {
+            Self {
+                lane_position_based,
+                map_based,
+                confidence,
+            }
+        }
+    }
+    #[doc = "*"]
     #[doc = " * This DE represents a time period to describe the opening days and hours of a Point of Interest."]
     #[doc = " * (for example local commerce)."]
     #[doc = " *"]
@@ -4093,12 +4652,59 @@ pub mod etsi_its_cdd {
     #[doc = " * This DE represents the recorded or estimated travel time between a position and a predefined reference position. "]
     #[doc = " *"]
     #[doc = " * @unit 0,01 second"]
-    #[doc = " * @category: GeoReference information"]
+    #[doc = " * @category: Basic information"]
     #[doc = " * @revision: V1.3.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=65535", extensible))]
     pub struct PathDeltaTime(pub Integer);
+    #[doc = "*"]
+    #[doc = " * This DF represents estimated/predicted travel time between a position and a predefined reference position. "]
+    #[doc = " *"]
+    #[doc = " * the following options are available:"]
+    #[doc = " * "]
+    #[doc = " * @field deltaTimeHighPrecision: delta time with precision of 0,1 s."]
+    #[doc = " *"]
+    #[doc = " * @field deltaTimeBigRange: delta time with precision of 10 s."]
+    #[doc = " *"]
+    #[doc = " * @category: Basic information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PathDeltaTimeChoice {
+        deltaTimeHighPrecision(DeltaTimeTenthOfSecond),
+        deltaTimeBigRange(DeltaTimeTenSeconds),
+    }
+    #[doc = "* "]
+    #[doc = " * This DF represents a path towards a specific point specified in the @ref EventZone."]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " * "]
+    #[doc = " * @field pointOfEventZone: the ordinal number of the point within the DF EventZone, i.e. within the list of EventPoints."]
+    #[doc = " *"]
+    #[doc = " * @field path: the associated path towards the point specified in pointOfEventZone."]
+    #[doc = " * The first PathPoint presents an offset delta position with regards to the position of that pointOfEventZone."]
+    #[doc = " *"]
+    #[doc = " * @category: GeoReference information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PathExtended {
+        #[rasn(value("1..=23"), identifier = "pointOfEventZone")]
+        pub point_of_event_zone: u8,
+        pub path: Path,
+    }
+    impl PathExtended {
+        pub fn new(point_of_event_zone: u8, path: Path) -> Self {
+            Self {
+                point_of_event_zone,
+                path,
+            }
+        }
+    }
     #[doc = "*"]
     #[doc = " * This DF represents a path history with a set of path points."]
     #[doc = " * It shall contain up to `40` @ref PathPoint. "]
@@ -4108,11 +4714,25 @@ pub mod etsi_its_cdd {
     #[doc = " *"]
     #[doc = " * @note: this DF is kept for backwards compatibility reasons only. It is recommended to use @ref Path instead."]
     #[doc = " * @category: GeoReference information, Vehicle information"]
-    #[doc = " * @revision: semantics updated in V2.1.1"]
+    #[doc = " * @revision: semantics updated in V2.1.1, size corrected to 0..40 in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("40"))]
+    #[rasn(delegate, size("0..=40"))]
     pub struct PathHistory(pub SequenceOf<PathPoint>);
+    #[doc = "* "]
+    #[doc = " * This DE indicates an ordinal number that represents the position of a component in the list of @ref Traces or @ref TracesExtended. "]
+    #[doc = " *"]
+    #[doc = " * The value shall be set to:"]
+    #[doc = " * - `0` - noPath  - if no path is identified"]
+    #[doc = " * - `1..7`        - for instances 1..7 of @ref Traces "]
+    #[doc = " * - `8..14`       - for instances 1..7 of @ref TracesExtended. "]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=14"))]
+    pub struct PathId(pub u8);
     #[doc = "*"]
     #[doc = " * This DF defines an offset waypoint position within a path."]
     #[doc = " *"]
@@ -4145,24 +4765,28 @@ pub mod etsi_its_cdd {
         }
     }
     #[doc = "*"]
-    #[doc = " * This DF  defines a predicted offset waypoint position within a path."]
+    #[doc = " * This DF defines a predicted offset position that can be used within a predicted path or trajectory, together with optional data to describe a path zone shape."]
     #[doc = " *"]
     #[doc = " * It shall include the following components: "]
     #[doc = " *"]
-    #[doc = " * @field deltaLatitude: an offset latitude with regards to a pre-defined reference position. "]
+    #[doc = " * @field deltaLatitude: the offset latitude with regards to a pre-defined reference position. "]
     #[doc = " *"]
-    #[doc = " * @field deltaLongitude: an offset longitude with regards to a pre-defined reference position. "]
+    #[doc = " * @field deltaLongitude: the offset longitude with regards to a pre-defined reference position. "]
     #[doc = " * "]
-    #[doc = " * @field horizontalPositionConfidence: the confidence value associated to the horizontal geographical position."]
+    #[doc = " * @field horizontalPositionConfidence: the optional confidence value associated to the horizontal geographical position."]
     #[doc = " *"]
-    #[doc = " * @field deltaAltitude: an offset altitude with regards to a pre-defined reference position. "]
+    #[doc = " * @field deltaAltitude: the optional offset altitude with regards to a pre-defined reference position, with default value unavailable. "]
     #[doc = " *"]
-    #[doc = " * @field altitudeConfidence: the confidence value associated to the altitude value of the geographical position."]
+    #[doc = " * @field altitudeConfidence: the optional confidence value associated to the altitude value of the geographical position, with default value unavailable."]
     #[doc = " * "]
-    #[doc = " * @field pathDeltaTime: The  travel time separated from the waypoint to the predefined reference position."]
+    #[doc = " * @field pathDeltaTime: the optional travel time to the waypoint from the predefined reference position."]
+    #[doc = ""]
+    #[doc = " * @field symmetricAreaOffset: the optional symmetric offset to generate a shape, see Annex D for details."]
+    #[doc = " *  "]
+    #[doc = " * @field asymmetricAreaOffset: the optional asymmetric offset to generate a shape, see Annex D for details. "]
     #[doc = " *"]
     #[doc = " * @category GeoReference information"]
-    #[doc = " * @revision: semantics updated in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type of pathDeltaTime changed and optionality added, fields symmetricAreaOffset and asymmetricAreaOffset added in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -4185,7 +4809,11 @@ pub mod etsi_its_cdd {
         )]
         pub altitude_confidence: AltitudeConfidence,
         #[rasn(identifier = "pathDeltaTime")]
-        pub path_delta_time: DeltaTimeTenthOfSecond,
+        pub path_delta_time: Option<PathDeltaTimeChoice>,
+        #[rasn(identifier = "symmetricAreaOffset")]
+        pub symmetric_area_offset: Option<StandardLength9b>,
+        #[rasn(identifier = "asymmetricAreaOffset")]
+        pub asymmetric_area_offset: Option<StandardLength9b>,
     }
     impl PathPointPredicted {
         pub fn new(
@@ -4194,7 +4822,9 @@ pub mod etsi_its_cdd {
             horizontal_position_confidence: Option<PosConfidenceEllipse>,
             delta_altitude: DeltaAltitude,
             altitude_confidence: AltitudeConfidence,
-            path_delta_time: DeltaTimeTenthOfSecond,
+            path_delta_time: Option<PathDeltaTimeChoice>,
+            symmetric_area_offset: Option<StandardLength9b>,
+            asymmetric_area_offset: Option<StandardLength9b>,
         ) -> Self {
             Self {
                 delta_latitude,
@@ -4203,6 +4833,8 @@ pub mod etsi_its_cdd {
                 delta_altitude,
                 altitude_confidence,
                 path_delta_time,
+                symmetric_area_offset,
+                asymmetric_area_offset,
             }
         }
     }
@@ -4213,18 +4845,75 @@ pub mod etsi_its_cdd {
         AltitudeConfidence::unavailable
     }
     #[doc = "*"]
-    #[doc = " * This DF represents a predicted path with a set of path points."]
-    #[doc = " * It shall contain up to `15` @ref PathPoint. "]
+    #[doc = " * This DF represents a predicted path or trajectory with a set of predicted points and optional information to generate a shape which is estimated to contain the real path. "]
+    #[doc = " * It shall contain up to `16` @ref PathPointPredicted. "]
     #[doc = " * "]
     #[doc = " * The first PathPoint presents an offset delta position with regards to an external reference position."]
     #[doc = " * Each other PathPoint presents an offset delta position and optionally an offset travel time with regards to the previous PathPoint. "]
     #[doc = " *"]
     #[doc = " * @category: GeoReference information"]
-    #[doc = " * @revision: created in V2.1.1 based on PathHistory"]
+    #[doc = " * @revision: created in V2.1.1 , size constraint changed to SIZE(1..16, ...) in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("0..=15", extensible))]
+    #[rasn(delegate, size("1..=16", extensible))]
     pub struct PathPredicted(pub SequenceOf<PathPointPredicted>);
+    #[doc = "* "]
+    #[doc = " * This DF represents a predicted path, predicted trajectory or predicted path zone together with usage information and a prediction confidence."]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " *"]
+    #[doc = " * @field pathPredicted: the predicted path (pathDeltaTime ABSENT) or trajectory (pathDeltaTime PRESENT) and/or the path zone (symmetricAreaOffset PRESENT)."]
+    #[doc = " *"]
+    #[doc = " * @field usageIndication: an indication of how the predicted path will be used. "]
+    #[doc = " *"]
+    #[doc = " * @field confidenceLevel: the confidence that the path/trajectory in pathPredicted will occur as predicted."]
+    #[doc = " *"]
+    #[doc = " * @category: GeoReference information"]
+    #[doc = " * @revision: created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PathPredicted2 {
+        #[rasn(value("0.."), identifier = "pathPredicted")]
+        pub path_predicted: PathPredicted,
+        #[rasn(identifier = "usageIndication")]
+        pub usage_indication: UsageIndication,
+        #[rasn(identifier = "confidenceLevel")]
+        pub confidence_level: ConfidenceLevel,
+    }
+    impl PathPredicted2 {
+        pub fn new(
+            path_predicted: PathPredicted,
+            usage_indication: UsageIndication,
+            confidence_level: ConfidenceLevel,
+        ) -> Self {
+            Self {
+                path_predicted,
+                usage_indication,
+                confidence_level,
+            }
+        }
+    }
+    #[doc = "*"]
+    #[doc = " * This DF represents one or more predicted paths, or trajectories or path zones (zones that include all possible paths/trajectories within its boundaries) using @ref PathPredicted2."]
+    #[doc = " * It shall contain up to `16` @ref PathPredicted2. "]
+    #[doc = " * "]
+    #[doc = " * @category: GeoReference information"]
+    #[doc = " * @revision: V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=16", extensible))]
+    pub struct PathPredictedList(pub SequenceOf<PathPredicted2>);
+    #[doc = "* "]
+    #[doc = " * This DF represents a list of references to the components of a @ref Traces or @ref TracesExtended DF using the @ref PathId. "]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=14"))]
+    pub struct PathReferences(pub SequenceOf<PathId>);
     #[doc = "* "]
     #[doc = " * This DF contains information about a perceived object including its kinematic state and attitude vector in a pre-defined coordinate system and with respect to a reference time."]
     #[doc = " * "]
@@ -4518,6 +5207,24 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=30"))]
     pub struct PosPillar(pub u8);
+    #[doc = "* "]
+    #[doc = " * This DE represents a position along a single dimension such as the middle of a road or lane, measured as an offset from an externally defined starting point, "]
+    #[doc = " * in direction of an externally defined reference direction."]
+    #[doc = " * "]
+    #[doc = " * The value shall be set to:"]
+    #[doc = " * - `n` (`n >= -8190` and `n < 0`) if the position is equal to or less than n x 1 metre and more than (n-1) x 1 metre, in opposite direction of the reference direction,"]
+    #[doc = " * - `0` if the position is at the starting point,"]
+    #[doc = " * - `n` (`n > 0` and `n < 8190`) if the position is equal to or less than n x 1 metre and more than (n-1) x 1 metre, in the same direction as the reference direction,"]
+    #[doc = " * - `8 190` if the position is out of range, i.e. equal to or greater than 8 189 m,"]
+    #[doc = " * - `8 191` if the position information is not available. "]
+    #[doc = " *"]
+    #[doc = " * @unit 1 metre"]
+    #[doc = " * @category: GeoReference information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-8190..=8191"))]
+    pub struct Position1d(pub i16);
     #[doc = "*"]
     #[doc = " * This DF indicates the horizontal position confidence ellipse which represents the estimated accuracy with a "]
     #[doc = " * confidence level of 95 %. The centre of the ellipse shape corresponds to the reference"]
@@ -4615,10 +5322,11 @@ pub mod etsi_its_cdd {
     #[doc = " * - 2 `dGNSS`                  - Differential GNSS used,"]
     #[doc = " * - 3 `sGNSSplusDR`            - GNSS and dead reckoning used,"]
     #[doc = " * - 4 `dGNSSplusDR`            - Differential GNSS and dead reckoning used,"]
-    #[doc = " * - 5 `dR`                     - dead reckoning used."]
+    #[doc = " * - 5 `dR`                     - dead reckoning used,"]
+    #[doc = " * - 6 `manuallyByOperator`     - position set manually by a human operator."]
     #[doc = " *"]
     #[doc = " * @category: GeoReference information"]
-    #[doc = " * @revision: V1.3.1"]
+    #[doc = " * @revision: V1.3.1, extension with value 6 added in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
@@ -4630,6 +5338,8 @@ pub mod etsi_its_cdd {
         sGNSSplusDR = 3,
         dGNSSplusDR = 4,
         dR = 5,
+        #[rasn(extension_addition)]
+        manuallyByOperator = 6,
     }
     #[doc = "*"]
     #[doc = " * This DE represents the value of the sub cause codes of the @ref CauseCode `postCrash` ."]
@@ -4772,6 +5482,36 @@ pub mod etsi_its_cdd {
         temporaryCenDsrcTolling = 1,
     }
     #[doc = "*"]
+    #[doc = " * This DF identifies an organization."]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " * "]
+    #[doc = " * @field countryCode: represents the country code that identifies the country of the national registration administrator for issuers according to ISO 14816."]
+    #[doc = " *"]
+    #[doc = " * @field providerIdentifier: identifies the organization according to the national ISO 14816 register for issuers."]
+    #[doc = " *"]
+    #[doc = " * @note: See https://www.itsstandards.eu/registries/register-of-nra-i-cs1/ for a list of national registration administrators and their respective registers"]
+    #[doc = " * "]
+    #[doc = " * @category: Communication information"]
+    #[doc = " * @revision: Created in V2.2.1 based on ISO 17573-3 [24]"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Provider {
+        #[rasn(identifier = "countryCode")]
+        pub country_code: CountryCode,
+        #[rasn(identifier = "providerIdentifier")]
+        pub provider_identifier: IssuerIdentifier,
+    }
+    impl Provider {
+        pub fn new(country_code: CountryCode, provider_identifier: IssuerIdentifier) -> Self {
+            Self {
+                country_code,
+                provider_identifier,
+            }
+        }
+    }
+    #[doc = "*"]
     #[doc = " * This DF represents activation data for real-time systems designed for operations control, traffic light priorities, track switches, barriers, etc."]
     #[doc = " * using a range of activation devices equipped in public transport vehicles."]
     #[doc = " *"]
@@ -4851,38 +5591,32 @@ pub mod etsi_its_cdd {
     #[rasn(delegate, value("0..=255"))]
     pub struct PtActivationType(pub u8);
     #[doc = "*"]
-    #[doc = " * This DF describes a radial shape. The triangular or cone-shaped volume is"]
-    #[doc = " * constructed by sweeping the provided range about the reference point  between a horizontal start "]
-    #[doc = " * and a horizontal end angle in positive angular direction of the WGS84"]
-    #[doc = " * coordinate system. A vertical opening angle may be provided in a Cartesian coordinate system with"]
-    #[doc = " * the x-axis located in the North-East plane of the WGS84 coordinate system. The sensor height may"]
-    #[doc = " * be provided to reflect characteristics of sensors mounted at an altitude (e.g. sensors mounted"]
-    #[doc = " * above intersections)."]
+    #[doc = " * This DF describes a radial shape. The circular or spherical sector is constructed by sweeping      "]
+    #[doc = " * the provided range about the reference position specified outside of the context of this DF or "]
+    #[doc = " * about the optional shapeReferencePoint. The range is swept between a horizontal start and a "]
+    #[doc = " * horizontal end angle in the X-Y plane of a cartesian coordinate system specified outside of the "]
+    #[doc = " * context of this DF, in a right-hand positive angular direction w.r.t. the x-axis. "]
+    #[doc = " * A vertical opening angle in the X-Z plane may optionally be provided in a right-hand positive "]
+    #[doc = " * angular direction w.r.t. the x-axis. "]
     #[doc = " *"]
     #[doc = " * It shall include the following components:"]
     #[doc = " * "]
-    #[doc = " * @field shapeReferencePoint: the optional reference point used for the definition of the shape, relative to an externally specified reference position. "]
-    #[doc = " * If this component is absent, the externally specified reference position represents the shape's  reference point. "]
+    #[doc = " * @field shapeReferencePoint: the optional reference point used for the definition of the shape, "]
+    #[doc = " * relative to an externally specified reference position. If this component is absent, the  "]
+    #[doc = " * externally specified reference position represents the shape's reference point. "]
     #[doc = " *"]
     #[doc = " * @field range: the radial range of the shape from the shape's reference point. "]
     #[doc = " *"]
-    #[doc = " * @field stationaryHorizontalOpeningAngleStart:  the orientation indicating the beginning of the "]
-    #[doc = " * shape's horizontal opening angle in positive angular direction with respect to the "]
-    #[doc = " * WGS84 coordinate system."]
+    #[doc = " * @field horizontalOpeningAngleStart: the start of the shape's horizontal opening angle. "]
     #[doc = " *"]
-    #[doc = " * @field stationaryHorizontalOpeningAngleEnd: The orientation indicating the end of the shape's "]
-    #[doc = " * horizontal opening angle in positive angular direction with respect to the WGS84 coordinate system."]
+    #[doc = " * @field horizontalOpeningAngleEnd: the end of the shape's horizontal opening angle. "]
     #[doc = " *"]
-    #[doc = " * @field verticalOpeningAngleStart: optional orientation indicating the beginning of the shape's"]
-    #[doc = " * opening angle in positive angular direction of a Cartesian coordinate system with its x-axis "]
-    #[doc = " * located in the north-east plane of the WGS84 coordinate system."]
+    #[doc = " * @field verticalOpeningAngleStart: optional start of the shape's vertical opening angle. "]
     #[doc = " *"]
-    #[doc = " * @field verticalOpeningAngleEnd: optional orientation indicating the end of the shape's "]
-    #[doc = " * vertical opening angle in positive angular direction of a Cartesian coordinate system with its x-axis "]
-    #[doc = " * located in the north-east plane of the WGS84 coordinate system. "]
+    #[doc = " * @field verticalOpeningAngleEnd: optional end of the shape's vertical opening angle. "]
     #[doc = " *"]
     #[doc = " * @category GeoReference information"]
-    #[doc = " * @revision: created in V2.1.1"]
+    #[doc = " * @revision: created in V2.1.1, names and types of the horizontal opening angles changed, constraint added and description revised in V2.2.1"]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -4890,10 +5624,10 @@ pub mod etsi_its_cdd {
         #[rasn(identifier = "shapeReferencePoint")]
         pub shape_reference_point: Option<CartesianPosition3d>,
         pub range: StandardLength12b,
-        #[rasn(identifier = "stationaryHorizontalOpeningAngleStart")]
-        pub stationary_horizontal_opening_angle_start: Wgs84AngleValue,
-        #[rasn(identifier = "stationaryHorizontalOpeningAngleEnd")]
-        pub stationary_horizontal_opening_angle_end: Wgs84AngleValue,
+        #[rasn(identifier = "horizontalOpeningAngleStart")]
+        pub horizontal_opening_angle_start: CartesianAngleValue,
+        #[rasn(identifier = "horizontalOpeningAngleEnd")]
+        pub horizontal_opening_angle_end: CartesianAngleValue,
         #[rasn(identifier = "verticalOpeningAngleStart")]
         pub vertical_opening_angle_start: Option<CartesianAngleValue>,
         #[rasn(identifier = "verticalOpeningAngleEnd")]
@@ -4903,50 +5637,43 @@ pub mod etsi_its_cdd {
         pub fn new(
             shape_reference_point: Option<CartesianPosition3d>,
             range: StandardLength12b,
-            stationary_horizontal_opening_angle_start: Wgs84AngleValue,
-            stationary_horizontal_opening_angle_end: Wgs84AngleValue,
+            horizontal_opening_angle_start: CartesianAngleValue,
+            horizontal_opening_angle_end: CartesianAngleValue,
             vertical_opening_angle_start: Option<CartesianAngleValue>,
             vertical_opening_angle_end: Option<CartesianAngleValue>,
         ) -> Self {
             Self {
                 shape_reference_point,
                 range,
-                stationary_horizontal_opening_angle_start,
-                stationary_horizontal_opening_angle_end,
+                horizontal_opening_angle_start,
+                horizontal_opening_angle_end,
                 vertical_opening_angle_start,
                 vertical_opening_angle_end,
             }
         }
     }
     #[doc = "*"]
-    #[doc = " * This DF describes a radial shape details. The triangular or cone-shaped volume is"]
-    #[doc = " * constructed by sweeping the provided range about the reference point  or about the offset"]
-    #[doc = " * point (if provided) between a horizontal start and a horizontal end angle in positive angular direction of the WGS84"]
-    #[doc = " * coordinate system. A vertical opening angle may be provided in a Cartesian coordinate system with"]
-    #[doc = " * the x-axis located in the North-East plane of the WGS84 coordinate system. The sensor height may"]
-    #[doc = " * be provided to reflect characteristics of sensors mounted at an altitude (e.g. sensors mounted"]
-    #[doc = " * above intersections)."]
-    #[doc = " *"]
+    #[doc = " * This DF describes radial shape details. The circular sector or cone is"]
+    #[doc = " * constructed by sweeping the provided range about the position specified outside of the  "]
+    #[doc = " * context of this DF. The range is swept between a horizontal start and a horizontal end angle in "]
+    #[doc = " * the X-Y plane of a right-hand cartesian coordinate system specified outside of the context of "]
+    #[doc = " * this DF, in positive angular direction w.r.t. the x-axis. A vertical opening angle in the X-Z "]
+    #[doc = " * plane may optionally be provided in positive angular direction w.r.t. the x-axis."]
+    #[doc = " * "]
     #[doc = " * It shall include the following components:"]
     #[doc = " * "]
     #[doc = " * @field range: the radial range of the sensor from the reference point or sensor point offset. "]
     #[doc = " *"]
-    #[doc = " * @field horizontalOpeningAngleStart:  the orientation indicating the beginning of the "]
-    #[doc = " * shape's horizontal opening angle in positive angular direction."]
+    #[doc = " * @field horizontalOpeningAngleStart:  the start of the shape's horizontal opening angle."]
     #[doc = " *"]
-    #[doc = " * @field horizontalOpeningAngleEnd: The orientation indicating the end of the shape's horizontal "]
-    #[doc = " * opening angle in positive angular direction."]
+    #[doc = " * @field horizontalOpeningAngleEnd: the end of the shape's horizontal opening angle. "]
     #[doc = " *"]
-    #[doc = " * @field verticalOpeningAngleStart: optional orientation indicating the beginning of the shape's "]
-    #[doc = " * vertical opening angle in positive angular direction of a Cartesian coordinate system with its x-axis "]
-    #[doc = " * located in the north-east plane of the WGS84 coordinate system."]
+    #[doc = " * @field verticalOpeningAngleStart: optional start of the shape's vertical opening angle. "]
     #[doc = " *"]
-    #[doc = " * @field verticalOpeningAngleEnd: optional orientation indicating the end of the shape's "]
-    #[doc = " * vertical opening angle in positive angular direction of a Cartesian coordinate system with its x-axis "]
-    #[doc = " * located in the north-east plane of the WGS84 coordinate system. "]
+    #[doc = " * @field verticalOpeningAngleEnd: optional end of the shape's vertical opening angle. "]
     #[doc = " *"]
     #[doc = " * @category: Georeference information"]
-    #[doc = " * @revision: created in V2.1.1"]
+    #[doc = " * @revision: created in V2.1.1, description revised and constraint added in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -4979,22 +5706,24 @@ pub mod etsi_its_cdd {
         }
     }
     #[doc = "*"]
-    #[doc = " * This DF describes a list of radial shapes. "]
+    #[doc = " * This DF describes a list of radial shapes positioned w.r.t. to an offset position defined  "]
+    #[doc = " * relative to a reference position specified outside of the context of this DF and oriented w.r.t.  "]
+    #[doc = " * a cartesian coordinate system specified outside of the context of this DF. "]
     #[doc = " *"]
     #[doc = " * It shall include the following components:"]
-    #[doc = ""]
+    #[doc = " *"]
     #[doc = " * @field refPointId: the identification of the reference point in case of a sensor mounted to trailer. Defaults to ITS ReferencePoint (0)."]
     #[doc = " * "]
-    #[doc = " * @field xCoordinate: the x-coordinate of the offset point."]
+    #[doc = " * @field xCoordinate: the x-coordinate of the offset position."]
     #[doc = " *"]
-    #[doc = " * @field yCoordinate: the y-coordinate of the offset point."]
+    #[doc = " * @field yCoordinate: the y-coordinate of the offset position."]
     #[doc = " *"]
-    #[doc = " * @field zCoordinate: the optional z-coordinate of the offset point."]
+    #[doc = " * @field zCoordinate: the optional z-coordinate of the offset position."]
     #[doc = " *"]
     #[doc = " * @field radialShapesList: the list of radial shape details."]
     #[doc = " *"]
     #[doc = " * @category: Georeference information"]
-    #[doc = " * @revision: created in V2.1.1"]
+    #[doc = " * @revision: created in V2.1.1, description revised in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -5055,46 +5784,52 @@ pub mod etsi_its_cdd {
     #[rasn(delegate, value("0..=255"))]
     pub struct RailwayLevelCrossingSubCauseCode(pub u8);
     #[doc = "* "]
-    #[doc = " * This DF represents the shape of a rectangular area or a right rectangular prism that is centred on a reference position defined outside of the context of this DF. "]
+    #[doc = " * This DF represents the shape of a rectangular area or a right rectangular prism that is centred "]
+    #[doc = " * on a reference position defined outside of the context of this DF and oriented w.r.t. a cartesian    "]
+    #[doc = " * coordinate system defined outside of the context of this DF. "]
     #[doc = " *"]
     #[doc = " * It shall include the following components: "]
     #[doc = " * "]
-    #[doc = " * @field centerPoint: represents an optional offset point which the rectangle is centred on with respect to the reference position."]
+    #[doc = " * @field shapeReferencePoint: represents an optional offset point which the rectangle is centred on with "]
+    #[doc = " * respect to the reference position. If this component is absent, the externally specified  "]
+    #[doc = " * reference position represents the shape's reference point. "]
     #[doc = " *"]
-    #[doc = " * @field semiLength: represents half the length of the rectangle."]
+    #[doc = " * @field semiLength: represents half the length of the rectangle located in the X-Y Plane."]
     #[doc = " * "]
-    #[doc = " * @field semiBreadth: represents half the breadth of the rectangle."]
+    #[doc = " * @field semiBreadth: represents half the breadth of the rectangle located in the X-Y Plane."]
     #[doc = " *"]
-    #[doc = " * @field orientation: represents the optional orientation of the lenght of the rectangle in the WGS84 coordinate system."]
-    #[doc = " * The specific WGS84 coordinate system is specified by the corresponding standards applying this DE."]
+    #[doc = " * @field orientation: represents the optional orientation of the length of the rectangle, "]
+    #[doc = " * measured with positive values turning around the Z-axis using the right-hand rule, starting from"]
+    #[doc = " * the X-axis. "]
     #[doc = " *"]
-    #[doc = " * @field height: represents the optional height, present if the shape is a right rectangular prism with height extending in the positive z-axis."]
+    #[doc = " * @field height: represents the optional height, present if the shape is a right rectangular prism "]
+    #[doc = " * with height extending in the positive Z-axis."]
     #[doc = " *"]
     #[doc = " * @category GeoReference information"]
-    #[doc = " * @revision: created in V2.1.1"]
+    #[doc = " * @revision: created in V2.1.1, centerPoint renamed to shapeReferencePoint, the type of the field orientation changed and description revised in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct RectangularShape {
-        #[rasn(identifier = "centerPoint")]
-        pub center_point: Option<CartesianPosition3d>,
+        #[rasn(identifier = "shapeReferencePoint")]
+        pub shape_reference_point: Option<CartesianPosition3d>,
         #[rasn(identifier = "semiLength")]
         pub semi_length: StandardLength12b,
         #[rasn(identifier = "semiBreadth")]
         pub semi_breadth: StandardLength12b,
-        pub orientation: Option<Wgs84AngleValue>,
+        pub orientation: Option<CartesianAngleValue>,
         pub height: Option<StandardLength12b>,
     }
     impl RectangularShape {
         pub fn new(
-            center_point: Option<CartesianPosition3d>,
+            shape_reference_point: Option<CartesianPosition3d>,
             semi_length: StandardLength12b,
             semi_breadth: StandardLength12b,
-            orientation: Option<Wgs84AngleValue>,
+            orientation: Option<CartesianAngleValue>,
             height: Option<StandardLength12b>,
         ) -> Self {
             Self {
-                center_point,
+                shape_reference_point,
                 semi_length,
                 semi_breadth,
                 orientation,
@@ -5261,16 +5996,19 @@ pub mod etsi_its_cdd {
     #[doc = " * This DE represents the value of the sub cause codes of the @ref CauseCode `rescueAndRecoveryWorkInProgress` "]
     #[doc = " * "]
     #[doc = " * The value shall be set to:"]
-    #[doc = " * - 0 `unavailable`             - in case further detailed information on rescue and recovery work is unavailable,"]
-    #[doc = " * - 1 `emergencyVehicles`       - in case rescue work is ongoing by emergency vehicles,"]
-    #[doc = " * - 2 `rescueHelicopterLanding` - in case rescue helicopter is landing,"]
-    #[doc = " * - 3 `policeActivityOngoing`   - in case police activity is ongoing,"]
-    #[doc = " * - 4 `medicalEmergencyOngoing` - in case medical emergency recovery is ongoing,"]
-    #[doc = " * - 5 `childAbductionInProgress`- in case a child kidnapping alarm is activated and rescue work is ongoing,"]
-    #[doc = " * - 6-255: reserved for future usage."]
+    #[doc = " * - 0 `unavailable`              - in case further detailed information on rescue and recovery work is unavailable,"]
+    #[doc = " * - 1 `emergencyVehicles`        - in case rescue and/or safeguarding work is ongoing by emergency vehicles, i.e. by vehicles that have the absolute right of way,"]
+    #[doc = " * - 2 `rescueHelicopterLanding`  - in case rescue helicopter is landing,"]
+    #[doc = " * - 3 `policeActivityOngoing`    - in case police activity is ongoing (only to be used if a more specific sub cause than (1) is needed),"]
+    #[doc = " * - 4 `medicalEmergencyOngoing`  - in case medical emergency recovery is ongoing (only to be used if a more specific sub cause than (1) is needed),"]
+    #[doc = " * - 5 `childAbductionInProgress` - in case a child kidnapping alarm is activated and rescue work is ongoing (only to be used if a more specific sub cause than (1) is needed),"]
+    #[doc = " * - 6 `prioritizedVehicle`       - in case rescue and/or safeguarding work is ongoing by prioritized vehicles, i.e. by vehicles that have priority but not the absolute right of way,"]
+    #[doc = " * - 7 `rescueAndRecoveryVehicle` - in case technical rescue work is ongoing by rescue and recovery vehicles."]
+    #[doc = " * - 8-255: reserved for future usage."]
+    #[doc = ""]
     #[doc = " *"]
     #[doc = " * @category: Traffic information"]
-    #[doc = " * @revision: V1.3.1"]
+    #[doc = " * @revision: V1.3.1, named values 6 and 7 added in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
@@ -5284,6 +6022,135 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=3", extensible))]
     pub struct RestrictedTypes(pub SequenceOf<StationType>);
+    #[doc = "* "]
+    #[doc = " * This DF provides configuration information about a road section."]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " *"]
+    #[doc = " * @field roadSectionDefinition: the topological definition of the road section for which the information in the other components applies throughout its entire length."]
+    #[doc = " * "]
+    #[doc = " * @field roadType: the optional type of road on which the section is located."]
+    #[doc = " * "]
+    #[doc = " * @field laneConfiguration: the optional configuration of the road section in terms of basic information per lane."]
+    #[doc = " *"]
+    #[doc = " * @field mapemConfiguration: the optional configuration of the road section in terms of MAPEM lanes or connections."]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RoadConfigurationSection {
+        #[rasn(identifier = "roadSectionDefinition")]
+        pub road_section_definition: RoadSectionDefinition,
+        #[rasn(identifier = "roadType")]
+        pub road_type: Option<RoadType>,
+        #[rasn(identifier = "laneConfiguration")]
+        pub lane_configuration: Option<BasicLaneConfiguration>,
+        #[rasn(identifier = "mapemConfiguration")]
+        pub mapem_configuration: Option<MapemConfiguration>,
+    }
+    impl RoadConfigurationSection {
+        pub fn new(
+            road_section_definition: RoadSectionDefinition,
+            road_type: Option<RoadType>,
+            lane_configuration: Option<BasicLaneConfiguration>,
+            mapem_configuration: Option<MapemConfiguration>,
+        ) -> Self {
+            Self {
+                road_section_definition,
+                road_type,
+                lane_configuration,
+                mapem_configuration,
+            }
+        }
+    }
+    #[doc = "*"]
+    #[doc = " * This DF shall contain a list of @ref RoadConfigurationSection."]
+    #[doc = " * "]
+    #[doc = " * @category: Road Topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=8", extensible))]
+    pub struct RoadConfigurationSectionList(pub SequenceOf<RoadConfigurationSection>);
+    #[doc = "* "]
+    #[doc = " * This DF provides the basic topological definition of a road section."]
+    #[doc = " *"]
+    #[doc = " * It shall include the following components: "]
+    #[doc = " * "]
+    #[doc = " * @field startingPointSection: the position of the starting point of the section. "]
+    #[doc = " * "]
+    #[doc = " * @field lengthOfSection: the optional length of the section along the road profile (i.e. including curves)."]
+    #[doc = " * "]
+    #[doc = " * @field endingPointSection: the optional position of the ending point of the section. "]
+    #[doc = " * If this component is absent, the ending position is implicitly defined by other means, e.g. the starting point of the next RoadConfigurationSection, or the section�s length."]
+    #[doc = " *"]
+    #[doc = " * @field connectedPaths: the identifier(s) of the path(s) having one or an ordered subset of waypoints located upstream of the RoadConfigurationSection� starting point. "]
+    #[doc = " * "]
+    #[doc = " * @field includedPaths: the identifier(s) of the path(s) that covers (either with all its length or with a part of it) a RoadConfigurationSection. "]
+    #[doc = " *"]
+    #[doc = " * @field isEventZoneIncluded: indicates, if set to TRUE, that the @ref EventZone incl. its reference position covers a RoadConfigurationSection (either with all its length or with a part of it). "]
+    #[doc = " * "]
+    #[doc = " * @field isEventZoneConnected: indicates, if set to TRUE, that the @ref EventZone incl. its reference position has one or an ordered subset of waypoints located upstream of the RoadConfigurationSection� starting point."]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RoadSectionDefinition {
+        #[rasn(identifier = "startingPointSection")]
+        pub starting_point_section: GeoPosition,
+        #[rasn(identifier = "lengthOfSection")]
+        pub length_of_section: Option<StandardLength2B>,
+        #[rasn(identifier = "endingPointSection")]
+        pub ending_point_section: Option<GeoPosition>,
+        #[rasn(identifier = "connectedPaths")]
+        pub connected_paths: PathReferences,
+        #[rasn(identifier = "includedPaths")]
+        pub included_paths: PathReferences,
+        #[rasn(identifier = "isEventZoneIncluded")]
+        pub is_event_zone_included: bool,
+        #[rasn(identifier = "isEventZoneConnected")]
+        pub is_event_zone_connected: bool,
+    }
+    impl RoadSectionDefinition {
+        pub fn new(
+            starting_point_section: GeoPosition,
+            length_of_section: Option<StandardLength2B>,
+            ending_point_section: Option<GeoPosition>,
+            connected_paths: PathReferences,
+            included_paths: PathReferences,
+            is_event_zone_included: bool,
+            is_event_zone_connected: bool,
+        ) -> Self {
+            Self {
+                starting_point_section,
+                length_of_section,
+                ending_point_section,
+                connected_paths,
+                included_paths,
+                is_event_zone_included,
+                is_event_zone_connected,
+            }
+        }
+    }
+    #[doc = "* "]
+    #[doc = " * This DE indicates an ordinal number that represents the position of a component in the list @ref RoadConfigurationSectionList. "]
+    #[doc = " *"]
+    #[doc = " * The value shall be set to:"]
+    #[doc = " * - `0`     - if no road section is identified"]
+    #[doc = " * - `1..8`  - for instances 1..8 of @ref RoadConfigurationSectionList "]
+    #[doc = " *"]
+    #[doc = " * @category: Road topology information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=8", extensible))]
+    pub struct RoadSectionId(pub Integer);
     #[doc = "*"]
     #[doc = " * This DF represents a unique id for a road segment"]
     #[doc = " *"]
@@ -5440,6 +6307,34 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=31"))]
     pub struct SensorType(pub u8);
+    #[doc = "* "]
+    #[doc = " * This DE indicates the type of sensor(s)."]
+    #[doc = " * The corresponding bit shall be set to 1 under the following conditions:"]
+    #[doc = " * "]
+    #[doc = " * - 0  `undefined`         - in case the sensor type is undefined. "]
+    #[doc = " * - 1  `radar`             - in case the sensor is a radar,"]
+    #[doc = " * - 2  `lidar`             - in case the sensor is a lidar,"]
+    #[doc = " * - 3  `monovideo`         - in case the sensor is mono video,"]
+    #[doc = " * - 4  `stereovision`      - in case the sensor is stereo vision,"]
+    #[doc = " * - 5  `nightvision`       - in case the sensor is night vision,"]
+    #[doc = " * - 6  `ultrasonic`        - in case the sensor is ultrasonic,"]
+    #[doc = " * - 7  `pmd`               - in case the sensor is photonic mixing device,"]
+    #[doc = " * - 8  `inductionLoop`     - in case the sensor is an induction loop,"]
+    #[doc = " * - 9  `sphericalCamera`   - in case the sensor is a spherical camera,"]
+    #[doc = " * - 10 `uwb`               - in case the sensor is ultra wide band,"]
+    #[doc = " * - 11 `acoustic`          - in case the sensor is acoustic,"]
+    #[doc = " * - 12 `localAggregation`  - in case the information is provided by a system that aggregates information from different local sensors. Aggregation may include fusion,"]
+    #[doc = " * - 13 `itsAggregation`    - in case the information is provided by a system that aggregates information from other received ITS messages."]
+    #[doc = " * - 14-15                  - are reserved for future usage."]
+    #[doc = " * "]
+    #[doc = " * @note: If all bits are set to 0, then no sensor type is used"]
+    #[doc = " *"]
+    #[doc = " * @category: Sensing Information"]
+    #[doc = " * @revision: created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("16", extensible))]
+    pub struct SensorTypes(pub BitString);
     #[doc = "*"]
     #[doc = " * This DE represents a sequence number."]
     #[doc = " * "]
@@ -5940,6 +6835,26 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("-511..=512"))]
     pub struct SteeringWheelAngleValue(pub i16);
+    #[doc = "* "]
+    #[doc = " * This DE indicates the type of stored information."]
+    #[doc = " *"]
+    #[doc = " * The corresponding bit shall be set to 1 under the following conditions:"]
+    #[doc = " * "]
+    #[doc = " * - `0` undefined        - in case the stored information type is undefined. "]
+    #[doc = " * - `1` staticDb         - in case the stored information type is a static database."]
+    #[doc = " * - `2` dynamicDb        - in case the stored information type is a dynamic database"]
+    #[doc = " * - `3` realTimeDb       - in case the stored information type is a real time updated database."]
+    #[doc = " * - `4` map              - in case the stored information type is a road topology map."]
+    #[doc = " * - Bits 5 to 7          - are reserved for future use."]
+    #[doc = " *"]
+    #[doc = " * @note: If all bits are set to 0, then no stored information type is used"]
+    #[doc = " *"]
+    #[doc = " * @category: Basic Information"]
+    #[doc = " * @revision: created in V2.2.1"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("8", extensible))]
+    pub struct StoredInformationType(pub BitString);
     #[doc = "*"]
     #[doc = " * This DE indicates the generic sub cause of a detected event."]
     #[doc = " * "]
@@ -5988,7 +6903,7 @@ pub mod etsi_its_cdd {
     #[rasn(delegate, value("0..=4398046511103"))]
     pub struct TimestampIts(pub u64);
     #[doc = "*"]
-    #[doc = " * This DF represents one or more paths using @ref PathHistory."]
+    #[doc = " * This DF represents one or more paths using @ref Path."]
     #[doc = " * "]
     #[doc = " * @category: GeoReference information"]
     #[doc = " * @revision: Description revised in V2.1.1. Is is now based on Path and not on PathHistory"]
@@ -5997,50 +6912,59 @@ pub mod etsi_its_cdd {
     #[rasn(delegate, size("1..=7"))]
     pub struct Traces(pub SequenceOf<Path>);
     #[doc = "*"]
+    #[doc = " * This DF represents one or more paths using @ref PathExtended."]
+    #[doc = " * "]
+    #[doc = " * @category: GeoReference information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=7"))]
+    pub struct TracesExtended(pub SequenceOf<PathExtended>);
+    #[doc = "*"]
     #[doc = " * This DE represents the value of the sub cause codes of the @ref CauseCode `trafficCondition`. "]
     #[doc = " * "]
     #[doc = " * The value shall be set to:"]
-    #[doc = " * - 0 `unavailable`                 - in case further detailed information on traffic jam is unavailable,"]
-    #[doc = " * - 1 `increasedVolumeOfTraffic`    - in case detected jam volume is increased,"]
-    #[doc = " * - 2 `trafficJamSlowlyIncreasing`  - in case detected traffic jam volume is increasing slowly,"]
-    #[doc = " * - 3 `trafficJamIncreasing`        - in case traffic jam volume is increasing,"]
-    #[doc = " * - 4 `trafficJamStronglyIncreasing`- in case traffic jam volume is strongly increasing,"]
-    #[doc = " * - 5 `trafficStationary`           - in case traffic is stationary,"]
-    #[doc = " * - 6 `trafficJamSlightlyDecreasing`- in case traffic jam volume is decreasing slowly,"]
-    #[doc = " * - 7 `trafficJamDecreasing`        - in case traffic jam volume is decreasing,"]
-    #[doc = " * - 8 `trafficJamStronglyDecreasing`- in case traffic jam volume is decreasing rapidly,"]
-    #[doc = " * - 9-255: reserved for future usage."]
+    #[doc = " * - 0 `unavailable`                  - in case further detailed information on the traffic condition is unavailable,"]
+    #[doc = " * - 1 `increasedVolumeOfTraffic`     - in case the type of traffic condition is increased traffic volume,"]
+    #[doc = " * - 2 `trafficJamSlowlyIncreasing`   - in case the type of traffic condition is a traffic jam which volume is increasing slowly,"]
+    #[doc = " * - 3 `trafficJamIncreasing`         - in case the type of traffic condition is a traffic jam which volume is increasing,"]
+    #[doc = " * - 4 `trafficJamStronglyIncreasing` - in case the type of traffic condition is a traffic jam which volume is strongly increasing,"]
+    #[doc = " * - 5 `trafficJam`         `         - in case the type of traffic condition is a traffic jam and no further detailed information about its volume is available,"]
+    #[doc = " * - 6 `trafficJamSlightlyDecreasing` - in case the type of traffic condition is a traffic jam which volume is decreasing slowly,"]
+    #[doc = " * - 7 `trafficJamDecreasing`         - in case the type of traffic condition is a traffic jam which volume is decreasing,"]
+    #[doc = " * - 8 `trafficJamStronglyDecreasing` - in case the type of traffic condition is a traffic jam which volume is decreasing rapidly,"]
+    #[doc = " * - 9 `trafficJamStable`             - in case the traffic condition is a traffic jam with stable volume,"]
+    #[doc = " * - 10-255: reserved for future usage."]
     #[doc = " *"]
     #[doc = " * @category: Traffic information"]
-    #[doc = " * @revision: V1.3.1"]
+    #[doc = " * @revision: V1.3.1, definition of value 0 and 1 changed in V2.2.1, name and definition of value 5 changed in V2.2.1, value 9 added in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct TrafficConditionSubCauseCode(pub u8);
     #[doc = "*"]
-    #[doc = " * This DE indicates a traffic direction that is relevant to information indicated in a message."]
+    #[doc = " * This DE indicates a direction of traffic with respect to a reference direction, and a portion of that traffic with respect to a reference position."]
     #[doc = " * "]
     #[doc = " * The value shall be set to:"]
-    #[doc = " * - 0 `allTrafficDirections` - for all traffic directions, "]
-    #[doc = " * - 1 `upstreamTraffic`      - for upstream traffic, "]
-    #[doc = " * - 2 `downstreamTraffic`    - for downstream traffic, "]
-    #[doc = " * - 3 `oppositeTraffic`      - for traffic in the opposite direction. "]
+    #[doc = " * - 0 `allTrafficDirections`                                    - for all directions of traffic, "]
+    #[doc = " * - 1 `sameAsReferenceDirection-upstreamOfReferencePosition`    - for the direction of traffic according to the reference direction, and the portion of traffic upstream of the reference position, "]
+    #[doc = " * - 2 `sameAsReferenceDirection-downstreamOfReferencePosition`  - for the direction of traffic according to the reference direction, and the portion of traffic downstream of the reference position, "]
+    #[doc = " * - 3 `oppositeToReferenceDirection`                            - for the direction of traffic opposite to the reference direction. "]
     #[doc = " *"]
-    #[doc = " * The terms `upstream`, `downstream` and `oppositeTraffic` are relative to the event position."]
-    #[doc = " *"]
-    #[doc = " * @note: Upstream traffic corresponds to the incoming traffic towards the event position,"]
-    #[doc = " * and downstream traffic to the departing traffic away from the event position."]
-    #[doc = " *"]
+    #[doc = " * @note: Upstream traffic corresponds to the incoming traffic towards the event position, and downstream traffic to the departing traffic away from the event position."]
     #[doc = " * @category: GeoReference information"]
-    #[doc = " * @revision: Created in V2.1.1 from RelevanceTrafficDirection"]
+    #[doc = " * @revision: Created in V2.1.1 from RelevanceTrafficDirection, description and naming of values changed in V2.2.1"]
+    #[doc = " *"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum TrafficDirection {
         allTrafficDirections = 0,
-        upstreamTraffic = 1,
-        downstreamTraffic = 2,
-        oppositeTraffic = 3,
+        #[rasn(identifier = "sameAsReferenceDirection-upstreamOfReferencePosition")]
+        sameAsReferenceDirection_upstreamOfReferencePosition = 1,
+        #[rasn(identifier = "sameAsReferenceDirection-downstreamOfReferencePosition")]
+        sameAsReferenceDirection_downstreamOfReferencePosition = 2,
+        oppositeToReferenceDirection = 3,
     }
     #[doc = "*"]
     #[doc = " * Ths DF represents the a position on a traffic island between two lanes. "]
@@ -6108,6 +7032,7 @@ pub mod etsi_its_cdd {
     #[doc = " * - `1` - if overtaking is prohibited for trucks,"]
     #[doc = " * - `2` - if vehicles should pass to the right lane,"]
     #[doc = " * - `3` - if vehicles should pass to the left lane."]
+    #[doc = " * - `4` - if vehicles should pass to the left or right lane."]
     #[doc = " *"]
     #[doc = " * @category: Infrastructure information, Traffic information"]
     #[doc = " * @revision: Editorial update in V2.1.1"]
@@ -6120,6 +7045,8 @@ pub mod etsi_its_cdd {
         noPassingForTrucks = 1,
         passToRight = 2,
         passToLeft = 3,
+        #[rasn(extension_addition)]
+        passToLeftOrRight = 4,
     }
     #[doc = "* "]
     #[doc = " * This DF provides detailed information about an attached trailer."]
@@ -6325,6 +7252,25 @@ pub mod etsi_its_cdd {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=255"))]
     pub struct TurningRadius(pub u8);
+    #[doc = "*"]
+    #[doc = " * This DE represents indication of how a certain path or area will be used. "]
+    #[doc = " * "]
+    #[doc = " * The value shall be set to:"]
+    #[doc = " * - 0  - ` noIndication `     - in case it will remain free to be used,"]
+    #[doc = " * - 1  - ` specialUse `       - in case it will be physically blocked by special use,"]
+    #[doc = " * - 2  - ` rescueOperation`   - in case it is intended to be used for rescue operations,"]
+    #[doc = " *"]
+    #[doc = " * @category: Basic information"]
+    #[doc = " * @revision: Created in V2.2.1"]
+    #[doc = " "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum UsageIndication {
+        noIndication = 0,
+        specialUse = 1,
+        rescueOperation = 2,
+    }
     #[doc = "*"]
     #[doc = " * This DE represents the Vehicle Descriptor Section (VDS). The values are assigned according to ISO 3779 [6]."]
     #[doc = " * "]
@@ -6561,13 +7507,13 @@ pub mod etsi_its_cdd {
     #[doc = " * - 9 `commercial`       - to indicate that the vehicle is used for transportation of commercial goods,"]
     #[doc = " * - 10 `military`        - to indicate that the vehicle is used for military purpose, "]
     #[doc = " * - 11 `roadOperator`    - to indicate that the vehicle is used in road operator missions,"]
-    #[doc = " * - 12 `taxi`            - to indicate that the vehicle is used to provide an authorized taxi service."]
-    #[doc = " * - 13 `reserved`        - is reserved for future usage."]
-    #[doc = " * - 14 `reserved`        - is reserved for future usage."]
-    #[doc = " * - 15 `reserved`        - is reserved for future usage."]
+    #[doc = " * - 12 `taxi`            - to indicate that the vehicle is used to provide an authorized taxi service,"]
+    #[doc = " * - 13 `uvar`            - to indicate that the vehicle is authorized to enter a zone according to the applicable Urban Vehicle Access Restrictions."]
+    #[doc = " * - 14 `rfu1`            - is reserved for future usage."]
+    #[doc = " * - 15 `rfu2`            - is reserved for future usage."]
     #[doc = " * "]
     #[doc = " * @category: Vehicle Information"]
-    #[doc = " * @revision: Description updated in V2.1.1 (removed reference to CEN/TS 16157-3)"]
+    #[doc = " * @revision: Description updated in V2.1.1 (removed reference to CEN/TS 16157-3), value 13 assigned in V2.2.1"]
     #[doc = " "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
@@ -6585,9 +7531,9 @@ pub mod etsi_its_cdd {
         military = 10,
         roadOperator = 11,
         taxi = 12,
-        reserved1 = 13,
-        reserved2 = 14,
-        reserved3 = 15,
+        uvar = 13,
+        rfu1 = 14,
+        rfu2 = 15,
     }
     #[doc = "*"]
     #[doc = " * This DE represents the width of a vehicle, excluding side mirrors and possible similar extensions."]
@@ -6794,17 +7740,18 @@ pub mod etsi_its_cdd {
     #[doc = " *"]
     #[doc = " * It shall include the following components: "]
     #[doc = " *"]
-    #[doc = " * @field clusterId: optional identifier of a VRU cluster ."]
+    #[doc = " * @field clusterId: optional identifier of a VRU cluster."]
     #[doc = " *"]
-    #[doc = " * @field clusterBoundingBoxShape: optionally indicates the shape of the cluster bounding box."]
+    #[doc = " * @field clusterBoundingBoxShape: optionally indicates the shape of the cluster bounding box, per default inside an East-North-Up coordinate system "]
+    #[doc = " * centered around a reference point defined outside of the context of this DF."]
     #[doc = " *"]
-    #[doc = " * @field clusterCardinalitySize: indicates an estimation of the number of VRUs in the group, i.e. the known members in the cluster + 1 (for the cluster leader) ."]
+    #[doc = " * @field clusterCardinalitySize: indicates an estimation of the number of VRUs in the group, e.g. the known members in the cluster + 1 (for the cluster leader) ."]
     #[doc = " *"]
-    #[doc = " * @field clusterProfiles: optionally identifies all the VRU profile types that are known to be within the cluster."]
+    #[doc = " * @field clusterProfiles: optionally identifies all the VRU profile types that are estimated to be within the cluster."]
     #[doc = " * if this component is absent it means that the information is unavailable. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, description revised in V2.2.1"]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -6865,25 +7812,14 @@ pub mod etsi_its_cdd {
     #[doc = " * - 6 `playingGames`     - to indicate that the human is playing games,"]
     #[doc = " * - 7 `reading`          - to indicate that the human is reading on the VRU device,"]
     #[doc = " * - 8 `viewing`          - to indicate that the human is watching dynamic content, including following navigation prompts, viewing videos or other visual contents that are not static."]
-    #[doc = " * - value 9 to 255       - are reserved for future usage. Value 255 set to \"max\" in order to bound the size of the encoded field."]
+    #[doc = " * - value 9 to 15        - are reserved for future usage. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1 and range changed from 0..255 to 0..15"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruDeviceUsage {
-        unavailable = 0,
-        other = 1,
-        idle = 2,
-        listeningToAudio = 3,
-        typing = 4,
-        calling = 5,
-        playingGames = 6,
-        reading = 7,
-        viewing = 8,
-        max = 255,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct VruDeviceUsage(pub u8);
     #[doc = "*"]
     #[doc = " * This DE represents the possible VRU environment conditions."]
     #[doc = " *"]
@@ -6894,22 +7830,14 @@ pub mod etsi_its_cdd {
     #[doc = " * - 3 `sidewalk`               - to indicate that the VRU is on a sidewalk,"]
     #[doc = " * - 4 `onVehicleRoad`          - to indicate that the VRU is on a traffic lane,"]
     #[doc = " * - 5 `protectedGeographicArea`- to indicate that the VRU is in a protected area."]
-    #[doc = " * - value 5 to 255             - are reserved for future usage. Value 255 is set to \"max\" in order to bound the size of the encoded field."]
+    #[doc = " * - value 6 to 15              - are reserved for future usage. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1 and range changed from 0..255 to 0..15"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruEnvironment {
-        unavailable = 0,
-        intersectionCrossing = 1,
-        zebraCrossing = 2,
-        sidewalk = 3,
-        onVehicleRoad = 4,
-        protectedGeographicArea = 5,
-        max = 255,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct VruEnvironment(pub u8);
     #[doc = "*"]
     #[doc = " * This DF represents the status of the exterior light switches of a VRU."]
     #[doc = " * This DF is an extension of the vehicular DE @ref ExteriorLights."]
@@ -6950,23 +7878,14 @@ pub mod etsi_its_cdd {
     #[doc = " * - 4 `brakingAndStopPedaling`      - to indicate that the VRU stopped pedaling an is braking,"]
     #[doc = " * - 5 `hardBrakingAndStopPedaling`  - to indicate that the VRU stopped pedaling an is braking hard,"]
     #[doc = " * - 6 `noReaction`                  - to indicate that the VRU is not changing its behavior."]
-    #[doc = " * - 7 to 255                        - are reserved for future usage. Value 255 is set to \"max\" in order to bound the size of the encoded field."]
+    #[doc = " * - 7 to 15                         - are reserved for future usage. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1 and range changed from 0..255 to 0..15"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruMovementControl {
-        unavailable = 0,
-        braking = 1,
-        hardBraking = 2,
-        stopPedaling = 3,
-        brakingAndStopPedaling = 4,
-        hardBrakingAndStopPedaling = 5,
-        noReaction = 6,
-        max = 255,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct VruMovementControl(pub u8);
     #[doc = "*"]
     #[doc = " * This DF indicates the profile of a VRU including sub-profile information"]
     #[doc = " * It identifies four options corresponding to the four types of VRU profiles specified in ETSI TS 103 300-2 [18]:"]
@@ -6999,20 +7918,14 @@ pub mod etsi_its_cdd {
     #[doc = " * - 1 `low`            - to indicate that the VRU size class is low depending on the VRU profile,"]
     #[doc = " * - 2 `medium`         - to indicate that the VRU size class is medium depending on the VRU profile,"]
     #[doc = " * - 3 `high`           - to indicate that the VRU size class is high depending on the VRU profile."]
-    #[doc = " * - 4 to 15            - are reserved for future usage. Value 15 is set to \"max\" in order to bound the size of the encoded field."]
+    #[doc = " * - 4 to 15            - are reserved for future usage. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSizeClass {
-        unavailable = 0,
-        low = 1,
-        medium = 2,
-        high = 3,
-        max = 15,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct VruSizeClass(pub u8);
     #[doc = "*"]
     #[doc = " * This DE describes the status of the exterior light switches of a VRU."]
     #[doc = " *"]
@@ -7043,60 +7956,37 @@ pub mod etsi_its_cdd {
     #[doc = " * - 1 `wild-animal`     - to indicate a animal living in the wildness, "]
     #[doc = " * - 2 `farm-animal`     - to indicate an animal beloning to a farm,"]
     #[doc = " * - 3 `service-animal`  - to indicate an animal that supports a human being."]
-    #[doc = " * - 4 to 15             - are reserved for future usage. Value 15 is set to \"max\" in order to bound the size of the encoded field."]
+    #[doc = " * - 4 to 15             - are reserved for future usage. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSubProfileAnimal {
-        unavailable = 0,
-        #[rasn(identifier = "wild-animal")]
-        wild_animal = 1,
-        #[rasn(identifier = "farm-animal")]
-        farm_animal = 2,
-        #[rasn(identifier = "service-animal")]
-        service_animal = 3,
-        max = 15,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct VruSubProfileAnimal(pub u8);
     #[doc = "*"]
     #[doc = " * This DE indicates the profile of a VRU and its light VRU vehicle / mounted animal. "]
     #[doc = " *"]
     #[doc = " * The value shall be set to:"]
     #[doc = " * - 0 `unavailable`           - to indicate that the information  is unavailable,"]
-    #[doc = " * - 1 `bicyclist `            - to indicate a cycle and bicyclist,"]
+    #[doc = " * - 1 `bicyclist `            - to indicate a cycle and bicyclist to which no more-specific profile applies, "]
     #[doc = " * - 2 `wheelchair-user`       - to indicate a wheelchair and its user,"]
     #[doc = " * - 3 `horse-and-rider`       - to indicate a horse and rider,"]
-    #[doc = " * - 4 `rollerskater`          - to indicate a rolleskater and skater,"]
+    #[doc = " * - 4 `rollerskater`          - to indicate a roller-skater and skater,"]
     #[doc = " * - 5 `e-scooter`             - to indicate an e-scooter and rider,"]
     #[doc = " * - 6 `personal-transporter`  - to indicate a personal-transporter and rider,"]
-    #[doc = " * - 7 `pedelec`               - to indicate a pedelec and rider,"]
+    #[doc = " * - 7 `pedelec`               - to indicate a pedelec and rider to which no more-specific profile applies,"]
     #[doc = " * - 8 `speed-pedelec`         - to indicate a speed-pedelec and rider."]
-    #[doc = " * - 9 to 15                   - are reserved for future usage. Value 15 is set to \"max\" in order to bound the size of the encoded field."]
+    #[doc = " * - 9 `roadbike`              - to indicate a road bicycle (or road pedelec) and rider,"]
+    #[doc = " * - 10 `childrensbike`        - to indicate a children�s bicycle (or children�s pedelec) and rider,"]
+    #[doc = " * - 11 to 15                  - are reserved for future usage. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, values 9 and 10 assigned in V2.2.1"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSubProfileBicyclist {
-        unavailable = 0,
-        bicyclist = 1,
-        #[rasn(identifier = "wheelchair-user")]
-        wheelchair_user = 2,
-        #[rasn(identifier = "horse-and-rider")]
-        horse_and_rider = 3,
-        rollerskater = 4,
-        #[rasn(identifier = "e-scooter")]
-        e_scooter = 5,
-        #[rasn(identifier = "personal-transporter")]
-        personal_transporter = 6,
-        pedelec = 7,
-        #[rasn(identifier = "speed-pedelec")]
-        speed_pedelec = 8,
-        max = 15,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct VruSubProfileBicyclist(pub u8);
     #[doc = "*"]
     #[doc = " * This DE indicates the profile of a motorcyclist and corresponding vehicle."]
     #[doc = " * "]
@@ -7106,23 +7996,14 @@ pub mod etsi_its_cdd {
     #[doc = " * - 2 `motorcycle`                    - to indicate a motorcycle and rider,"]
     #[doc = " * - 3 `motorcycle-and-sidecar-right`  - to indicate a motorcycle with sidecar on the right and rider,"]
     #[doc = " * - 4 `motorcycle-and-sidecar-left`   - to indicate  a motorcycle with sidecar on the left and rider."]
-    #[doc = " * - 5 to 15                           - are reserved for future usage. Value 15 is set to \"max\" in order to bound the size of the encoded field."]
+    #[doc = " * - 5 to 15                           - are reserved for future usage. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSubProfileMotorcyclist {
-        unavailable = 0,
-        moped = 1,
-        motorcycle = 2,
-        #[rasn(identifier = "motorcycle-and-sidecar-right")]
-        motorcycle_and_sidecar_right = 3,
-        #[rasn(identifier = "motorcycle-and-sidecar-left")]
-        motorcycle_and_sidecar_left = 4,
-        max = 15,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct VruSubProfileMotorcyclist(pub u8);
     #[doc = "*"]
     #[doc = " * This DE indicates the profile of a pedestrian."]
     #[doc = " * "]
@@ -7131,23 +8012,14 @@ pub mod etsi_its_cdd {
     #[doc = " * - 1 `ordinary-pedestrian`     - to indicate a pedestrian to which no more-specific profile applies,"]
     #[doc = " * - 2 `road-worker`             - to indicate a pedestrian with the role of a road worker,"]
     #[doc = " * - 3 `first-responder`         - to indicate a pedestrian with the role of a first responder."]
-    #[doc = " * - value 4 to 15               - are reserved for future usage. Value 15 is set to \"max\" in order to bound the size of the encoded field."]
+    #[doc = " * - value 4 to 15               - are reserved for future usage. "]
     #[doc = " *"]
     #[doc = " * @category: VRU information"]
-    #[doc = " * @revision: Created in V2.1.1"]
+    #[doc = " * @revision: Created in V2.1.1, type changed from ENUMERATED to INTEGER in V2.2.1"]
     #[doc = " "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    pub enum VruSubProfilePedestrian {
-        unavailable = 0,
-        #[rasn(identifier = "ordinary-pedestrian")]
-        ordinary_pedestrian = 1,
-        #[rasn(identifier = "road-worker")]
-        road_worker = 2,
-        #[rasn(identifier = "first-responder")]
-        first_responder = 3,
-        max = 15,
-    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct VruSubProfilePedestrian(pub u8);
     #[doc = "*"]
     #[doc = " * This DE represents the World Manufacturer Identifier (WMI). The values are assigned according to ISO 3779 [6]."]
     #[doc = " * "]

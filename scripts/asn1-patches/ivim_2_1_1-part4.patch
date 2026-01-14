@@ -1,0 +1,15 @@
+diff --git a/autogen/asn.1/ivim_2_1_1-part4.asn b/autogen/asn.1/ivim_2_1_1-part4.asn
+index 88d0ad1..cea1282 100644
+--- a/autogen/asn.1/ivim_2_1_1-part4.asn
++++ b/autogen/asn.1/ivim_2_1_1-part4.asn
+@@ -79,8 +79,8 @@ ServiceNumber::= BIT STRING (SIZE(32))(CONTAINING INTEGER (0..4294967295))
+ TaxCode::= OCTET STRING
+ 
+ AlphabetIndicator::= INTEGER {
+-	latinAlphabetNo1		(0), -- encoded as 00 00 00’B
+-	latinAlphabetNo2		(1), -- encoded as 00 00 01’B etc
++	latinAlphabetNo1		(0), -- encoded as 00 00 00 B
++	latinAlphabetNo2		(1), -- encoded as 00 00 01 B etc
+ 	latinAlphabetNo3		(2),
+ 	latinAlphabetNo4		(3),
+ 	latinCyrillicAlphabet	(4),

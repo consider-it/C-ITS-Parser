@@ -91,7 +91,7 @@ pub enum ItsMessage<'a> {
     DenmV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::denm_2_1_1::denm_pdu_description::DENM>,
+        etsi: Box<standards::denm_2_2_1::denm_pdu_description::DENM>,
     },
     Cam {
         geonetworking: Option<Packet<'a>>,
@@ -101,17 +101,17 @@ pub enum ItsMessage<'a> {
     Spatem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::is_1_3_1::etsi_schema::SPATEM>,
+        etsi: Box<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>,
     },
     Mapem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::is_1_3_1::etsi_schema::MAPEM>,
+        etsi: Box<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>,
     },
     IvimV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::is_1_3_1::etsi_schema::IVIM>,
+        etsi: Box<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>,
     },
     IvimV2 {
         geonetworking: Option<Packet<'a>>,
@@ -121,17 +121,17 @@ pub enum ItsMessage<'a> {
     Srem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::is_1_3_1::etsi_schema::SREM>,
+        etsi: Box<standards::srem_2_2_1::srem_pdu_descriptions::SREM>,
     },
     Ssem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::is_1_3_1::etsi_schema::SSEM>,
+        etsi: Box<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>,
     },
     CpmV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::is_1_3_1::etsi_schema::CPM>,
+        etsi: Box<standards::cpm_1::cpm_pdu_descriptions::CPM>,
     },
     CpmV2 {
         geonetworking: Option<Packet<'a>>,

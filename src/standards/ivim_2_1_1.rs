@@ -5,73 +5,406 @@
     unused,
     clippy::too_many_arguments
 )]
-pub mod efc_data_dictionary {
+pub mod aviaeinumbering_and_data_structures {
     extern crate alloc;
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = " Clause 5.3\tSingle level data types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=63"))]
+    pub struct AlphabetIndicator(pub u8);
+    #[doc = " 6 bits, latinAlphabetNo1 recommended "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AviEriDateTime(pub FixedOctetString<10usize>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
-    pub struct AxleWeightLimits {
-        #[rasn(identifier = "maxLadenWeightOnAxle1")]
-        pub max_laden_weight_on_axle1: Int2Unsigned,
-        #[rasn(identifier = "maxLadenWeightOnAxle2")]
-        pub max_laden_weight_on_axle2: Int2Unsigned,
-        #[rasn(identifier = "maxLadenWeightOnAxle3")]
-        pub max_laden_weight_on_axle3: Int2Unsigned,
-        #[rasn(identifier = "maxLadenWeightOnAxle4")]
-        pub max_laden_weight_on_axle4: Int2Unsigned,
-        #[rasn(identifier = "maxLadenWeightOnAxle5")]
-        pub max_laden_weight_on_axle5: Int2Unsigned,
+    pub struct CS1 {
+        #[rasn(identifier = "countryCode")]
+        pub country_code: CountryCode,
+        #[rasn(identifier = "issuerIdentifier")]
+        pub issuer_identifier: IssuerIdentifier,
+        #[rasn(identifier = "serviceNumber")]
+        pub service_number: ServiceNumber,
     }
-    impl AxleWeightLimits {
+    impl CS1 {
         pub fn new(
-            max_laden_weight_on_axle1: Int2Unsigned,
-            max_laden_weight_on_axle2: Int2Unsigned,
-            max_laden_weight_on_axle3: Int2Unsigned,
-            max_laden_weight_on_axle4: Int2Unsigned,
-            max_laden_weight_on_axle5: Int2Unsigned,
+            country_code: CountryCode,
+            issuer_identifier: IssuerIdentifier,
+            service_number: ServiceNumber,
         ) -> Self {
             Self {
-                max_laden_weight_on_axle1,
-                max_laden_weight_on_axle2,
-                max_laden_weight_on_axle3,
-                max_laden_weight_on_axle4,
-                max_laden_weight_on_axle5,
+                country_code,
+                issuer_identifier,
+                service_number,
             }
         }
     }
-    #[doc = " Int2Signed ::=\tINTEGER (-32768..32767)"]
-    #[doc = " Int3Unsigned ::= INTEGER (0..16777215)"]
-    #[doc = " Int4Unsigned ::= INTEGER (0..4294967295)"]
-    #[doc = " Int4Signed ::= INTEGER (-2147483648..2147483647)"]
-    #[doc = " 5.2\tSubtypes of simple data types"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=15"))]
-    pub struct CopValue(pub u8);
+    #[rasn(automatic_tags)]
+    pub struct CS2 {
+        #[rasn(identifier = "manufacturerIdentifier")]
+        pub manufacturer_identifier: ManufacturerIdentifier,
+        #[rasn(identifier = "serviceNumber")]
+        pub service_number: ServiceNumber,
+    }
+    impl CS2 {
+        pub fn new(
+            manufacturer_identifier: ManufacturerIdentifier,
+            service_number: ServiceNumber,
+        ) -> Self {
+            Self {
+                manufacturer_identifier,
+                service_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CS3 {
+        #[rasn(identifier = "startTime")]
+        pub start_time: StartTime,
+        #[rasn(identifier = "stopTime")]
+        pub stop_time: StopTime,
+        #[rasn(identifier = "geographLimit")]
+        pub geograph_limit: GeoGraphicalLimit,
+        #[rasn(identifier = "serviceAppLimit")]
+        pub service_app_limit: ServiceApplicationLimit,
+    }
+    impl CS3 {
+        pub fn new(
+            start_time: StartTime,
+            stop_time: StopTime,
+            geograph_limit: GeoGraphicalLimit,
+            service_app_limit: ServiceApplicationLimit,
+        ) -> Self {
+            Self {
+                start_time,
+                stop_time,
+                geograph_limit,
+                service_app_limit,
+            }
+        }
+    }
+    #[doc = ""]
+    #[doc = "CS4::= SEQUENCE {"]
+    #[doc = "\tcountryCode \t\tCountryCode,"]
+    #[doc = "\talphabetIndicator \tAlphabetIndicator, "]
+    #[doc = "\tlicPlateNumber \t\tLicPlateNumber"]
+    #[doc = "\t}"]
+    #[doc = "\t"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CS4 {
+        #[rasn(identifier = "countryCode")]
+        pub country_code: CountryCode,
+        #[rasn(identifier = "alphabetIndicator")]
+        pub alphabet_indicator: AlphabetIndicator,
+        #[rasn(identifier = "licPlateNumber")]
+        pub lic_plate_number: LicPlateNumber,
+    }
+    impl CS4 {
+        pub fn new(
+            country_code: CountryCode,
+            alphabet_indicator: AlphabetIndicator,
+            lic_plate_number: LicPlateNumber,
+        ) -> Self {
+            Self {
+                country_code,
+                alphabet_indicator,
+                lic_plate_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CS5 {
+        pub vin: VisibleString,
+        #[rasn(size("9"))]
+        pub fill: BitString,
+    }
+    impl CS5 {
+        pub fn new(vin: VisibleString, fill: BitString) -> Self {
+            Self { vin, fill }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CS7(pub FreightContainerData);
+    #[doc = " 12 octets"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CS8 {
+        #[rasn(size("6"))]
+        pub fill: BitString,
+        #[rasn(identifier = "countryCode")]
+        pub country_code: CountryCode,
+        #[rasn(identifier = "taxCode")]
+        pub tax_code: TaxCode,
+    }
+    impl CS8 {
+        pub fn new(fill: BitString, country_code: CountryCode, tax_code: TaxCode) -> Self {
+            Self {
+                fill,
+                country_code,
+                tax_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CountryCode(pub FixedBitString<10usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct FreightContainerData {
+        #[rasn(size("19"), identifier = "ownerCode")]
+        pub owner_code: BitString,
+        #[rasn(value("0..=1000000"), identifier = "serialNumber")]
+        pub serial_number: u32,
+        #[rasn(value("0..=10"), identifier = "checkDigit")]
+        pub check_digit: u8,
+        #[rasn(value("1..=2000"))]
+        pub length: u16,
+        #[rasn(value("1..=500"))]
+        pub height: u16,
+        #[rasn(value("200..=300"))]
+        pub width: u16,
+        #[rasn(value("0..=127"), identifier = "containerTypeCode")]
+        pub container_type_code: u8,
+        #[rasn(value("19..=500"), identifier = "maximumGrossMass")]
+        pub maximum_gross_mass: u16,
+        #[rasn(value("0..=99"), identifier = "tareMass")]
+        pub tare_mass: u8,
+        #[rasn(size("3"))]
+        pub fill: BitString,
+    }
+    impl FreightContainerData {
+        pub fn new(
+            owner_code: BitString,
+            serial_number: u32,
+            check_digit: u8,
+            length: u16,
+            height: u16,
+            width: u16,
+            container_type_code: u8,
+            maximum_gross_mass: u16,
+            tare_mass: u8,
+            fill: BitString,
+        ) -> Self {
+            Self {
+                owner_code,
+                serial_number,
+                check_digit,
+                length,
+                height,
+                width,
+                container_type_code,
+                maximum_gross_mass,
+                tare_mass,
+                fill,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GeoGraphicalLimit(pub FixedBitString<8usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16383"))]
+    pub struct IssuerIdentifier(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LicPlateNumber(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct ManufacturerIdentifier(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceApplicationLimit(pub FixedBitString<8usize>);
+    #[doc = "ServiceNumber::= BIT STRING(SIZE(32))"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceNumber(pub FixedBitString<32usize>);
+    #[doc = " YYMMDDhhmm"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StartTime(pub AviEriDateTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StopTime(pub AviEriDateTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TaxCode(pub OctetString);
+}
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod citsappl_mgmt_ids {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Ext1 {
+        #[rasn(value("128..=16511"), tag(context, 0))]
+        content(u16),
+        #[rasn(tag(context, 1))]
+        extension(Ext2),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Ext2 {
+        #[rasn(value("16512..=2113663"), tag(context, 0))]
+        content(u32),
+        #[rasn(tag(context, 1))]
+        extension(Ext3),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("2113664..=270549119", extensible))]
+    pub struct Ext3(pub Integer);
+    #[doc = " End of IMPORTS"]
+    #[doc = " Types"]
+    #[doc = " Variable length data types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum VarLengthNumber {
+        #[rasn(value("0..=127"), tag(context, 0))]
+        content(u8),
+        #[rasn(tag(context, 1))]
+        extension(Ext1),
+    }
+    #[doc = " four and more octets length"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum VarLengthNumber2 {
+        #[rasn(value("0..=127"), tag(context, 0))]
+        shortNo(u8),
+        #[rasn(value("0..=32767"), tag(context, 1))]
+        longNo(u16),
+    }
+    #[doc = " Values"]
+    pub const VERSION: u8 = 1;
+}
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod efc_dsrc_application {
+    extern crate alloc;
+    use super::aviaeinumbering_and_data_structures::{CountryCode, IssuerIdentifier, CS5};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " defined in ISO 14816 "]
+    #[doc = " NOTE: The following are the definitions of the action and response"]
+    #[doc = " parameters"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AxleWeightLimits {
+        #[rasn(identifier = "maxLadenweightOnAxle1")]
+        pub max_ladenweight_on_axle1: Int2,
+        #[rasn(identifier = "maxLadenweightOnAxle2")]
+        pub max_ladenweight_on_axle2: Int2,
+        #[rasn(identifier = "maxLadenweightOnAxle3")]
+        pub max_ladenweight_on_axle3: Int2,
+        #[rasn(identifier = "maxLadenweightOnAxle4")]
+        pub max_ladenweight_on_axle4: Int2,
+        #[rasn(identifier = "maxLadenweightOnAxle5")]
+        pub max_ladenweight_on_axle5: Int2,
+    }
+    impl AxleWeightLimits {
+        pub fn new(
+            max_ladenweight_on_axle1: Int2,
+            max_ladenweight_on_axle2: Int2,
+            max_ladenweight_on_axle3: Int2,
+            max_ladenweight_on_axle4: Int2,
+            max_ladenweight_on_axle5: Int2,
+        ) -> Self {
+            Self {
+                max_ladenweight_on_axle1,
+                max_ladenweight_on_axle2,
+                max_ladenweight_on_axle3,
+                max_ladenweight_on_axle4,
+                max_ladenweight_on_axle5,
+            }
+        }
+    }
+    #[doc = " 4 bits, EURO-Classes as defined in EC directive 88/77/EEC, annex 1"]
+    #[doc = " and in 91/542/EEC, 96/1/EC, 1999/96/EC, 2001/27/EC, regulation No 595/2009"]
+    #[doc = " and for EEV in Section 6.2.1 of Annex I in EC directive 2005/55/EC"]
+    #[doc = " EUR-Class VI as defined in Regulation (EC) No 595/2009"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CopValue {
+        noEntry = 0,
+        co2class1 = 1,
+        co2class2 = 2,
+        co2class3 = 3,
+        co2class4 = 4,
+        co2class5 = 5,
+        co2class6 = 6,
+        co2class7 = 7,
+        reservedforUse = 8,
+    }
+    #[doc = " NOTE: The following are the definitions of EFC attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DateCompact {
+        #[rasn(value("1990..=2117"))]
+        pub year: u16,
+        #[rasn(value("0..=12"))]
+        pub month: u8,
+        #[rasn(value("0..=31"))]
+        pub day: u8,
+    }
+    impl DateCompact {
+        pub fn new(year: u16, month: u8, day: u8) -> Self {
+            Self { year, month, day }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DieselEmissionValuesParticulate {
+        #[rasn(identifier = "unitType")]
+        pub unit_type: UnitType,
+        #[rasn(value("0..=32767"))]
+        pub value: u16,
+    }
+    impl DieselEmissionValuesParticulate {
+        pub fn new(unit_type: UnitType, value: u16) -> Self {
+            Self { unit_type, value }
+        }
+    }
+    #[doc = " The value \"{year 1990, month 0, day 0}\" is a 16-bit all-zero"]
+    #[doc = " encoding, and is used to represent \"no date\"."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct DieselEmissionValues {
-        pub particulate: Particulate,
+        pub particulate: DieselEmissionValuesParticulate,
         #[rasn(identifier = "absorptionCoeff")]
-        pub absorption_coeff: Int2Unsigned,
+        pub absorption_coeff: Int2,
     }
     impl DieselEmissionValues {
-        pub fn new(particulate: Particulate, absorption_coeff: Int2Unsigned) -> Self {
+        pub fn new(particulate: DieselEmissionValuesParticulate, absorption_coeff: Int2) -> Self {
             Self {
                 particulate,
                 absorption_coeff,
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=1"))]
-    pub struct EmissionUnit(pub u8);
+    #[doc = " 4 bits, reserved for carbon dioxide pollution values as defined in"]
+    #[doc = " EC directive 2003/127/EC'"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct EngineCharacteristics(pub u8);
-    #[doc = " Clause 5.4\tTwo level data types"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct EnvironmentalCharacteristics {
@@ -88,71 +421,146 @@ pub mod efc_data_dictionary {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=15"))]
-    pub struct EuroValue(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EuroValue {
+        noEntry = 0,
+        #[rasn(identifier = "euro-1")]
+        euro_1 = 1,
+        #[rasn(identifier = "euro-2")]
+        euro_2 = 2,
+        #[rasn(identifier = "euro-3")]
+        euro_3 = 3,
+        #[rasn(identifier = "euro-4")]
+        euro_4 = 4,
+        #[rasn(identifier = "euro-5")]
+        euro_5 = 5,
+        #[rasn(identifier = "euro-6")]
+        euro_6 = 6,
+        reservedForUse1 = 7,
+        reservedForUse2 = 8,
+        reservedForUse3 = 9,
+        reservedForUse4 = 10,
+        reservedForUse5 = 11,
+        reservedForUse6 = 12,
+        reservedForUse7 = 13,
+        reservedForUse8 = 14,
+        eev = 15,
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct ExhaustEmissionValues {
         #[rasn(identifier = "unitType")]
-        pub unit_type: EmissionUnit,
-        #[rasn(value("0..=32767"), identifier = "emissionCo")]
+        pub unit_type: UnitType,
+        #[rasn(value("0..=32767"), identifier = "emissionCO")]
         pub emission_co: u16,
-        #[rasn(identifier = "emissionHc")]
-        pub emission_hc: Int2Unsigned,
-        #[rasn(identifier = "emissionNox")]
-        pub emission_nox: Int2Unsigned,
-        #[rasn(identifier = "emissionHcNox")]
-        pub emission_hc_nox: Int2Unsigned,
+        #[rasn(identifier = "emissionHC")]
+        pub emission_hc: Int2,
+        #[rasn(identifier = "emissionNOX")]
+        pub emission_nox: Int2,
+        #[rasn(identifier = "emissionHCNOX")]
+        pub emission_hcnox: Int2,
     }
     impl ExhaustEmissionValues {
         pub fn new(
-            unit_type: EmissionUnit,
+            unit_type: UnitType,
             emission_co: u16,
-            emission_hc: Int2Unsigned,
-            emission_nox: Int2Unsigned,
-            emission_hc_nox: Int2Unsigned,
+            emission_hc: Int2,
+            emission_nox: Int2,
+            emission_hcnox: Int2,
         ) -> Self {
             Self {
                 unit_type,
                 emission_co,
                 emission_hc,
                 emission_nox,
-                emission_hc_nox,
+                emission_hcnox,
             }
         }
     }
-    #[doc = " useful subtypes (with no semantics associated)"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
-    pub struct Int1Unsigned(pub u8);
-    #[doc = " Int1Signed ::= INTEGER (-128..127)"]
+    pub struct Int1(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=65535"))]
-    pub struct Int2Unsigned(pub u16);
+    pub struct Int2(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16777215"))]
+    pub struct Int3(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct Int4(pub u32);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LPNAlphabetIndicator {
+        latinAlphabetNo1 = 1,
+        latinAlphabetNo2 = 2,
+        latinAlphabetNo3 = 3,
+        latinAlphabetNo4 = 4,
+        latinCyrillicAlphabet = 5,
+        latinArabicAlphabet = 6,
+        latinGreekAlphabet = 7,
+        latinHebrewAlphabet = 8,
+        latinAlphabetNo5 = 9,
+        latinAlphabetNo6 = 10,
+        twoOctetBMP = 11,
+        fourOctetCanonical = 12,
+        reservedForUse1 = 13,
+        reservedForUse2 = 14,
+        reservedForUse3 = 15,
+        reservedForUse4 = 16,
+        reservedForUse5 = 17,
+        reservedForUse6 = 18,
+        reservedForUse7 = 19,
+        reservedForUse8 = 20,
+        reservedForUse9 = 21,
+        reservedForUse10 = 22,
+        reservedForUse11 = 23,
+        reservedForUse12 = 24,
+        reservedForUse13 = 25,
+        reservedForUse14 = 26,
+        reservedForUse15 = 27,
+        reservedForUse16 = 28,
+        reservedForUse17 = 29,
+        reservedForUse18 = 30,
+        reservedForUse19 = 31,
+        reservedForUse20 = 32,
+        reservedForUse21 = 33,
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
-    pub struct Particulate {
-        #[rasn(identifier = "unitType")]
-        pub unit_type: EmissionUnit,
-        #[rasn(value("0..=32767"))]
-        pub value: u16,
+    pub struct LPN {
+        #[rasn(identifier = "countryCode")]
+        pub country_code: CountryCode,
+        #[rasn(identifier = "alphabetIndicator")]
+        pub alphabet_indicator: LPNAlphabetIndicator,
+        #[rasn(identifier = "licencePlateNumber")]
+        pub licence_plate_number: OctetString,
     }
-    impl Particulate {
-        pub fn new(unit_type: EmissionUnit, value: u16) -> Self {
-            Self { unit_type, value }
+    impl LPN {
+        pub fn new(
+            country_code: CountryCode,
+            alphabet_indicator: LPNAlphabetIndicator,
+            licence_plate_number: OctetString,
+        ) -> Self {
+            Self {
+                country_code,
+                alphabet_indicator,
+                licence_plate_number,
+            }
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct PassengerCapacity {
         #[rasn(identifier = "numberOfSeats")]
-        pub number_of_seats: Int1Unsigned,
+        pub number_of_seats: Int1,
         #[rasn(identifier = "numberOfStandingPlaces")]
-        pub number_of_standing_places: Int1Unsigned,
+        pub number_of_standing_places: Int1,
     }
     impl PassengerCapacity {
-        pub fn new(number_of_seats: Int1Unsigned, number_of_standing_places: Int1Unsigned) -> Self {
+        pub fn new(number_of_seats: Int1, number_of_standing_places: Int1) -> Self {
             Self {
                 number_of_seats,
                 number_of_standing_places,
@@ -160,40 +568,131 @@ pub mod efc_data_dictionary {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PayUnit(pub FixedOctetString<2usize>);
+    #[doc = " corresponds to a �3 octets Signed Integer�, associated with the following"]
+    #[doc = " examples of line codes:"]
+    #[doc = " -8'388'608 : 80 00 00'H"]
+    #[doc = " -1 : FF FF FF'H"]
+    #[doc = " 0 : 00 00 00'H"]
+    #[doc = " 1 : 00 00 01�H"]
+    #[doc = " 8'388'607 : 7F FF FF'H"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PaymentMeansUnit(pub PayUnit);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PaymentSecurityData(pub OctetString);
+    #[doc = " The unique designation of a Currency as defined in ISO 4217"]
+    #[doc = " using the ISO numeric binary coded decimal representation."]
+    #[doc = " The code can also express a company specific token or a"]
+    #[doc = " \"charging unit code\" as used in the freight.unit in which"]
+    #[doc = " the fee is expressed."]
+    #[doc = " Value Assignment :"]
+    #[doc = " '0xxx'H Currency in main units"]
+    #[doc = " '1xxx'H Currency in minor units of 10 :1 ('dime')"]
+    #[doc = " '2xxx'H Currency in minor units of 100 :1 ('cents')"]
+    #[doc = " '3xxx'H Currency in minor units of 1000 :1"]
+    #[doc = " '4xxx'H Currency in 'major' units / 10"]
+    #[doc = " (e.g. 10 Belgian Francs)"]
+    #[doc = " '5xxx'H Currency in 'major' units / 100"]
+    #[doc = " (e.g. 100 Italian Lire)"]
+    #[doc = " '6xxx'H Currency in 'major' units / 1000"]
+    #[doc = " '7xxx'H Currency in 'major' units / 10000"]
+    #[doc = " '8xxx'H Currency in 'major' units / 100000"]
+    #[doc = " where xxx is the BCD representation of \"Currency\""]
+    #[doc = " as defined in ISO 4217"]
+    #[doc = " '9xxx'H Tokens"]
+    #[doc = " where xxx is Purse Provider specific coding."]
+    #[doc = " 'Axxx'H Charging Unit Codes,"]
+    #[doc = " denoting quantification of the service provided"]
+    #[doc = " (e.g. man-hours)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PersonalAccountNumber(pub FixedOctetString<10usize>);
+    #[doc = " Personal account number structure � according to ISO/IEC 7812-1"]
+    #[doc = " Issuer identifier number (�BIN�)"]
+    #[doc = " Major industry identifier (MII, 1 binary coded decimal, BCD)"]
+    #[doc = " 0 : reserved for future use by ISO/TC68"]
+    #[doc = " 1 : airline sector"]
+    #[doc = " 2 : extended airline sector"]
+    #[doc = " 3 : travel and tourism sector"]
+    #[doc = " 4 : financial banking sector"]
+    #[doc = " 5 : financial banking sector"]
+    #[doc = " 6 : commerce and banking sector"]
+    #[doc = " 7 : petrol industry sector"]
+    #[doc = " 8 : telecommunication sector"]
+    #[doc = " 9 : reserved for national use"]
+    #[doc = " Issuer identifier (5 BCD in the second edition of ISO/IEC 7812-1)"]
+    #[doc = " Account number (max 12 BCD)"]
+    #[doc = " Control digit (1 BCD)"]
+    #[doc = " Padding bits, set to 1'B, in order to accomplish a"]
+    #[doc = " total length of 10 octets."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
-    pub struct SoundLevel {
-        #[rasn(identifier = "soundStationary")]
-        pub sound_stationary: Int1Unsigned,
-        #[rasn(identifier = "soundDriveBy")]
-        pub sound_drive_by: Int1Unsigned,
+    pub struct Provider {
+        #[rasn(identifier = "countryCode")]
+        pub country_code: CountryCode,
+        #[rasn(identifier = "providerIdentifier")]
+        pub provider_identifier: IssuerIdentifier,
     }
-    impl SoundLevel {
-        pub fn new(sound_stationary: Int1Unsigned, sound_drive_by: Int1Unsigned) -> Self {
+    impl Provider {
+        pub fn new(country_code: CountryCode, provider_identifier: IssuerIdentifier) -> Self {
             Self {
-                sound_stationary,
-                sound_drive_by,
+                country_code,
+                provider_identifier,
             }
         }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SignedValue {
+        #[rasn(value("0..=8388607"))]
+        positive(u32),
+        #[rasn(value("-8388608..=-1"))]
+        negative(i32),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SoundLevel {
+        pub soundstationary: Int1,
+        pub sounddriveby: Int1,
+    }
+    impl SoundLevel {
+        pub fn new(soundstationary: Int1, sounddriveby: Int1) -> Self {
+            Self {
+                soundstationary,
+                sounddriveby,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UnitType {
+        #[rasn(identifier = "mg-km")]
+        mg_km = 0,
+        #[rasn(identifier = "mg-kWh")]
+        mg_kWh = 1,
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct VehicleDimensions {
         #[rasn(identifier = "vehicleLengthOverall")]
-        pub vehicle_length_overall: Int1Unsigned,
-        #[rasn(identifier = "vehicleHeightOverall")]
-        pub vehicle_height_overall: Int1Unsigned,
+        pub vehicle_length_overall: Int1,
+        #[rasn(identifier = "vehicleHeigthOverall")]
+        pub vehicle_heigth_overall: Int1,
         #[rasn(identifier = "vehicleWidthOverall")]
-        pub vehicle_width_overall: Int1Unsigned,
+        pub vehicle_width_overall: Int1,
     }
     impl VehicleDimensions {
         pub fn new(
-            vehicle_length_overall: Int1Unsigned,
-            vehicle_height_overall: Int1Unsigned,
-            vehicle_width_overall: Int1Unsigned,
+            vehicle_length_overall: Int1,
+            vehicle_heigth_overall: Int1,
+            vehicle_width_overall: Int1,
         ) -> Self {
             Self {
                 vehicle_length_overall,
-                vehicle_height_overall,
+                vehicle_heigth_overall,
                 vehicle_width_overall,
             }
         }
@@ -202,17 +701,17 @@ pub mod efc_data_dictionary {
     #[rasn(automatic_tags)]
     pub struct VehicleWeightLimits {
         #[rasn(identifier = "vehicleMaxLadenWeight")]
-        pub vehicle_max_laden_weight: Int2Unsigned,
+        pub vehicle_max_laden_weight: Int2,
         #[rasn(identifier = "vehicleTrainMaximumWeight")]
-        pub vehicle_train_maximum_weight: Int2Unsigned,
+        pub vehicle_train_maximum_weight: Int2,
         #[rasn(identifier = "vehicleWeightUnladen")]
-        pub vehicle_weight_unladen: Int2Unsigned,
+        pub vehicle_weight_unladen: Int2,
     }
     impl VehicleWeightLimits {
         pub fn new(
-            vehicle_max_laden_weight: Int2Unsigned,
-            vehicle_train_maximum_weight: Int2Unsigned,
-            vehicle_weight_unladen: Int2Unsigned,
+            vehicle_max_laden_weight: Int2,
+            vehicle_train_maximum_weight: Int2,
+            vehicle_weight_unladen: Int2,
         ) -> Self {
             Self {
                 vehicle_max_laden_weight,
@@ -221,6 +720,66 @@ pub mod efc_data_dictionary {
             }
         }
     }
+}
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod electronic_registration_identification_vehicle_data_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Electronic Registration Identification (ERI)- Vehicle Data"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum EuVehicleCategoryCode {
+        euVehicleCategoryL(EuVehicleCategoryL),
+        euVehicleCategoryM(EuVehicleCategoryM),
+        euVehicleCategoryN(EuVehicleCategoryN),
+        euVehicleCategoryO(EuVehicleCategoryO),
+        euVehilcleCategoryT(()),
+        euVehilcleCategoryG(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EuVehicleCategoryL {
+        l1 = 0,
+        l2 = 1,
+        l3 = 2,
+        l4 = 3,
+        l5 = 4,
+        l6 = 5,
+        l7 = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EuVehicleCategoryM {
+        m1 = 0,
+        m2 = 1,
+        m3 = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EuVehicleCategoryN {
+        n1 = 0,
+        n2 = 1,
+        n3 = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EuVehicleCategoryO {
+        o1 = 0,
+        o2 = 1,
+        o3 = 2,
+        o4 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct Iso3833VehicleType(pub u8);
 }
 #[allow(
     non_camel_case_types,
@@ -763,17 +1322,23 @@ pub mod gdd {
 )]
 pub mod ivi {
     extern crate alloc;
-    use super::super::cdd_2_2_1::etsi_its_cdd::{
-        ActionIdList, Altitude, DangerousGoodsBasic, DeltaLatitude, DeltaLongitude,
-        DeltaReferencePosition, Direction, EuVehicleCategoryCode, Heading, HeadingValue,
-        Identifier1B, Iso3833VehicleType, LanePosition, LaneType, LaneWidth, Latitude, Longitude,
-        MapReference, Provider, ReferencePosition, RoadType, SpecialTransportType, Speed,
-        SpeedValue, StandardLength9b, StationType, TimestampIts, VarLengthNumber, VehicleRole,
+    use super::super::cdd_1_3_1_1::its_container::{
+        ActionID, Altitude, DangerousGoodsBasic, DeltaLatitude, DeltaLongitude,
+        DeltaReferencePosition, Heading, HeadingValue, LanePosition, Latitude, Longitude,
+        ReferencePosition, RoadType, SpecialTransportType, Speed, SpeedValue, StationType,
+        TimestampIts, VehicleRole,
     };
-    use super::efc_data_dictionary::{
+    use super::super::dsrc_2_2_1::etsi_its_dsrc::{
+        IntersectionReferenceID, LaneID, RoadSegmentReferenceID,
+    };
+    use super::citsappl_mgmt_ids::VarLengthNumber;
+    use super::efc_dsrc_application::{
         AxleWeightLimits, DieselEmissionValues, EngineCharacteristics,
-        EnvironmentalCharacteristics, ExhaustEmissionValues, PassengerCapacity, SoundLevel,
-        VehicleDimensions, VehicleWeightLimits,
+        EnvironmentalCharacteristics, ExhaustEmissionValues, PassengerCapacity, Provider,
+        SoundLevel, VehicleDimensions, VehicleWeightLimits,
+    };
+    use super::electronic_registration_identification_vehicle_data_module::{
+        EuVehicleCategoryCode, Iso3833VehicleType,
     };
     use super::gdd::{
         InternationalSignApplicablePeriod, InternationalSignApplicableVehicleDimensions,
@@ -784,7 +1349,6 @@ pub mod ivi {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = " Extension in V3.1"]
     #[doc = "  Definition of Data Frames"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -984,7 +1548,7 @@ pub mod ivi {
         #[rasn(identifier = "laneNumber")]
         pub lane_number: LanePosition,
         #[rasn(identifier = "laneWidth")]
-        pub lane_width: LaneWidth,
+        pub lane_width: IviLaneWidth,
         #[rasn(value("-32768..=32767"), identifier = "offsetDistance")]
         pub offset_distance: Option<i16>,
         #[rasn(identifier = "offsetPosition")]
@@ -994,7 +1558,7 @@ pub mod ivi {
         pub fn new(
             zone_id: Zid,
             lane_number: LanePosition,
-            lane_width: LaneWidth,
+            lane_width: IviLaneWidth,
             offset_distance: Option<i16>,
             offset_position: Option<DeltaReferencePosition>,
         ) -> Self {
@@ -1010,16 +1574,17 @@ pub mod ivi {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=15", extensible))]
     pub struct Condition(pub Integer);
-    #[doc = "size extension corrected in V3.1"]
+    #[doc = " new DF in V2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=8", extensible))]
+    pub struct ConnectedDenms(pub SequenceOf<ActionID>);
+    #[doc = "size extension in V2"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=4", extensible))]
     pub struct ConstraintTextLines1(pub SequenceOf<Text>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=4", extensible))]
     pub struct ConstraintTextLines2(pub SequenceOf<Text>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, value("0..=127", extensible))]
-    pub struct ContentId(pub Integer);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=7", extensible))]
     pub struct DefinitionAccuracy(pub Integer);
@@ -1043,13 +1608,16 @@ pub mod ivi {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=32", extensible))]
     pub struct DeltaPositions(pub SequenceOf<DeltaPosition>);
-    #[doc = "size extension corrected in V3.1"]
+    #[doc = "size extension in V2"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=32", extensible))]
     pub struct DeltaReferencePositions(pub SequenceOf<DeltaReferencePosition>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=255"))]
     pub struct Depth(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=3"))]
+    pub struct Direction(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=3"))]
     pub struct DriverCharacteristics(pub u8);
@@ -1246,13 +1814,6 @@ pub mod ivi {
         roadCondition = 1,
     }
     #[doc = " Inner type "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
-    #[rasn(enumerated)]
-    #[non_exhaustive]
-    pub enum ISO14823CodePictogramCodeServiceCategoryCodeSupplementaryPanel {
-        supplementaryPanelAndAdditionalPanel = 0,
-    }
-    #[doc = " Inner type "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     #[non_exhaustive]
@@ -1264,8 +1825,6 @@ pub mod ivi {
         ambientOrRoadConditionPictogram(
             ISO14823CodePictogramCodeServiceCategoryCodeAmbientOrRoadConditionPictogram,
         ),
-        #[rasn(extension_addition)]
-        supplementaryPanel(ISO14823CodePictogramCodeServiceCategoryCodeSupplementaryPanel),
     }
     #[doc = " Inner type "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -1326,54 +1885,6 @@ pub mod ivi {
             }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=16", extensible))]
-    pub struct InfrastructureSupportContainer(pub SequenceOf<IscPart>);
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct InfrastructureSupportInformation {
-        #[rasn(identifier = "baseOid")]
-        pub base_oid: Option<ObjectIdentifier>,
-        #[rasn(identifier = "supportList")]
-        pub support_list: SupportItems,
-    }
-    impl InfrastructureSupportInformation {
-        pub fn new(base_oid: Option<ObjectIdentifier>, support_list: SupportItems) -> Self {
-            Self {
-                base_oid,
-                support_list,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct IscPart {
-        #[rasn(identifier = "detectionZoneIds")]
-        pub detection_zone_ids: Option<ZoneIds>,
-        #[rasn(identifier = "relevanceZoneIds")]
-        pub relevance_zone_ids: ZoneIds,
-        pub direction: Option<Direction>,
-        #[rasn(identifier = "infrastructureSupport")]
-        pub infrastructure_support: InfrastructureSupportInformation,
-    }
-    impl IscPart {
-        pub fn new(
-            detection_zone_ids: Option<ZoneIds>,
-            relevance_zone_ids: ZoneIds,
-            direction: Option<Direction>,
-            infrastructure_support: InfrastructureSupportInformation,
-        ) -> Self {
-            Self {
-                detection_zone_ids,
-                relevance_zone_ids,
-                direction,
-                infrastructure_support,
-            }
-        }
-    }
-    #[doc = "size extension in V3.1"]
     #[doc = "Definition of Containers"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
@@ -1390,8 +1901,6 @@ pub mod ivi {
         mlc(MapLocationContainer),
         #[rasn(extension_addition)]
         rsc(RoadSurfaceContainer),
-        #[rasn(extension_addition)]
-        isc(InfrastructureSupportContainer),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=8", extensible))]
@@ -1402,6 +1911,9 @@ pub mod ivi {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=8"))]
     pub struct IviIdentificationNumbers(pub SequenceOf<IviIdentificationNumber>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=1023"))]
+    pub struct IviLaneWidth(pub u16);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]
@@ -1421,7 +1933,7 @@ pub mod ivi {
         #[rasn(identifier = "iviStatus")]
         pub ivi_status: IviStatus,
         #[rasn(extension_addition, identifier = "connectedDenms")]
-        pub connected_denms: Option<ActionIdList>,
+        pub connected_denms: Option<ConnectedDenms>,
     }
     impl IviManagementContainer {
         pub fn new(
@@ -1432,7 +1944,7 @@ pub mod ivi {
             valid_to: Option<TimestampIts>,
             connected_ivi_structures: Option<IviIdentificationNumbers>,
             ivi_status: IviStatus,
-            connected_denms: Option<ActionIdList>,
+            connected_denms: Option<ConnectedDenms>,
         ) -> Self {
             Self {
                 service_provider_id,
@@ -1446,13 +1958,14 @@ pub mod ivi {
             }
         }
     }
-    #[doc = " extension in V3.1"]
+    #[doc = " only renamed from V1, no change"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=3"))]
     pub struct IviPurpose(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=7"))]
     pub struct IviStatus(pub u8);
+    #[doc = " Definition of IVI structure"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct IviStructure {
@@ -1513,7 +2026,7 @@ pub mod ivi {
     pub struct LaneDelimitation(pub Integer);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=16", extensible))]
-    pub struct LaneIds(pub SequenceOf<Identifier1B>);
+    pub struct LaneIds(pub SequenceOf<LaneID>);
     #[doc = " Inner type "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -1561,7 +2074,7 @@ pub mod ivi {
         #[rasn(identifier = "laneStatus")]
         pub lane_status: LaneStatus,
         #[rasn(identifier = "laneWidth")]
-        pub lane_width: Option<LaneWidth>,
+        pub lane_width: Option<IviLaneWidth>,
         #[rasn(extension_addition_group, identifier = "SEQUENCE")]
         pub ext_group_detection_zone_ids: Option<LaneInformationExtGroupDetectionZoneIds>,
     }
@@ -1573,7 +2086,7 @@ pub mod ivi {
             lane_type: LaneType,
             lane_type_qualifier: Option<CompleteVehicleCharacteristics>,
             lane_status: LaneStatus,
-            lane_width: Option<LaneWidth>,
+            lane_width: Option<IviLaneWidth>,
             ext_group_detection_zone_ids: Option<LaneInformationExtGroupDetectionZoneIds>,
         ) -> Self {
             Self {
@@ -1597,6 +2110,9 @@ pub mod ivi {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=7", extensible))]
     pub struct LaneStatus(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=31"))]
+    pub struct LaneType(pub u8);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct LayoutComponent {
@@ -1696,6 +2212,12 @@ pub mod ivi {
         pub fn new(reference: MapReference, parts: MlcParts) -> Self {
             Self { reference, parts }
         }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum MapReference {
+        roadsegment(RoadSegmentReferenceID),
+        intersection(IntersectionReferenceID),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=7", extensible))]
@@ -1948,55 +2470,13 @@ pub mod ivi {
     pub struct Segment {
         pub line: PolygonalLine,
         #[rasn(identifier = "laneWidth")]
-        pub lane_width: Option<LaneWidth>,
+        pub lane_width: Option<IviLaneWidth>,
     }
     impl Segment {
-        pub fn new(line: PolygonalLine, lane_width: Option<LaneWidth>) -> Self {
+        pub fn new(line: PolygonalLine, lane_width: Option<IviLaneWidth>) -> Self {
             Self { line, lane_width }
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    #[non_exhaustive]
-    pub struct SegmentExtended {
-        #[rasn(identifier = "segmentReferencePosition")]
-        pub segment_reference_position: Option<Zid>,
-        pub line: PolygonalLine,
-        #[rasn(identifier = "segmentWidthLeft")]
-        pub segment_width_left: Option<StandardLength9b>,
-        #[rasn(identifier = "segmentWidthRight")]
-        pub segment_width_right: Option<StandardLength9b>,
-    }
-    impl SegmentExtended {
-        pub fn new(
-            segment_reference_position: Option<Zid>,
-            line: PolygonalLine,
-            segment_width_left: Option<StandardLength9b>,
-            segment_width_right: Option<StandardLength9b>,
-        ) -> Self {
-            Self {
-                segment_reference_position,
-                line,
-                segment_width_left,
-                segment_width_right,
-            }
-        }
-    }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(automatic_tags)]
-    pub struct SupportItem {
-        pub id: ContentId,
-        pub content: Any,
-    }
-    impl SupportItem {
-        pub fn new(id: ContentId, content: Any) -> Self {
-            Self { id, content }
-        }
-    }
-    #[doc = " new DF in V2"]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(delegate, size("1..=128", extensible))]
-    pub struct SupportItems(pub SequenceOf<SupportItem>);
     #[doc = " Inner type "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -2220,7 +2700,7 @@ pub mod ivi {
         loadType(LoadType),
         usage(VehicleRole),
     }
-    #[doc = " new DF in V3.1"]
+    #[doc = " new DF in V2"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=4", extensible))]
     pub struct VehicleCharacteristicsFixValuesList(pub SequenceOf<VehicleCharacteristicsFixValues>);
@@ -2273,12 +2753,9 @@ pub mod ivi {
     #[rasn(choice, automatic_tags)]
     #[non_exhaustive]
     pub enum Zone {
-        #[rasn(identifier = "segment-carriagewayOrLane")]
-        segment_carriagewayOrLane(Segment),
+        segment(Segment),
         area(PolygonalLine),
         computedSegment(ComputedSegment),
-        #[rasn(extension_addition, identifier = "segment-setOfLanes")]
-        segment_setOfLanes(SegmentExtended),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=8", extensible))]
@@ -2291,42 +2768,17 @@ pub mod ivi {
     unused,
     clippy::too_many_arguments
 )]
-pub mod ivi_is {
-    extern crate alloc;
-    use super::ivi::*;
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
-    pub static DUMMY_ID: LazyLock<ContentId> = LazyLock::new(|| ContentId(Integer::from(0i128)));
-    pub static TEST1: LazyLock<ContentId> = LazyLock::new(|| ContentId(Integer::from(1i128)));
-}
-#[allow(
-    non_camel_case_types,
-    non_snake_case,
-    non_upper_case_globals,
-    unused,
-    clippy::too_many_arguments
-)]
 pub mod ivim_pdu_descriptions {
     extern crate alloc;
-    use super::super::cdd_2_2_1::etsi_its_cdd::ItsPduHeader;
+    use super::super::cdd_1_3_1_1::its_container::ItsPduHeader;
     use super::ivi::IviStructure;
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = "*"]
-    #[doc = "* In vehicle information Message Message"]
-    #[doc = "* This DF includes DEs for the IVIM protocolVersion, the IVI message type identifier `messageID`,"]
-    #[doc = "* the station identifier `stationID` of the originating ITS-S and the IVI data from ISO TS 19321."]
-    #[doc = "*"]
-    #[doc = "* @field header: The DE `protocolVersion` is used to select the appropriate protocol decoder at the receiving ITS-S. "]
-    #[doc = "*                It shall be set to 2."]
-    #[doc = "*                The DE `messageID` shall be ivim(6)."]
-    #[doc = "* @field ivi:    contains the IVI data as defined in ISO TS 19321."]
-    #[doc = "* "]
-    #[doc = "* @category: Basic Information"]
-    #[doc = "* @revision: V1.3.1"]
-    #[doc = ""]
+    #[doc = " In vehicle information Message Message"]
+    #[doc = " @brief In vehicle information Message Root"]
+    #[doc = " This DF includes DEs for the IVIM protocolVersion, the IVI message type identifier _messageID_,"]
+    #[doc = " the station identifier _stationID_ of the originating ITS-S and the IVI data from ISO TS 19321."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct IVIM {

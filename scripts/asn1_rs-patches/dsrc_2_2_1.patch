@@ -1,0 +1,20 @@
+diff --git a/src/standards/dsrc_2_2_1.rs b/src/standards/dsrc_2_2_1.rs
+index c479cd8..3335870 100644
+--- a/src/standards/dsrc_2_2_1.rs
++++ b/src/standards/dsrc_2_2_1.rs
+@@ -8,15 +8,6 @@
+ pub mod etsi_its_dsrc {
+     extern crate alloc;
+     use super::super::cdd_2_2_1::etsi_its_cdd::{Iso3833VehicleType, Latitude, Longitude, StationID};
+-    use super::super::dsrc_2_2_1::etsi_its_dsrc_region::{
+-        RegAdvisorySpeed, RegComputedLane, RegConnectionManeuverAssist, RegGenericLane,
+-        RegIntersectionGeometry, RegIntersectionState, RegLaneAttributes, RegLaneDataAttribute,
+-        RegMapData, RegMovementEvent, RegMovementState, RegNodeAttributeSetXY,
+-        RegNodeOffsetPointXY, RegPosition3D, RegRTCMcorrections, RegRequestorDescription,
+-        RegRequestorType, RegRestrictionUserType, RegRoadSegment, RegSPAT, RegSignalControlZone,
+-        RegSignalRequest, RegSignalRequestMessage, RegSignalRequestPackage, RegSignalStatus,
+-        RegSignalStatusMessage, RegSignalStatusPackage,
+-    };
+     use core::borrow::Borrow;
+     use rasn::prelude::*;
+     use std::sync::LazyLock;

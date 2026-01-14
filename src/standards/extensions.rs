@@ -178,10 +178,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         TrafficCondition,
-        crate::standards::denm_2_1_1::etsi_its_cdd::TrafficConditionSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::TrafficConditionSubCauseCode
     );
     impl TryInto<TrafficCondition>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::TrafficConditionSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::TrafficConditionSubCauseCode
     {
         type Error = String;
 
@@ -222,9 +222,9 @@ pub mod its_scc {
     }
     scc_conv_part!(
         Accident,
-        crate::standards::denm_2_1_1::etsi_its_cdd::AccidentSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::AccidentSubCauseCode
     );
-    impl TryInto<Accident> for crate::standards::denm_2_1_1::etsi_its_cdd::AccidentSubCauseCode {
+    impl TryInto<Accident> for crate::standards::cdd_2_2_1::etsi_its_cdd::AccidentSubCauseCode {
         type Error = String;
 
         fn try_into(self) -> Result<Accident, Self::Error> {
@@ -259,9 +259,9 @@ pub mod its_scc {
     }
     scc_conv_part!(
         Roadworks,
-        crate::standards::denm_2_1_1::etsi_its_cdd::RoadworksSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::RoadworksSubCauseCode
     );
-    impl TryInto<Roadworks> for crate::standards::denm_2_1_1::etsi_its_cdd::RoadworksSubCauseCode {
+    impl TryInto<Roadworks> for crate::standards::cdd_2_2_1::etsi_its_cdd::RoadworksSubCauseCode {
         type Error = String;
 
         fn try_into(self) -> Result<Roadworks, Self::Error> {
@@ -294,10 +294,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         HumanPresenceOnTheRoad,
-        crate::standards::denm_2_1_1::etsi_its_cdd::HumanPresenceOnTheRoadSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::HumanPresenceOnTheRoadSubCauseCode
     );
     impl TryInto<HumanPresenceOnTheRoad>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::HumanPresenceOnTheRoadSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::HumanPresenceOnTheRoadSubCauseCode
     {
         type Error = String;
 
@@ -327,10 +327,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         WrongWayDriving,
-        crate::standards::denm_2_1_1::etsi_its_cdd::WrongWayDrivingSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::WrongWayDrivingSubCauseCode
     );
     impl TryInto<WrongWayDriving>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::WrongWayDrivingSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::WrongWayDrivingSubCauseCode
     {
         type Error = String;
 
@@ -363,10 +363,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         AdverseWeatherConditionExtremeWeatherCondition,
-        crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionExtremeWeatherConditionSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionExtremeWeatherConditionSubCauseCode
     );
     impl TryInto<AdverseWeatherConditionExtremeWeatherCondition>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionExtremeWeatherConditionSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionExtremeWeatherConditionSubCauseCode
     {
         type Error = String;
 
@@ -404,10 +404,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         AdverseWeatherConditionAdhesion,
-        crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionAdhesionSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionAdhesionSubCauseCode
     );
     impl TryInto<AdverseWeatherConditionAdhesion>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionAdhesionSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionAdhesionSubCauseCode
     {
         type Error = String;
 
@@ -447,10 +447,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         AdverseWeatherConditionVisibility,
-        crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionVisibilitySubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionVisibilitySubCauseCode
     );
     impl TryInto<AdverseWeatherConditionVisibility>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionVisibilitySubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionVisibilitySubCauseCode
     {
         type Error = String;
 
@@ -465,7 +465,10 @@ pub mod its_scc {
                 6 => Ok(AdverseWeatherConditionVisibility::LowSunGlare),
                 7 => Ok(AdverseWeatherConditionVisibility::Sandstorms),
                 8 => Ok(AdverseWeatherConditionVisibility::SwarmsOfInsects),
-                _ => Err(format!("VisibilitySubCauseCode {} not a known value", self.0)),
+                _ => Err(format!(
+                    "VisibilitySubCauseCode {} not a known value",
+                    self.0
+                )),
             }
         }
     }
@@ -483,10 +486,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         AdverseWeatherConditionPrecipitation,
-        crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionPrecipitationSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionPrecipitationSubCauseCode
     );
     impl TryInto<AdverseWeatherConditionPrecipitation>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::AdverseWeatherConditionPrecipitationSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionPrecipitationSubCauseCode
     {
         type Error = String;
 
@@ -519,9 +522,9 @@ pub mod its_scc {
     }
     scc_conv_part!(
         SlowVehicle,
-        crate::standards::denm_2_1_1::etsi_its_cdd::SlowVehicleSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::SlowVehicleSubCauseCode
     );
-    impl TryInto<SlowVehicle> for crate::standards::denm_2_1_1::etsi_its_cdd::SlowVehicleSubCauseCode {
+    impl TryInto<SlowVehicle> for crate::standards::cdd_2_2_1::etsi_its_cdd::SlowVehicleSubCauseCode {
         type Error = String;
 
         fn try_into(self) -> Result<SlowVehicle, Self::Error> {
@@ -558,10 +561,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         StationaryVehicle,
-        crate::standards::denm_2_1_1::etsi_its_cdd::StationaryVehicleSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::StationaryVehicleSubCauseCode
     );
     impl TryInto<StationaryVehicle>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::StationaryVehicleSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::StationaryVehicleSubCauseCode
     {
         type Error = String;
 
@@ -593,11 +596,9 @@ pub mod its_scc {
     }
     scc_conv_part!(
         HumanProblem,
-        crate::standards::denm_2_1_1::etsi_its_cdd::HumanProblemSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::HumanProblemSubCauseCode
     );
-    impl TryInto<HumanProblem>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::HumanProblemSubCauseCode
-    {
+    impl TryInto<HumanProblem> for crate::standards::cdd_2_2_1::etsi_its_cdd::HumanProblemSubCauseCode {
         type Error = String;
 
         fn try_into(self) -> Result<HumanProblem, Self::Error> {
@@ -625,10 +626,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         EmergencyVehicleApproaching,
-        crate::standards::denm_2_1_1::etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode
     );
     impl TryInto<EmergencyVehicleApproaching>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode
     {
         type Error = String;
 
@@ -660,10 +661,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         HazardousLocationDangerousCurve,
-        crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationDangerousCurveSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationDangerousCurveSubCauseCode
     );
     impl TryInto<HazardousLocationDangerousCurve>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationDangerousCurveSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationDangerousCurveSubCauseCode
     {
         type Error = String;
 
@@ -699,10 +700,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         HazardousLocationSurfaceCondition,
-        crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationSurfaceConditionSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationSurfaceConditionSubCauseCode
     );
     impl TryInto<HazardousLocationSurfaceCondition>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationSurfaceConditionSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationSurfaceConditionSubCauseCode
     {
         type Error = String;
 
@@ -718,7 +719,10 @@ pub mod its_scc {
                 7 => Ok(HazardousLocationSurfaceCondition::BurstPipe),
                 8 => Ok(HazardousLocationSurfaceCondition::VolcanoEruption),
                 9 => Ok(HazardousLocationSurfaceCondition::FallingIce),
-                _ => Err(format!("SurfaceConditionSubCauseCode {} not a known value", self.0)),
+                _ => Err(format!(
+                    "SurfaceConditionSubCauseCode {} not a known value",
+                    self.0
+                )),
             }
         }
     }
@@ -740,10 +744,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         HazardousLocationObstacleOnTheRoad,
-        crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationObstacleOnTheRoadSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationObstacleOnTheRoadSubCauseCode
     );
     impl TryInto<HazardousLocationObstacleOnTheRoad>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationObstacleOnTheRoadSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationObstacleOnTheRoadSubCauseCode
     {
         type Error = String;
 
@@ -776,10 +780,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         HazardousLocationAnimalOnTheRoad,
-        crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationAnimalOnTheRoadSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationAnimalOnTheRoadSubCauseCode
     );
     impl TryInto<HazardousLocationAnimalOnTheRoad>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::HazardousLocationAnimalOnTheRoadSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationAnimalOnTheRoadSubCauseCode
     {
         type Error = String;
 
@@ -812,10 +816,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         CollisionRisk,
-        crate::standards::denm_2_1_1::etsi_its_cdd::CollisionRiskSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::CollisionRiskSubCauseCode
     );
     impl TryInto<CollisionRisk>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::CollisionRiskSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::CollisionRiskSubCauseCode
     {
         type Error = String;
 
@@ -847,10 +851,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         SignalViolation,
-        crate::standards::denm_2_1_1::etsi_its_cdd::SignalViolationSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::SignalViolationSubCauseCode
     );
     impl TryInto<SignalViolation>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::SignalViolationSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::SignalViolationSubCauseCode
     {
         type Error = String;
 
@@ -883,10 +887,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         RescueAndRecoveryWorkInProgress,
-        crate::standards::denm_2_1_1::etsi_its_cdd::RescueAndRecoveryWorkInProgressSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::RescueAndRecoveryWorkInProgressSubCauseCode
     );
     impl TryInto<RescueAndRecoveryWorkInProgress>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::RescueAndRecoveryWorkInProgressSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::RescueAndRecoveryWorkInProgressSubCauseCode
     {
         type Error = String;
 
@@ -920,10 +924,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         DangerousEndOfQueue,
-        crate::standards::denm_2_1_1::etsi_its_cdd::DangerousEndOfQueueSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::DangerousEndOfQueueSubCauseCode
     );
     impl TryInto<DangerousEndOfQueue>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::DangerousEndOfQueueSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::DangerousEndOfQueueSubCauseCode
     {
         type Error = String;
 
@@ -959,10 +963,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         DangerousSituation,
-        crate::standards::denm_2_1_1::etsi_its_cdd::DangerousSituationSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::DangerousSituationSubCauseCode
     );
     impl TryInto<DangerousSituation>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::DangerousSituationSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::DangerousSituationSubCauseCode
     {
         type Error = String;
 
@@ -1003,10 +1007,10 @@ pub mod its_scc {
     }
     scc_conv_part!(
         VehicleBreakdown,
-        crate::standards::denm_2_1_1::etsi_its_cdd::VehicleBreakdownSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::VehicleBreakdownSubCauseCode
     );
     impl TryInto<VehicleBreakdown>
-        for crate::standards::denm_2_1_1::etsi_its_cdd::VehicleBreakdownSubCauseCode
+        for crate::standards::cdd_2_2_1::etsi_its_cdd::VehicleBreakdownSubCauseCode
     {
         type Error = String;
 
@@ -1044,9 +1048,9 @@ pub mod its_scc {
     }
     scc_conv_part!(
         PostCrash,
-        crate::standards::denm_2_1_1::etsi_its_cdd::PostCrashSubCauseCode
+        crate::standards::cdd_2_2_1::etsi_its_cdd::PostCrashSubCauseCode
     );
-    impl TryInto<PostCrash> for crate::standards::denm_2_1_1::etsi_its_cdd::PostCrashSubCauseCode {
+    impl TryInto<PostCrash> for crate::standards::cdd_2_2_1::etsi_its_cdd::PostCrashSubCauseCode {
         type Error = String;
 
         fn try_into(self) -> Result<PostCrash, Self::Error> {
@@ -1364,13 +1368,7 @@ pub mod cdd_1_3_1_1 {
 }
 
 pub mod cdd_2_2_1 {
-    itsmessageid_conv!(crate::standards::cdd_2_2_1::etsi_its_cdd::MessageId);
-
-    itsstationtype_conv!(crate::standards::cdd_2_2_1::etsi_its_cdd::StationType);
-}
-
-pub mod denm_2_1_1 {
-    use crate::standards::denm_2_1_1::etsi_its_cdd::EnergyStorageType;
+    use crate::standards::cdd_2_2_1::etsi_its_cdd::EnergyStorageType;
 
     impl Default for EnergyStorageType {
         fn default() -> Self {
@@ -1452,20 +1450,19 @@ pub mod denm_2_1_1 {
         }
     }
 
-    itsmessageid_conv!(crate::standards::denm_2_1_1::etsi_its_cdd::MessageId);
+    itsmessageid_conv!(crate::standards::cdd_2_2_1::etsi_its_cdd::MessageId);
 
-    itsstationtype_conv!(crate::standards::denm_2_1_1::etsi_its_cdd::StationType);
+    itsstationtype_conv!(crate::standards::cdd_2_2_1::etsi_its_cdd::StationType);
 }
 
-pub mod is_1_3_1 {
+mod dsrc_2_2_1 {
     use rasn::types::Ia5String;
 
-    use crate::standards::is_1_3_1::etsi_schema::{
-        AllowedManeuvers, DayOfWeek, IntersectionStatusObject, LaneAttributes,
-        LaneAttributesBarrier, LaneAttributesBike, LaneAttributesCrosswalk, LaneAttributesParking,
-        LaneAttributesSidewalk, LaneAttributesStriping, LaneAttributesTrackedVehicle,
-        LaneAttributesVehicle, LaneDirection, LaneSharing, LaneTypeAttributes,
-        TransitVehicleStatus, PMD,
+    use crate::standards::dsrc_2_2_1::etsi_its_dsrc::{
+        AllowedManeuvers, IntersectionStatusObject, LaneAttributes, LaneAttributesBarrier,
+        LaneAttributesBike, LaneAttributesCrosswalk, LaneAttributesParking, LaneAttributesSidewalk,
+        LaneAttributesStriping, LaneAttributesTrackedVehicle, LaneAttributesVehicle, LaneDirection,
+        LaneSharing, LaneTypeAttributes, OcitRequestorDescriptionContainer, TransitVehicleStatus,
     };
 
     // MAPEM/ SPATEM
@@ -2604,58 +2601,26 @@ pub mod is_1_3_1 {
         }
     }
 
-    impl Default for PMD {
+    impl TryFrom<String> for crate::standards::dsrc_2_2_1::etsi_its_dsrc::DescriptiveName {
+        type Error = String;
+
+        fn try_from(value: String) -> Result<Self, Self::Error> {
+            Ok(Self(
+                Ia5String::from_iso646_bytes(value.as_bytes())
+                    .map_err(|err| format!("Failed to create DescriptiveName: {err}"))?,
+            ))
+        }
+    }
+
+    impl Default for OcitRequestorDescriptionContainer {
         fn default() -> Self {
-            Self(Default::default())
+            Self::new(None, None, None, None, None, None, None, None)
         }
     }
-    impl PMD {
-        pub fn get_national_holiday(&self) -> bool {
-            self.0[0]
-        }
-        pub fn get_even_days(&self) -> bool {
-            self.0[1]
-        }
-        pub fn get_odd_days(&self) -> bool {
-            self.0[2]
-        }
-        pub fn get_market_day(&self) -> bool {
-            self.0[3]
-        }
+}
 
-        pub fn set_national_holiday(&mut self, value: bool) {
-            self.0.set(0, value)
-        }
-        pub fn set_even_days(&mut self, value: bool) {
-            self.0.set(1, value)
-        }
-        pub fn set_odd_days(&mut self, value: bool) {
-            self.0.set(2, value)
-        }
-        pub fn set_market_day(&mut self, value: bool) {
-            self.0.set(3, value)
-        }
-    }
-    impl std::fmt::Display for PMD {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
-
-            if self.get_national_holiday() {
-                items.push("national-holiday: 1".into());
-            }
-            if self.get_even_days() {
-                items.push("even-days: 1".into());
-            }
-            if self.get_odd_days() {
-                items.push("odd-days: 1".into());
-            }
-            if self.get_market_day() {
-                items.push("market-day: 1".into());
-            }
-
-            write!(f, "{}", items.join(", "))
-        }
-    }
+mod ivim_2_2_1 {
+    use crate::standards::ivim_2_2_1::gdd::DayOfWeek;
 
     impl Default for DayOfWeek {
         fn default() -> Self {
@@ -2746,20 +2711,60 @@ pub mod is_1_3_1 {
         }
     }
 
-    itsstationtype_conv!(crate::standards::is_1_3_1::etsi_schema::StationType);
+    mod gdd {
+        use crate::standards::ivim_2_2_1::gdd::RepeatingPeriodDayTypes;
 
-    impl TryFrom<String> for crate::standards::is_1_3_1::etsi_schema::DescriptiveName {
-        type Error = String;
+        impl Default for RepeatingPeriodDayTypes {
+            fn default() -> Self {
+                Self(Default::default())
+            }
+        }
+        impl RepeatingPeriodDayTypes {
+            pub fn get_national_holiday(&self) -> bool {
+                self.0[0]
+            }
+            pub fn get_even_days(&self) -> bool {
+                self.0[1]
+            }
+            pub fn get_odd_days(&self) -> bool {
+                self.0[2]
+            }
+            pub fn get_market_day(&self) -> bool {
+                self.0[3]
+            }
 
-        fn try_from(value: String) -> Result<Self, Self::Error> {
-            Ok(Self(
-                Ia5String::from_iso646_bytes(value.as_bytes())
-                    .map_err(|err| format!("Failed to create DescriptiveName: {err}"))?,
-            ))
+            pub fn set_national_holiday(&mut self, value: bool) {
+                self.0.set(0, value)
+            }
+            pub fn set_even_days(&mut self, value: bool) {
+                self.0.set(1, value)
+            }
+            pub fn set_odd_days(&mut self, value: bool) {
+                self.0.set(2, value)
+            }
+            pub fn set_market_day(&mut self, value: bool) {
+                self.0.set(3, value)
+            }
+        }
+        impl std::fmt::Display for RepeatingPeriodDayTypes {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                let mut items = Vec::<String>::new();
+
+                if self.get_national_holiday() {
+                    items.push("national-holiday: 1".into());
+                }
+                if self.get_even_days() {
+                    items.push("even-days: 1".into());
+                }
+                if self.get_odd_days() {
+                    items.push("odd-days: 1".into());
+                }
+                if self.get_market_day() {
+                    items.push("market-day: 1".into());
+                }
+
+                write!(f, "{}", items.join(", "))
+            }
         }
     }
-}
-
-mod ivim_2_2_1 {
-    itsstationtype_conv!(crate::standards::ivim_2_2_1::ivim_pdu_descriptions::StationType);
 }

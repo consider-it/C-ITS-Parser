@@ -157,25 +157,25 @@ impl ItsMessage<'_> {
 #[wasm_bindgen(js_name = encodeDenm)]
 /// Encodes a DENM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
-/// Currently, denms of the following versions are supported: v2.1.1 (211) and v1.3.1 (131)
+/// Currently, denms of the following versions are supported: v2.2.1 (221) and v1.3.1 (131)
 /// Throws string error on encoding error
 pub fn encode_denm(denm: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&denm.its, version) {
-        (None, 131) | (None, 211) => return Err("No DENM JSON provided.".to_string()),
+        (None, 131) | (None, 221) => return Err("No DENM JSON provided.".to_string()),
         (Some(denm_json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::denm_1_3_1::denm_pdu_descriptions::DENM,
             >(denm_json)?);
         }
-        (Some(denm_json), 211) => {
+        (Some(denm_json), 221) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::denm_2_1_1::denm_pdu_description::DENM,
+                crate::standards::denm_2_2_1::denm_pdu_description::DENM,
             >(denm_json)?);
         }
         _ => {
             return Err(
-                "Unsupported DENM version: Supported DENM versions are 131 and 211.".to_string(),
+                "Unsupported DENM version: Supported DENM versions are 131 and 221.".to_string(),
             );
         }
     };
@@ -208,18 +208,18 @@ pub fn encode_cam(cam: &JsonItsMessage, version: u32) -> Result<Encoded, String>
 #[wasm_bindgen(js_name = encodeMapem)]
 /// Encodes a MAPEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
-/// Currently, mapems of the following versions are supported: v1.3.1 (131)
+/// Currently, mapems of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
 pub fn encode_mapem(mapem: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&mapem.its, version) {
-        (None, 131) => return Err("No MAPEM JSON provided.".to_string()),
-        (Some(json), 131) => {
+        (None, 221) => return Err("No MAPEM JSON provided.".to_string()),
+        (Some(json), 221) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::etsi_schema::MAPEM,
+                crate::standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM,
             >(json)?);
         }
-        _ => return Err("Unsupported MAPEM version: Supported MAPEM version is 131.".to_string()),
+        _ => return Err("Unsupported MAPEM version: Supported MAPEM version is 221.".to_string()),
     };
     let encoded = optionally_encode_headers(&mapem.geonetworking, &mapem.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -229,19 +229,19 @@ pub fn encode_mapem(mapem: &JsonItsMessage, version: u32) -> Result<Encoded, Str
 #[wasm_bindgen(js_name = encodeSpatem)]
 /// Encodes a SPATEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
-/// Currently, spatems of the following versions are supported: v1.3.1 (131)
+/// Currently, spatems of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
 pub fn encode_spatem(spatem: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&spatem.its, version) {
-        (None, 131) => return Err("No SPATEM JSON provided.".to_string()),
-        (Some(json), 131) => {
+        (None, 221) => return Err("No SPATEM JSON provided.".to_string()),
+        (Some(json), 221) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::etsi_schema::SPATEM,
+                crate::standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM,
             >(json)?);
         }
         _ => {
-            return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string());
+            return Err("Unsupported SPATEM version: Supported SPATEM version is 221.".to_string());
         }
     };
     let encoded = optionally_encode_headers(&spatem.geonetworking, &spatem.transport, payload)?;
@@ -252,18 +252,28 @@ pub fn encode_spatem(spatem: &JsonItsMessage, version: u32) -> Result<Encoded, S
 #[wasm_bindgen(js_name = encodeIvim)]
 /// Encodes a IVIM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
-/// Currently, ivims of the following versions are supported: v2.2.1 (221)
+/// Currently, ivims of the following versions are supported: v1.3.1 (131)/ v2.1.1 (211), v2.2.1 (221)
 /// Throws string error on encoding error
 pub fn encode_ivim(ivim: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&ivim.its, version) {
-        (None, 221) => return Err("No IVIM JSON provided.".to_string()),
+        (None, 131) | (None, 211) | (None, 221) => return Err("No IVIM JSON provided.".to_string()),
+        (Some(json), 211) | (Some(json), 131) => {
+            payload.append(&mut transcode_jer_to_uper::<
+                crate::standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM,
+            >(json)?);
+        }
         (Some(json), 221) => {
             payload.append(&mut transcode_jer_to_uper::<
                 crate::standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM,
             >(json)?);
         }
-        _ => return Err("Unsupported IVIM version: Supported IVIM version is 221.".to_string()),
+        _ => {
+            return Err(
+                "Unsupported IVIM version: Supported IVIM versions are 131, 211 and 221."
+                    .to_string(),
+            )
+        }
     };
     let encoded = optionally_encode_headers(&ivim.geonetworking, &ivim.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -273,18 +283,18 @@ pub fn encode_ivim(ivim: &JsonItsMessage, version: u32) -> Result<Encoded, Strin
 #[wasm_bindgen(js_name = encodeSrem)]
 /// Encodes a SREM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
-/// Currently, srems of the following versions are supported: v1.3.1 (131)
+/// Currently, srems of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
 pub fn encode_srem(srem: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&srem.its, version) {
-        (None, 131) => return Err("No SREM JSON provided.".to_string()),
-        (Some(json), 131) => {
+        (None, 221) => return Err("No SREM JSON provided.".to_string()),
+        (Some(json), 221) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::etsi_schema::SREM,
+                crate::standards::srem_2_2_1::srem_pdu_descriptions::SREM,
             >(json)?);
         }
-        _ => return Err("Unsupported SREM version: Supported SREM version is 131.".to_string()),
+        _ => return Err("Unsupported SREM version: Supported SREM version is 221.".to_string()),
     };
     let encoded = optionally_encode_headers(&srem.geonetworking, &srem.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -294,18 +304,27 @@ pub fn encode_srem(srem: &JsonItsMessage, version: u32) -> Result<Encoded, Strin
 #[wasm_bindgen(js_name = encodeCpm)]
 /// Encodes a CPM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
-/// Currently, cpms of the following versions are supported: v1.3.1 (131)
+/// Currently, cpms of the following versions are supported: v1.3.1 (131), v2.1.1 (211)
 /// Throws string error on encoding error
 pub fn encode_cpm(cpm: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&cpm.its, version) {
-        (None, 131) => return Err("No CPM JSON provided.".to_string()),
+        (None, 131) | (None, 211) => return Err("No CPM JSON provided.".to_string()),
         (Some(json), 131) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::etsi_schema::CPM,
+                crate::standards::cpm_1::cpm_pdu_descriptions::CPM,
             >(json)?);
         }
-        _ => return Err("Unsupported CPM version: Supported CPM version is 131.".to_string()),
+        (Some(json), 211) => {
+            payload.append(&mut transcode_jer_to_uper::<
+                crate::standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage,
+            >(json)?);
+        }
+        _ => {
+            return Err(
+                "Unsupported CPM version: Supported CPM versions are 131 and 211.".to_string(),
+            )
+        }
     };
     let encoded = optionally_encode_headers(&cpm.geonetworking, &cpm.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))
@@ -315,18 +334,18 @@ pub fn encode_cpm(cpm: &JsonItsMessage, version: u32) -> Result<Encoded, String>
 #[wasm_bindgen(js_name = encodeSsem)]
 /// Encodes a SSEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
-/// Currently, ssems of the following versions are supported: v1.3.1 (131)
+/// Currently, ssems of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
 pub fn encode_ssem(ssem: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&ssem.its, version) {
-        (None, 131) => return Err("No SSEM JSON provided.".to_string()),
-        (Some(json), 131) => {
+        (None, 221) => return Err("No SSEM JSON provided.".to_string()),
+        (Some(json), 221) => {
             payload.append(&mut transcode_jer_to_uper::<
-                crate::standards::is_1_3_1::etsi_schema::SSEM,
+                crate::standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM,
             >(json)?);
         }
-        _ => return Err("Unsupported SSEM version: Supported SSEM version is 131.".to_string()),
+        _ => return Err("Unsupported SSEM version: Supported SSEM version is 221.".to_string()),
     };
     let encoded = optionally_encode_headers(&ssem.geonetworking, &ssem.transport, payload)?;
     Ok(Encoded::from(encoded.as_slice()))

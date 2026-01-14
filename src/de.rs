@@ -19,7 +19,7 @@ use crate::{standards, Headers, ItsMessage};
     all(target_arch = "wasm32", feature = "etsi", feature = "json"),
     all(test, feature = "etsi")
 ))]
-use crate::{standards::is_1_3_1::etsi_schema::ItsPduHeader, EncodingRules};
+use crate::{standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader, EncodingRules};
 #[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 use geonetworking::Encode;
 #[cfg(feature = "transport")]
@@ -70,23 +70,27 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
     }?;
     let (encoding_rules, mut protocol_version, msg_type) = message_type(input)?;
 
-    // workaround to parse DENM Rel1 XER/ JER properly
-    if msg_type == 1 {
+    // workaround to parse DENM and IVIM Rel1 XER/ JER properly
+    if msg_type == 1 || msg_type == 6 {
         if let Ok(data) = std::str::from_utf8(input) {
             if (data.trim_start().starts_with('<') || data.trim_start().starts_with('{'))
                 && data.contains("messageID")
             {
-                // XER/ JER was encoded with old CDD and therefore complies to DENM v1.3.1, not 2.1.1
-                // set protocol_version to 1 for the match statement below
+                // CDD 2.2.1 is using slightly different names for some things that CDD 1.3.1, e.g.
+                // `messageID` (and other IDs) were changed to `messageId`, etc.
+                // The IVIM 2.2.1 also changed how other things are named.
+                // So we're using a fictional protocol_version 1 to fall into the right message type
+                // in the match statement below.
                 protocol_version = 1;
             }
         }
     }
+    // TODO: add a similar workaround for IVIM v2.1.1 since v2.2.1 changed some wording and updated to new CDD
 
     match (msg_type, protocol_version) {
         (1, 2) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::denm_2_1_1::denm_pdu_description::DENM>(input)
+            .decode_from_binary::<standards::denm_2_2_1::denm_pdu_description::DENM>(input)
             .map(|etsi| ItsMessage::DenmV2 {
                 geonetworking,
                 transport,
@@ -110,7 +114,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             }),
         (4, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::etsi_schema::SPATEM>(input)
+            .decode_from_binary::<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>(input)
             .map(|etsi| ItsMessage::Spatem {
                 geonetworking,
                 transport,
@@ -118,7 +122,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             }),
         (5, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::etsi_schema::MAPEM>(input)
+            .decode_from_binary::<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>(input)
             .map(|etsi| ItsMessage::Mapem {
                 geonetworking,
                 transport,
@@ -132,9 +136,9 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
                 transport,
                 etsi: Box::new(etsi)
             }),
-        (6, _) => encoding_rules
+         (6, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::etsi_schema::IVIM>(input)
+            .decode_from_binary::<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>(input)
             .map(|etsi| ItsMessage::IvimV1 {
                 geonetworking,
                 transport,
@@ -142,7 +146,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             }),
         (9, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::etsi_schema::SREM>(input)
+            .decode_from_binary::<standards::srem_2_2_1::srem_pdu_descriptions::SREM>(input)
             .map(|etsi| ItsMessage::Srem {
                 geonetworking,
                 transport,
@@ -150,7 +154,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             }),
         (10, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::etsi_schema::SSEM>(input)
+            .decode_from_binary::<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>(input)
             .map(|etsi| ItsMessage::Ssem {
                 geonetworking,
                 transport,
@@ -166,7 +170,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             }),
         (14, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::is_1_3_1::etsi_schema::CPM>(input)
+            .decode_from_binary::<standards::cpm_1::cpm_pdu_descriptions::CPM>(input)
             .map(|etsi| ItsMessage::CpmV1 {
                 geonetworking,
                 transport,
@@ -436,7 +440,13 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
         EncodingRules::UPER => EncodingRules::UPER
             .codec()
             .decode_from_binary::<ItsPduHeader>(input)
-            .map(|header| (encoding_rules, header.protocol_version, header.message_id))
+            .map(|header| {
+                (
+                    encoding_rules,
+                    header.protocol_version.0,
+                    header.message_id.0,
+                )
+            })
             .map_err(map_err_to_string),
     }
 }
@@ -463,7 +473,7 @@ fn decode_denm(
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         None | Some(211) => Some(
-            transcode::<standards::denm_2_1_1::denm_pdu_description::DENM>(
+            transcode::<standards::denm_2_2_1::denm_pdu_description::DENM>(
                 input,
                 input_encoding_rules,
                 output_encoding_rules,
@@ -512,13 +522,11 @@ fn decode_mapem(
 ) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(mapem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::MAPEM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        None | Some(221) => Some(transcode::<
+            standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        _ => return Err("Unsupported MAPEM version: Supported MAPEM version is 131.".to_string()),
+        _ => return Err("Unsupported MAPEM version: Supported MAPEM version is 221.".to_string()),
     }?;
     Ok(etsi_json)
 }
@@ -533,11 +541,9 @@ fn decode_spatem(
 ) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(spatem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SPATEM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        None | Some(131) => Some(transcode::<
+            standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
             return Err("Unsupported SPATEM version: Supported SPATEM version is 131.".to_string());
@@ -557,26 +563,22 @@ fn decode_ivim(
     let (input, mut etsi_json) = optionally_decode_headers(ivim, headers_present)?;
     if version.is_none() {
         version = match input.first() {
-            Some(1) => Some(131),
+            Some(1) => Some(211),
             Some(2) => Some(221),
             _ => None,
         };
     }
     etsi_json.its = match version {
-        Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::IVIM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        Some(211) => Some(transcode::<
+            standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         None | Some(221) => Some(transcode::<
             standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
-            return Err(
-                "Unsupported IVIM version: Supported IVIM versions are 131 and 221.".to_string(),
-            );
+            return Err("Unsupported IVIM version: Supported IVIM versions is 221.".to_string());
         }
     }?;
     Ok(etsi_json)
@@ -592,13 +594,11 @@ fn decode_srem(
 ) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(srem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SREM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        None | Some(221) => Some(transcode::<
+            standards::srem_2_2_1::srem_pdu_descriptions::SREM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        _ => return Err("Unsupported SREM version: Supported SREM version is 131.".to_string()),
+        _ => return Err("Unsupported SREM version: Supported SREM version is 221.".to_string()),
     }?;
     Ok(etsi_json)
 }
@@ -624,7 +624,7 @@ fn decode_cpm(
             standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::CPM>(
+        Some(131) => Some(transcode::<standards::cpm_1::cpm_pdu_descriptions::CPM>(
             input,
             input_encoding_rules,
             output_encoding_rules,
@@ -649,13 +649,11 @@ fn decode_ssem(
 ) -> Result<JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ssem, headers_present)?;
     etsi_json.its = match version {
-        None | Some(131) => Some(transcode::<standards::is_1_3_1::etsi_schema::SSEM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        None | Some(221) => Some(transcode::<
+            standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        _ => return Err("Unsupported SSEM version: Supported SSEM version is 131.".to_string()),
+        _ => return Err("Unsupported SSEM version: Supported SSEM version is 221.".to_string()),
     }?;
     Ok(etsi_json)
 }

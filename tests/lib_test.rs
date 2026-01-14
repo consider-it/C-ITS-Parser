@@ -30,10 +30,9 @@ use etsi_web::en::{
     encode_cam, encode_cpm, encode_denm, encode_ivim, encode_mapem, encode_spatem, encode_srem,
 };
 #[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
-use etsi_web::standards::ivim_2_2_1::ivim_pdu_descriptions::{
-    DeltaLatitude, DeltaLongitude, DeltaPosition, DeltaPositions, IviLaneWidth, PolygonalLine,
-    Segment,
-};
+use etsi_web::standards::cdd_2_2_1::etsi_its_cdd::{DeltaLatitude, DeltaLongitude, LaneWidth};
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
+use etsi_web::standards::ivim_2_2_1::ivi::{DeltaPosition, DeltaPositions, PolygonalLine, Segment};
 
 #[cfg(any(
     all(not(target_arch = "wasm32"), feature = "etsi"),
@@ -212,12 +211,12 @@ fn round_trip_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::denm_2_1_1::denm_pdu_description::DENM>(DENM)
+            &rasn::uper::decode::<etsi_web::standards::denm_2_2_1::denm_pdu_description::DENM>(DENM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_denm(&json, 211).unwrap();
+    let encoded = encode_denm(&json, 221).unwrap();
     let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
     assert_eq!(
         serde_json::from_str::<serde_json::Value>(expected_gn).unwrap(),
@@ -240,12 +239,12 @@ fn round_trip_denm_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::denm_2_1_1::denm_pdu_description::DENM>(DENM)
+            &rasn::uper::decode::<etsi_web::standards::denm_2_2_1::denm_pdu_description::DENM>(DENM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_denm(&json, 211).unwrap();
+    let encoded = encode_denm(&json, 221).unwrap();
     let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     assert_eq!(
@@ -290,12 +289,12 @@ fn round_trip_mapem_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":540,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::is_1_3_1::etsi_schema::MAPEM>(MAPEM)
+            &rasn::uper::decode::<etsi_web::standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>(MAPEM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_mapem(&json, 131).unwrap();
+    let encoded = encode_mapem(&json, 221).unwrap();
     let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     assert_eq!(
@@ -315,12 +314,12 @@ fn round_trip_spatem_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":207,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::is_1_3_1::etsi_schema::SPATEM>(SPATEM)
+            &rasn::uper::decode::<etsi_web::standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>(SPATEM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_spatem(&json, 131).unwrap();
+    let encoded = encode_spatem(&json, 221).unwrap();
     let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     assert_eq!(
@@ -340,7 +339,7 @@ fn round_trip_ivim_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":77,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::is_1_3_1::etsi_schema::IVIM>(IVIM)
+            &rasn::uper::decode::<etsi_web::standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>(IVIM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
@@ -364,10 +363,10 @@ fn round_trip_srem_wasm() {
     let json = JsonItsMessage {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":43,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
-        its: Some("{\"header\":{\"protocolVersion\":2,\"messageID\":9,\"stationID\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requester\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}".into()),
+        its: Some("{\"header\":{\"protocolVersion\":2,\"messageId\":9,\"stationId\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requestor\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}".into()),
         ..Default::default()
     };
-    let encoded = encode_srem(&json, 131).unwrap();
+    let encoded = encode_srem(&json, 221).unwrap();
     let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     assert_eq!(
@@ -387,7 +386,7 @@ fn round_trip_cpm_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":628,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::is_1_3_1::etsi_schema::CPM>(CPM).unwrap()
+            &rasn::uper::decode::<etsi_web::standards::cpm_1::cpm_pdu_descriptions::CPM>(CPM).unwrap()
         ).unwrap()),
         ..Default::default()
     };
@@ -537,7 +536,7 @@ fn segment() {
             DeltaPosition::new(DeltaLatitude(933), DeltaLongitude(-458)),
             DeltaPosition::new(DeltaLatitude(1375), DeltaLongitude(-323)),
         ])),
-        Some(IviLaneWidth(350)),
+        Some(LaneWidth(350)),
     );
     let re_encoded = Element::parse(rasn::xer::encode(&decoded).unwrap().as_slice()).unwrap();
     assert_eq!(expected, re_encoded);

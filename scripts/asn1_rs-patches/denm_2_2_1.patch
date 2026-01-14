@@ -1,0 +1,24 @@
+diff --git a/src/standards/denm_2_2_1.rs b/src/standards/denm_2_2_1.rs
+index acd8014..d718366 100644
+--- a/src/standards/denm_2_2_1.rs
++++ b/src/standards/denm_2_2_1.rs
+@@ -440,7 +440,7 @@ pub mod denm_pdu_description {
+         }
+     }
+     fn management_container_validity_duration_default() -> DeltaTimeSecond {
+-        DEFAULT_VALIDITY
++        DEFAULT_VALIDITY.clone()
+     }
+     #[doc = "* "]
+     #[doc = " * This type contains detailed information about an object with which a vehicle and/or the traffic is likely to collide."]
+diff --git a/src/standards/denm_2_2_1.rs b/src/standards/denm_2_2_1.rs
+index 701b227..acd8014 100644
+--- a/src/standards/denm_2_2_1.rs
++++ b/src/standards/denm_2_2_1.rs
+@@ -735,5 +735,5 @@ pub mod denm_pdu_description {
+     #[doc = "* "]
+     #[doc = " * This type specifies the default value for DENM validity duration used for DENM protocol operation."]
+     #[doc = ""]
+-    pub static DEFAULT_VALIDITY: LazyLock<Integer> = LazyLock::new(|| Integer::from(600i128));
++    pub static DEFAULT_VALIDITY: DeltaTimeSecond = DeltaTimeSecond(600);
+ }
