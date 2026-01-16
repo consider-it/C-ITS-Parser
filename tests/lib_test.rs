@@ -646,6 +646,32 @@ fn test_srem_versions() {
     }
 }
 
+#[cfg(all(not(target_arch = "wasm32"), feature = "mapem_2_2_1"))]
+#[test]
+fn test_mapem_versions() {
+    // test XER which uses old CDD
+    {
+        let xer_string = include_str!("files/mapem-cdd_1_3_1.xml");
+
+        let decoded = etsi_web::de::decode(xer_string.as_bytes(), etsi_web::Headers::None).unwrap();
+        let _re_encoded = decoded.encode(etsi_web::EncodingRules::XER).unwrap();
+
+        // don't check if XER is equal since it's expected to have different capitalization of messageId and stationID
+    }
+    // test XER which uses current CDD
+    {
+        let xer_string = include_str!("files/mapem-cdd_2_2_1.xml");
+
+        let decoded = etsi_web::de::decode(xer_string.as_bytes(), etsi_web::Headers::None).unwrap();
+        let re_encoded = decoded.encode(etsi_web::EncodingRules::XER).unwrap();
+
+        pretty_assertions::assert_eq!(
+            xmltree::Element::parse(xer_string.as_bytes()).unwrap(),
+            xmltree::Element::parse(re_encoded.as_slice()).unwrap(),
+        );
+    }
+}
+
 #[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_2_1"))]
 #[test]
 fn segment() {
