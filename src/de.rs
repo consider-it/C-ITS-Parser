@@ -70,28 +70,65 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
     }?;
     let (encoding_rules, mut protocol_version, msg_type) = message_type(input)?;
 
-    // workaround to parse DENM and IVIM Rel1 XER/ JER properly
-    if msg_type == 1 || msg_type == 6 {
-        if let Ok(data) = std::str::from_utf8(input) {
-            if (data.trim_start().starts_with('<') || data.trim_start().starts_with('{'))
-                && data.contains("messageID")
-            {
-                // CDD 2.2.1 is using slightly different names for some things that CDD 1.3.1, e.g.
-                // `messageID` (and other IDs) were changed to `messageId`, etc.
-                // The IVIM 2.2.1 also changed how other things are named.
-                // So we're using a fictional protocol_version 1 to fall into the right message type
-                // in the match statement below.
-                protocol_version = 1;
+    let input = match msg_type {
+        // workaround to parse DENM and IVIM as XER/ JER which still uses old CDD
+        1 | 6 => {
+            if let Ok(data) = std::str::from_utf8(input) {
+                if (data.trim_start().starts_with('<') || data.trim_start().starts_with('{'))
+                    && data.contains("messageID")
+                {
+                    // CDD 2.2.1 is using slightly different names for some things that CDD 1.3.1, e.g.
+                    // `messageID` (and other IDs) were changed to `messageId`, etc.
+                    // The IVIM 2.2.1 also changed how other things are named.
+                    // So we're using a fictional protocol_version 1 to fall into the right message type
+                    // in the match statement below.
+                    protocol_version = 1;
+                }
+            }
+            input.to_owned()
+        }
+        // workaround to parse MAPEM, SPATEM, SREM, SSEM as XER/ JER which still uses old CDD
+        4 | 5 | 9 | 10 => {
+            if let Ok(data) = std::str::from_utf8(input) {
+                // live-patch messageID and stationID in PDU header for MAPEMs, SPATEMs, SREMs and SSEMs
+                // Note: an SREM may contain stationID in the requestor, but that's actually fine!!! So we shall only patch the PDU header
+                if data.trim_start().starts_with('<') && data.contains("messageID") {
+                    // XML end tags are not allowed to contain a space between the `</` and the name, so this find is safe to use
+                    let patched_msg = match data.find("</header") {
+                        Some(header_end_pos) => {
+                            let (header, remains) = data.split_at(header_end_pos);
+
+                            let patched_msg = header.replace("messageID", "messageId");
+                            let patched_msg = patched_msg.replace("stationID", "stationId");
+
+                            patched_msg + remains
+                        }
+                        None => data.to_string(),
+                    };
+
+                    patched_msg.as_bytes().to_owned()
+                } else if data.trim_start().starts_with('{') && data.contains("messageID") {
+                    let patched_msg = data.replace("messageID", "messageId");
+
+                    // we can't easily find the end of the header in JSON, so just replace the first occurrence
+                    let patched_msg = patched_msg.replacen("stationID", "stationId", 1);
+
+                    patched_msg.as_bytes().to_owned()
+                } else {
+                    input.to_owned()
+                }
+            } else {
+                input.to_owned()
             }
         }
-    }
-    // TODO: add a similar workaround for IVIM v2.1.1 since v2.2.1 changed some wording and updated to new CDD
+        _ => input.to_owned(),
+    };
 
     match (msg_type, protocol_version) {
         #[cfg(feature = "denm_2_2_1")]
         (1, 2) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::denm_2_2_1::denm_pdu_description::DENM>(input)
+            .decode_from_binary::<standards::denm_2_2_1::denm_pdu_description::DENM>(&input)
             .map(|etsi| ItsMessage::DenmV2 {
                 geonetworking,
                 transport,
@@ -100,7 +137,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "denm_1_3_1")]
         (1, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::denm_1_3_1::denm_pdu_descriptions::DENM>(input)
+            .decode_from_binary::<standards::denm_1_3_1::denm_pdu_descriptions::DENM>(&input)
             .map(|etsi| ItsMessage::DenmV1 {
                 geonetworking,
                 transport,
@@ -109,7 +146,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "cam_1_4_1")]
         (2, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::cam_1_4_1::cam_pdu_descriptions::CAM>(input)
+            .decode_from_binary::<standards::cam_1_4_1::cam_pdu_descriptions::CAM>(&input)
             .map(|etsi| ItsMessage::Cam {
                 geonetworking,
                 transport,
@@ -118,7 +155,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "spatem_2_2_1")]
         (4, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>(input)
+            .decode_from_binary::<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>(&input)
             .map(|etsi| ItsMessage::Spatem {
                 geonetworking,
                 transport,
@@ -127,7 +164,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "mapem_2_2_1")]
         (5, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>(input)
+            .decode_from_binary::<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>(&input)
             .map(|etsi| ItsMessage::Mapem {
                 geonetworking,
                 transport,
@@ -136,7 +173,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "ivim_2_2_1")]
         (6, 2) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>(input)
+            .decode_from_binary::<standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>(&input)
             .map(|etsi| ItsMessage::IvimV2 {
                 geonetworking,
                 transport,
@@ -145,7 +182,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "ivim_2_1_1")]
          (6, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>(input)
+            .decode_from_binary::<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>(&input)
             .map(|etsi| ItsMessage::IvimV1 {
                 geonetworking,
                 transport,
@@ -154,7 +191,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "srem_2_2_1")]
         (9, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::srem_2_2_1::srem_pdu_descriptions::SREM>(input)
+            .decode_from_binary::<standards::srem_2_2_1::srem_pdu_descriptions::SREM>(&input)
             .map(|etsi| ItsMessage::Srem {
                 geonetworking,
                 transport,
@@ -163,7 +200,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "ssem_2_2_1")]
         (10, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>(input)
+            .decode_from_binary::<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>(&input)
             .map(|etsi| ItsMessage::Ssem {
                 geonetworking,
                 transport,
@@ -172,7 +209,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "cpm_2_1_1")]
         (14, 2) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage>(input)
+            .decode_from_binary::<standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage>(&input)
             .map(|etsi| ItsMessage::CpmV2 {
                 geonetworking,
                 transport,
@@ -181,7 +218,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         #[cfg(feature = "cpm_1")]
         (14, _) => encoding_rules
             .codec()
-            .decode_from_binary::<standards::cpm_1::cpm_pdu_descriptions::CPM>(input)
+            .decode_from_binary::<standards::cpm_1::cpm_pdu_descriptions::CPM>(&input)
             .map(|etsi| ItsMessage::CpmV1 {
                 geonetworking,
                 transport,
