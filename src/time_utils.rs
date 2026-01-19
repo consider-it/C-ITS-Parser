@@ -7,7 +7,12 @@
     clippy::missing_panics_doc,
     reason = "unwrap is safe b/c of preconditions"
 )]
-#[cfg(feature = "etsi")]
+#[cfg(any(
+    feature = "mapem_2_2_1",
+    feature = "spatem_2_2_1",
+    feature = "srem_2_2_1",
+    feature = "ssem_2_2_1",
+))]
 #[must_use]
 pub fn moy_and_dsecond(
     time: chrono::DateTime<chrono::Utc>,
@@ -43,7 +48,12 @@ pub fn moy_and_dsecond(
     clippy::missing_panics_doc,
     reason = "unwrap is safe b/c of preconditions"
 )]
-#[cfg(feature = "etsi")]
+#[cfg(any(
+    feature = "mapem_2_2_1",
+    feature = "spatem_2_2_1",
+    feature = "srem_2_2_1",
+    feature = "ssem_2_2_1",
+))]
 #[must_use]
 pub fn time_from_moy_and_dsecond(
     moy: &crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear,
@@ -132,18 +142,24 @@ fn its_offset_ms(unix_time_ms: u64) -> u16 {
     }
 }
 
-// used by DENM 1.3.1
-#[cfg(feature = "etsi")]
+// used by DENM 1.3.1, IVIM 2.1.1
+#[cfg(any(feature = "denm_1_3_1", feature = "ivim_2_1_1"))]
 timestampits_conv_datetime!(crate::standards::cdd_1_3_1_1::its_container::TimestampIts);
 
-// used by DENM 2.2.1 and IVIM 2.2.1
-#[cfg(feature = "etsi")]
+// used by CPM 2.1.1, DENM 2.2.1 and IVIM 2.2.1
+#[cfg(any(feature = "cpm_2_1_1", feature = "denm_2_2_1", feature = "ivim_2_2_1"))]
 timestampits_conv_datetime!(crate::standards::cdd_2_2_1::etsi_its_cdd::TimestampIts);
 
 #[cfg(all(test, feature = "etsi"))]
 mod tests {
 
     #[test]
+    #[cfg(any(
+        feature = "mapem_2_2_1",
+        feature = "spatem_2_2_1",
+        feature = "srem_2_2_1",
+        feature = "ssem_2_2_1",
+    ))]
     fn time_to_moy_and_dsecond() {
         use crate::time_utils::moy_and_dsecond;
 
@@ -179,6 +195,12 @@ mod tests {
     }
 
     #[test]
+    #[cfg(any(
+        feature = "mapem_2_2_1",
+        feature = "spatem_2_2_1",
+        feature = "srem_2_2_1",
+        feature = "ssem_2_2_1",
+    ))]
     fn moy_and_dsecond_to_time() {
         use crate::standards::dsrc_2_2_1::etsi_its_dsrc::DSecond;
         use crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear;
@@ -214,6 +236,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(any(feature = "cpm_2_1_1", feature = "denm_2_2_1", feature = "ivim_2_2_1"))]
     fn utc_to_its_timestamp() {
         use crate::standards::cdd_2_2_1::etsi_its_cdd::TimestampIts;
 
@@ -228,6 +251,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(any(feature = "cpm_2_1_1", feature = "denm_2_2_1", feature = "ivim_2_2_1"))]
     fn its_to_utc_timestamp() {
         use crate::standards::cdd_2_2_1::etsi_its_cdd::TimestampIts;
 

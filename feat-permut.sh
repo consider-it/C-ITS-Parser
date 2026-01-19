@@ -4,14 +4,36 @@ set -eu
 
 mode=${1:-help}
 wasm_target="--chrome --headless"
+extended=${2:-false}
 
-features=(
+features_base=(
   geo
   json
   transport
   transport,json
-  etsi
-  etsi,json
+  etsi,v2x
+  etsi,v2x,json
+)
+features_more=(
+  cam
+  cpm
+  denm
+  ivim
+  mapem
+  spatem
+  srem
+  ssem
+  cpm_1
+  denm_1_3_1
+  ivim_2_1_1
+  cam_1_4_1
+  cpm_2_1_1
+  denm_2_2_1
+  ivim_2_2_1
+  mapem_2_2_1
+  spatem_2_2_1
+  srem_2_2_1
+  ssem_2_2_1
 )
 
 
@@ -50,6 +72,13 @@ runClippy () {
   done
 }
 
+if [ $extended == "--more" ]; then
+  echo "running with extended feature list"
+  features=( "${features_base[@]}" "${features_more[@]}" )
+else
+  echo "running standard feature list"
+  features=( "${features_base[@]}" )
+fi
 
 case $mode in
 build)
@@ -75,5 +104,5 @@ all)
   runWasmTest
   ;;
 *)
-  echo "Usage: $0 [build | clippy | test | wasm-test | wasm-build | all]"
+  echo "Usage: $0 [build | clippy | test | wasm-test | wasm-build | all] [--more]"
 esac
