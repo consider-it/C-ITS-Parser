@@ -1,42 +1,17 @@
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
-use etsi_web::de::decode;
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
-use etsi_web::de::decode_to;
 #[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
 use etsi_web::ItsMessage;
 #[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 use etsi_web::JsonItsMessage;
-#[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
-))]
-use etsi_web::{EncodingRules, Headers};
 #[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 use wasm_bindgen_test::wasm_bindgen_test;
 #[cfg(target_arch = "wasm32")]
 wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 #[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
 use geonetworking::Encode;
-#[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
-))]
-use pretty_assertions::assert_eq;
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
-use xmltree::Element;
-
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
-use etsi_web::en::{
-    encode_cam, encode_cpm, encode_denm, encode_ivim, encode_mapem, encode_spatem, encode_srem,
-};
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
-use etsi_web::standards::cdd_2_2_1::etsi_its_cdd::{DeltaLatitude, DeltaLongitude, LaneWidth};
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
-use etsi_web::standards::ivim_2_2_1::ivi::{DeltaPosition, DeltaPositions, PolygonalLine, Segment};
 
 #[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+    all(not(target_arch = "wasm32"), feature = "denm_2_2_1"),
+    all(target_arch = "wasm32", feature = "denm_2_2_1", feature = "json")
 ))]
 const DENM: &[u8] = &[
     0x02, 0x01, 0xe0, 0xfd, 0x1d, 0x37, 0xe7, 0x46, 0x5a, 0xa8, 0xbc, 0x80, 0x06, 0x91, 0x0d, 0x64,
@@ -68,8 +43,8 @@ const DENM: &[u8] = &[
 ];
 
 #[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+    all(not(target_arch = "wasm32"), feature = "cam_1_4_1"),
+    all(target_arch = "wasm32", feature = "cam_1_4_1", feature = "json")
 ))]
 const CAM: &[u8] = &[
     0x02, 0x02, 0xde, 0x14, 0x0c, 0xe5, 0xc7, 0xc0, 0x40, 0x5a, 0xb2, 0x3d, 0x82, 0xce, 0x27, 0x81,
@@ -85,8 +60,8 @@ const CAM: &[u8] = &[
 ];
 
 #[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+    all(not(target_arch = "wasm32"), feature = "mapem_2_2_1"),
+    all(target_arch = "wasm32", feature = "mapem_2_2_1", feature = "json")
 ))]
 const MAPEM: &[u8] = &[
     0x02, 0x05, 0x00, 0x00, 0x30, 0x16, 0x08, 0x00, 0x03, 0x09, 0x4d, 0x83, 0x42, 0xfc, 0x9a, 0x94,
@@ -126,8 +101,8 @@ const MAPEM: &[u8] = &[
 ];
 
 #[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+    all(not(target_arch = "wasm32"), feature = "spatem_2_2_1"),
+    all(target_arch = "wasm32", feature = "spatem_2_2_1", feature = "json")
 ))]
 const SPATEM: &[u8] = &[
     0x02, 0x04, 0x00, 0x00, 0x30, 0x16, 0x00, 0x38, 0x4a, 0x6c, 0x1a, 0x17, 0xe4, 0xd4, 0xa7, 0x7d,
@@ -146,8 +121,8 @@ const SPATEM: &[u8] = &[
 ];
 
 #[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+    all(not(target_arch = "wasm32"), feature = "ivim_2_2_1"),
+    all(target_arch = "wasm32", feature = "ivim_2_2_1", feature = "json")
 ))]
 const IVIM: &[u8] = &[
     0x02, 0x06, 0x00, 0x12, 0x10, 0xdc, 0x82, 0x50, 0x00, 0x00, 0x00, 0x00, 0x88, 0x05, 0x58, 0xea,
@@ -158,8 +133,8 @@ const IVIM: &[u8] = &[
 ];
 
 #[cfg(any(
-    all(not(target_arch = "wasm32"), feature = "etsi"),
-    all(target_arch = "wasm32", feature = "etsi", feature = "json")
+    all(not(target_arch = "wasm32"), feature = "cpm_1"),
+    all(target_arch = "wasm32", feature = "cpm_1", feature = "json")
 ))]
 const CPM: &[u8] = &[
     0x01, 0x0e, 0xa6, 0xc0, 0x52, 0x47, 0x7a, 0x3f, 0x70, 0x0b, 0x56, 0x40, 0x27, 0x01, 0xc4, 0xd7,
@@ -203,14 +178,14 @@ const CPM: &[u8] = &[
     0xa7, 0xf0, 0xaf, 0x2c, 0x1a, 0x2f, 0xaf, 0x61, 0x3e, 0xe5, 0x0b, 0x12, 0x00, 0x37, 0x28, 0xd0,
 ];
 
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "srem_2_2_1", feature = "json"))]
 const SREM_PRE_OCIT: &[u8] = &[
     0x02, 0x09, 0xa6, 0x44, 0xd1, 0xdf, 0x70, 0x39, 0xec, 0xc8, 0x44, 0x00, 0x03, 0x00, 0x01, 0xec,
     0x04, 0x80, 0x10, 0x73, 0xda, 0x84, 0xd0, 0x60, 0x69, 0x91, 0x34, 0x77, 0xc0, 0x01, 0x2a, 0xb3,
     0x05, 0xf8, 0xee, 0x28, 0x8f, 0x08, 0x42, 0x00, 0x14, 0x8c, 0x00,
 ];
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "denm_2_2_1", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_wasm() {
     let expected_gn = r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}},"payload":[7,209,0,0,2,1,224,253,29,55,231,70,90,168,188,128,6,145,13,100,201,4,4,67,89,50,69,157,89,1,146,7,19,95,33,66,190,43,224,0,24,106,9,136,0,80,20,64,24,3,0,20,251,132,63,10,47,221,107,251,0,197,10,6,2,45,41,127,245,159,255,230,6,128,95,156,0,255,0,13,49,36,4,155,224,6,72,2,173,137,32,19,135,0,27,192,57,76,50,129,18,248,1,165,254,213,97,68,9,95,192,13,47,252,147,17,0,21,222,0,87,127,70,88,6,2,200,111,253,27,252,206,199,216,11,183,127,213,159,205,183,14,66,137,251,255,123,0,143,51,204,5,119,224,4,24,1,13,134,240,23,111,0,25,191,238,236,168,3,163,55,252,102,4,30,101,104,16,253,192,2,240,2,19,23,64,109,94,0,74,127,241,216,191,1,81,112,3,123,248,98,205,240,19,215,128,7,160,2,22,74,0,31,219,255,210,255,248,178,170,2,112,223,251,152,0,181,142,112,15,158,255,179,63,255,236,75,129,61,119,255,45,255,179,98,232,10,249,192,0,144,12,27,18,64,120,77,255,18,128,129,25,240,3,129,111,247,244,1,204,200,40,66,63,127,250,223,255,230,2,192,83,28,2,120,255,10,177,16,6,113,223,252,231,255,153,159,160,29,174,255,244,64,23,44,200,128,199,248,0,26,0,238,99,216,13,10,191,254,15,253,202,236,32,147,213,255,75,127,255,216,151,13,26,176,5,51,253,100,201,184,12,29,128,20,95,227,182,70,64,84,92,2,60,255,146,47,238,8,131,224,8,24,1,69,142,32,19,135,0,82,192,106,203,114,1,93,248,0,161,255,247,99,136,6,113,192,29,112,21,211,25,32,87,125,255,245,128,96,215,192,1,6,66,4,128,96,12]}}"#;
@@ -223,23 +198,28 @@ fn round_trip_wasm() {
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_denm(&json, 221).unwrap();
-    let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
-    assert_eq!(
+    let encoded = etsi_web::en::encode_denm(&json, 221).unwrap();
+    let decoded = etsi_web::de::decode_to(
+        &encoded.to_vec(),
+        etsi_web::Headers::GnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(expected_gn).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.geonetworking.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "denm_2_2_1", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_denm_wasm() {
     let json = JsonItsMessage {
@@ -251,20 +231,25 @@ fn round_trip_denm_wasm() {
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_denm(&json, 221).unwrap();
-    let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
+    let encoded = etsi_web::en::encode_denm(&json, 221).unwrap();
+    let decoded = etsi_web::de::decode_to(
+        &encoded.to_vec(),
+        etsi_web::Headers::GnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "cam_1_4_1", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_cam_wasm() {
     let json = JsonItsMessage {
@@ -276,20 +261,25 @@ fn round_trip_cam_wasm() {
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_cam(&json, 141).unwrap();
-    let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
+    let encoded = etsi_web::en::encode_cam(&json, 141).unwrap();
+    let decoded = etsi_web::de::decode_to(
+        &encoded.to_vec(),
+        etsi_web::Headers::GnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "mapem_2_2_1", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_mapem_wasm() {
     let json = JsonItsMessage {
@@ -301,20 +291,25 @@ fn round_trip_mapem_wasm() {
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_mapem(&json, 221).unwrap();
-    let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
+    let encoded = etsi_web::en::encode_mapem(&json, 221).unwrap();
+    let decoded = etsi_web::de::decode_to(
+        &encoded.to_vec(),
+        etsi_web::Headers::GnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "spatem_2_2_1", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_spatem_wasm() {
     let json = JsonItsMessage {
@@ -326,20 +321,25 @@ fn round_trip_spatem_wasm() {
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_spatem(&json, 221).unwrap();
-    let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
+    let encoded = etsi_web::en::encode_spatem(&json, 221).unwrap();
+    let decoded = etsi_web::de::decode_to(
+        &encoded.to_vec(),
+        etsi_web::Headers::GnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "ivim_2_2_1", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_ivim_wasm() {
     let json = JsonItsMessage {
@@ -351,20 +351,25 @@ fn round_trip_ivim_wasm() {
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_ivim(&json, 221).unwrap();
-    let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
+    let encoded = etsi_web::en::encode_ivim(&json, 221).unwrap();
+    let decoded = etsi_web::de::decode_to(
+        &encoded.to_vec(),
+        etsi_web::Headers::GnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_srem_wasm() {
     let json = JsonItsMessage {
@@ -373,20 +378,25 @@ fn round_trip_srem_wasm() {
         its: Some("{\"header\":{\"protocolVersion\":2,\"messageId\":9,\"stationId\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requestor\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}".into()),
         ..Default::default()
     };
-    let encoded = encode_srem(&json, 221).unwrap();
-    let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
+    let encoded = etsi_web::en::encode_srem(&json, 221).unwrap();
+    let decoded = etsi_web::de::decode_to(
+        &encoded.to_vec(),
+        etsi_web::Headers::GnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "cpm_1", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_cpm_wasm() {
     let json = JsonItsMessage {
@@ -397,20 +407,25 @@ fn round_trip_cpm_wasm() {
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = encode_cpm(&json, 131).unwrap();
-    let decoded = decode_to(&encoded.to_vec(), Headers::GnBtp, EncodingRules::JER).unwrap();
+    let encoded = etsi_web::en::encode_cpm(&json, 131).unwrap();
+    let decoded = etsi_web::de::decode_to(
+        &encoded.to_vec(),
+        etsi_web::Headers::GnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
     // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 #[wasm_bindgen_test]
 fn decode_pcap_frame_wasm() {
     let exp_geonetworking = r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":5,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[true,false,false,false,false,false,false,false],"payload_length":67,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"PassengerCar","reserved":[false,false,false,false,false,false,false,false,false,false],"address":[138,176,248,168,162,37]},"timestamp":1151018751,"latitude":535505166,"longitude":99353789,"position_accuracy":true,"speed":14,"heading":724},"media_dependent_data":[0,0,0,0]}},"payload":[7,209,0,0,2,2,156,107,199,147,38,255,64,90,178,2,65,206,38,186,215,161,134,24,96,0,54,204,208,72,45,79,160,5,168,130,152,138,127,51,255,1,255,250,0,40,51,0,0,44,2,121,2,217,173,240,3,121,96,26,104,51,205,99,240,67,44]}}"#;
@@ -422,22 +437,27 @@ fn decode_pcap_frame_wasm() {
         .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
         .collect::<Result<Vec<u8>, _>>()
         .unwrap();
-    let decoded = decode_to(&raw, Headers::RadioTap802LlcGnBtp, EncodingRules::JER).unwrap();
-    assert_eq!(
+    let decoded = etsi_web::de::decode_to(
+        &raw,
+        etsi_web::Headers::RadioTap802LlcGnBtp,
+        etsi_web::EncodingRules::JER,
+    )
+    .unwrap();
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&decoded.geonetworking.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(exp_geonetworking).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&decoded.its.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(exp_etsi).unwrap()
     );
-    assert_eq!(
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(exp_tp).unwrap()
     );
 }
 
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 #[wasm_bindgen_test]
 fn strip_headers_frame_wasm() {
     let expected = JsonItsMessage {
@@ -458,19 +478,24 @@ fn strip_headers_frame_wasm() {
         .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
         .collect::<Result<Vec<u8>, _>>()
         .unwrap();
-    let decoded = decode_to(&raw, Headers::RadioTap802LlcGnBtp, EncodingRules::UPER).unwrap();
-    assert_eq!(
+    let decoded = etsi_web::de::decode_to(
+        &raw,
+        etsi_web::Headers::RadioTap802LlcGnBtp,
+        etsi_web::EncodingRules::UPER,
+    )
+    .unwrap();
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&expected.geonetworking.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.geonetworking.unwrap()).unwrap()
     );
-    assert_eq!(expected.its, decoded.its);
-    assert_eq!(
+    pretty_assertions::assert_eq!(expected.its, decoded.its);
+    pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&expected.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
     );
 }
 
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "v2x", feature = "json"))]
 #[test]
 fn decode_pcap_frame() {
     let exp_geonetworking = r#"{"Unsecured":{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":5,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[true,false,false,false,false,false,false,false],"payload_length":67,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"PassengerCar","reserved":[false,false,false,false,false,false,false,false,false,false],"address":[138,176,248,168,162,37]},"timestamp":1151018751,"latitude":535505166,"longitude":99353789,"position_accuracy":true,"speed":14,"heading":724},"media_dependent_data":[0,0,0,0]}},"payload":[7,209,0,0,2,2,156,107,199,147,38,255,64,90,178,2,65,206,38,186,215,161,134,24,96,0,54,204,208,72,45,79,160,5,168,130,152,138,127,51,255,1,255,250,0,40,51,0,0,44,2,121,2,217,173,240,3,121,96,26,104,51,205,99,240,67,44]}}"#;
@@ -482,16 +507,16 @@ fn decode_pcap_frame() {
         .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
         .collect::<Result<Vec<u8>, _>>()
         .unwrap();
-    let decoded = decode(&raw, Headers::RadioTap802LlcGnBtp).unwrap();
+    let decoded = etsi_web::de::decode(&raw, etsi_web::Headers::RadioTap802LlcGnBtp).unwrap();
     if let ItsMessage::Cam {
         geonetworking: Some(geo),
         transport: Some(tp),
         etsi,
     } = decoded
     {
-        assert_eq!(geo.encode_to_json().unwrap(), exp_geonetworking);
-        assert_eq!(tp.encode_to_json().unwrap(), exp_tp);
-        assert_eq!(
+        pretty_assertions::assert_eq!(geo.encode_to_json().unwrap(), exp_geonetworking);
+        pretty_assertions::assert_eq!(tp.encode_to_json().unwrap(), exp_tp);
+        pretty_assertions::assert_eq!(
             serde_json::from_str::<serde_json::Value>(
                 &String::from_utf8(
                     ItsMessage::Cam {
@@ -499,7 +524,7 @@ fn decode_pcap_frame() {
                         transport: None,
                         etsi
                     }
-                    .encode(EncodingRules::JER)
+                    .encode(etsi_web::EncodingRules::JER)
                     .unwrap()
                 )
                 .unwrap()
@@ -512,53 +537,95 @@ fn decode_pcap_frame() {
     }
 }
 
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
 #[test]
+#[cfg(all(
+    not(target_arch = "wasm32"),
+    any(
+        feature = "denm_2_2_1",
+        feature = "cam_1_4_1",
+        feature = "mapem_2_2_1",
+        feature = "spatem_2_2_1",
+        feature = "ivim_2_2_1",
+        feature = "cpm_1"
+    )
+))]
 fn round_trip() {
-    let messages = [DENM, CAM, MAPEM, SPATEM, IVIM, CPM];
+    let messages = [
+        #[cfg(feature = "denm_2_2_1")]
+        DENM,
+        #[cfg(feature = "cam_1_4_1")]
+        CAM,
+        #[cfg(feature = "mapem_2_2_1")]
+        MAPEM,
+        #[cfg(feature = "spatem_2_2_1")]
+        SPATEM,
+        #[cfg(feature = "ivim_2_2_1")]
+        IVIM,
+        #[cfg(feature = "cpm_1")]
+        CPM,
+    ];
     for message in messages {
-        let uper_decoded = decode(message, Headers::None).unwrap();
+        let uper_decoded = etsi_web::de::decode(message, etsi_web::Headers::None).unwrap();
 
         // Encode to all encoding rules
-        let _uper_encoded = uper_decoded.clone().encode(EncodingRules::UPER).unwrap();
-        let xer_encoded = uper_decoded.clone().encode(EncodingRules::XER).unwrap();
-        let jer_encoded = uper_decoded.clone().encode(EncodingRules::JER).unwrap();
+        let _uper_encoded = uper_decoded
+            .clone()
+            .encode(etsi_web::EncodingRules::UPER)
+            .unwrap();
+        let xer_encoded = uper_decoded
+            .clone()
+            .encode(etsi_web::EncodingRules::XER)
+            .unwrap();
+        let jer_encoded = uper_decoded
+            .clone()
+            .encode(etsi_web::EncodingRules::JER)
+            .unwrap();
 
         // Decode from XER and JER (UPER done already)
-        let xer_decoded = decode(&xer_encoded, Headers::None).unwrap();
-        let jer_decoded = decode(&jer_encoded, Headers::None).unwrap();
+        let xer_decoded = etsi_web::de::decode(&xer_encoded, etsi_web::Headers::None).unwrap();
+        let jer_decoded = etsi_web::de::decode(&jer_encoded, etsi_web::Headers::None).unwrap();
 
-        assert_eq!(uper_decoded, xer_decoded);
-        assert_eq!(uper_decoded, jer_decoded);
+        pretty_assertions::assert_eq!(uper_decoded, xer_decoded);
+        pretty_assertions::assert_eq!(uper_decoded, jer_decoded);
     }
 }
 
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "srem_2_2_1", feature = "json"))]
 #[test]
 fn test_srem_versions() {
     // decode "old" SREM without OCIT extension
     {
         let srem_pre_ocit_jer = "{\"header\":{\"messageId\":9,\"protocolVersion\":2,\"stationId\":2789528031},\"srm\":{\"requestor\":{\"id\":{\"stationID\":2789528031},\"position\":{\"heading\":21040,\"position\":{\"elevation\":0,\"lat\":536037063,\"long\":100312642}},\"type\":{\"role\":\"basicVehicle\"}},\"requests\":[{\"minute\":29658,\"request\":{\"id\":{\"id\":123},\"inBoundLane\":{\"lane\":1},\"requestID\":1,\"requestType\":\"priorityRequest\"},\"second\":34000}],\"second\":37000,\"sequenceNumber\":0,\"timeStamp\":29657}}";
 
-        let uper_decoded = decode(SREM_PRE_OCIT, Headers::None).unwrap();
+        let uper_decoded = etsi_web::de::decode(SREM_PRE_OCIT, etsi_web::Headers::None).unwrap();
 
         // Encode to all encoding rules
-        let _uper_encoded = uper_decoded.clone().encode(EncodingRules::UPER).unwrap();
-        let xer_encoded = uper_decoded.clone().encode(EncodingRules::XER).unwrap();
-        let jer_encoded = uper_decoded.clone().encode(EncodingRules::JER).unwrap();
+        let _uper_encoded = uper_decoded
+            .clone()
+            .encode(etsi_web::EncodingRules::UPER)
+            .unwrap();
+        let xer_encoded = uper_decoded
+            .clone()
+            .encode(etsi_web::EncodingRules::XER)
+            .unwrap();
+        let jer_encoded = uper_decoded
+            .clone()
+            .encode(etsi_web::EncodingRules::JER)
+            .unwrap();
 
         // Decode from XER and JER (UPER done already)
-        let xer_decoded = decode(&xer_encoded, Headers::None).unwrap();
-        let jer_decoded = decode(&jer_encoded, Headers::None).unwrap();
+        let xer_decoded = etsi_web::de::decode(&xer_encoded, etsi_web::Headers::None).unwrap();
+        let jer_decoded = etsi_web::de::decode(&jer_encoded, etsi_web::Headers::None).unwrap();
 
-        assert_eq!(uper_decoded, xer_decoded);
-        assert_eq!(uper_decoded, jer_decoded);
+        pretty_assertions::assert_eq!(uper_decoded, xer_decoded);
+        pretty_assertions::assert_eq!(uper_decoded, jer_decoded);
 
         // compare JER with known good value
-        let jer_decoded = decode(srem_pre_ocit_jer.as_bytes(), Headers::None).unwrap();
-        assert_eq!(uper_decoded, jer_decoded);
+        let jer_decoded =
+            etsi_web::de::decode(srem_pre_ocit_jer.as_bytes(), etsi_web::Headers::None).unwrap();
+        pretty_assertions::assert_eq!(uper_decoded, jer_decoded);
 
-        assert_eq!(
+        pretty_assertions::assert_eq!(
             serde_json::from_str::<serde_json::Value>(srem_pre_ocit_jer).unwrap(),
             serde_json::from_slice::<serde_json::Value>(&jer_encoded).unwrap()
         );
@@ -568,37 +635,43 @@ fn test_srem_versions() {
     {
         let srem_ocit_empty_jer = "{\"header\":{\"protocolVersion\":2,\"messageId\":9,\"stationId\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requestor\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}";
 
-        let decoded = decode(srem_ocit_empty_jer.as_bytes(), Headers::None).unwrap();
-        let encoded = decoded.encode(EncodingRules::JER).unwrap();
+        let decoded =
+            etsi_web::de::decode(srem_ocit_empty_jer.as_bytes(), etsi_web::Headers::None).unwrap();
+        let encoded = decoded.encode(etsi_web::EncodingRules::JER).unwrap();
 
-        assert_eq!(
+        pretty_assertions::assert_eq!(
             serde_json::from_str::<serde_json::Value>(srem_ocit_empty_jer).unwrap(),
             serde_json::from_slice::<serde_json::Value>(&encoded).unwrap()
         );
     }
 }
 
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_2_1"))]
 #[test]
 fn segment() {
-    let expected = Element::parse(include_str!("files/segment.xml").as_bytes()).unwrap();
-    let decoded = Segment::new(
-        PolygonalLine::deltaPositions(DeltaPositions(vec![
-            DeltaPosition::new(DeltaLatitude(937), DeltaLongitude(-917)),
-            DeltaPosition::new(DeltaLatitude(933), DeltaLongitude(-458)),
-            DeltaPosition::new(DeltaLatitude(1375), DeltaLongitude(-323)),
+    use etsi_web::standards::cdd_2_2_1::etsi_its_cdd::{DeltaLatitude, DeltaLongitude, LaneWidth};
+    use etsi_web::standards::ivim_2_2_1::ivi;
+
+    let expected = xmltree::Element::parse(include_str!("files/segment.xml").as_bytes()).unwrap();
+    let decoded = ivi::Segment::new(
+        ivi::PolygonalLine::deltaPositions(ivi::DeltaPositions(vec![
+            ivi::DeltaPosition::new(DeltaLatitude(937), DeltaLongitude(-917)),
+            ivi::DeltaPosition::new(DeltaLatitude(933), DeltaLongitude(-458)),
+            ivi::DeltaPosition::new(DeltaLatitude(1375), DeltaLongitude(-323)),
         ])),
         Some(LaneWidth(350)),
     );
-    let re_encoded = Element::parse(rasn::xer::encode(&decoded).unwrap().as_slice()).unwrap();
-    assert_eq!(expected, re_encoded);
+    let re_encoded =
+        xmltree::Element::parse(rasn::xer::encode(&decoded).unwrap().as_slice()).unwrap();
+    pretty_assertions::assert_eq!(expected, re_encoded);
 }
 
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_2_1"))]
 #[test]
 fn ivim_xer_impl() {
-    let expected = Element::parse(include_str!("files/ivim_xer_impl_ivi.xml").as_bytes()).unwrap();
-    let decoded = decode(
+    let expected =
+        xmltree::Element::parse(include_str!("files/ivim_xer_impl_ivi.xml").as_bytes()).unwrap();
+    let decoded = etsi_web::de::decode(
         &[
             0x02, 0x06, 0x00, 0x12, 0x10, 0xdc, 0x82, 0x50, 0x00, 0x00, 0x00, 0x00, 0x88, 0x05,
             0x58, 0xea, 0xad, 0x57, 0x13, 0xd7, 0xa6, 0x4f, 0xff, 0xff, 0xfe, 0x11, 0xdb, 0xba,
@@ -607,26 +680,36 @@ fn ivim_xer_impl() {
             0x11, 0x2f, 0x01, 0x29, 0x45, 0x70, 0xea, 0xf0, 0x81, 0x60, 0x00, 0x02, 0x00, 0x04,
             0x08, 0x01, 0x4e,
         ],
-        Headers::None,
+        etsi_web::Headers::None,
     )
     .unwrap();
-    let re_encoded =
-        Element::parse(decoded.encode(EncodingRules::XER).unwrap().as_slice()).unwrap();
+    let re_encoded = xmltree::Element::parse(
+        decoded
+            .encode(etsi_web::EncodingRules::XER)
+            .unwrap()
+            .as_slice(),
+    )
+    .unwrap();
     pretty_assertions::assert_eq!(expected, re_encoded);
 }
 
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_1_1"))]
 #[test]
 fn xer_to_xer() {
     let expected_bytes = include_str!("files/xer_to_xer_ivi.xml").as_bytes();
-    let expected_xml = Element::parse(expected_bytes).unwrap();
-    let decoded = decode(expected_bytes, Headers::None).unwrap();
-    let re_encoded =
-        Element::parse(decoded.encode(EncodingRules::XER).unwrap().as_slice()).unwrap();
-    assert_eq!(expected_xml, re_encoded);
+    let expected_xml = xmltree::Element::parse(expected_bytes).unwrap();
+    let decoded = etsi_web::de::decode(expected_bytes, etsi_web::Headers::None).unwrap();
+    let re_encoded = xmltree::Element::parse(
+        decoded
+            .encode(etsi_web::EncodingRules::XER)
+            .unwrap()
+            .as_slice(),
+    )
+    .unwrap();
+    pretty_assertions::assert_eq!(expected_xml, re_encoded);
 }
 
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_1_1"))]
 #[test]
 fn xer_to_uper() {
     let expected = &[
@@ -658,12 +741,12 @@ fn xer_to_uper() {
         0x04, 0x04, 0x04, 0x04, 0x04, 0x03, 0x08, 0x00, 0x21, 0x08, 0x15, 0x11, 0x14, 0x13, 0x1e,
     ];
     // This string can't be in one line, because of new lines in the free text
-    let decoded = decode(
+    let decoded = etsi_web::de::decode(
         include_str!("files/xer_to_uper_ivi.xml").as_bytes(),
-        Headers::None,
+        etsi_web::Headers::None,
     )
     .unwrap();
-    let re_encoded = decoded.encode(EncodingRules::UPER).unwrap();
+    let re_encoded = decoded.encode(etsi_web::EncodingRules::UPER).unwrap();
 
-    assert_eq!(expected, re_encoded.as_slice());
+    pretty_assertions::assert_eq!(expected, re_encoded.as_slice());
 }

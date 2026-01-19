@@ -83,56 +83,67 @@ impl JsonItsMessage {
 #[cfg(feature = "etsi")]
 #[derive(Debug, Clone, PartialEq)]
 pub enum ItsMessage<'a> {
+    #[cfg(feature = "denm_1_3_1")]
     DenmV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::denm_1_3_1::denm_pdu_descriptions::DENM>,
     },
+    #[cfg(feature = "denm_2_2_1")]
     DenmV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::denm_2_2_1::denm_pdu_description::DENM>,
     },
+    #[cfg(feature = "cam_1_4_1")]
     Cam {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::cam_1_4_1::cam_pdu_descriptions::CAM>,
     },
+    #[cfg(feature = "spatem_2_2_1")]
     Spatem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>,
     },
+    #[cfg(feature = "mapem_2_2_1")]
     Mapem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>,
     },
+    #[cfg(feature = "ivim_2_1_1")]
     IvimV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>,
     },
+    #[cfg(feature = "ivim_2_2_1")]
     IvimV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>,
     },
+    #[cfg(feature = "srem_2_2_1")]
     Srem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::srem_2_2_1::srem_pdu_descriptions::SREM>,
     },
+    #[cfg(feature = "ssem_2_2_1")]
     Ssem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>,
     },
+    #[cfg(feature = "cpm_1")]
     CpmV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::cpm_1::cpm_pdu_descriptions::CPM>,
     },
+    #[cfg(feature = "cpm_2_1_1")]
     CpmV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,

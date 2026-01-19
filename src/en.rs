@@ -39,6 +39,7 @@ impl ItsMessage<'_> {
     /// unexpected set of headers was found.
     pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, String> {
         let (geo, tp, mut etsi_uper) = match self {
+            #[cfg(feature = "denm_1_3_1")]
             ItsMessage::DenmV1 {
                 geonetworking,
                 transport,
@@ -47,6 +48,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "denm_2_2_1")]
             ItsMessage::DenmV2 {
                 geonetworking,
                 transport,
@@ -55,6 +57,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "cam_1_4_1")]
             ItsMessage::Cam {
                 geonetworking,
                 transport,
@@ -63,6 +66,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "spatem_2_2_1")]
             ItsMessage::Spatem {
                 geonetworking,
                 transport,
@@ -71,6 +75,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "mapem_2_2_1")]
             ItsMessage::Mapem {
                 geonetworking,
                 transport,
@@ -79,6 +84,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "ivim_2_1_1")]
             ItsMessage::IvimV1 {
                 geonetworking,
                 transport,
@@ -87,6 +93,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "ivim_2_2_1")]
             ItsMessage::IvimV2 {
                 geonetworking,
                 transport,
@@ -95,6 +102,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "srem_2_2_1")]
             ItsMessage::Srem {
                 geonetworking,
                 transport,
@@ -103,6 +111,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "ssem_2_2_1")]
             ItsMessage::Ssem {
                 geonetworking,
                 transport,
@@ -111,6 +120,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "cpm_1")]
             ItsMessage::CpmV1 {
                 geonetworking,
                 transport,
@@ -119,6 +129,7 @@ impl ItsMessage<'_> {
                 .codec()
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
+            #[cfg(feature = "cpm_2_1_1")]
             ItsMessage::CpmV2 {
                 geonetworking,
                 transport,

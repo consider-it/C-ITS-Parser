@@ -38,6 +38,7 @@ impl ItsMessageId {
     }
 }
 
+#[cfg(feature = "_cdd_2_2_1")]
 macro_rules! itsmessageid_conv {
     ($t:ty) => {
         impl From<crate::standards::extensions::ItsMessageId> for $t {
@@ -107,6 +108,7 @@ impl ItsStationType {
     }
 }
 
+#[cfg(any(feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
 macro_rules! itsstationtype_conv {
     ($t:ty) => {
         impl From<crate::standards::extensions::ItsStationType> for $t {
@@ -1069,6 +1071,7 @@ pub mod its_scc {
     }
 }
 
+#[cfg(feature = "_cdd_1_3_1_1")]
 pub mod cdd_1_3_1_1 {
     use crate::standards::cdd_1_3_1_1::its_container::{
         AccelerationControl, EmergencyPriority, ExteriorLights, LightBarSirenInUse,
@@ -1367,6 +1370,7 @@ pub mod cdd_1_3_1_1 {
     itsstationtype_conv!(crate::standards::cdd_1_3_1_1::its_container::StationType);
 }
 
+#[cfg(feature = "_cdd_2_2_1")]
 pub mod cdd_2_2_1 {
     use crate::standards::cdd_2_2_1::etsi_its_cdd::EnergyStorageType;
 
@@ -1455,6 +1459,7 @@ pub mod cdd_2_2_1 {
     itsstationtype_conv!(crate::standards::cdd_2_2_1::etsi_its_cdd::StationType);
 }
 
+#[cfg(feature = "_dsrc_2_2_1")]
 mod dsrc_2_2_1 {
     use rasn::types::Ia5String;
 
@@ -2619,6 +2624,7 @@ mod dsrc_2_2_1 {
     }
 }
 
+#[cfg(feature = "ivim_2_2_1")]
 mod ivim_2_2_1 {
     use crate::standards::ivim_2_2_1::gdd::DayOfWeek;
 
