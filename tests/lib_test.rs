@@ -203,6 +203,13 @@ const CPM: &[u8] = &[
     0xa7, 0xf0, 0xaf, 0x2c, 0x1a, 0x2f, 0xaf, 0x61, 0x3e, 0xe5, 0x0b, 0x12, 0x00, 0x37, 0x28, 0xd0,
 ];
 
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
+const SREM_PRE_OCIT: &[u8] = &[
+    0x02, 0x09, 0xa6, 0x44, 0xd1, 0xdf, 0x70, 0x39, 0xec, 0xc8, 0x44, 0x00, 0x03, 0x00, 0x01, 0xec,
+    0x04, 0x80, 0x10, 0x73, 0xda, 0x84, 0xd0, 0x60, 0x69, 0x91, 0x34, 0x77, 0xc0, 0x01, 0x2a, 0xb3,
+    0x05, 0xf8, 0xee, 0x28, 0x8f, 0x08, 0x42, 0x00, 0x14, 0x8c, 0x00,
+];
+
 #[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
 #[wasm_bindgen_test]
 fn round_trip_wasm() {
@@ -523,6 +530,51 @@ fn round_trip() {
 
         assert_eq!(uper_decoded, xer_decoded);
         assert_eq!(uper_decoded, jer_decoded);
+    }
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
+#[test]
+fn test_srem_versions() {
+    // decode "old" SREM without OCIT extension
+    {
+        let srem_pre_ocit_jer = "{\"header\":{\"messageId\":9,\"protocolVersion\":2,\"stationId\":2789528031},\"srm\":{\"requestor\":{\"id\":{\"stationID\":2789528031},\"position\":{\"heading\":21040,\"position\":{\"elevation\":0,\"lat\":536037063,\"long\":100312642}},\"type\":{\"role\":\"basicVehicle\"}},\"requests\":[{\"minute\":29658,\"request\":{\"id\":{\"id\":123},\"inBoundLane\":{\"lane\":1},\"requestID\":1,\"requestType\":\"priorityRequest\"},\"second\":34000}],\"second\":37000,\"sequenceNumber\":0,\"timeStamp\":29657}}";
+
+        let uper_decoded = decode(SREM_PRE_OCIT, Headers::None).unwrap();
+
+        // Encode to all encoding rules
+        let _uper_encoded = uper_decoded.clone().encode(EncodingRules::UPER).unwrap();
+        let xer_encoded = uper_decoded.clone().encode(EncodingRules::XER).unwrap();
+        let jer_encoded = uper_decoded.clone().encode(EncodingRules::JER).unwrap();
+
+        // Decode from XER and JER (UPER done already)
+        let xer_decoded = decode(&xer_encoded, Headers::None).unwrap();
+        let jer_decoded = decode(&jer_encoded, Headers::None).unwrap();
+
+        assert_eq!(uper_decoded, xer_decoded);
+        assert_eq!(uper_decoded, jer_decoded);
+
+        // compare JER with known good value
+        let jer_decoded = decode(srem_pre_ocit_jer.as_bytes(), Headers::None).unwrap();
+        assert_eq!(uper_decoded, jer_decoded);
+
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(srem_pre_ocit_jer).unwrap(),
+            serde_json::from_slice::<serde_json::Value>(&jer_encoded).unwrap()
+        );
+    }
+
+    // round-trip SREM with OCIT extension
+    {
+        let srem_ocit_empty_jer = "{\"header\":{\"protocolVersion\":2,\"messageId\":9,\"stationId\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requestor\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}";
+
+        let decoded = decode(srem_ocit_empty_jer.as_bytes(), Headers::None).unwrap();
+        let encoded = decoded.encode(EncodingRules::JER).unwrap();
+
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(srem_ocit_empty_jer).unwrap(),
+            serde_json::from_slice::<serde_json::Value>(&encoded).unwrap()
+        );
     }
 }
 

@@ -3388,6 +3388,17 @@ pub mod etsi_its_dsrc {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=4"))]
     pub struct RequestorDescriptionRegional(pub SequenceOf<AnonymousRequestorDescriptionRegional>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RequestorDescriptionExtGroupOcit {
+        pub ocit: OcitRequestorDescriptionContainer,
+    }
+    impl RequestorDescriptionExtGroupOcit {
+        pub fn new(ocit: OcitRequestorDescriptionContainer) -> Self {
+            Self { ocit }
+        }
+    }
     #[doc = "*"]
     #[doc = "* This DF is used to provide identity information about a selected vehicle or users."]
     #[doc = "* This data frame is typically used with fleet type vehicles which can (or which must) safely release such information for use"]
@@ -3429,8 +3440,8 @@ pub mod etsi_its_dsrc {
         #[rasn(identifier = "transitSchedule")]
         pub transit_schedule: Option<DeltaTime>,
         pub regional: Option<RequestorDescriptionRegional>,
-        #[rasn(extension_addition)]
-        pub ocit: OcitRequestorDescriptionContainer,
+        #[rasn(extension_addition_group, identifier = "SEQUENCE")]
+        pub ext_group_ocit: Option<RequestorDescriptionExtGroupOcit>,
     }
     impl RequestorDescription {
         pub fn new(
@@ -3443,7 +3454,7 @@ pub mod etsi_its_dsrc {
             transit_occupancy: Option<TransitVehicleOccupancy>,
             transit_schedule: Option<DeltaTime>,
             regional: Option<RequestorDescriptionRegional>,
-            ocit: OcitRequestorDescriptionContainer,
+            ext_group_ocit: Option<RequestorDescriptionExtGroupOcit>,
         ) -> Self {
             Self {
                 id,
@@ -3455,7 +3466,7 @@ pub mod etsi_its_dsrc {
                 transit_occupancy,
                 transit_schedule,
                 regional,
-                ocit,
+                ext_group_ocit,
             }
         }
     }

@@ -1382,7 +1382,9 @@ RequestorDescription ::= SEQUENCE {
   transitSchedule   DeltaTime OPTIONAL,
   regional          SEQUENCE (SIZE(1..4)) OF RegionalExtension {{Reg-RequestorDescription}} OPTIONAL,
   ...,
-  ocit OcitRequestorDescriptionContainer -- Extension for OCIT in V2.2.1
+  [[
+    ocit OcitRequestorDescriptionContainer -- Extension for OCIT in V2.2.1
+  ]]
 }
 
 /**

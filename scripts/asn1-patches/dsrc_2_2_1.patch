@@ -1,0 +1,15 @@
+diff --git a/autogen/asn.1/dsrc_2_2_1.asn b/autogen/asn.1/dsrc_2_2_1.asn
+index be97e59..86ca46b 100644
+--- a/autogen/asn.1/dsrc_2_2_1.asn
++++ b/autogen/asn.1/dsrc_2_2_1.asn
+@@ -1382,7 +1382,9 @@ RequestorDescription ::= SEQUENCE {
+   transitSchedule   DeltaTime OPTIONAL,
+   regional          SEQUENCE (SIZE(1..4)) OF RegionalExtension {{Reg-RequestorDescription}} OPTIONAL,
+   ...,
+-  ocit OcitRequestorDescriptionContainer -- Extension for OCIT in V2.2.1
++  [[
++    ocit OcitRequestorDescriptionContainer -- Extension for OCIT in V2.2.1
++  ]]
+ }
+ 
+ /**
