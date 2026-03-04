@@ -96,4 +96,4 @@ wasm-bindgen = { version = "0.2.102" }
 pretty_assertions = "1.4.1"
 assert_float_eq = "1.2.0"
 wasm-bindgen-test = "0.3.52"
-xmltree = "0.11.0"
+xmltree = "0.12.0"
