@@ -23,6 +23,16 @@ macro_rules! latlon_to_deg {
                 f64::from(self.0) / 10_000_000.
             }
 
+            /// convert ETSI Latitude/ Longitude to degrees or `None` if "unavailable"
+            #[must_use]
+            pub fn try_as_deg(&self) -> Option<f64> {
+                if self.is_unavailable() {
+                    None
+                } else {
+                    Some(self.as_deg())
+                }
+            }
+
             /// convert ETSI Latitude/ Longitude to degrees
             #[must_use]
             pub fn from_deg(other: f64) -> Self {
@@ -150,6 +160,16 @@ macro_rules! etsi_to_mps {
                 f32::from(self.0) / $conv
             }
 
+            /// convert ETSI speed to m/s or `None` if "unavailable"
+            #[must_use]
+            pub fn try_as_mps(&self) -> Option<f32> {
+                if self.is_unavailable() {
+                    None
+                } else {
+                    Some(self.as_mps())
+                }
+            }
+
             /// create ETSI speed from m/s
             ///
             /// # Errors
@@ -232,6 +252,16 @@ macro_rules! angle_to_deg {
                 f32::from(self.0) / $conv
             }
 
+            /// convert ETSI WGS84AngleValue/ CartesianAngleValue to degrees or `None` if "unavailable"
+            #[must_use]
+            pub fn try_as_deg(&self) -> Option<f32> {
+                if self.is_unavailable() {
+                    None
+                } else {
+                    Some(self.as_deg())
+                }
+            }
+
             /// create ETSI WGS84AngleValue/ CartesianAngleValue from degrees
             ///
             /// # Errors
@@ -305,6 +335,16 @@ impl dsrc_2_2_1::etsi_its_dsrc::DeltaTime {
         i16::from(self.0) * 10
     }
 
+    /// convert ETSI DeltaTime to seconds or `None` if "unavailable"
+    #[must_use]
+    pub fn try_as_sec(&self) -> Option<i16> {
+        if self.is_unavailable() {
+            None
+        } else {
+            Some(self.as_sec())
+        }
+    }
+
     /// create ETSI DeltaTime from seconds, clamping at min. and max. bounds
     #[must_use]
     pub fn from_sec(value: i16) -> Self {
@@ -345,6 +385,16 @@ impl dsrc_2_2_1::etsi_its_dsrc::DSecond {
     #[must_use]
     pub fn as_millis(&self) -> u16 {
         self.0
+    }
+
+    /// convert ETSI DeltaTime to milliseconds or `None` if "unavailable"
+    #[must_use]
+    pub fn try_as_millis(&self) -> Option<u16> {
+        if self.is_unavailable() {
+            None
+        } else {
+            Some(self.as_millis())
+        }
     }
 
     /// create ETSI DSecond from milliseconds
