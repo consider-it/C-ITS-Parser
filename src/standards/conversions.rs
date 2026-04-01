@@ -217,7 +217,12 @@ etsi_to_mps!(cdd_2_2_1::etsi_its_cdd::SpeedValue, u16, 100., 16_383); // Unit: 0
 etsi_to_mps!(dsrc_2_2_1::etsi_its_dsrc::Velocity, u16, 50., 8191); // Unit: 0.02 m/s
 
 /// Create conversions for ETSI type `t` with conversion factor `conv` and some "unavailable" value
-#[cfg(any(feature = "cpm_1", feature = "_cdd_2_2_1", feature = "_dsrc_2_2_1"))]
+#[cfg(any(
+    feature = "cpm_1",
+    feature = "_cdd_1_3_1_1",
+    feature = "_cdd_2_2_1",
+    feature = "_dsrc_2_2_1"
+))]
 macro_rules! angle_to_deg {
     ($t:ty, $conv:expr, $unavailable:expr) => {
         impl $t {
@@ -286,6 +291,10 @@ angle_to_deg!(cpm_1::cpm_pdu_descriptions::CartesianAngleValue, 10., 3601); // U
 angle_to_deg!(cpm_1::cpm_pdu_descriptions::WGS84AngleValue, 10., 3601); // Unit: 0,1 degrees
 #[cfg(feature = "_dsrc_2_2_1")]
 angle_to_deg!(dsrc_2_2_1::etsi_its_dsrc::Angle, 80., 28800); // Unit: 0.0125 degrees
+#[cfg(feature = "_cdd_2_2_1")]
+angle_to_deg!(cdd_2_2_1::etsi_its_cdd::HeadingValue, 10., 3601); // Unit: 0,1 degree
+#[cfg(feature = "_cdd_1_3_1_1")]
+angle_to_deg!(cdd_1_3_1_1::its_container::HeadingValue, 10., 3601); // Unit: 0,1 degree
 
 // DeltaTime: unit 10 seconds, clamping to -121 for <-20 minutes and +120 for >+20 minutes, -122 for unavailable
 #[cfg(feature = "_dsrc_2_2_1")]
