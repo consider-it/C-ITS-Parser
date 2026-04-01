@@ -326,6 +326,83 @@ angle_to_deg!(cdd_2_2_1::etsi_its_cdd::HeadingValue, 10., 3601); // Unit: 0,1 de
 #[cfg(feature = "_cdd_1_3_1_1")]
 angle_to_deg!(cdd_1_3_1_1::its_container::HeadingValue, 10., 3601); // Unit: 0,1 degree
 
+/// Create conversions for ETSI type `t` with conversion factor `conv` and some "unavailable" value
+#[cfg(any(feature = "_cdd_2_2_1", feature = "_cdd_1_3_1_1"))]
+macro_rules! angle_to_degrate {
+    ($t:ty, $conv:expr, $unavailable:expr) => {
+        impl $t {
+            /// convert ETSI YawRateValue to degrees
+            #[must_use]
+            pub fn as_deg_rate(&self) -> f32 {
+                f32::from(self.0) / $conv
+            }
+
+            /// convert ETSI YawRateValue to degrees or `None` if "unavailable"
+            #[must_use]
+            pub fn try_as_deg(&self) -> Option<f32> {
+                if self.is_unavailable() {
+                    None
+                } else {
+                    Some(self.as_deg_rate())
+                }
+            }
+
+            /// create ETSI YawRateValue from degrees
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_deg_rate(value: f32) -> Result<Self, String> {
+                use rasn::AsnType;
+
+                #[allow(clippy::cast_possible_truncation)]
+                let etsi_val = (value * $conv) as i16;
+
+                if let Some(constraints) = Self::CONSTRAINTS.value() {
+                    if !constraints.constraint.in_bound(&etsi_val) {
+                        return Err(format!("Value out of bounds"));
+                    }
+                }
+
+                Ok(Self(etsi_val))
+            }
+
+            /// create ETSI YawRateValue with "unavailable" value
+            pub fn unavailable() -> Self {
+                Self($unavailable)
+            }
+
+            /// determines if the ETSI value is special "unavailable" value
+            pub fn is_unavailable(&self) -> bool {
+                self.0 == $unavailable
+            }
+        }
+
+        impl From<&$t> for f32 {
+            fn from(other: &$t) -> f32 {
+                other.as_deg_rate()
+            }
+        }
+        impl From<$t> for f32 {
+            fn from(other: $t) -> f32 {
+                other.as_deg_rate()
+            }
+        }
+
+        impl TryFrom<f32> for $t {
+            type Error = String;
+
+            fn try_from(value: f32) -> Result<Self, Self::Error> {
+                Self::from_deg_rate(value)
+            }
+        }
+    };
+}
+
+#[cfg(feature = "_cdd_2_2_1")]
+angle_to_degrate!(cdd_2_2_1::etsi_its_cdd::YawRateValue, 100., 3601); // Unit: 0,01 degree per second
+#[cfg(feature = "_cdd_1_3_1_1")]
+angle_to_degrate!(cdd_1_3_1_1::its_container::YawRateValue, 100., 32767); // Unit: 0,01 degree per second
+
 // DeltaTime: unit 10 seconds, clamping to -121 for <-20 minutes and +120 for >+20 minutes, -122 for unavailable
 #[cfg(feature = "_dsrc_2_2_1")]
 impl dsrc_2_2_1::etsi_its_dsrc::DeltaTime {
