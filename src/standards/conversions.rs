@@ -39,7 +39,7 @@ macro_rules! latlon_to_deg {
                 Self((other * 10_000_000.) as i32)
             }
 
-            /// create ETSI Latitude/ Longitude with "unavailable" value
+            /// create ETSI type with "unavailable" value
             pub fn unavailable() -> Self {
                 Self($unavailable)
             }
@@ -275,7 +275,7 @@ macro_rules! etsi_to_mps {
                 Ok(Self(etsi_val))
             }
 
-            /// create ETSI speed with "unavailable" value
+            /// create ETSI type with "unavailable" value
             pub fn unavailable() -> Self {
                 Self($unavailable)
             }
@@ -655,7 +655,7 @@ macro_rules! angle_to_degrate {
                 Ok(Self(etsi_val))
             }
 
-            /// create ETSI YawRateValue with "unavailable" value
+            /// create ETSI type with "unavailable" value
             pub fn unavailable() -> Self {
                 Self($unavailable)
             }
@@ -720,7 +720,7 @@ impl dsrc_2_2_1::etsi_its_dsrc::DeltaTime {
         Self(etsi_val.clamp(-121, 120))
     }
 
-    /// create ETSI DeltaTime with "unavailable" value
+    /// create ETSI type with "unavailable" value
     pub fn unavailable() -> Self {
         Self(-122)
     }
@@ -779,7 +779,7 @@ impl dsrc_2_2_1::etsi_its_dsrc::DSecond {
         Ok(Self(value))
     }
 
-    /// create ETSI DSecond with "unavailable" value
+    /// create ETSI type with "unavailable" value
     pub fn unavailable() -> Self {
         Self(65535)
     }
