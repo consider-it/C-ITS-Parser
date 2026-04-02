@@ -151,6 +151,92 @@ etsi_to_meters!(cpm_1::cpm_pdu_descriptions::Range, u16, 10.);
 etsi_to_meters!(cpm_1::cpm_pdu_descriptions::SemiRangeLength, u16, 10.);
 
 /// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv` and some "unavailable" value
+#[cfg(any(feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
+macro_rules! etsi_to_meters_unavailable {
+    ($t:ty, $tt:ty, $conv:expr, $unavailable:expr) => {
+        impl $t {
+            /// convert ETSI data to meters
+            #[must_use]
+            pub fn as_meters(&self) -> f32 {
+                self.0 as f32 / $conv
+            }
+
+            /// convert ETSI data to meters or `None` if "unavailable"
+            #[must_use]
+            pub fn try_as_meters(&self) -> Option<f32> {
+                if self.is_unavailable() {
+                    None
+                } else {
+                    Some(self.as_meters())
+                }
+            }
+
+            /// create ETSI data from meters
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_meters(value: f32) -> Result<Self, String> {
+                use rasn::AsnType;
+
+                #[allow(clippy::cast_possible_truncation)]
+                let etsi_val = (value * $conv) as $tt;
+
+                if let Some(constraints) = Self::CONSTRAINTS.value() {
+                    if !constraints.constraint.in_bound(&etsi_val) {
+                        return Err(format!("Value out of bounds"));
+                    }
+                }
+
+                Ok(Self(etsi_val))
+            }
+
+            /// create ETSI type with "unavailable" value
+            pub fn unavailable() -> Self {
+                Self($unavailable)
+            }
+
+            /// determines if the ETSI value is special "unavailable" value
+            pub fn is_unavailable(&self) -> bool {
+                self.0 == $unavailable
+            }
+        }
+
+        impl From<&$t> for f32 {
+            fn from(other: &$t) -> f32 {
+                other.as_meters()
+            }
+        }
+        impl From<$t> for f32 {
+            fn from(other: $t) -> f32 {
+                other.as_meters()
+            }
+        }
+
+        impl TryFrom<f32> for $t {
+            type Error = String;
+
+            fn try_from(value: f32) -> Result<Self, Self::Error> {
+                Self::from_meters(value)
+            }
+        }
+    };
+}
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::VehicleWidth, u8, 10., 62);
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::VehicleWidth, u8, 10., 62);
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(
+    cdd_1_3_1_1::its_container::VehicleLengthValue,
+    u16,
+    10.,
+    1023
+);
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::VehicleLengthValue, u16, 10., 1023);
+
+/// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv` and some "unavailable" value
 macro_rules! etsi_to_mps {
     ($t:ty, $tt:ty, $conv:expr, $unavailable:expr) => {
         impl $t {
