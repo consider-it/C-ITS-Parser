@@ -322,6 +322,121 @@ etsi_to_mps!(cdd_2_2_1::etsi_its_cdd::SpeedValue, u16, 100., 16_383); // Unit: 0
 #[cfg(feature = "_dsrc_2_2_1")]
 etsi_to_mps!(dsrc_2_2_1::etsi_its_dsrc::Velocity, u16, 50., 8191); // Unit: 0.02 m/s
 
+/// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv` and some "unavailable" value
+#[cfg(any(feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
+macro_rules! etsi_to_mpss {
+    ($t:ty, $tt:ty, $conv:expr, $unavailable:expr) => {
+        impl $t {
+            /// convert ETSI acceleration to m/s/s
+            #[must_use]
+            pub fn as_mpss(&self) -> f32 {
+                f32::from(self.0) / $conv
+            }
+
+            /// convert ETSI acceleration to m/s/s or `None` if "unavailable"
+            #[must_use]
+            pub fn try_as_mpss(&self) -> Option<f32> {
+                if self.is_unavailable() {
+                    None
+                } else {
+                    Some(self.as_mpss())
+                }
+            }
+
+            /// create ETSI acceleration from m/s/s
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_mpss(value: f32) -> Result<Self, String> {
+                use rasn::AsnType;
+
+                #[allow(clippy::cast_possible_truncation)]
+                let etsi_val = (value * $conv) as $tt;
+
+                if let Some(constraints) = Self::CONSTRAINTS.value() {
+                    if !constraints.constraint.in_bound(&etsi_val) {
+                        return Err(format!("Value out of bounds"));
+                    }
+                }
+
+                Ok(Self(etsi_val))
+            }
+
+            /// create ETSI type with "unavailable" value
+            pub fn unavailable() -> Self {
+                Self($unavailable)
+            }
+
+            /// determines if the ETSI value is special "unavailable" value
+            pub fn is_unavailable(&self) -> bool {
+                self.0 == $unavailable
+            }
+        }
+
+        impl From<&$t> for f32 {
+            fn from(other: &$t) -> f32 {
+                other.as_mpss()
+            }
+        }
+        impl From<$t> for f32 {
+            fn from(other: $t) -> f32 {
+                other.as_mpss()
+            }
+        }
+
+        impl TryFrom<f32> for $t {
+            type Error = String;
+
+            fn try_from(value: f32) -> Result<Self, Self::Error> {
+                Self::from_mpss(value)
+            }
+        }
+    };
+}
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_mpss!(
+    cdd_1_3_1_1::its_container::LongitudinalAccelerationValue,
+    i16,
+    10.,
+    161
+); // Unit: 0,1 m/s^2
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_mpss!(
+    cdd_2_2_1::etsi_its_cdd::LongitudinalAccelerationValue,
+    i16,
+    10.,
+    161
+); // Unit: 0,1 m/s^2
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_mpss!(
+    cdd_1_3_1_1::its_container::LateralAccelerationValue,
+    i16,
+    10.,
+    161
+); // Unit: 0,1 m/s^2
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_mpss!(
+    cdd_2_2_1::etsi_its_cdd::LateralAccelerationValue,
+    i16,
+    10.,
+    161
+); // Unit: 0,1 m/s^2
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_mpss!(
+    cdd_1_3_1_1::its_container::VerticalAccelerationValue,
+    i16,
+    10.,
+    161
+); // Unit: 0,1 m/s^2
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_mpss!(
+    cdd_2_2_1::etsi_its_cdd::VerticalAccelerationValue,
+    i16,
+    10.,
+    161
+); // Unit: 0,1 m/s^2
+
 /// Create conversions for ETSI type `t` with conversion factor `conv` and some "unavailable" value
 #[cfg(any(
     feature = "cpm_1",
