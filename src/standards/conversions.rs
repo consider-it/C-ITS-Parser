@@ -437,6 +437,74 @@ etsi_to_mpss!(
     161
 ); // Unit: 0,1 m/s^2
 
+/// Check for unavailable data of ETSI type `t` (which has underlying data type `tt`)
+#[cfg(any(feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
+macro_rules! etsi_raw_unavailable {
+    ($t:ty, $tt:ty, $unavailable:expr) => {
+        impl $t {
+            /// convert ETSI acceleration to m/s/s or `None` if "unavailable"
+            #[must_use]
+            pub fn try_as_raw(&self) -> Option<$tt> {
+                if self.is_unavailable() {
+                    None
+                } else {
+                    Some(self.0)
+                }
+            }
+
+            /// create ETSI acceleration from raw value
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_raw(value: $tt) -> Result<Self, String> {
+                use rasn::AsnType;
+
+                if let Some(constraints) = Self::CONSTRAINTS.value() {
+                    if !constraints.constraint.in_bound(&value) {
+                        return Err(format!("Value out of bounds"));
+                    }
+                }
+
+                Ok(Self(value))
+            }
+
+            /// create ETSI type with "unavailable" value
+            pub fn unavailable() -> Self {
+                Self($unavailable)
+            }
+
+            /// determines if the ETSI value is special "unavailable" value
+            pub fn is_unavailable(&self) -> bool {
+                self.0 == $unavailable
+            }
+        }
+
+        impl From<&$t> for $tt {
+            fn from(other: &$t) -> $tt {
+                other.0
+            }
+        }
+        impl From<$t> for $tt {
+            fn from(other: $t) -> $tt {
+                other.0
+            }
+        }
+
+        impl TryFrom<$tt> for $t {
+            type Error = String;
+
+            fn try_from(value: $tt) -> Result<Self, Self::Error> {
+                Self::from_raw(value)
+            }
+        }
+    };
+}
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_raw_unavailable!(cdd_1_3_1_1::its_container::CurvatureValue, i16, 1023);
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_raw_unavailable!(cdd_2_2_1::etsi_its_cdd::CurvatureValue, i16, 1023);
+
 /// Create conversions for ETSI type `t` with conversion factor `conv` and some "unavailable" value
 #[cfg(any(
     feature = "cpm_1",
