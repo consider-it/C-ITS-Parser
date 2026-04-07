@@ -145,6 +145,7 @@ macro_rules! etsi_to_mps {
     ($t:ty, $tt:ty, $conv:expr, $unavailable:expr) => {
         impl $t {
             /// convert ETSI speed to m/s
+            #[must_use]
             pub fn as_mps(&self) -> f32 {
                 f32::from(self.0) / $conv
             }
@@ -296,6 +297,7 @@ impl dsrc_2_2_1::etsi_its_dsrc::DeltaTime {
     }
 
     /// create ETSI DeltaTime from seconds, clamping at min. and max. bounds
+    #[must_use]
     pub fn from_sec(value: i16) -> Self {
         #[allow(clippy::cast_possible_truncation)]
         let etsi_val = (value / 10) as i8;
