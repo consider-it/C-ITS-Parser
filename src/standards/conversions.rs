@@ -4,6 +4,8 @@
 //!
 //! ETSI types to common (SI) units
 
+pub const MPS_TO_KMH_FACTOR: f32 = 3.6;
+
 #[cfg(feature = "_cdd_1_3_1_1")]
 use crate::standards::cdd_1_3_1_1;
 #[cfg(feature = "_cdd_2_2_1")]
@@ -273,6 +275,30 @@ macro_rules! etsi_to_mps {
                 }
 
                 Ok(Self(etsi_val))
+            }
+
+            /// convert ETSI speed to km/h
+            #[must_use]
+            pub fn as_kmh(&self) -> f32 {
+                self.as_mps() * MPS_TO_KMH_FACTOR
+            }
+
+            /// convert ETSI speed to km/h or `None` if "unavailable"
+            #[must_use]
+            pub fn try_as_kmh(&self) -> Option<f32> {
+                if self.is_unavailable() {
+                    None
+                } else {
+                    Some(self.as_kmh())
+                }
+            }
+
+            /// create ETSI speed from km/h
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_kmh(value: f32) -> Result<Self, String> {
+                Self::from_mps(value / MPS_TO_KMH_FACTOR)
             }
 
             /// create ETSI type with "unavailable" value
