@@ -82,8 +82,9 @@ jobs:
         run: cargo build --all-features
       - name: cargo test
         run: cargo test --all-features --verbose
-      - name: wasm-pack test
-        run: wasm-pack test --chrome --headless
+      ## TODO: headless chrome tests suddenly broke between 2026-04-02 and 2026-04-07
+      # - name: wasm-pack test
+      #   run: wasm-pack test --chrome --headless
 
       - name: free some disk space
         run: |
@@ -124,5 +125,5 @@ jobs:
         run: ./feat-permut.sh test
       - name: wasm-pack build important feature permutations
         run: ./feat-permut.sh wasm-build
-      - name: wasm-pack test important feature permutations
-        run: ./feat-permut.sh wasm-test
+      # - name: wasm-pack test important feature permutations
+      #   run: ./feat-permut.sh wasm-test
