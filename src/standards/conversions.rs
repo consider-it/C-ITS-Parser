@@ -124,36 +124,12 @@ macro_rules! etsi_to_meters {
     };
 }
 
-#[cfg(feature = "_dsrc_2_2_1")]
-etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB09, i16, 100.);
-#[cfg(feature = "_dsrc_2_2_1")]
-etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB10, i16, 100.);
-#[cfg(feature = "_dsrc_2_2_1")]
-etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB11, i16, 100.);
-#[cfg(feature = "_dsrc_2_2_1")]
-etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB12, i16, 100.);
-#[cfg(feature = "_dsrc_2_2_1")]
-etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB13, i16, 100.);
-#[cfg(feature = "_dsrc_2_2_1")]
-etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB14, i16, 100.);
-#[cfg(feature = "_dsrc_2_2_1")]
-etsi_to_meters!(dsrc_2_2_1::etsi_its_dsrc::OffsetB16, i16, 100.);
-
-#[cfg(feature = "cpm_1")]
-etsi_to_meters!(cpm_1::cpm_pdu_descriptions::DistanceValue, i32, 100.);
-#[cfg(feature = "_cdd_2_2_1")]
-etsi_to_meters!(cdd_2_2_1::etsi_its_cdd::ObjectDimensionValue, u16, 10.);
-#[cfg(feature = "cpm_1")]
-etsi_to_meters!(cpm_1::cpm_pdu_descriptions::ObjectDimensionValue, u16, 10.);
-#[cfg(feature = "cpm_1")]
-etsi_to_meters!(cpm_1::cpm_pdu_descriptions::Radius, u16, 10.);
-#[cfg(feature = "cpm_1")]
-etsi_to_meters!(cpm_1::cpm_pdu_descriptions::Range, u16, 10.);
-#[cfg(feature = "cpm_1")]
-etsi_to_meters!(cpm_1::cpm_pdu_descriptions::SemiRangeLength, u16, 10.);
-
 /// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv` and some "unavailable" value
-#[cfg(any(feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
+#[cfg(any(
+    feature = "_cdd_1_3_1_1",
+    feature = "_cdd_2_2_1",
+    feature = "_dsrc_2_2_1"
+))]
 macro_rules! etsi_to_meters_unavailable {
     ($t:ty, $tt:ty, $conv:expr, $unavailable:expr) => {
         impl $t {
@@ -223,6 +199,34 @@ macro_rules! etsi_to_meters_unavailable {
         }
     };
 }
+
+#[cfg(feature = "_dsrc_2_2_1")]
+etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::OffsetB09, i16, 100., -256);
+#[cfg(feature = "_dsrc_2_2_1")]
+etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::OffsetB10, i16, 100., -512);
+#[cfg(feature = "_dsrc_2_2_1")]
+etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::OffsetB11, i16, 100., -1024);
+#[cfg(feature = "_dsrc_2_2_1")]
+etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::OffsetB12, i16, 100., -2048);
+#[cfg(feature = "_dsrc_2_2_1")]
+etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::OffsetB13, i16, 100., -4096);
+#[cfg(feature = "_dsrc_2_2_1")]
+etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::OffsetB14, i16, 100., -8192);
+#[cfg(feature = "_dsrc_2_2_1")]
+etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::OffsetB16, i16, 100., -32768);
+
+#[cfg(feature = "cpm_1")]
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::DistanceValue, i32, 100.);
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::ObjectDimensionValue, u16, 10., 256);
+#[cfg(feature = "cpm_1")]
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::ObjectDimensionValue, u16, 10.);
+#[cfg(feature = "cpm_1")]
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::Radius, u16, 10.);
+#[cfg(feature = "cpm_1")]
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::Range, u16, 10.);
+#[cfg(feature = "cpm_1")]
+etsi_to_meters!(cpm_1::cpm_pdu_descriptions::SemiRangeLength, u16, 10.);
 
 #[cfg(feature = "_cdd_1_3_1_1")]
 etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::VehicleWidth, u8, 10., 62);
