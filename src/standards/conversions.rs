@@ -714,7 +714,7 @@ macro_rules! angle_to_degrate {
 }
 
 #[cfg(feature = "_cdd_2_2_1")]
-angle_to_degrate!(cdd_2_2_1::etsi_its_cdd::YawRateValue, 100., 3601); // Unit: 0,01 degree per second
+angle_to_degrate!(cdd_2_2_1::etsi_its_cdd::YawRateValue, 100., 32767); // Unit: 0,01 degree per second
 #[cfg(feature = "_cdd_1_3_1_1")]
 angle_to_degrate!(cdd_1_3_1_1::its_container::YawRateValue, 100., 32767); // Unit: 0,01 degree per second
 
