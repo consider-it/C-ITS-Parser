@@ -165,6 +165,12 @@ macro_rules! etsi_to_meters_unavailable {
                     }
                 }
 
+                // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
+                // So by checking for constraints first, we can use a strict equals condition.
+                if etsi_val == $unavailable {
+                    return Err(format!("Value out of bounds"));
+                }
+
                 Ok(Self(etsi_val))
             }
 
@@ -278,6 +284,12 @@ macro_rules! etsi_to_mps {
                     }
                 }
 
+                // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
+                // So by checking for constraints first, we can use a strict equals condition.
+                if etsi_val == $unavailable {
+                    return Err(format!("Value out of bounds"));
+                }
+
                 Ok(Self(etsi_val))
             }
 
@@ -389,6 +401,12 @@ macro_rules! etsi_to_mpss {
                     }
                 }
 
+                // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
+                // So by checking for constraints first, we can use a strict equals condition.
+                if etsi_val == $unavailable {
+                    return Err(format!("Value out of bounds"));
+                }
+
                 Ok(Self(etsi_val))
             }
 
@@ -495,6 +513,12 @@ macro_rules! etsi_raw_unavailable {
                     }
                 }
 
+                // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
+                // So by checking for constraints first, we can use a strict equals condition.
+                if value == $unavailable {
+                    return Err(format!("Value out of bounds"));
+                }
+
                 Ok(Self(value))
             }
 
@@ -575,6 +599,12 @@ macro_rules! angle_to_deg {
                     if !constraints.constraint.in_bound(&etsi_val) {
                         return Err(format!("Value out of bounds"));
                     }
+                }
+
+                // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
+                // So by checking for constraints first, we can use a strict equals condition.
+                if etsi_val == $unavailable {
+                    return Err(format!("Value out of bounds"));
                 }
 
                 Ok(Self(etsi_val))
@@ -680,6 +710,12 @@ macro_rules! angle_to_degrate {
                     if !constraints.constraint.in_bound(&etsi_val) {
                         return Err(format!("Value out of bounds"));
                     }
+                }
+
+                // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
+                // So by checking for constraints first, we can use a strict equals condition.
+                if etsi_val == $unavailable {
+                    return Err(format!("Value out of bounds"));
                 }
 
                 Ok(Self(etsi_val))
@@ -798,12 +834,10 @@ impl dsrc_2_2_1::etsi_its_dsrc::DSecond {
     /// # Errors
     /// human-readable string when input value is out of bounds
     pub fn from_millis(value: u16) -> Result<Self, String> {
-        use rasn::AsnType;
+        // ASN.1 bounds are bigger than allowed values (0..59999 for normal values, 60000..60999 for leap seconds)
 
-        if let Some(constraints) = Self::CONSTRAINTS.value() {
-            if !constraints.constraint.in_bound(&value) {
-                return Err(format!("Value out of bounds"));
-            }
+        if value > 60999 {
+            return Err(format!("Value out of bounds"));
         }
 
         Ok(Self(value))
