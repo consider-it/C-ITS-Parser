@@ -1,7 +1,7 @@
 #[cfg(all(not(target_arch = "wasm32"), feature = "_etsi", feature = "json"))]
-use etsi_web::ItsMessage;
+use c_its_parser::ItsMessage;
 #[cfg(all(target_arch = "wasm32", feature = "_etsi", feature = "json"))]
-use etsi_web::JsonItsMessage;
+use c_its_parser::JsonItsMessage;
 #[cfg(all(target_arch = "wasm32", feature = "_etsi", feature = "json"))]
 use wasm_bindgen_test::wasm_bindgen_test;
 #[cfg(target_arch = "wasm32")]
@@ -193,16 +193,16 @@ fn round_trip_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::denm_2_2_1::denm_pdu_description::DENM>(DENM)
+            &rasn::uper::decode::<c_its_parser::standards::denm_2_2_1::denm_pdu_description::DENM>(DENM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = etsi_web::en::encode_denm(&json, 221).unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let encoded = c_its_parser::en::encode_denm(&json, 221).unwrap();
+    let decoded = c_its_parser::de::decode_to(
         &encoded.to_vec(),
-        etsi_web::Headers::GnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::GnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     pretty_assertions::assert_eq!(
@@ -226,16 +226,16 @@ fn round_trip_denm_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":408,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::denm_2_2_1::denm_pdu_description::DENM>(DENM)
+            &rasn::uper::decode::<c_its_parser::standards::denm_2_2_1::denm_pdu_description::DENM>(DENM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = etsi_web::en::encode_denm(&json, 221).unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let encoded = c_its_parser::en::encode_denm(&json, 221).unwrap();
+    let decoded = c_its_parser::de::decode_to(
         &encoded.to_vec(),
-        etsi_web::Headers::GnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::GnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
@@ -256,16 +256,16 @@ fn round_trip_cam_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":164,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::cam_1_4_1::cam_pdu_descriptions::CAM>(CAM)
+            &rasn::uper::decode::<c_its_parser::standards::cam_1_4_1::cam_pdu_descriptions::CAM>(CAM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = etsi_web::en::encode_cam(&json, 141).unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let encoded = c_its_parser::en::encode_cam(&json, 141).unwrap();
+    let decoded = c_its_parser::de::decode_to(
         &encoded.to_vec(),
-        etsi_web::Headers::GnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::GnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
@@ -286,16 +286,16 @@ fn round_trip_mapem_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":540,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>(MAPEM)
+            &rasn::uper::decode::<c_its_parser::standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>(MAPEM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = etsi_web::en::encode_mapem(&json, 221).unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let encoded = c_its_parser::en::encode_mapem(&json, 221).unwrap();
+    let decoded = c_its_parser::de::decode_to(
         &encoded.to_vec(),
-        etsi_web::Headers::GnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::GnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
@@ -316,16 +316,16 @@ fn round_trip_spatem_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":207,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>(SPATEM)
+            &rasn::uper::decode::<c_its_parser::standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>(SPATEM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = etsi_web::en::encode_spatem(&json, 221).unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let encoded = c_its_parser::en::encode_spatem(&json, 221).unwrap();
+    let decoded = c_its_parser::de::decode_to(
         &encoded.to_vec(),
-        etsi_web::Headers::GnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::GnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
@@ -346,16 +346,16 @@ fn round_trip_ivim_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":77,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>(IVIM)
+            &rasn::uper::decode::<c_its_parser::standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>(IVIM)
             .unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = etsi_web::en::encode_ivim(&json, 221).unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let encoded = c_its_parser::en::encode_ivim(&json, 221).unwrap();
+    let decoded = c_its_parser::de::decode_to(
         &encoded.to_vec(),
-        etsi_web::Headers::GnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::GnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
@@ -378,11 +378,11 @@ fn round_trip_srem_wasm() {
         its: Some("{\"header\":{\"protocolVersion\":2,\"messageId\":9,\"stationId\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requestor\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}".into()),
         ..Default::default()
     };
-    let encoded = etsi_web::en::encode_srem(&json, 221).unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let encoded = c_its_parser::en::encode_srem(&json, 221).unwrap();
+    let decoded = c_its_parser::de::decode_to(
         &encoded.to_vec(),
-        etsi_web::Headers::GnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::GnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
@@ -403,15 +403,15 @@ fn round_trip_cpm_wasm() {
         geonetworking: Some(r#"{"basic":{"version":1,"next_header":"CommonHeader","reserved":[false,false,false,false,false,false,false,false],"lifetime":80,"remaining_hop_limit":1},"common":{"next_header":"BTPB","reserved_1":[false,false,false,false],"header_type_and_subtype":{"TopologicallyScopedBroadcast":"SingleHop"},"traffic_class":{"store_carry_forward":false,"channel_offload":false,"traffic_class_id":2},"flags":[false,false,false,false,false,false,false,false],"payload_length":628,"maximum_hop_limit":1,"reserved_2":[false,false,false,false,false,false,false,false]},"extended":{"SHB":{"source_position_vector":{"gn_address":{"manually_configured":false,"station_type":"Unknown","reserved":[false,true,false,false,false,false,false,true,true,false],"address":[0,96,224,105,87,141]},"timestamp":542947520,"latitude":535574568,"longitude":99765648,"position_accuracy":false,"speed":680,"heading":2122},"media_dependent_data":[127,0,184,0]}}}"#.into()),
         transport: Some(r#"{"destination_port":2001,"destination_port_info":0}"#.into()),
         its: Some(rasn::jer::encode(
-            &rasn::uper::decode::<etsi_web::standards::cpm_1::cpm_pdu_descriptions::CPM>(CPM).unwrap()
+            &rasn::uper::decode::<c_its_parser::standards::cpm_1::cpm_pdu_descriptions::CPM>(CPM).unwrap()
         ).unwrap()),
         ..Default::default()
     };
-    let encoded = etsi_web::en::encode_cpm(&json, 131).unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let encoded = c_its_parser::en::encode_cpm(&json, 131).unwrap();
+    let decoded = c_its_parser::de::decode_to(
         &encoded.to_vec(),
-        etsi_web::Headers::GnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::GnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
@@ -437,10 +437,10 @@ fn decode_pcap_frame_wasm() {
         .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
         .collect::<Result<Vec<u8>, _>>()
         .unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let decoded = c_its_parser::de::decode_to(
         &raw,
-        etsi_web::Headers::RadioTap802LlcGnBtp,
-        etsi_web::EncodingRules::JER,
+        c_its_parser::Headers::RadioTap802LlcGnBtp,
+        c_its_parser::EncodingRules::JER,
     )
     .unwrap();
     pretty_assertions::assert_eq!(
@@ -478,10 +478,10 @@ fn strip_headers_frame_wasm() {
         .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
         .collect::<Result<Vec<u8>, _>>()
         .unwrap();
-    let decoded = etsi_web::de::decode_to(
+    let decoded = c_its_parser::de::decode_to(
         &raw,
-        etsi_web::Headers::RadioTap802LlcGnBtp,
-        etsi_web::EncodingRules::UPER,
+        c_its_parser::Headers::RadioTap802LlcGnBtp,
+        c_its_parser::EncodingRules::UPER,
     )
     .unwrap();
     pretty_assertions::assert_eq!(
@@ -507,7 +507,8 @@ fn decode_pcap_frame() {
         .map(|s| u8::from_str_radix(&hex[s..s + 2], 16))
         .collect::<Result<Vec<u8>, _>>()
         .unwrap();
-    let decoded = etsi_web::de::decode(&raw, etsi_web::Headers::RadioTap802LlcGnBtp).unwrap();
+    let decoded =
+        c_its_parser::de::decode(&raw, c_its_parser::Headers::RadioTap802LlcGnBtp).unwrap();
     if let ItsMessage::Cam {
         geonetworking: Some(geo),
         transport: Some(tp),
@@ -524,7 +525,7 @@ fn decode_pcap_frame() {
                         transport: None,
                         etsi
                     }
-                    .encode(etsi_web::EncodingRules::JER)
+                    .encode(c_its_parser::EncodingRules::JER)
                     .unwrap()
                 )
                 .unwrap()
@@ -565,25 +566,27 @@ fn round_trip() {
         CPM,
     ];
     for message in messages {
-        let uper_decoded = etsi_web::de::decode(message, etsi_web::Headers::None).unwrap();
+        let uper_decoded = c_its_parser::de::decode(message, c_its_parser::Headers::None).unwrap();
 
         // Encode to all encoding rules
         let _uper_encoded = uper_decoded
             .clone()
-            .encode(etsi_web::EncodingRules::UPER)
+            .encode(c_its_parser::EncodingRules::UPER)
             .unwrap();
         let xer_encoded = uper_decoded
             .clone()
-            .encode(etsi_web::EncodingRules::XER)
+            .encode(c_its_parser::EncodingRules::XER)
             .unwrap();
         let jer_encoded = uper_decoded
             .clone()
-            .encode(etsi_web::EncodingRules::JER)
+            .encode(c_its_parser::EncodingRules::JER)
             .unwrap();
 
         // Decode from XER and JER (UPER done already)
-        let xer_decoded = etsi_web::de::decode(&xer_encoded, etsi_web::Headers::None).unwrap();
-        let jer_decoded = etsi_web::de::decode(&jer_encoded, etsi_web::Headers::None).unwrap();
+        let xer_decoded =
+            c_its_parser::de::decode(&xer_encoded, c_its_parser::Headers::None).unwrap();
+        let jer_decoded =
+            c_its_parser::de::decode(&jer_encoded, c_its_parser::Headers::None).unwrap();
 
         pretty_assertions::assert_eq!(uper_decoded, xer_decoded);
         pretty_assertions::assert_eq!(uper_decoded, jer_decoded);
@@ -597,32 +600,36 @@ fn test_srem_versions() {
     {
         let srem_pre_ocit_jer = "{\"header\":{\"messageId\":9,\"protocolVersion\":2,\"stationId\":2789528031},\"srm\":{\"requestor\":{\"id\":{\"stationID\":2789528031},\"position\":{\"heading\":21040,\"position\":{\"elevation\":0,\"lat\":536037063,\"long\":100312642}},\"type\":{\"role\":\"basicVehicle\"}},\"requests\":[{\"minute\":29658,\"request\":{\"id\":{\"id\":123},\"inBoundLane\":{\"lane\":1},\"requestID\":1,\"requestType\":\"priorityRequest\"},\"second\":34000}],\"second\":37000,\"sequenceNumber\":0,\"timeStamp\":29657}}";
 
-        let uper_decoded = etsi_web::de::decode(SREM_PRE_OCIT, etsi_web::Headers::None).unwrap();
+        let uper_decoded =
+            c_its_parser::de::decode(SREM_PRE_OCIT, c_its_parser::Headers::None).unwrap();
 
         // Encode to all encoding rules
         let _uper_encoded = uper_decoded
             .clone()
-            .encode(etsi_web::EncodingRules::UPER)
+            .encode(c_its_parser::EncodingRules::UPER)
             .unwrap();
         let xer_encoded = uper_decoded
             .clone()
-            .encode(etsi_web::EncodingRules::XER)
+            .encode(c_its_parser::EncodingRules::XER)
             .unwrap();
         let jer_encoded = uper_decoded
             .clone()
-            .encode(etsi_web::EncodingRules::JER)
+            .encode(c_its_parser::EncodingRules::JER)
             .unwrap();
 
         // Decode from XER and JER (UPER done already)
-        let xer_decoded = etsi_web::de::decode(&xer_encoded, etsi_web::Headers::None).unwrap();
-        let jer_decoded = etsi_web::de::decode(&jer_encoded, etsi_web::Headers::None).unwrap();
+        let xer_decoded =
+            c_its_parser::de::decode(&xer_encoded, c_its_parser::Headers::None).unwrap();
+        let jer_decoded =
+            c_its_parser::de::decode(&jer_encoded, c_its_parser::Headers::None).unwrap();
 
         pretty_assertions::assert_eq!(uper_decoded, xer_decoded);
         pretty_assertions::assert_eq!(uper_decoded, jer_decoded);
 
         // compare JER with known good value
         let jer_decoded =
-            etsi_web::de::decode(srem_pre_ocit_jer.as_bytes(), etsi_web::Headers::None).unwrap();
+            c_its_parser::de::decode(srem_pre_ocit_jer.as_bytes(), c_its_parser::Headers::None)
+                .unwrap();
         pretty_assertions::assert_eq!(uper_decoded, jer_decoded);
 
         pretty_assertions::assert_eq!(
@@ -636,8 +643,9 @@ fn test_srem_versions() {
         let srem_ocit_empty_jer = "{\"header\":{\"protocolVersion\":2,\"messageId\":9,\"stationId\":760129084},\"srm\":{\"timeStamp\":98917,\"second\":23692,\"sequenceNumber\":87,\"requests\":[{\"request\":{\"id\":{\"id\":0},\"requestID\":0,\"requestType\":\"priorityRequestUpdate\",\"inBoundLane\":{\"approach\":0},\"outBoundLane\":{\"approach\":0}}}],\"requestor\":{\"id\":{\"stationID\":3919},\"type\":{\"role\":\"publicTransport\"},\"position\":{\"position\":{\"lat\":535485106,\"long\":99886480},\"speed\":{\"transmisson\":\"unavailable\",\"speed\":232}},\"transitStatus\":\"00\",\"transitOccupancy\":\"occupancyMed\",\"transitSchedule\":4}}}";
 
         let decoded =
-            etsi_web::de::decode(srem_ocit_empty_jer.as_bytes(), etsi_web::Headers::None).unwrap();
-        let encoded = decoded.encode(etsi_web::EncodingRules::JER).unwrap();
+            c_its_parser::de::decode(srem_ocit_empty_jer.as_bytes(), c_its_parser::Headers::None)
+                .unwrap();
+        let encoded = decoded.encode(c_its_parser::EncodingRules::JER).unwrap();
 
         pretty_assertions::assert_eq!(
             serde_json::from_str::<serde_json::Value>(srem_ocit_empty_jer).unwrap(),
@@ -653,8 +661,9 @@ fn test_mapem_versions() {
     {
         let xer_string = include_str!("files/mapem-cdd_1_3_1.xml");
 
-        let decoded = etsi_web::de::decode(xer_string.as_bytes(), etsi_web::Headers::None).unwrap();
-        let _re_encoded = decoded.encode(etsi_web::EncodingRules::XER).unwrap();
+        let decoded =
+            c_its_parser::de::decode(xer_string.as_bytes(), c_its_parser::Headers::None).unwrap();
+        let _re_encoded = decoded.encode(c_its_parser::EncodingRules::XER).unwrap();
 
         // don't check if XER is equal since it's expected to have different capitalization of messageId and stationID
     }
@@ -662,8 +671,9 @@ fn test_mapem_versions() {
     {
         let xer_string = include_str!("files/mapem-cdd_2_2_1.xml");
 
-        let decoded = etsi_web::de::decode(xer_string.as_bytes(), etsi_web::Headers::None).unwrap();
-        let re_encoded = decoded.encode(etsi_web::EncodingRules::XER).unwrap();
+        let decoded =
+            c_its_parser::de::decode(xer_string.as_bytes(), c_its_parser::Headers::None).unwrap();
+        let re_encoded = decoded.encode(c_its_parser::EncodingRules::XER).unwrap();
 
         pretty_assertions::assert_eq!(
             xmltree::Element::parse(xer_string.as_bytes()).unwrap(),
@@ -675,8 +685,12 @@ fn test_mapem_versions() {
 #[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_2_1"))]
 #[test]
 fn segment() {
-    use etsi_web::standards::cdd_2_2_1::etsi_its_cdd::{DeltaLatitude, DeltaLongitude, LaneWidth};
-    use etsi_web::standards::ivim_2_2_1::ivi;
+    use c_its_parser::standards::cdd_2_2_1::etsi_its_cdd::{
+        DeltaLatitude,
+        DeltaLongitude,
+        LaneWidth,
+    };
+    use c_its_parser::standards::ivim_2_2_1::ivi;
 
     let expected = xmltree::Element::parse(include_str!("files/segment.xml").as_bytes()).unwrap();
     let decoded = ivi::Segment::new(
@@ -697,7 +711,7 @@ fn segment() {
 fn ivim_xer_impl() {
     let expected =
         xmltree::Element::parse(include_str!("files/ivim_xer_impl_ivi.xml").as_bytes()).unwrap();
-    let decoded = etsi_web::de::decode(
+    let decoded = c_its_parser::de::decode(
         &[
             0x02, 0x06, 0x00, 0x12, 0x10, 0xdc, 0x82, 0x50, 0x00, 0x00, 0x00, 0x00, 0x88, 0x05,
             0x58, 0xea, 0xad, 0x57, 0x13, 0xd7, 0xa6, 0x4f, 0xff, 0xff, 0xfe, 0x11, 0xdb, 0xba,
@@ -706,12 +720,12 @@ fn ivim_xer_impl() {
             0x11, 0x2f, 0x01, 0x29, 0x45, 0x70, 0xea, 0xf0, 0x81, 0x60, 0x00, 0x02, 0x00, 0x04,
             0x08, 0x01, 0x4e,
         ],
-        etsi_web::Headers::None,
+        c_its_parser::Headers::None,
     )
     .unwrap();
     let re_encoded = xmltree::Element::parse(
         decoded
-            .encode(etsi_web::EncodingRules::XER)
+            .encode(c_its_parser::EncodingRules::XER)
             .unwrap()
             .as_slice(),
     )
@@ -724,10 +738,10 @@ fn ivim_xer_impl() {
 fn xer_to_xer() {
     let expected_bytes = include_str!("files/xer_to_xer_ivi.xml").as_bytes();
     let expected_xml = xmltree::Element::parse(expected_bytes).unwrap();
-    let decoded = etsi_web::de::decode(expected_bytes, etsi_web::Headers::None).unwrap();
+    let decoded = c_its_parser::de::decode(expected_bytes, c_its_parser::Headers::None).unwrap();
     let re_encoded = xmltree::Element::parse(
         decoded
-            .encode(etsi_web::EncodingRules::XER)
+            .encode(c_its_parser::EncodingRules::XER)
             .unwrap()
             .as_slice(),
     )
@@ -767,12 +781,12 @@ fn xer_to_uper() {
         0x04, 0x04, 0x04, 0x04, 0x04, 0x03, 0x08, 0x00, 0x21, 0x08, 0x15, 0x11, 0x14, 0x13, 0x1e,
     ];
     // This string can't be in one line, because of new lines in the free text
-    let decoded = etsi_web::de::decode(
+    let decoded = c_its_parser::de::decode(
         include_str!("files/xer_to_uper_ivi.xml").as_bytes(),
-        etsi_web::Headers::None,
+        c_its_parser::Headers::None,
     )
     .unwrap();
-    let re_encoded = decoded.encode(etsi_web::EncodingRules::UPER).unwrap();
+    let re_encoded = decoded.encode(c_its_parser::EncodingRules::UPER).unwrap();
 
     pretty_assertions::assert_eq!(expected, re_encoded.as_slice());
 }

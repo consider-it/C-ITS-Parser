@@ -40,7 +40,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           wasm-pack build --release --target web
-          ./scripts/publish.sh
+          ./scripts/publish.sh '-web'
       - name: Build for node and publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
