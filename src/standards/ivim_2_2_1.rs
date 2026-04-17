@@ -2314,19 +2314,16 @@ pub mod ivim_pdu_descriptions {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = "*"]
-    #[doc = "* In vehicle information Message Message"]
-    #[doc = "* This DF includes DEs for the IVIM protocolVersion, the IVI message type identifier `messageID`,"]
-    #[doc = "* the station identifier `stationID` of the originating ITS-S and the IVI data from ISO TS 19321."]
-    #[doc = "*"]
-    #[doc = "* @field header: The DE `protocolVersion` is used to select the appropriate protocol decoder at the receiving ITS-S. "]
-    #[doc = "*                It shall be set to 2."]
-    #[doc = "*                The DE `messageID` shall be ivim(6)."]
-    #[doc = "* @field ivi:    contains the IVI data as defined in ISO TS 19321."]
-    #[doc = "* "]
-    #[doc = "* @category: Basic Information"]
-    #[doc = "* @revision: V1.3.1"]
-    #[doc = ""]
+
+    #[doc = "In vehicle information Message Message"]
+    #[doc = "This DF includes DEs for the IVIM protocolVersion, the IVI message type identifier `messageID`,"]
+    #[doc = "the station identifier `stationID` of the originating ITS-S and the IVI data from ISO TS 19321."]
+    #[doc = "\n@field header: The DE `protocolVersion` is used to select the appropriate protocol decoder at the receiving ITS-S. "]
+    #[doc = "               It shall be set to 2."]
+    #[doc = "               The DE `messageID` shall be ivim(6)."]
+    #[doc = "\n@field ivi:    contains the IVI data as defined in ISO TS 19321."]
+    #[doc = "\n@category: Basic Information"]
+    #[doc = "\n@revision: V1.3.1"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct IVIM {

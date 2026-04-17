@@ -43,6 +43,35 @@ for file in $rootdir/scripts/asn1_rs-patches/*.patch; do
     git apply $file
 done
 
+# fix doc comments
+for file in $rootdir/src/standards/*_*.rs; do
+    echo "patching doc attributes in $file"
+
+    # empty `#[doc = "*"]` attributes (which result in rustdoc parsing issues)
+    sed -i '' -E 's/#\[doc = "\*[[:space:]]*"\]//' $file
+
+    # empty doc lines
+    sed -i '' 's/#\[doc = "[[:space:]]*"\]//' $file
+
+    # remove ` *` at the beginning of lines
+    sed -i '' -E 's/#\[doc = " \*[[:space:]]?/#\[doc = "/' $file
+
+    # remove `*` at the beginning of lines
+    sed -i '' -E 's/#\[doc = "\*[[:space:]]?/#\[doc = "/' $file
+
+    # enforce newlines before "@attrs"
+    sed -i '' -E 's/#\[doc = "@/#\[doc = "\\n@/' $file
+
+
+    # remove "[$num]" style references
+    sed -i '' -E 's/#\[doc = "(.*) \[[[:digit:]]+\](.*)"/#\[doc = "\1\2"/' $file
+    # remove "[OCIT]" references
+    sed -i '' -E 's/#\[doc = "(.*) \[OCIT\](.*)"/#\[doc = "\1\2"/' $file
+
+    # encode links in pointy brackets
+    sed -i '' -E 's/#\[doc = "(.*) (https+:\/\/[^[:space:]]+) (.*)"/#\[doc = "\1 <\2> \3"/' $file
+done
+
 echo ""
 echo "formatting code..."
 for file in $rootdir/src/standards/*.rs; do

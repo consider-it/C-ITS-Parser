@@ -13,13 +13,12 @@ pub mod cpm_originating_station_containers {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = "*"]
-    #[doc = " * This DF  represents the Originating RSU Container."]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field mapReference: identifies the MAPEM containing the topology information reference in the Perceived Object Container"]
-    #[doc = " * "]
+
+    #[doc = "This DF  represents the Originating RSU Container."]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field mapReference: identifies the MAPEM containing the topology information reference in the Perceived Object Container"]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -33,19 +32,18 @@ pub mod cpm_originating_station_containers {
             Self { map_reference }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF  represents the Originating Vehicle Container"]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field orientationAngle: the angle and angle accuracy of the absolute orientation of the disseminating vehicle in the WGS84 coordinate system with respect to true North."]
-    #[doc = " *"]
-    #[doc = " * @field pitchAngle: the optional angle and angle accuracy between the ground plane and the current orientation of the vehicle's x-axis with respect to the ground plane about the y-axis according to the ISO 8855."]
-    #[doc = " *"]
-    #[doc = " * @field rollAngle: the optional angle and angle accuracy between the ground plane and the current orientation of a vehicle's y-axis with respect to the ground plane about the x-axis according to the ISO 8855"]
-    #[doc = " *"]
-    #[doc = " * @field trailerData: information about the trailer dimensions and orientation in case a trailer is present."]
-    #[doc = " * "]
+
+    #[doc = "This DF  represents the Originating Vehicle Container"]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field orientationAngle: the angle and angle accuracy of the absolute orientation of the disseminating vehicle in the WGS84 coordinate system with respect to true North."]
+    #[doc = ""]
+    #[doc = "\n@field pitchAngle: the optional angle and angle accuracy between the ground plane and the current orientation of the vehicle's x-axis with respect to the ground plane about the y-axis according to the ISO 8855."]
+    #[doc = ""]
+    #[doc = "\n@field rollAngle: the optional angle and angle accuracy between the ground plane and the current orientation of a vehicle's y-axis with respect to the ground plane about the x-axis according to the ISO 8855"]
+    #[doc = ""]
+    #[doc = "\n@field trailerData: information about the trailer dimensions and orientation in case a trailer is present."]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -75,9 +73,8 @@ pub mod cpm_originating_station_containers {
             }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF  represents a list of trailer data."]
-    #[doc = " * "]
+
+    #[doc = "This DF  represents a list of trailer data."]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=8", extensible))]
@@ -105,15 +102,14 @@ pub mod cpm_pdu_descriptions {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = "*"]
-    #[doc = " * This DF  represents the Collective Perception Message (CPM) and is the top level Protocol Data Unit. "]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field header: the common message header for the facilities layer message. "]
-    #[doc = " *"]
-    #[doc = " * @field payload: the payload of the message. "]
-    #[doc = " *"]
+
+    #[doc = "This DF  represents the Collective Perception Message (CPM) and is the top level Protocol Data Unit. "]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field header: the common message header for the facilities layer message. "]
+    #[doc = ""]
+    #[doc = "\n@field payload: the payload of the message. "]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -127,28 +123,25 @@ pub mod cpm_pdu_descriptions {
             Self { header, payload }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF represents a list of CPM containers, each with their type identifier with an additional constraint. "]
-    #[doc = ""]
+
+    #[doc = "This DF represents a list of CPM containers, each with their type identifier with an additional constraint. "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct ConstraintWrappedCpmContainers(pub WrappedCpmContainers);
-    #[doc = "*"]
-    #[doc = " * This DE represents the identifier of the container type. "]
-    #[doc = " *"]
+
+    #[doc = "This DE represents the identifier of the container type. "]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=16"))]
     pub struct CpmContainerId(pub u8);
-    #[doc = "*"]
-    #[doc = " * This DF  represents the payload of the CPM. "]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field managementContainer: the management container. "]
-    #[doc = " *"]
-    #[doc = " * @field cpmContainers: the list of CPM containers, including its container type identifier and including either one or none of originatingVehicleContainer and/or originatingRsuContainer. "]
-    #[doc = " *"]
+
+    #[doc = "This DF  represents the payload of the CPM. "]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field managementContainer: the management container. "]
+    #[doc = ""]
+    #[doc = "\n@field cpmContainers: the list of CPM containers, including its container type identifier and including either one or none of originatingVehicleContainer and/or originatingRsuContainer. "]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -170,20 +163,19 @@ pub mod cpm_pdu_descriptions {
             }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF  represents the management container of the CPM. "]
-    #[doc = " * The management container provides basic information about the originating ITS-S, which are not specific to a specific type of station."]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field referenceTime: the reference time for all time related information in the CPM."]
-    #[doc = " *"]
-    #[doc = " * @field messageRateRange: the planned or expected range of the CPM generation rate."]
-    #[doc = " *"]
-    #[doc = " * @field segmentationInfo: information regarding the message segmentation on facility layer."]
-    #[doc = " *"]
-    #[doc = " * @field referencePosition: the reference position for all position related information in the CPM."]
-    #[doc = " *"]
+
+    #[doc = "This DF  represents the management container of the CPM. "]
+    #[doc = "The management container provides basic information about the originating ITS-S, which are not specific to a specific type of station."]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field referenceTime: the reference time for all time related information in the CPM."]
+    #[doc = ""]
+    #[doc = "\n@field messageRateRange: the planned or expected range of the CPM generation rate."]
+    #[doc = ""]
+    #[doc = "\n@field segmentationInfo: information regarding the message segmentation on facility layer."]
+    #[doc = ""]
+    #[doc = "\n@field referencePosition: the reference position for all position related information in the CPM."]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -213,15 +205,14 @@ pub mod cpm_pdu_descriptions {
             }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF  represents the planned or expected range of the message generation rate."]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field messageRateMin: the minimum planned or expected message rate."]
-    #[doc = " *"]
-    #[doc = " * @field messageRateMax: the maximum planned or expected message rate."]
-    #[doc = " *"]
+
+    #[doc = "This DF  represents the planned or expected range of the message generation rate."]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field messageRateMin: the minimum planned or expected message rate."]
+    #[doc = ""]
+    #[doc = "\n@field messageRateMax: the maximum planned or expected message rate."]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -239,15 +230,14 @@ pub mod cpm_pdu_descriptions {
             }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF represents a CPM container preceded by its type identifier and a lenght indicator."]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field containerId: the identifier of the container type."]
-    #[doc = " *"]
-    #[doc = " * @field containerData: the container content consistent with the container type."]
-    #[doc = " *"]
+
+    #[doc = "This DF represents a CPM container preceded by its type identifier and a lenght indicator."]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field containerId: the identifier of the container type."]
+    #[doc = ""]
+    #[doc = "\n@field containerData: the container content consistent with the container type."]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -265,16 +255,15 @@ pub mod cpm_pdu_descriptions {
             }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF represents a list of CPM containers, each with their type identifier. "]
-    #[doc = ""]
+
+    #[doc = "This DF represents a list of CPM containers, each with their type identifier. "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=8", extensible))]
     pub struct WrappedCpmContainers(pub SequenceOf<WrappedCpmContainer>);
     pub const ORIGINATING_RSU_CONTAINER: CpmContainerId = CpmContainerId(2);
-    #[doc = "*"]
-    #[doc = " * These value assignements represent specific values of the container type identifier. "]
-    #[doc = ""]
+
+    #[doc = "These value assignements represent specific values of the container type identifier. "]
+
     pub const ORIGINATING_VEHICLE_CONTAINER: CpmContainerId = CpmContainerId(1);
     pub const PERCEIVED_OBJECT_CONTAINER: CpmContainerId = CpmContainerId(5);
     pub const PERCEPTION_REGION_CONTAINER: CpmContainerId = CpmContainerId(4);
@@ -293,15 +282,14 @@ pub mod cpm_perceived_object_container {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = "*"]
-    #[doc = " * This DF  represents the Perceived Object Container "]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field numberOfPerceivedObjects: the total number of perceived objects at the time of generating the message. "]
-    #[doc = " *"]
-    #[doc = " * @field perceivedObjects: the list of perceived objects."]
-    #[doc = " *"]
+
+    #[doc = "This DF  represents the Perceived Object Container "]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field numberOfPerceivedObjects: the total number of perceived objects at the time of generating the message. "]
+    #[doc = ""]
+    #[doc = "\n@field perceivedObjects: the list of perceived objects."]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -323,9 +311,8 @@ pub mod cpm_perceived_object_container {
             }
         }
     }
-    #[doc = "* @brief Perceived Objects"]
-    #[doc = " * This DF provides a list of perceived objects represented in the coordinate system in which the y-axis corresponds to the North direction, the x-axis to the East direction, and the z- axis to the vertical direction."]
-    #[doc = ""]
+    #[doc = "\n@brief Perceived Objects"]
+    #[doc = "This DF provides a list of perceived objects represented in the coordinate system in which the y-axis corresponds to the North direction, the x-axis to the East direction, and the z- axis to the vertical direction."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("0..=255", extensible))]
     pub struct PerceivedObjects(pub SequenceOf<PerceivedObject>);
@@ -346,31 +333,28 @@ pub mod cpm_perception_region_container {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = "*"]
-    #[doc = " * This DF  represents a list of identifiers of perceived objects. "]
-    #[doc = ""]
+
+    #[doc = "This DF  represents a list of identifiers of perceived objects. "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("0..=255", extensible))]
     pub struct PerceivedObjectIds(pub SequenceOf<Identifier2B>);
-    #[doc = "*"]
-    #[doc = " * This DF represents the actual perception capabilities available to the transmitting ITS-S, offering additional (often dynamic) details to the information provided in the sensor information container."]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
+
+    #[doc = "This DF represents the actual perception capabilities available to the transmitting ITS-S, offering additional (often dynamic) details to the information provided in the sensor information container."]
     #[doc = ""]
-    #[doc = " * @field measurementDeltaTime: difference between the time of estimation of the perception region and the reference time. Positive values indicates that the provided information refers to a point in time after the reference time."]
-    #[doc = " *"]
-    #[doc = " * @field perceptionRegionConfidence: the perception confidence."]
-    #[doc = " *"]
-    #[doc = " * @field perceptionRegionShape: specification of the shape of the perception region."]
-    #[doc = " *"]
-    #[doc = " * @field shadowingApplies: indicates if the standard shadowing approach applies to the described perception region."]
-    #[doc = " *"]
-    #[doc = " * @field sensorIdList: the optional list of identifiers of the sensors which are involved in perceiving the region."]
-    #[doc = " *"]
-    #[doc = " * @field numberOfPerceivedObjects: the optional number of perceived objects contained in the perception region specified in the component perceptionRegionShape. "]
-    #[doc = " *"]
-    #[doc = " * @field perceivedObjectIds: the optional list of identifiers of the objects specified in the Perceived Object Container that are contained in the perception region specified in the component perceptionRegionShape."]
-    #[doc = " *"]
+    #[doc = "It shall include the following components: "]
+    #[doc = "\n@field measurementDeltaTime: difference between the time of estimation of the perception region and the reference time. Positive values indicates that the provided information refers to a point in time after the reference time."]
+    #[doc = ""]
+    #[doc = "\n@field perceptionRegionConfidence: the perception confidence."]
+    #[doc = ""]
+    #[doc = "\n@field perceptionRegionShape: specification of the shape of the perception region."]
+    #[doc = ""]
+    #[doc = "\n@field shadowingApplies: indicates if the standard shadowing approach applies to the described perception region."]
+    #[doc = ""]
+    #[doc = "\n@field sensorIdList: the optional list of identifiers of the sensors which are involved in perceiving the region."]
+    #[doc = ""]
+    #[doc = "\n@field numberOfPerceivedObjects: the optional number of perceived objects contained in the perception region specified in the component perceptionRegionShape. "]
+    #[doc = ""]
+    #[doc = "\n@field perceivedObjectIds: the optional list of identifiers of the objects specified in the Perceived Object Container that are contained in the perception region specified in the component perceptionRegionShape."]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -412,9 +396,8 @@ pub mod cpm_perception_region_container {
             }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF  represents the Perception Region Container as a list of perception region information objects. "]
-    #[doc = ""]
+
+    #[doc = "This DF  represents the Perception Region Container as a list of perception region information objects. "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=256", extensible))]
     pub struct PerceptionRegionContainer(pub SequenceOf<PerceptionRegion>);
@@ -432,22 +415,21 @@ pub mod cpm_sensor_information_container {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    #[doc = "*"]
-    #[doc = " * This DF  represents the characteristics of a single sensor or data fusion system."]
-    #[doc = " *"]
-    #[doc = " * It shall include the following components: "]
-    #[doc = " *"]
-    #[doc = " * @field sensorId: identifier of the sensor or data fusion system used to relate the perceived object in the Perceived Object Container to the sensor that detected it."]
-    #[doc = " * this identifier shall uniquely identify the sensor inside the CPM, but may be changed from one CPM to the next."]
-    #[doc = " *"]
-    #[doc = " * @field sensorType: the type of the sensor."]
-    #[doc = " *"]
-    #[doc = " * @field perceptionRegionShape: the perception region of the sensor."]
-    #[doc = " *"]
-    #[doc = " * @field perceptionRegionConfidence: the homogeneous perception region confidence that can be assumed for the entire perception region shape of this sensor. "]
-    #[doc = " *"]
-    #[doc = " * @field shadowingApplies: indicates if the standard shadowing approach applies to the described perception region."]
-    #[doc = " *"]
+
+    #[doc = "This DF  represents the characteristics of a single sensor or data fusion system."]
+    #[doc = ""]
+    #[doc = "It shall include the following components: "]
+    #[doc = ""]
+    #[doc = "\n@field sensorId: identifier of the sensor or data fusion system used to relate the perceived object in the Perceived Object Container to the sensor that detected it."]
+    #[doc = "this identifier shall uniquely identify the sensor inside the CPM, but may be changed from one CPM to the next."]
+    #[doc = ""]
+    #[doc = "\n@field sensorType: the type of the sensor."]
+    #[doc = ""]
+    #[doc = "\n@field perceptionRegionShape: the perception region of the sensor."]
+    #[doc = ""]
+    #[doc = "\n@field perceptionRegionConfidence: the homogeneous perception region confidence that can be assumed for the entire perception region shape of this sensor. "]
+    #[doc = ""]
+    #[doc = "\n@field shadowingApplies: indicates if the standard shadowing approach applies to the described perception region."]
     #[doc = ""]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -481,9 +463,8 @@ pub mod cpm_sensor_information_container {
             }
         }
     }
-    #[doc = "*"]
-    #[doc = " * This DF  represents the Sensor Information Container as a list of information objects about the sensors or data fusion systems from which the station provides information about detected objects."]
-    #[doc = ""]
+
+    #[doc = "This DF  represents the Sensor Information Container as a list of information objects about the sensors or data fusion systems from which the station provides information about detected objects."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=128", extensible))]
     pub struct SensorInformationContainer(pub SequenceOf<SensorInformation>);
