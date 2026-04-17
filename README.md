@@ -1,6 +1,6 @@
-# C-ITS Parser (a.k.a. ETSI-Web)
+# C-ITS Parser
 
-This library can parse and encode ETSI C-ITS messages including GeoNetworking headers and optionally Pcap Radiotap and IEEE 802.11 headers.
+This library can parse and encode ETSI C-ITS (a.k.a. V2X) messages including GeoNetworking headers and optionally Pcap Radiotap and IEEE 802.11 headers.
 It also provides Javascript/ WebAssembly bindings to transcode (decode and re-encode as JER/ XER/ UPER) packets and to encode them from JSON (JER) representation.
 
 By default, it's a `no_std` library unless compiled for wasm32.
@@ -22,14 +22,14 @@ Supported standards:
 
 ## Usage
 
-When using in Rust code, get crate via cargo: `cargo add --tag v1.1.0 --git ssh://git@github.com/consider-it/V2X-Etsi_web.git`.
+When using in Rust code, get crate via cargo: `cargo add c-its-parser`.
 
 When using in Javascript or NodeJS code, two flavors of NPM packages are available in the GitHub NPM Registry: One to be used in NodeJS environments and one to be used in the browser.
 So either use `npm install @consider-it/etsi-web-node` or `npm install @consider-it/etsi-web` depending on the target.
 
 ### Rust API
 
-See `cargo doc` output.
+Please refer to [docs.rs](https://docs.rs/c_its_parser) for auto-generated documentation.
 
 ### Javascript API
 

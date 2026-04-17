@@ -5,7 +5,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn lat_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to degrees
         let test = cdd_2_2_1::etsi_its_cdd::Latitude(10_000_000);
@@ -39,7 +39,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn long_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to degrees
         let test = cdd_2_2_1::etsi_its_cdd::Longitude(10_000_000);
@@ -73,7 +73,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_dsrc_2_2_1")]
     fn offset_b09_test() {
-        use etsi_web::standards::dsrc_2_2_1;
+        use c_its_parser::standards::dsrc_2_2_1;
 
         // from ETSI to meters
         let test = dsrc_2_2_1::etsi_its_dsrc::OffsetB09(100);
@@ -119,7 +119,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn object_dimension_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to meters
         let test = cdd_2_2_1::etsi_its_cdd::ObjectDimensionValue(10);
@@ -158,7 +158,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn vehicle_width_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to meters
         let test = cdd_2_2_1::etsi_its_cdd::VehicleWidth(10);
@@ -197,7 +197,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn vehicle_length_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to meters
         let test = cdd_2_2_1::etsi_its_cdd::VehicleLengthValue(10);
@@ -236,7 +236,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn speed_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to m/s
         let test = cdd_2_2_1::etsi_its_cdd::SpeedValue(100);
@@ -275,7 +275,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn longitudinal_acceleration_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to m/s/s
         let test = cdd_2_2_1::etsi_its_cdd::LongitudinalAccelerationValue(10);
@@ -314,7 +314,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn cartesian_angle_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to degrees
         let test = cdd_2_2_1::etsi_its_cdd::CartesianAngleValue(10);
@@ -353,7 +353,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_dsrc_2_2_1")]
     fn dsrc_angle_test() {
-        use etsi_web::standards::dsrc_2_2_1;
+        use c_its_parser::standards::dsrc_2_2_1;
 
         // from ETSI to degrees
         let test = dsrc_2_2_1::etsi_its_dsrc::Angle(80);
@@ -392,7 +392,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn steering_wheel_angle_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to degrees
         let test = cdd_2_2_1::etsi_its_cdd::SteeringWheelAngleValue(510);
@@ -431,7 +431,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_cdd_2_2_1")]
     fn yaw_rate_test() {
-        use etsi_web::standards::cdd_2_2_1;
+        use c_its_parser::standards::cdd_2_2_1;
 
         // from ETSI to deg/s
         let test = cdd_2_2_1::etsi_its_cdd::YawRateValue(100);
@@ -470,7 +470,7 @@ mod tests {
     #[test]
     #[cfg(feature = "_dsrc_2_2_1")]
     fn dsecond_test() {
-        use etsi_web::standards::dsrc_2_2_1;
+        use c_its_parser::standards::dsrc_2_2_1;
 
         // from ETSI to seconds
         let test = dsrc_2_2_1::etsi_its_dsrc::DSecond(1000);
