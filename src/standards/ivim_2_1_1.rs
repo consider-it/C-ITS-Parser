@@ -86,7 +86,7 @@ pub mod aviaeinumbering_and_data_structures {
             }
         }
     }
-    #[doc = ""]
+
     #[doc = "CS4::= SEQUENCE {"]
     #[doc = "\tcountryCode \t\tCountryCode,"]
     #[doc = "\talphabetIndicator \tAlphabetIndicator, "]
