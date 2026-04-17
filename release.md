@@ -12,7 +12,7 @@ To pack the NPM packet, install wasm-back using: `cargo install wasm-pack`.
 
 - Bump the version in Cargo.toml to reflect the nature of the changes
 - Use `./prepare-release.sh` to update the changelog, create a release commit and add a tag
-- If everything looks fine, push the changes. The CI will publish new NPM versions
+- If everything looks fine, push the changes. The CI will publish new NPM and crate versions
 
 ## Manual Publishing
 
