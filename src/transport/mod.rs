@@ -74,11 +74,11 @@ pub struct BasicTransportAHeader {
 pub struct BasicTransportBHeader {
     /// It identifies the protocol entity at the ITS facilities layer in the destination.
     /// For well-known ports it shall be set to a value corresponding to the
-    /// identified facilities layer service as specified the values in ETSI TS 103 248 [6]
+    /// identified facilities layer service as specified the values in ETSI TS 103 248
     pub destination_port: u16,
     /// It provides additional information. If Destination port is a well-known port
-    /// and the field value is specified in ETSI TS 103 248 [6], it shall be set to a value
-    /// corresponding to the identified facilities layer service as specified in ETSI TS 103 248 [6].
+    /// and the field value is specified in ETSI TS 103 248, it shall be set to a value
+    /// corresponding to the identified facilities layer service as specified in ETSI TS 103 248.
     /// Default setting is 0
     pub destination_port_info: u16,
 }
