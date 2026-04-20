@@ -1,8 +1,8 @@
 // Copyright (c) 2025 consider it GmbH
 
-//! Common data conversions
+//! Conversions between ETSI ASN.1 values and common (SI) units
 //!
-//! ETSI types to common (SI) units
+//! Take a look at the individual data types in [`crate::standards`] to discover available conversion methods and initialization functions.
 
 pub const MPS_TO_KMH_FACTOR: f32 = 3.6;
 

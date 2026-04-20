@@ -4,3 +4,5 @@
 /pkg
 .DS_Store
 ignoreme.rs
+
+.vscode/settings.json

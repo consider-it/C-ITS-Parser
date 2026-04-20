@@ -1,3 +1,8 @@
+//! C-ITS Message Encoding
+//!
+//! Provides Rust and wasm functions to encode C-ITS messages.
+//! The Rust API just needs one method ([`ItsMessage::encode`]) for the [`ItsMessage`] struct while wasm has one function per message type.
+
 #[cfg(any(
     all(target_arch = "wasm32", feature = "json"),
     not(target_arch = "wasm32")
@@ -21,8 +26,10 @@ use crate::transport::encode::Encode as TpEncode;
 use wasm_bindgen::prelude::*;
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
+/// Wasm output is a Javascript uint8 array
 pub type Encoded = js_sys::Uint8Array;
 #[cfg(not(target_arch = "wasm32"))]
+/// Rust output is a `Vec<u8>`
 pub type Encoded = Vec<u8>;
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -31,12 +38,10 @@ impl ItsMessage<'_> {
     /// Encodes an ITS message with optional headers.
     ///
     /// Supports XER, JER, and UPER encoding rules.
-    /// XER and JER values are returned as UTF8 buffers.
+    /// XER and JER values are returned as UTF-8 buffers.
     ///
     /// # Errors
-    ///
-    /// Gives a human-readable error description when ASN.1 parsing failed or an
-    /// unexpected set of headers was found.
+    /// Gives a human-readable error description when ASN.1 parsing failed or an unexpected set of headers was found.
     pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, String> {
         let (geo, tp, mut etsi_uper) = match self {
             #[cfg(feature = "denm_1_3_1")]

@@ -8,6 +8,11 @@
 #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+/// Enum values for [`MessageId`](`crate::standards::cdd_2_2_1::etsi_its_cdd::MessageId`)
+///
+/// Conversions to and from the ETSI ASN.1 type are provided.
+///
+/// Since `MessageId` doesn't contain a named value for each possible value, rasn can't generate this enum for us
 pub enum ItsMessageId {
     Denm = 1,
     Cam = 2,
@@ -84,6 +89,11 @@ macro_rules! itsmessageid_conv {
 #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "lowercase"))]
+/// Enum values for [`CDD 2.2.1 StationType`](`crate::standards::cdd_2_2_1::etsi_its_cdd::StationType`)/ [`CDD 1.3.1 StationType`](`crate::standards::cdd_1_3_1_1::its_container::StationType`)
+///
+/// Conversions to and from the ETSI ASN.1 type are provided.
+///
+/// Since `StationType` doesn't contain a named value for each possible value, rasn can't generate this enum for us
 pub enum ItsStationType {
     Unknown = 0,
     Pedestrian = 1,
@@ -144,6 +154,7 @@ macro_rules! itsstationtype_conv {
     };
 }
 
+/// DENM Sub Cause Codes
 pub mod its_scc {
     /// Common conversions for manual ETSI Enums
     macro_rules! scc_conv_part {
@@ -1072,6 +1083,15 @@ pub mod its_scc {
 }
 
 #[cfg(feature = "_cdd_1_3_1_1")]
+/// Implementation of additional getters and setters for BITSTRING types with named bits
+///
+/// See individual types for available methods:
+///
+/// - [`AccelerationControl`](`crate::standards::cdd_1_3_1_1::its_container::AccelerationControl`)
+/// - [`EmergencyPriority`](`crate::standards::cdd_1_3_1_1::its_container::EmergencyPriority`)
+/// - [`ExteriorLights`](`crate::standards::cdd_1_3_1_1::its_container::ExteriorLights`)
+/// - [`LightBarSirenInUse`](`crate::standards::cdd_1_3_1_1::its_container::LightBarSirenInUse`)
+/// - [`SpecialTransportType`](`crate::standards::cdd_1_3_1_1::its_container::SpecialTransportType`)
 pub mod cdd_1_3_1_1 {
     use crate::standards::cdd_1_3_1_1::its_container::{
         AccelerationControl, EmergencyPriority, ExteriorLights, LightBarSirenInUse,
@@ -1371,6 +1391,11 @@ pub mod cdd_1_3_1_1 {
 }
 
 #[cfg(feature = "_cdd_2_2_1")]
+/// Implementation of additional getters and setters for BITSTRING types with named bits
+///
+/// See individual types for available methods:
+///
+/// - [`EnergyStorageType`](`crate::standards::cdd_1_3_1_1::its_container::EnergyStorageType`)
 pub mod cdd_2_2_1 {
     use crate::standards::cdd_2_2_1::etsi_its_cdd::EnergyStorageType;
 
@@ -1460,7 +1485,27 @@ pub mod cdd_2_2_1 {
 }
 
 #[cfg(feature = "_dsrc_2_2_1")]
-mod dsrc_2_2_1 {
+/// Implementation of additional getters and setters for BITSTRING types with named bits
+///
+/// See individual types for available methods:
+///
+/// - [`AllowedManeuvers`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::AllowedManeuvers`)
+/// - [`IntersectionStatusObject`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::IntersectionStatusObject`)
+/// - [`LaneAttributes`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributes`)
+/// - [`LaneAttributesBarrier`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributesBarrier`)
+/// - [`LaneAttributesBike`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributesBike`)
+/// - [`LaneAttributesCrosswalk`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributesCrosswalk`)
+/// - [`LaneAttributesParking`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributesParking`)
+/// - [`LaneAttributesSidewalk`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributesSidewalk`)
+/// - [`LaneAttributesStriping`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributesStriping`)
+/// - [`LaneAttributesTrackedVehicle`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributesTrackedVehicle`)
+/// - [`LaneAttributesVehicle`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneAttributesVehicle`)
+/// - [`LaneDirection`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneDirection`)
+/// - [`LaneSharing`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneSharing`)
+/// - [`LaneTypeAttributes`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::LaneTypeAttributes`)
+/// - [`OcitRequestorDescriptionContainer`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::OcitRequestorDescriptionContainer`)
+/// - [`TransitVehicleStatus`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::TransitVehicleStatus`)
+pub mod dsrc_2_2_1 {
     use rasn::types::Ia5String;
 
     use crate::standards::dsrc_2_2_1::etsi_its_dsrc::{
@@ -2625,7 +2670,13 @@ mod dsrc_2_2_1 {
 }
 
 #[cfg(feature = "ivim_2_2_1")]
-mod ivim_2_2_1 {
+/// Implementation of additional getters and setters for BITSTRING types with named bits
+///
+/// See individual types for available methods:
+///
+/// - [`DayOfWeek`](`crate::standards::ivim_2_2_1::gdd::DayOfWeek`)
+/// - [`RepeatingPeriodDayTypes`](`crate::standards::ivim_2_2_1::gdd::RepeatingPeriodDayTypes`)
+pub mod ivim_2_2_1 {
     use crate::standards::ivim_2_2_1::gdd::DayOfWeek;
 
     impl Default for DayOfWeek {

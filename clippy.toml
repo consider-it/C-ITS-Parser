@@ -1,1 +1,1 @@
-doc-valid-idents = ["CiT", "ReferencePosition", "PathHistory", "OffsetB*", "OffsetB", "TimestampIts", ".."]
+doc-valid-idents = ["CiT", "ReferencePosition", "PathHistory", "OffsetB*", "OffsetB", "TimestampIts", "GeoNetworking", "NodeJS", ".."]

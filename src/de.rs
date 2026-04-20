@@ -1,3 +1,7 @@
+//! C-ITS Message Decoding
+//!
+//! Provides Rust and wasm functions to decode messages
+
 #![allow(non_snake_case)]
 
 #[cfg(any(feature = "transport", feature = "etsi"))]
@@ -50,13 +54,18 @@ macro_rules! btp {
 
 #[cfg(feature = "etsi")]
 #[allow(clippy::too_many_lines)]
-/// Decodes an ASN.1 message with headers. Supported encoding rules are UPER, JER, and XER. JSON and XML strings are expected as UTF8 slices.
-/// ### Params
-///  - `message`: binary input containing the ITS message
-///  - `headers`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
+/// Decodes an ASN.1 message with headers. Supported encoding rules are UPER, JER, and XER. JSON and XML strings are expected as UTF-8 slices.
+///
+/// # Params
+///  - `input`: binary input containing the ITS message
+///  - `headers`: indicate which headers are present in the binary input. GeoNetworking and transport headers will be decoded and returned, other headers will be skipped.
+///
+/// # Notes
+/// CDD 2.2.1 has changed the capitalization of the `messageId` and `stationId` data fields compared to CDD 1.3.1.
+/// This didn't change the UPER encoding and therefore hasn't lead to a new protocol version in the ITS PDU header, but changes the XER and JER encodings.
+/// There's a fallback in place to handle XER or JER-encoded DENM, IVIM, MAPEM, SPATEM, SREM and SSEM messages which were encoded using the old CDD.
 ///
 /// # Errors
-///
 /// Throws string error on decoding errors.
 pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, String> {
     let (input, transport, geonetworking) = match headers {
@@ -233,7 +242,10 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
 }
 
 #[cfg(feature = "transport")]
-#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+/// Decodes the GeoNetworking and BTP headers and returns the remaining data
+///
+/// # Errors
+/// Returns human-readable error descriptions when decoding failed
 pub fn decode_gn_btp_headers(
     input: &'_ [u8],
 ) -> Result<(&'_ [u8], Box<TransportHeader>, Packet<'_>), String> {
@@ -267,7 +279,7 @@ pub fn decode_gn_btp_headers(
 /// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
 /// ### Params
 ///  - `message`: binary input containing the ITS message
-///  - `headersPresent`: indicate which headers are present in the binary input. Geonetworking and transport headers will be decoded and returned, other headers will be skipped.
+///  - `headersPresent`: indicate which headers are present in the binary input. GeoNetworking and transport headers will be decoded and returned, other headers will be skipped.
 ///  - `outputEncodingRules`: ASN.1 encoding rules that will be used for re-encoding the message in the `JsonItsMessage`'s `its` field. (UPER output will be rendered as a UTF-8 hex string)
 /// Throws string error on decoding errors.
 pub fn decode_to(
