@@ -520,7 +520,7 @@ fn decode_denm(
             standards::denm_1_3_1::denm_pdu_descriptions::DENM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        None | Some(211) => Some(
+        None | Some(221) => Some(
             transcode::<standards::denm_2_2_1::denm_pdu_description::DENM>(
                 input,
                 input_encoding_rules,
@@ -530,7 +530,7 @@ fn decode_denm(
         .transpose(),
         _ => {
             return Err(
-                "Unsupported DENM version: Supported DENM versions are 131 and 211.".to_string(),
+                "Unsupported DENM version: Supported DENM versions are 131 and 221.".to_string(),
             );
         }
     }?;
@@ -617,7 +617,7 @@ fn decode_ivim(
         };
     }
     etsi_json.its = match version {
-        Some(211) => Some(transcode::<
+        Some(131) | Some(211) => Some(transcode::<
             standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
@@ -626,7 +626,10 @@ fn decode_ivim(
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
-            return Err("Unsupported IVIM version: Supported IVIM versions is 221.".to_string());
+            return Err(
+                "Unsupported IVIM version: Supported IVIM versions are 131, 211 and 221."
+                    .to_string(),
+            );
         }
     }?;
     Ok(etsi_json)
