@@ -21,10 +21,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           lfs: true
-      - name: Give GitHub Actions access to private repos
-        uses: webfactory/ssh-agent@v0.10.0
-        with:
-          ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
 
       - name: Install wasm-pack
         run: |

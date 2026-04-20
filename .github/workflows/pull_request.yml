@@ -2,7 +2,7 @@ name: Rust
 
 on:
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -17,10 +17,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           lfs: true
-      - name: Give GitHub Actions access to private repos
-        uses: webfactory/ssh-agent@v0.10.0
-        with:
-          ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
 
       - name: Add nightly rustfmt
         run: |
@@ -37,10 +33,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           lfs: true
-      - name: Give GitHub Actions access to private repos
-        uses: webfactory/ssh-agent@v0.10.0
-        with:
-          ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
 
       - name: cargo clippy
         run: cargo clippy --all-features --all-targets --verbose -- --deny warnings
@@ -69,10 +61,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           lfs: true
-      - name: Give GitHub Actions access to private repos
-        uses: webfactory/ssh-agent@v0.10.0
-        with:
-          ssh-private-key: ${{ secrets.WORKFLOW_PULL_KEY }}
 
       - name: Add wasm-pack
         run: |
