@@ -1,18 +1,23 @@
 //! Conversions between ETSI and chrono values
+//!
+//! Take a look at the individual data types in [`crate::standards`] to discover available conversion methods and initialization functions.
+//!
+//! Note: These conversions are only available with the optional `time` feature flag.
 
 // used by IS 1.3.1
 
-/// Converts a time point to `MinuteOfTheYear` and `DSecond` (milliseconds)
-#[allow(
-    clippy::missing_panics_doc,
-    reason = "unwrap is safe b/c of preconditions"
-)]
 #[cfg(any(
     feature = "mapem_2_2_1",
     feature = "spatem_2_2_1",
     feature = "srem_2_2_1",
     feature = "ssem_2_2_1",
 ))]
+#[allow(
+    clippy::missing_panics_doc,
+    reason = "unwrap is safe b/c of preconditions"
+)]
+/// Converts a UTC time point to ETSI ASN.1 [`MinuteOfTheYear`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear`)
+/// and [`DSecond`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::DSecond`) (milliseconds) values.
 #[must_use]
 pub fn moy_and_dsecond(
     time: chrono::DateTime<chrono::Utc>,
@@ -43,17 +48,18 @@ pub fn moy_and_dsecond(
     (moy, dsec)
 }
 
-/// Converts `MinuteOfTheYear` and `DSecond` (milliseconds) to a date and time
-#[allow(
-    clippy::missing_panics_doc,
-    reason = "unwrap is safe b/c of preconditions"
-)]
 #[cfg(any(
     feature = "mapem_2_2_1",
     feature = "spatem_2_2_1",
     feature = "srem_2_2_1",
     feature = "ssem_2_2_1",
 ))]
+#[allow(
+    clippy::missing_panics_doc,
+    reason = "unwrap is safe b/c of preconditions"
+)]
+/// Converts ETSI ASN.1 [`MinuteOfTheYear`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear`)
+/// and [`DSecond`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::DSecond`) (milliseconds) data to a UTC time point.
 #[must_use]
 pub fn time_from_moy_and_dsecond(
     moy: &crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear,

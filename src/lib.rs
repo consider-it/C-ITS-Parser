@@ -1,3 +1,52 @@
+//! Parser and encoder for ETSI C-ITS (V2X) messages including GeoNetworking headers and optionally Radiotap and IEEE 802.11 headers.
+//! It supports UPER, XER and JER ASN.1 encodings for parsing and encoding.
+//!
+//! Supported messages/ standards: See documentation of the [`ItsMessage`] variants.
+//!
+//! ## Decoding
+//!
+//! A packet can be decoded using the [`de::decode`] function:
+//!
+//! ```rust
+//! match de::decode(data, Headers::RadioTap802LlcGnBtp) {
+//!     Ok(ItsMessage::Cam {
+//!         geonetworking: _,
+//!         transport: _,
+//!         etsi: cam,
+//!     }) => {
+//!         println!("Got a CAM: {cam:?}")
+//!     }
+//!     Ok(msg) => println!("Got: {msg:?}"),
+//!     Err(err) => println!("Failed to parse message: {err}"),
+//! }
+//! ```
+//!
+//! The `headers` argument needs to specify which headers are present: None, GeoNetworking + BTP or Radiotap + 802.11p + LLC + GeoNetworking + BTP.
+//! Headers are expected to be present in binary form.
+//! When no headers are present, it can auto-detect the ASN.1 encoding (UPER/ XER/ JER) and decodes the message.
+//! This means, that XER and JER message buffers can only be decoded without headers.
+//!
+//! ## Encoding
+//!
+//! To encode an [`ItsMessage`] struct, call the [`encode()`](`ItsMessage::encode`) method supplying the intended encoding rules.
+//! Again, XER and JER messages can only be encoded without headers.
+//! GeoNetworking and transport (BTP) headers will be added when present if UPER encoding is used.
+//!
+//! ## Feature Flags
+//!
+//! This library has several feature flags to allow fine-grained control over the feature set and additional dependencies.
+//!
+//! By default, all V2X messages and conversion to and from JSON are enabled.
+//! If only some messages, or even just specific versions of messages are needed, they can be enabled one-by-one, e.g. using `denm` to enable both `denm_1_3_1` and `denm_2_2_1` support.
+//!
+//! When no parsing of the geonetworking and pcap headers is needed, the `transport` feature can be disabled.
+//!
+//! Besides parsing, the Rust API also provides helper functions to convert between ETSI data types and "normal"/ SI units.
+//! Additional conversions are only available by adding some feature flags:
+//!
+//! - `time`: Enable conversions to [chrono](https://crates.io/crates/chrono) timestamps
+//! - `geo`: Enable conversions to [geo-types](https://crates.io/crates/geo-types) (as lon/lat coordinates in degrees)
+
 pub mod de;
 #[cfg(feature = "etsi")]
 pub mod en;
@@ -82,68 +131,82 @@ impl JsonItsMessage {
 
 #[cfg(feature = "etsi")]
 #[derive(Debug, Clone, PartialEq)]
+/// Wrapper for C-ITS messages
+///
+/// Each message consists of the `etsi` data and can optionally contain a `transport` (BTP) and a `geonetworking` header.
 pub enum ItsMessage<'a> {
     #[cfg(feature = "denm_1_3_1")]
+    /// ETSI EN 302 637-3 v1.3.1 DENM
     DenmV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::denm_1_3_1::denm_pdu_descriptions::DENM>,
     },
     #[cfg(feature = "denm_2_2_1")]
+    /// ETSI TS 103 831 v2.2.1 (or v2.1.1) DENM
     DenmV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::denm_2_2_1::denm_pdu_description::DENM>,
     },
     #[cfg(feature = "cam_1_4_1")]
+    /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) CAM
     Cam {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::cam_1_4_1::cam_pdu_descriptions::CAM>,
     },
     #[cfg(feature = "spatem_2_2_1")]
+    /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SPATEM
     Spatem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>,
     },
     #[cfg(feature = "mapem_2_2_1")]
+    /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) MAPEM
     Mapem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>,
     },
     #[cfg(feature = "ivim_2_1_1")]
+    /// ETSI TS 103 301 v2.1.1 (or v1.3.1) IVIM
     IvimV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>,
     },
     #[cfg(feature = "ivim_2_2_1")]
+    /// ETSI TS 103 301 v2.2.1 IVIM
     IvimV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>,
     },
     #[cfg(feature = "srem_2_2_1")]
+    /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SREM
     Srem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::srem_2_2_1::srem_pdu_descriptions::SREM>,
     },
     #[cfg(feature = "ssem_2_2_1")]
+    /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SSEM
     Ssem {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>,
     },
     #[cfg(feature = "cpm_1")]
+    /// ETSI TR 103 562 v2.1.1 CPM
     CpmV1 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
         etsi: Box<standards::cpm_1::cpm_pdu_descriptions::CPM>,
     },
     #[cfg(feature = "cpm_2_1_1")]
+    /// ETSI TS 103 324 v2.1.1 CPM
     CpmV2 {
         geonetworking: Option<Packet<'a>>,
         transport: Option<Box<TransportHeader>>,
@@ -154,15 +217,20 @@ pub enum ItsMessage<'a> {
 #[cfg(feature = "etsi")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
+/// Choice which message headers are present in the binary message buffer
 pub enum Headers {
+    /// No headers before V2X message
     None,
+    /// Binary message with GeoNetworking and BTP headers
     GnBtp,
+    /// Binary message with Radiotap, IEEE 802.11p, LLC, GeoNetworking and BTP headers
     RadioTap802LlcGnBtp,
 }
 
 #[cfg(feature = "etsi")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
+/// Choice of ASN.1 encoding rule
 pub enum EncodingRules {
     UPER,
     XER,

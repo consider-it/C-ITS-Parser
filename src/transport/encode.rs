@@ -24,7 +24,10 @@ impl Encode for BasicTransportAHeader {
 
 impl BasicTransportAHeader {
     #[cfg(feature = "json")]
-    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+    /// Encodes a BTP-A as a JSON representation
+    ///
+    /// # Errors
+    /// Returns an error when encoding failed.
     pub fn encode_to_json(&self) -> Result<String, EncodeError> {
         serde_json::to_string(&self)
             .map_err(|e| EncodeError::Json(format!("Error encoding to JSON: {e:?}")))
@@ -43,7 +46,10 @@ impl Encode for BasicTransportBHeader {
 
 impl BasicTransportBHeader {
     #[cfg(feature = "json")]
-    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+    /// Encodes a BTP-B as a JSON representation
+    ///
+    /// # Errors
+    /// Returns an error when encoding failed.
     pub fn encode_to_json(&self) -> Result<String, EncodeError> {
         serde_json::to_string(&self)
             .map_err(|e| EncodeError::Json(format!("Error encoding to JSON: {e:?}")))

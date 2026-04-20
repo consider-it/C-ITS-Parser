@@ -1,4 +1,7 @@
-#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+/// Strips Radiotap, IEEE 802.11p and LLC headers from a binary message buffer
+///
+/// # Errors
+/// Returns a human-readable error when parsing failed
 pub fn remove_pcap_headers(data: &[u8]) -> Result<&[u8], String> {
     remove_radiotap_hdr(data)
         .and_then(remove_80211_hdr)
@@ -61,7 +64,7 @@ fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], String> {
     if ieee80211_fc_subtype != 0b1000 {
         // only select QoS frames
         return Err(
-            format!("Unsupported 802.11 frame subtype {ieee80211_fc_type:#04x}",).to_string(),
+            format!("Unsupported 802.11 frame subtype {ieee80211_fc_type:#04x}").to_string(),
         );
     }
 

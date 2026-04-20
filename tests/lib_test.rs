@@ -238,7 +238,7 @@ fn round_trip_denm_wasm() {
         etsi_web::EncodingRules::JER,
     )
     .unwrap();
-    // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
+    // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
@@ -268,7 +268,7 @@ fn round_trip_cam_wasm() {
         etsi_web::EncodingRules::JER,
     )
     .unwrap();
-    // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
+    // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
@@ -298,7 +298,7 @@ fn round_trip_mapem_wasm() {
         etsi_web::EncodingRules::JER,
     )
     .unwrap();
-    // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
+    // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
@@ -328,7 +328,7 @@ fn round_trip_spatem_wasm() {
         etsi_web::EncodingRules::JER,
     )
     .unwrap();
-    // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
+    // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
@@ -358,7 +358,7 @@ fn round_trip_ivim_wasm() {
         etsi_web::EncodingRules::JER,
     )
     .unwrap();
-    // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
+    // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
@@ -385,7 +385,7 @@ fn round_trip_srem_wasm() {
         etsi_web::EncodingRules::JER,
     )
     .unwrap();
-    // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
+    // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()
@@ -414,7 +414,7 @@ fn round_trip_cpm_wasm() {
         etsi_web::EncodingRules::JER,
     )
     .unwrap();
-    // Ignore Geonetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
+    // Ignore GeoNetworking header, because it will get wrapped in an Unsecured header, and have the payload from the rest of the message (like in [`round_trip_wasm`])
     pretty_assertions::assert_eq!(
         serde_json::from_str::<serde_json::Value>(&json.transport.unwrap()).unwrap(),
         serde_json::from_str::<serde_json::Value>(&decoded.transport.unwrap()).unwrap()

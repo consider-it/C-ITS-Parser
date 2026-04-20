@@ -1,3 +1,5 @@
+//! GeoNetworking Transport Layer Parser
+
 use core::fmt::Debug;
 
 use decode::Decode;
@@ -12,14 +14,24 @@ pub(crate) mod decode;
 pub(crate) mod encode;
 
 #[derive(Debug, Clone, PartialEq)]
+/// GeoNetworking "next header" of the Common Header
 pub enum TransportHeader {
+    /// Transport protocol (BTP-A for interactive packet transport) as defined in ETSI EN 302 636-5-1
     BtpA(BasicTransportAHeader),
+    /// Transport protocol (BTP-B for non-interactive packet transport) as defined in ETSI EN 302 636-5-1
     BtpB(BasicTransportBHeader),
+    /// IPv6 header as defined in ETSI EN 302 636-6-1
     IPv6(Box<IPv6Header>),
 }
 
 impl TransportHeader {
-    #[allow(clippy::missing_errors_doc)]
+    /// Decodes a GeoNetworking Transport Header from binary buffer
+    ///
+    /// The "next header" type needs to be supplied in `next_header`.
+    /// Returns the remaining data after the transport header.
+    ///
+    /// # Errors
+    /// Returns a human-readable error when parsing failed of unsupported header type was selected.
     pub fn decode_with_gn_next_header(
         next_header: NextAfterCommon,
         bytes: &[u8],
@@ -40,7 +52,12 @@ impl TransportHeader {
         }
     }
 
-    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+    /// Encodes a GeoNetworking Transport Header returning the binary buffer
+    ///
+    /// Note: Encoding IPv6 headers is not supported.
+    ///
+    /// # Errors
+    /// Returns a human-readable error when encoding failed.
     pub fn encode(&self) -> Result<Vec<u8>, String> {
         match self {
             TransportHeader::BtpA(a) => a.encode().map_err(map_err_to_string),
@@ -50,7 +67,12 @@ impl TransportHeader {
     }
 
     #[cfg(feature = "json")]
-    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+    /// Encodes a GeoNetworking Transport Header as a JSON representation
+    ///
+    /// Note: Encoding IPv6 headers is not supported.
+    ///
+    /// # Errors
+    /// Returns a human-readable error when encoding failed.
     pub fn encode_to_json(&self) -> Result<String, String> {
         match self {
             TransportHeader::BtpA(a) => a.encode_to_json().map_err(map_err_to_string),
@@ -62,6 +84,7 @@ impl TransportHeader {
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
+/// An ETSI EN 302 636-5-1 BTP-A header
 pub struct BasicTransportAHeader {
     /// identifies the protocol entity at the destination's ITS facilities layer
     pub destination_port: u16,
@@ -71,6 +94,7 @@ pub struct BasicTransportAHeader {
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
+/// An ETSI EN 302 636-5-1 BTP-B header
 pub struct BasicTransportBHeader {
     /// It identifies the protocol entity at the ITS facilities layer in the destination.
     /// For well-known ports it shall be set to a value corresponding to the
@@ -84,6 +108,7 @@ pub struct BasicTransportBHeader {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// An ETSI EN 302 636-6-1 IPv6 header
 pub struct IPv6Header {
     pub ip: Option<etherparse::NetHeaders>,
     pub link: Option<etherparse::LinkHeader>,

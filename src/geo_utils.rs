@@ -1,4 +1,12 @@
 //! Conversions from ETSI to geo-types
+//!
+//! - Positions are converted to [`geo_types::Point`]
+//! - Paths ([`PathHistory`](`crate::standards::cdd_1_3_1_1::its_container::PathHistory`)/ [`Path`](`crate::standards::cdd_2_2_1::etsi_its_cdd::Path`))
+//!   and MAPEM lanes [`NodeSetXY`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeSetXY`) are converted to [`geo_types::LineString`]
+//!
+//! Take a look at the individual data types in [`crate::standards`] to discover available conversion methods and initialization functions.
+//!
+//!  Note: These conversions are only available with the optional `geo` feature flag.
 
 const EARTH_CIRCUMFERENCE: f32 = 39_940_653.; // Earth's circumference in meters
 
@@ -130,9 +138,9 @@ impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeSetXY {
 
 #[cfg(feature = "mapem_2_2_1")]
 impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeOffsetPointXY {
-    /// Convert to absolte lon/lat (in degrees)
+    /// Convert to absolute lon/lat (in degrees)
     ///
-    /// [`NodeOffsetPointXY`] may contain XY delta positions or absolute lat/lon positions.
+    /// [`NodeOffsetPointXY`](`Self`) may contain XY delta positions or absolute lat/lon positions.
     /// XY positions will be converted to delta geo-coordinates near the `ref_pos`.
     #[must_use]
     pub fn to_geo(&self, ref_pos: &geo_types::Point) -> geo_types::Point {
@@ -166,7 +174,7 @@ impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeOffsetPointXY {
 
     /// Convert to delta distance (in meters)
     ///
-    /// [`NodeOffsetPointXY`] may contain XY delta positions or absolute lat/lon positions.
+    /// [`NodeOffsetPointXY`](`Self`) may contain XY delta positions or absolute lat/lon positions.
     /// lat/lon delta coordinates will be converted to XY offsets near the `ref_pos`.
     ///
     /// Output will be according to ETSI coordinate system (X pointing east, X pointing north)!

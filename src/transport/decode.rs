@@ -70,7 +70,10 @@ impl From<(u16, u16)> for BasicTransportAHeader {
 
 impl BasicTransportAHeader {
     #[cfg(feature = "json")]
-    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+    /// Decodes a BTP-A header from JSON
+    ///
+    /// # Errors
+    /// Returns an error when parsing failed
     pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
             .map_err(|e| DecodeError::Json(format!("Error encoding to JSON: {e:?}")))
@@ -94,7 +97,10 @@ impl From<(u16, u16)> for BasicTransportBHeader {
 
 impl BasicTransportBHeader {
     #[cfg(feature = "json")]
-    #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+    /// Decodes a BTP-B header from JSON
+    ///
+    /// # Errors
+    /// Returns an error when parsing failed
     pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
             .map_err(|e| DecodeError::Json(format!("Error encoding to JSON: {e:?}")))
