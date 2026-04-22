@@ -10,7 +10,6 @@ repository = "https://github.com/consider-it/V2X-Etsi_web"
 [lib]
 name = "etsi_web"
 crate-type = ["lib", "cdylib"]
-doctest = false
 
 [profile.release]
 lto = true

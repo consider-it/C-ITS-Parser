@@ -1817,9 +1817,9 @@ pub mod etsi_its_cdd {
     }
 
     #[doc = "This DE describes vehicle turning curve with the following information:"]
-    #[doc = "```"]
+    #[doc = "```text"]
     #[doc = "    Value = 1 / Radius * 10000"]
-    #[doc = "```"]
+    #[doc = "```text"]
     #[doc = "wherein radius is the vehicle turning curve radius in metres. "]
     #[doc = ""]
     #[doc = "Positive values indicate a turning curve to the left hand side of the driver."]
