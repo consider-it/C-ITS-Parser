@@ -7,9 +7,11 @@
 //!
 //! A packet can be decoded using the [`de::decode`] function:
 //!
-//! ```rust
-//! match de::decode(data, Headers::RadioTap802LlcGnBtp) {
-//!     Ok(ItsMessage::Cam {
+//! ```
+//! let data = &[0x02, 0x02, 0xde, 0x14, 0x0c, 0xe5]; // provide actual message buffer here
+//! #[cfg(feature = "etsi")]
+//! match etsi_web::de::decode(data, etsi_web::Headers::RadioTap802LlcGnBtp) {
+//!     Ok(etsi_web::ItsMessage::Cam {
 //!         geonetworking: _,
 //!         transport: _,
 //!         etsi: cam,

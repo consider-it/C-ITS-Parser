@@ -62,6 +62,9 @@ for file in $rootdir/src/standards/*_*.rs; do
     # enforce newlines before "@attrs"
     sed -i '' -E 's/#\[doc = "@/#\[doc = "\\n@/' $file
 
+    # add `ignore` to code blocks
+    sed -i '' -E 's/#\[doc = "```"/#\[doc = "```text"/' $file
+
 
     # remove "[$num]" style references
     sed -i '' -E 's/#\[doc = "(.*) \[[[:digit:]]+\](.*)"/#\[doc = "\1\2"/' $file

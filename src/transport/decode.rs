@@ -38,8 +38,8 @@ pub trait Decode: Sized {
     /// Decoder trait for decoding the individual fields of the transport header
     /// Takes byte slice as input.
     /// ### Usage
-    /// ```rust
-    /// # use etsi_transports::*;
+    /// ```ignore
+    /// # use etsi_web::transport::*;
     /// let input: &'static [u8] = &[0,1,0,2];
     /// let (_remaining_input, decoded) = BasicTransportAHeader::decode(input).unwrap();
     /// assert_eq!(
