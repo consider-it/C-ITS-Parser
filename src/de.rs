@@ -36,6 +36,8 @@ use nom::FindSubstring;
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 use wasm_bindgen::prelude::*;
 
+#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
+use crate::JsonItsMessage;
 #[cfg(any(feature = "transport", feature = "_etsi"))]
 use crate::map_err_to_string;
 #[cfg(feature = "_etsi")]
@@ -44,21 +46,19 @@ use crate::pcap::remove_pcap_headers;
 use crate::transport::TransportHeader;
 #[cfg(feature = "transport")]
 use crate::transport::{
-    decode::Decode as TransportDecode,
     BasicTransportAHeader,
     BasicTransportBHeader,
     IPv6Header,
+    decode::Decode as TransportDecode,
 };
-#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-use crate::JsonItsMessage;
-#[cfg(feature = "_etsi")]
-use crate::{standards, Headers, ItsMessage};
 #[cfg(any(
     feature = "_etsi",
     all(target_arch = "wasm32", feature = "v2x", feature = "json"),
     all(test, feature = "_etsi")
 ))]
-use crate::{standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader, EncodingRules};
+use crate::{EncodingRules, standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader};
+#[cfg(feature = "_etsi")]
+use crate::{Headers, ItsMessage, standards};
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 macro_rules! btp {
@@ -103,17 +103,16 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, alloc
     let input = match msg_type {
         // workaround to parse DENM and IVIM as XER/ JER which still uses old CDD
         1 | 6 => {
-            if let Ok(data) = str::from_utf8(input) {
-                if (data.trim_start().starts_with('<') || data.trim_start().starts_with('{'))
-                    && data.contains("messageID")
-                {
-                    // CDD 2.2.1 is using slightly different names for some things that CDD 1.3.1, e.g.
-                    // `messageID` (and other IDs) were changed to `messageId`, etc.
-                    // The IVIM 2.2.1 also changed how other things are named.
-                    // So we're using a fictional protocol_version 1 to fall into the right message type
-                    // in the match statement below.
-                    protocol_version = 1;
-                }
+            if let Ok(data) = str::from_utf8(input)
+                && (data.trim_start().starts_with('<') || data.trim_start().starts_with('{'))
+                && data.contains("messageID")
+            {
+                // CDD 2.2.1 is using slightly different names for some things that CDD 1.3.1, e.g.
+                // `messageID` (and other IDs) were changed to `messageId`, etc.
+                // The IVIM 2.2.1 also changed how other things are named.
+                // So we're using a fictional protocol_version 1 to fall into the right message type
+                // in the match statement below.
+                protocol_version = 1;
             }
             input.to_owned()
         }

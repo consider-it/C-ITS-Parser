@@ -302,7 +302,7 @@ pub mod efc_dsrc_application {
 
     use rasn::prelude::*;
 
-    use super::aviaeinumbering_and_data_structures::{CountryCode, IssuerIdentifier, CS5};
+    use super::aviaeinumbering_and_data_structures::{CS5, CountryCode, IssuerIdentifier};
     #[doc = " defined in ISO 14816 "]
     #[doc = " NOTE: The following are the definitions of the action and response"]
     #[doc = " parameters"]

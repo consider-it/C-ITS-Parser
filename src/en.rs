@@ -14,6 +14,10 @@ use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 use wasm_bindgen::prelude::*;
 
+#[cfg(not(target_arch = "wasm32"))]
+use crate::ItsMessage;
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
+use crate::JsonItsMessage;
 #[cfg(any(
     all(target_arch = "wasm32", feature = "json"),
     not(target_arch = "wasm32")
@@ -21,10 +25,6 @@ use wasm_bindgen::prelude::*;
 use crate::map_err_to_string;
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 use crate::transport::encode::Encode as TpEncode;
-#[cfg(not(target_arch = "wasm32"))]
-use crate::ItsMessage;
-#[cfg(all(target_arch = "wasm32", feature = "json"))]
-use crate::JsonItsMessage;
 #[cfg(not(target_arch = "wasm32"))]
 use crate::{EncodingRules, Packet};
 
@@ -291,7 +291,7 @@ pub fn encode_ivim(ivim: &JsonItsMessage, version: u32) -> Result<Encoded, Strin
             return Err(
                 "Unsupported IVIM version: Supported IVIM versions are 131, 211 and 221."
                     .to_string(),
-            )
+            );
         }
     };
     let encoded = optionally_encode_headers(&ivim.geonetworking, &ivim.transport, payload)?;
@@ -342,7 +342,7 @@ pub fn encode_cpm(cpm: &JsonItsMessage, version: u32) -> Result<Encoded, String>
         _ => {
             return Err(
                 "Unsupported CPM version: Supported CPM versions are 131 and 211.".to_string(),
-            )
+            );
         }
     };
     let encoded = optionally_encode_headers(&cpm.geonetworking, &cpm.transport, payload)?;
