@@ -8,11 +8,11 @@ use crate::transport::{BasicTransportAHeader, BasicTransportBHeader, IPv6Header}
 
 #[derive(Debug, PartialEq)]
 pub enum DecodeError<I> {
-    IntegerError(String),
-    IPv6Parsing(String),
+    IntegerError(alloc::string::String),
+    IPv6Parsing(alloc::string::String),
     Nom(I, ErrorKind),
     #[cfg(feature = "json")]
-    Json(String),
+    Json(alloc::string::String),
 }
 
 impl<I> ParseError<I> for DecodeError<I> {
@@ -75,7 +75,7 @@ impl BasicTransportAHeader {
     /// Returns an error when parsing failed
     pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
-            .map_err(|e| DecodeError::Json(format!("Error encoding to JSON: {e:?}")))
+            .map_err(|e| DecodeError::Json(alloc::format!("Error encoding to JSON: {e:?}")))
     }
 }
 
@@ -102,14 +102,14 @@ impl BasicTransportBHeader {
     /// Returns an error when parsing failed
     pub fn decode_from_json(input: &str) -> Result<Self, DecodeError<&str>> {
         serde_json::from_str(input)
-            .map_err(|e| DecodeError::Json(format!("Error encoding to JSON: {e:?}")))
+            .map_err(|e| DecodeError::Json(alloc::format!("Error encoding to JSON: {e:?}")))
     }
 }
 
 fn u16_from_be_bytes(input: &[u8]) -> IResult<&[u8], u16> {
     map_res(take(2usize), |slice: &[u8]| {
         slice.try_into().map(u16::from_be_bytes).map_err(|e| {
-            DecodeError::IntegerError::<&[u8]>(format!(
+            DecodeError::IntegerError::<&[u8]>(alloc::format!(
                 "Failed to construct integer from bytes: {e:?}"
             ))
         })
@@ -139,7 +139,7 @@ impl Decode for IPv6Header {
                 (&input[first_after_headers..], IPv6Header::from(headers))
             })
             .map_err(|e| {
-                nom::Err::Error(DecodeError::IPv6Parsing(format!(
+                nom::Err::Error(DecodeError::IPv6Parsing(alloc::format!(
                     "Error parsing IPv6 Header: {e:?}"
                 )))
             })

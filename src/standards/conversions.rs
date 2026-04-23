@@ -87,7 +87,7 @@ macro_rules! etsi_to_meters {
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
-            pub fn from_meters(value: f32) -> Result<Self, String> {
+            pub fn from_meters(value: f32) -> Result<Self, alloc::string::String> {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
@@ -95,7 +95,7 @@ macro_rules! etsi_to_meters {
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
-                        return Err(format!("Value out of bounds"));
+                        return Err(alloc::format!("Value out of bounds"));
                     }
                 }
 
@@ -115,7 +115,7 @@ macro_rules! etsi_to_meters {
         }
 
         impl TryFrom<f32> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_from(value: f32) -> Result<Self, Self::Error> {
                 Self::from_meters(value)
@@ -153,7 +153,7 @@ macro_rules! etsi_to_meters_unavailable {
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
-            pub fn from_meters(value: f32) -> Result<Self, String> {
+            pub fn from_meters(value: f32) -> Result<Self, alloc::string::String> {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
@@ -161,14 +161,14 @@ macro_rules! etsi_to_meters_unavailable {
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
-                        return Err(format!("Value out of bounds"));
+                        return Err(alloc::format!("Value out of bounds"));
                     }
                 }
 
                 // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
                 // So by checking for constraints first, we can use a strict equals condition.
                 if etsi_val == $unavailable {
-                    return Err(format!("Value out of bounds"));
+                    return Err(alloc::format!("Value out of bounds"));
                 }
 
                 Ok(Self(etsi_val))
@@ -197,7 +197,7 @@ macro_rules! etsi_to_meters_unavailable {
         }
 
         impl TryFrom<f32> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_from(value: f32) -> Result<Self, Self::Error> {
                 Self::from_meters(value)
@@ -272,7 +272,7 @@ macro_rules! etsi_to_mps {
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
-            pub fn from_mps(value: f32) -> Result<Self, String> {
+            pub fn from_mps(value: f32) -> Result<Self, alloc::string::String> {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
@@ -280,14 +280,14 @@ macro_rules! etsi_to_mps {
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
-                        return Err(format!("Value out of bounds"));
+                        return Err(alloc::format!("Value out of bounds"));
                     }
                 }
 
                 // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
                 // So by checking for constraints first, we can use a strict equals condition.
                 if etsi_val == $unavailable {
-                    return Err(format!("Value out of bounds"));
+                    return Err(alloc::format!("Value out of bounds"));
                 }
 
                 Ok(Self(etsi_val))
@@ -313,7 +313,7 @@ macro_rules! etsi_to_mps {
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
-            pub fn from_kmh(value: f32) -> Result<Self, String> {
+            pub fn from_kmh(value: f32) -> Result<Self, alloc::string::String> {
                 Self::from_mps(value / MPS_TO_KMH_FACTOR)
             }
 
@@ -340,7 +340,7 @@ macro_rules! etsi_to_mps {
         }
 
         impl TryFrom<f32> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_from(value: f32) -> Result<Self, Self::Error> {
                 Self::from_mps(value)
@@ -389,7 +389,7 @@ macro_rules! etsi_to_mpss {
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
-            pub fn from_mpss(value: f32) -> Result<Self, String> {
+            pub fn from_mpss(value: f32) -> Result<Self, alloc::string::String> {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
@@ -397,14 +397,14 @@ macro_rules! etsi_to_mpss {
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
-                        return Err(format!("Value out of bounds"));
+                        return Err(alloc::format!("Value out of bounds"));
                     }
                 }
 
                 // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
                 // So by checking for constraints first, we can use a strict equals condition.
                 if etsi_val == $unavailable {
-                    return Err(format!("Value out of bounds"));
+                    return Err(alloc::format!("Value out of bounds"));
                 }
 
                 Ok(Self(etsi_val))
@@ -433,7 +433,7 @@ macro_rules! etsi_to_mpss {
         }
 
         impl TryFrom<f32> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_from(value: f32) -> Result<Self, Self::Error> {
                 Self::from_mpss(value)
@@ -504,19 +504,19 @@ macro_rules! etsi_raw_unavailable {
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
-            pub fn from_raw(value: $tt) -> Result<Self, String> {
+            pub fn from_raw(value: $tt) -> Result<Self, alloc::string::String> {
                 use rasn::AsnType;
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&value) {
-                        return Err(format!("Value out of bounds"));
+                        return Err(alloc::format!("Value out of bounds"));
                     }
                 }
 
                 // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
                 // So by checking for constraints first, we can use a strict equals condition.
                 if value == $unavailable {
-                    return Err(format!("Value out of bounds"));
+                    return Err(alloc::format!("Value out of bounds"));
                 }
 
                 Ok(Self(value))
@@ -545,7 +545,7 @@ macro_rules! etsi_raw_unavailable {
         }
 
         impl TryFrom<$tt> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_from(value: $tt) -> Result<Self, Self::Error> {
                 Self::from_raw(value)
@@ -589,7 +589,7 @@ macro_rules! angle_to_deg {
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
-            pub fn from_deg(value: f32) -> Result<Self, String> {
+            pub fn from_deg(value: f32) -> Result<Self, alloc::string::String> {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
@@ -597,14 +597,14 @@ macro_rules! angle_to_deg {
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
-                        return Err(format!("Value out of bounds"));
+                        return Err(alloc::format!("Value out of bounds"));
                     }
                 }
 
                 // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
                 // So by checking for constraints first, we can use a strict equals condition.
                 if etsi_val == $unavailable {
-                    return Err(format!("Value out of bounds"));
+                    return Err(alloc::format!("Value out of bounds"));
                 }
 
                 Ok(Self(etsi_val))
@@ -633,7 +633,7 @@ macro_rules! angle_to_deg {
         }
 
         impl TryFrom<f32> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_from(value: f32) -> Result<Self, Self::Error> {
                 Self::from_deg(value)
@@ -700,7 +700,7 @@ macro_rules! angle_to_degrate {
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
-            pub fn from_deg_rate(value: f32) -> Result<Self, String> {
+            pub fn from_deg_rate(value: f32) -> Result<Self, alloc::string::String> {
                 use rasn::AsnType;
 
                 #[allow(clippy::cast_possible_truncation)]
@@ -708,14 +708,14 @@ macro_rules! angle_to_degrate {
 
                 if let Some(constraints) = Self::CONSTRAINTS.value() {
                     if !constraints.constraint.in_bound(&etsi_val) {
-                        return Err(format!("Value out of bounds"));
+                        return Err(alloc::format!("Value out of bounds"));
                     }
                 }
 
                 // Not all "unavailable" values are positive, but always at the very edge of the allowed value range.
                 // So by checking for constraints first, we can use a strict equals condition.
                 if etsi_val == $unavailable {
-                    return Err(format!("Value out of bounds"));
+                    return Err(alloc::format!("Value out of bounds"));
                 }
 
                 Ok(Self(etsi_val))
@@ -744,7 +744,7 @@ macro_rules! angle_to_degrate {
         }
 
         impl TryFrom<f32> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_from(value: f32) -> Result<Self, Self::Error> {
                 Self::from_deg_rate(value)
@@ -833,11 +833,11 @@ impl dsrc_2_2_1::etsi_its_dsrc::DSecond {
     ///
     /// # Errors
     /// human-readable string when input value is out of bounds
-    pub fn from_millis(value: u16) -> Result<Self, String> {
+    pub fn from_millis(value: u16) -> Result<Self, alloc::string::String> {
         // ASN.1 bounds are bigger than allowed values (0..59999 for normal values, 60000..60999 for leap seconds)
 
         if value > 60999 {
-            return Err(format!("Value out of bounds"));
+            return Err(alloc::format!("Value out of bounds"));
         }
 
         Ok(Self(value))

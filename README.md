@@ -3,6 +3,8 @@
 This library can parse and encode ETSI C-ITS messages including GeoNetworking headers and optionally Pcap Radiotap and IEEE 802.11 headers.
 It also provides Javascript/ WebAssembly bindings to transcode (decode and re-encode as JER/ XER/ UPER) packets and to encode them from JSON (JER) representation.
 
+By default, it's a `no_std` library unless compiled for wasm32.
+
 Supported standards:
 
 - GeoNetworking: via [geonetworking](https://crates.io/crates/geonetworking) crate

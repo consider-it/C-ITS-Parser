@@ -53,7 +53,7 @@ macro_rules! itsmessageid_conv {
         }
 
         impl TryInto<crate::standards::extensions::ItsMessageId> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_into(self) -> Result<crate::standards::extensions::ItsMessageId, Self::Error> {
                 match self.0 {
@@ -78,7 +78,7 @@ macro_rules! itsmessageid_conv {
                     19 => Ok(crate::standards::extensions::ItsMessageId::Pcvm),
                     20 => Ok(crate::standards::extensions::ItsMessageId::Mcm),
                     21 => Ok(crate::standards::extensions::ItsMessageId::Pam),
-                    _ => Err(format!("MessageId {} not a known value", self.0)),
+                    _ => Err(alloc::format!("MessageId {} not a known value", self.0)),
                 }
             }
         }
@@ -128,7 +128,7 @@ macro_rules! itsstationtype_conv {
         }
 
         impl TryInto<crate::standards::extensions::ItsStationType> for $t {
-            type Error = String;
+            type Error = alloc::string::String;
 
             fn try_into(self) -> Result<crate::standards::extensions::ItsStationType, Self::Error> {
                 match self.0 {
@@ -147,7 +147,7 @@ macro_rules! itsstationtype_conv {
                     12 => Ok(crate::standards::extensions::ItsStationType::LightVruVehicle),
                     13 => Ok(crate::standards::extensions::ItsStationType::Animal),
                     15 => Ok(crate::standards::extensions::ItsStationType::Roadsideunit),
-                    _ => Err(format!("StationType {} not a known value", self.0)),
+                    _ => Err(alloc::format!("StationType {} not a known value", self.0)),
                 }
             }
         }
@@ -196,7 +196,7 @@ pub mod its_scc {
     impl TryInto<TrafficCondition>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::TrafficConditionSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<TrafficCondition, Self::Error> {
             match self.0 {
@@ -209,7 +209,7 @@ pub mod its_scc {
                 6 => Ok(TrafficCondition::TrafficJamSlightlyDecreasing),
                 7 => Ok(TrafficCondition::TrafficJamDecreasing),
                 8 => Ok(TrafficCondition::TrafficJamStronglyDecreasing),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "TrafficConditionSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -238,7 +238,7 @@ pub mod its_scc {
         crate::standards::cdd_2_2_1::etsi_its_cdd::AccidentSubCauseCode
     );
     impl TryInto<Accident> for crate::standards::cdd_2_2_1::etsi_its_cdd::AccidentSubCauseCode {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<Accident, Self::Error> {
             match self.0 {
@@ -251,7 +251,10 @@ pub mod its_scc {
                 6 => Ok(Accident::AccidentOnOppositeLane),
                 7 => Ok(Accident::UnsecuredAccident),
                 8 => Ok(Accident::AssistanceRequested),
-                _ => Err(format!("AccidentSubCauseCode {} not a known value", self.0)),
+                _ => Err(alloc::format!(
+                    "AccidentSubCauseCode {} not a known value",
+                    self.0
+                )),
             }
         }
     }
@@ -275,7 +278,7 @@ pub mod its_scc {
         crate::standards::cdd_2_2_1::etsi_its_cdd::RoadworksSubCauseCode
     );
     impl TryInto<Roadworks> for crate::standards::cdd_2_2_1::etsi_its_cdd::RoadworksSubCauseCode {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<Roadworks, Self::Error> {
             match self.0 {
@@ -286,7 +289,7 @@ pub mod its_scc {
                 4 => Ok(Roadworks::ShortTermStationaryRoadworks),
                 5 => Ok(Roadworks::StreetCleaning),
                 6 => Ok(Roadworks::WinterService),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "RoadworksSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -312,7 +315,7 @@ pub mod its_scc {
     impl TryInto<HumanPresenceOnTheRoad>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::HumanPresenceOnTheRoadSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<HumanPresenceOnTheRoad, Self::Error> {
             match self.0 {
@@ -320,7 +323,7 @@ pub mod its_scc {
                 1 => Ok(HumanPresenceOnTheRoad::ChildrenOnRoadway),
                 2 => Ok(HumanPresenceOnTheRoad::CyclistOnRoadway),
                 3 => Ok(HumanPresenceOnTheRoad::MotorcyclistOnRoadway),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "HumanPresenceOnTheRoadSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -345,14 +348,14 @@ pub mod its_scc {
     impl TryInto<WrongWayDriving>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::WrongWayDrivingSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<WrongWayDriving, Self::Error> {
             match self.0 {
                 0 => Ok(WrongWayDriving::Unavailable),
                 1 => Ok(WrongWayDriving::WrongLane),
                 2 => Ok(WrongWayDriving::WrongDirection),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "WrongWayDrivingSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -381,7 +384,7 @@ pub mod its_scc {
     impl TryInto<AdverseWeatherConditionExtremeWeatherCondition>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionExtremeWeatherConditionSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<AdverseWeatherConditionExtremeWeatherCondition, Self::Error> {
             match self.0 {
@@ -392,7 +395,7 @@ pub mod its_scc {
                 4 => Ok(AdverseWeatherConditionExtremeWeatherCondition::Thunderstorm),
                 5 => Ok(AdverseWeatherConditionExtremeWeatherCondition::Tornado),
                 6 => Ok(AdverseWeatherConditionExtremeWeatherCondition::Blizzard),
-                _ => Err(format!("ExtremeWeatherConditionSubCauseCode {} not a known value", self.0)),
+                _ => Err(alloc::format!("ExtremeWeatherConditionSubCauseCode {} not a known value", self.0)),
             }
         }
     }
@@ -422,7 +425,7 @@ pub mod its_scc {
     impl TryInto<AdverseWeatherConditionAdhesion>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionAdhesionSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<AdverseWeatherConditionAdhesion, Self::Error> {
             match self.0 {
@@ -437,7 +440,10 @@ pub mod its_scc {
                 8 => Ok(AdverseWeatherConditionAdhesion::LooseChippings),
                 9 => Ok(AdverseWeatherConditionAdhesion::InstantBlackIce),
                 10 => Ok(AdverseWeatherConditionAdhesion::RoadsSalted),
-                _ => Err(format!("AdhesionSubCauseCode {} not a known value", self.0)),
+                _ => Err(alloc::format!(
+                    "AdhesionSubCauseCode {} not a known value",
+                    self.0
+                )),
             }
         }
     }
@@ -465,7 +471,7 @@ pub mod its_scc {
     impl TryInto<AdverseWeatherConditionVisibility>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionVisibilitySubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<AdverseWeatherConditionVisibility, Self::Error> {
             match self.0 {
@@ -478,7 +484,7 @@ pub mod its_scc {
                 6 => Ok(AdverseWeatherConditionVisibility::LowSunGlare),
                 7 => Ok(AdverseWeatherConditionVisibility::Sandstorms),
                 8 => Ok(AdverseWeatherConditionVisibility::SwarmsOfInsects),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "VisibilitySubCauseCode {} not a known value",
                     self.0
                 )),
@@ -504,7 +510,7 @@ pub mod its_scc {
     impl TryInto<AdverseWeatherConditionPrecipitation>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionPrecipitationSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<AdverseWeatherConditionPrecipitation, Self::Error> {
             match self.0 {
@@ -512,7 +518,7 @@ pub mod its_scc {
                 1 => Ok(AdverseWeatherConditionPrecipitation::HeavyRain),
                 2 => Ok(AdverseWeatherConditionPrecipitation::HeavySnowfall),
                 3 => Ok(AdverseWeatherConditionPrecipitation::SoftHail),
-                _ => Err(format!("PrecipitationSubCauseCode {} not a known value", self.0)),
+                _ => Err(alloc::format!("PrecipitationSubCauseCode {} not a known value", self.0)),
             }
         }
     }
@@ -538,7 +544,7 @@ pub mod its_scc {
         crate::standards::cdd_2_2_1::etsi_its_cdd::SlowVehicleSubCauseCode
     );
     impl TryInto<SlowVehicle> for crate::standards::cdd_2_2_1::etsi_its_cdd::SlowVehicleSubCauseCode {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<SlowVehicle, Self::Error> {
             match self.0 {
@@ -551,7 +557,7 @@ pub mod its_scc {
                 6 => Ok(SlowVehicle::Snowplough),
                 7 => Ok(SlowVehicle::Deicing),
                 8 => Ok(SlowVehicle::SaltingVehicles),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "SlowVehicleSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -579,7 +585,7 @@ pub mod its_scc {
     impl TryInto<StationaryVehicle>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::StationaryVehicleSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<StationaryVehicle, Self::Error> {
             match self.0 {
@@ -589,7 +595,7 @@ pub mod its_scc {
                 3 => Ok(StationaryVehicle::PostCrash),
                 4 => Ok(StationaryVehicle::PublicTransportStop),
                 5 => Ok(StationaryVehicle::CarryingDangerousGoods),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "StationaryVehicleSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -612,14 +618,14 @@ pub mod its_scc {
         crate::standards::cdd_2_2_1::etsi_its_cdd::HumanProblemSubCauseCode
     );
     impl TryInto<HumanProblem> for crate::standards::cdd_2_2_1::etsi_its_cdd::HumanProblemSubCauseCode {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<HumanProblem, Self::Error> {
             match self.0 {
                 0 => Ok(HumanProblem::Unavailable),
                 1 => Ok(HumanProblem::GlycemiaProblem),
                 2 => Ok(HumanProblem::HeartProblem),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "HumanProblemSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -644,14 +650,14 @@ pub mod its_scc {
     impl TryInto<EmergencyVehicleApproaching>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<EmergencyVehicleApproaching, Self::Error> {
             match self.0 {
                 0 => Ok(EmergencyVehicleApproaching::Unavailable),
                 1 => Ok(EmergencyVehicleApproaching::EmergencyVehicleApproaching),
                 2 => Ok(EmergencyVehicleApproaching::PrioritizedVehicleApproaching),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "EmergencyVehicleApproachingSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -679,7 +685,7 @@ pub mod its_scc {
     impl TryInto<HazardousLocationDangerousCurve>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationDangerousCurveSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<HazardousLocationDangerousCurve, Self::Error> {
             match self.0 {
@@ -689,7 +695,7 @@ pub mod its_scc {
                 3 => Ok(HazardousLocationDangerousCurve::MultipleCurvesStartingWithUnknownTurningDirection),
                 4 => Ok(HazardousLocationDangerousCurve::MultipleCurvesStartingWithLeftTurn),
                 5 => Ok(HazardousLocationDangerousCurve::MultipleCurvesStartingWithRightTurn),
-                _ => Err(format!("DangerousCurveSubCauseCode {} not a known value", self.0)),
+                _ => Err(alloc::format!("DangerousCurveSubCauseCode {} not a known value", self.0)),
             }
         }
     }
@@ -718,7 +724,7 @@ pub mod its_scc {
     impl TryInto<HazardousLocationSurfaceCondition>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationSurfaceConditionSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<HazardousLocationSurfaceCondition, Self::Error> {
             match self.0 {
@@ -732,7 +738,7 @@ pub mod its_scc {
                 7 => Ok(HazardousLocationSurfaceCondition::BurstPipe),
                 8 => Ok(HazardousLocationSurfaceCondition::VolcanoEruption),
                 9 => Ok(HazardousLocationSurfaceCondition::FallingIce),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "SurfaceConditionSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -762,7 +768,7 @@ pub mod its_scc {
     impl TryInto<HazardousLocationObstacleOnTheRoad>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationObstacleOnTheRoadSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<HazardousLocationObstacleOnTheRoad, Self::Error> {
             match self.0 {
@@ -774,7 +780,7 @@ pub mod its_scc {
                 5 => Ok(HazardousLocationObstacleOnTheRoad::FallenTrees),
                 6 => Ok(HazardousLocationObstacleOnTheRoad::HubCaps),
                 7 => Ok(HazardousLocationObstacleOnTheRoad::WaitingVehicles),
-                _ => Err(format!("ObstacleOnTheRoadSubCauseCode {} not a known value", self.0)),
+                _ => Err(alloc::format!("ObstacleOnTheRoadSubCauseCode {} not a known value", self.0)),
             }
         }
     }
@@ -798,7 +804,7 @@ pub mod its_scc {
     impl TryInto<HazardousLocationAnimalOnTheRoad>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::HazardousLocationAnimalOnTheRoadSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<HazardousLocationAnimalOnTheRoad, Self::Error> {
             match self.0 {
@@ -807,7 +813,7 @@ pub mod its_scc {
                 2 => Ok(HazardousLocationAnimalOnTheRoad::HerdOfAnimals),
                 3 => Ok(HazardousLocationAnimalOnTheRoad::SmallAnimals),
                 4 => Ok(HazardousLocationAnimalOnTheRoad::LargeAnimals),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "AnimalOnTheRoadSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -834,7 +840,7 @@ pub mod its_scc {
     impl TryInto<CollisionRisk>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::CollisionRiskSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<CollisionRisk, Self::Error> {
             match self.0 {
@@ -843,7 +849,7 @@ pub mod its_scc {
                 2 => Ok(CollisionRisk::CrossingCollisionRisk),
                 3 => Ok(CollisionRisk::LateralCollisionRisk),
                 4 => Ok(CollisionRisk::VulnerableRoadUser),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "CollisionRiskSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -869,7 +875,7 @@ pub mod its_scc {
     impl TryInto<SignalViolation>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::SignalViolationSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<SignalViolation, Self::Error> {
             match self.0 {
@@ -877,7 +883,7 @@ pub mod its_scc {
                 1 => Ok(SignalViolation::StopSignViolation),
                 2 => Ok(SignalViolation::TrafficLightViolation),
                 3 => Ok(SignalViolation::TurningRegulationViolation),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "SignalViolationSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -905,7 +911,7 @@ pub mod its_scc {
     impl TryInto<RescueAndRecoveryWorkInProgress>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::RescueAndRecoveryWorkInProgressSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<RescueAndRecoveryWorkInProgress, Self::Error> {
             match self.0 {
@@ -915,7 +921,7 @@ pub mod its_scc {
                 3 => Ok(RescueAndRecoveryWorkInProgress::PoliceActivityOngoing),
                 4 => Ok(RescueAndRecoveryWorkInProgress::MedicalEmergencyOngoing),
                 5 => Ok(RescueAndRecoveryWorkInProgress::ChildAbductionInProgress),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "RescueAndRecoveryWorkInProgressSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -942,7 +948,7 @@ pub mod its_scc {
     impl TryInto<DangerousEndOfQueue>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::DangerousEndOfQueueSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<DangerousEndOfQueue, Self::Error> {
             match self.0 {
@@ -951,7 +957,7 @@ pub mod its_scc {
                 2 => Ok(DangerousEndOfQueue::QueueOverHill),
                 3 => Ok(DangerousEndOfQueue::QueueAroundBend),
                 4 => Ok(DangerousEndOfQueue::QueueInTunnel),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "DangerousEndOfQueueSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -981,7 +987,7 @@ pub mod its_scc {
     impl TryInto<DangerousSituation>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::DangerousSituationSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<DangerousSituation, Self::Error> {
             match self.0 {
@@ -993,7 +999,7 @@ pub mod its_scc {
                 5 => Ok(DangerousSituation::AebEngaged),
                 6 => Ok(DangerousSituation::BrakeWarningEngaged),
                 7 => Ok(DangerousSituation::CollisionRiskWarningEngaged),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "DangerousSituationSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -1025,7 +1031,7 @@ pub mod its_scc {
     impl TryInto<VehicleBreakdown>
         for crate::standards::cdd_2_2_1::etsi_its_cdd::VehicleBreakdownSubCauseCode
     {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<VehicleBreakdown, Self::Error> {
             match self.0 {
@@ -1039,7 +1045,7 @@ pub mod its_scc {
                 7 => Ok(VehicleBreakdown::SteeringProblem),
                 8 => Ok(VehicleBreakdown::TyrePuncture),
                 9 => Ok(VehicleBreakdown::TyrePressureProblem),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "VehicleBreakdownSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -1064,7 +1070,7 @@ pub mod its_scc {
         crate::standards::cdd_2_2_1::etsi_its_cdd::PostCrashSubCauseCode
     );
     impl TryInto<PostCrash> for crate::standards::cdd_2_2_1::etsi_its_cdd::PostCrashSubCauseCode {
-        type Error = String;
+        type Error = alloc::string::String;
 
         fn try_into(self) -> Result<PostCrash, Self::Error> {
             match self.0 {
@@ -1073,7 +1079,7 @@ pub mod its_scc {
                 2 => Ok(PostCrash::AccidentWithECallManuallyTriggered),
                 3 => Ok(PostCrash::AccidentWithECallAutomaticallyTriggered),
                 4 => Ok(PostCrash::AccidentWithECallTriggeredWithoutAccessToCellularNetwork),
-                _ => Err(format!(
+                _ => Err(alloc::format!(
                     "PostCrashSubCauseCode {} not a known value",
                     self.0
                 )),
@@ -1152,9 +1158,9 @@ pub mod cdd_1_3_1_1 {
             self.0.set(6, value)
         }
     }
-    impl std::fmt::Display for AccelerationControl {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for AccelerationControl {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_brake_pedal_engaged() {
                 items.push("brakePedalEngaged: 1".into());
@@ -1239,9 +1245,9 @@ pub mod cdd_1_3_1_1 {
             self.0.set(7, value)
         }
     }
-    impl std::fmt::Display for ExteriorLights {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for ExteriorLights {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_low_beam_headlights_on() {
                 items.push("lowBeamHeadlightsOn: 1".into());
@@ -1293,8 +1299,8 @@ pub mod cdd_1_3_1_1 {
             self.0.set(1, value)
         }
     }
-    impl std::fmt::Display for EmergencyPriority {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    impl core::fmt::Display for EmergencyPriority {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             write!(
                 f,
                 "requestForRightOfWay: {}, requestForFreeCrossingAtATrafficLight: {}",
@@ -1325,8 +1331,8 @@ pub mod cdd_1_3_1_1 {
             self.0.set(1, value)
         }
     }
-    impl std::fmt::Display for LightBarSirenInUse {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    impl core::fmt::Display for LightBarSirenInUse {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             write!(
                 f,
                 "lightBarActivated: {}, sirenActivated: {}",
@@ -1369,9 +1375,9 @@ pub mod cdd_1_3_1_1 {
             self.0.set(3, value)
         }
     }
-    impl std::fmt::Display for SpecialTransportType {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for SpecialTransportType {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_heavy_load() {
                 items.push("heavyLoad: 1".into());
@@ -1452,9 +1458,9 @@ pub mod cdd_2_2_1 {
             self.0.set(6, value)
         }
     }
-    impl std::fmt::Display for EnergyStorageType {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for EnergyStorageType {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_hydrogen_storage() {
                 items.push("hydrogenStorage: 1".into());
@@ -1532,8 +1538,8 @@ pub mod dsrc_2_2_1 {
 
     // MAPEM/ SPATEM
 
-    impl std::fmt::Display for LaneAttributes {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    impl core::fmt::Display for LaneAttributes {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             write!(
                 f,
                 "LaneTypeAttributes{{{}}}, LaneDirection{{{}}}, LaneSharing{{{}}}",
@@ -1543,8 +1549,8 @@ pub mod dsrc_2_2_1 {
         }
     }
 
-    impl std::fmt::Display for LaneTypeAttributes {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    impl core::fmt::Display for LaneTypeAttributes {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             match self {
                 LaneTypeAttributes::vehicle(attrs) => write!(f, "vehicle({attrs})"),
                 LaneTypeAttributes::crosswalk(attrs) => write!(f, "crosswalk({attrs})"),
@@ -1626,9 +1632,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(9, value)
         }
     }
-    impl std::fmt::Display for LaneSharing {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneSharing {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_overlapping_lane_description_provided() {
                 items.push("overlappingLaneDescriptionProvided: 1".into());
@@ -1745,9 +1751,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(11, value)
         }
     }
-    impl std::fmt::Display for AllowedManeuvers {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for AllowedManeuvers {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_maneuver_straight_allowed() {
                 items.push("maneuverStraightAllowed: 1".into());
@@ -1882,9 +1888,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(13, value)
         }
     }
-    impl std::fmt::Display for IntersectionStatusObject {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for IntersectionStatusObject {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_manual_control_is_enabled() {
                 items.push("manualControlIsEnabled: 1".into());
@@ -2001,9 +2007,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(9, value)
         }
     }
-    impl std::fmt::Display for LaneAttributesBarrier {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneAttributesBarrier {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_median_revocable_lane() {
                 items.push("median-RevocableLane: 1".into());
@@ -2090,9 +2096,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(6, value)
         }
     }
-    impl std::fmt::Display for LaneAttributesBike {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneAttributesBike {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_bike_revocable_lane() {
                 items.push("bikeRevocableLane: 1".into());
@@ -2182,9 +2188,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(8, value)
         }
     }
-    impl std::fmt::Display for LaneAttributesCrosswalk {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneAttributesCrosswalk {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_crosswalk_revocable_lane() {
                 items.push("crosswalkRevocableLane: 1".into());
@@ -2268,9 +2274,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(6, value)
         }
     }
-    impl std::fmt::Display for LaneAttributesParking {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneAttributesParking {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_parking_revocable_lane() {
                 items.push("parkingRevocableLane: 1".into());
@@ -2330,9 +2336,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(3, value)
         }
     }
-    impl std::fmt::Display for LaneAttributesSidewalk {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneAttributesSidewalk {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_sidewalk_revocable_lane() {
                 items.push("sidewalk-RevocableLane: 1".into());
@@ -2395,9 +2401,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(5, value)
         }
     }
-    impl std::fmt::Display for LaneAttributesStriping {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneAttributesStriping {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_stripe_to_connecting_lanes_revocable_lane() {
                 items.push("stripeToConnectingLanesRevocableLane: 1".into());
@@ -2460,9 +2466,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(4, value)
         }
     }
-    impl std::fmt::Display for LaneAttributesTrackedVehicle {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneAttributesTrackedVehicle {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_spec_revocable_lane() {
                 items.push("spec-RevocableLane: 1".into());
@@ -2540,9 +2546,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(7, value)
         }
     }
-    impl std::fmt::Display for LaneAttributesVehicle {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for LaneAttributesVehicle {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_is_vehicle_revocable_lane() {
                 items.push("isVehicleRevocableLane: 1".into());
@@ -2593,8 +2599,8 @@ pub mod dsrc_2_2_1 {
             self.0.set(1, value)
         }
     }
-    impl std::fmt::Display for LaneDirection {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    impl core::fmt::Display for LaneDirection {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             write!(
                 f,
                 "ingressPath: {}, egressPath: {}",
@@ -2642,9 +2648,9 @@ pub mod dsrc_2_2_1 {
             self.0.set(4, value)
         }
     }
-    impl std::fmt::Display for TransitVehicleStatus {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for TransitVehicleStatus {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_loading() {
                 items.push("loading: 1".into());
@@ -2666,13 +2672,15 @@ pub mod dsrc_2_2_1 {
         }
     }
 
-    impl TryFrom<String> for crate::standards::dsrc_2_2_1::etsi_its_dsrc::DescriptiveName {
-        type Error = String;
+    impl TryFrom<alloc::string::String>
+        for crate::standards::dsrc_2_2_1::etsi_its_dsrc::DescriptiveName
+    {
+        type Error = alloc::string::String;
 
-        fn try_from(value: String) -> Result<Self, Self::Error> {
+        fn try_from(value: alloc::string::String) -> Result<Self, Self::Error> {
             Ok(Self(
                 Ia5String::from_iso646_bytes(value.as_bytes())
-                    .map_err(|err| format!("Failed to create DescriptiveName: {err}"))?,
+                    .map_err(|err| alloc::format!("Failed to create DescriptiveName: {err}"))?,
             ))
         }
     }
@@ -2750,9 +2758,9 @@ pub mod ivim_2_2_1 {
             self.0.set(7, value)
         }
     }
-    impl std::fmt::Display for DayOfWeek {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let mut items = Vec::<String>::new();
+    impl core::fmt::Display for DayOfWeek {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
             if self.get_unused() {
                 items.push("unused: 1".into());
@@ -2818,9 +2826,9 @@ pub mod ivim_2_2_1 {
                 self.0.set(3, value)
             }
         }
-        impl std::fmt::Display for RepeatingPeriodDayTypes {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                let mut items = Vec::<String>::new();
+        impl core::fmt::Display for RepeatingPeriodDayTypes {
+            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                let mut items = alloc::vec::Vec::<alloc::string::String>::new();
 
                 if self.get_national_holiday() {
                     items.push("national-holiday: 1".into());
