@@ -7,11 +7,13 @@
 )]
 pub mod ssem_pdu_descriptions {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_2_2_1::etsi_its_cdd::ItsPduHeader;
     use super::super::dsrc_2_2_1::etsi_its_dsrc::SignalStatusMessage;
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
 
     #[doc = "Signal status extended Message"]
     #[doc = "This DF includes DEs for the SSEM: protocolVersion, the SSEM message type identifier `messageID` and"]

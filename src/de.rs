@@ -4,26 +4,9 @@
 
 #![allow(non_snake_case)]
 
-#[cfg(any(feature = "transport", feature = "_etsi"))]
-use crate::map_err_to_string;
-#[cfg(feature = "_etsi")]
-use crate::pcap::remove_pcap_headers;
-#[cfg(feature = "transport")]
-use crate::transport::TransportHeader;
-#[cfg(feature = "transport")]
-use crate::transport::{
-    decode::Decode as TransportDecode, BasicTransportAHeader, BasicTransportBHeader, IPv6Header,
-};
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-use crate::JsonItsMessage;
-#[cfg(feature = "_etsi")]
-use crate::{standards, Headers, ItsMessage};
-#[cfg(any(
-    feature = "_etsi",
-    all(target_arch = "wasm32", feature = "v2x", feature = "json"),
-    all(test, feature = "_etsi")
-))]
-use crate::{standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader, EncodingRules};
+use std::fmt::Write;
+
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 use geonetworking::Encode;
 #[cfg(feature = "transport")]
@@ -35,9 +18,31 @@ use geonetworking::{Decode, NextAfterCommon, Packet};
 ))]
 use nom::FindSubstring;
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-use std::fmt::Write;
-#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 use wasm_bindgen::prelude::*;
+
+#[cfg(any(feature = "transport", feature = "_etsi"))]
+use crate::map_err_to_string;
+#[cfg(feature = "_etsi")]
+use crate::pcap::remove_pcap_headers;
+#[cfg(feature = "transport")]
+use crate::transport::TransportHeader;
+#[cfg(feature = "transport")]
+use crate::transport::{
+    decode::Decode as TransportDecode,
+    BasicTransportAHeader,
+    BasicTransportBHeader,
+    IPv6Header,
+};
+#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
+use crate::JsonItsMessage;
+#[cfg(feature = "_etsi")]
+use crate::{standards, Headers, ItsMessage};
+#[cfg(any(
+    feature = "_etsi",
+    all(target_arch = "wasm32", feature = "v2x", feature = "json"),
+    all(test, feature = "_etsi")
+))]
+use crate::{standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader, EncodingRules};
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 macro_rules! btp {

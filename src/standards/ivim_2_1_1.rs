@@ -8,8 +8,9 @@
 pub mod aviaeinumbering_and_data_structures {
     extern crate alloc;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=63"))]
     pub struct AlphabetIndicator(pub u8);
@@ -245,8 +246,9 @@ pub mod aviaeinumbering_and_data_structures {
 pub mod citsappl_mgmt_ids {
     extern crate alloc;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice)]
     pub enum Ext1 {
@@ -298,10 +300,12 @@ pub mod citsappl_mgmt_ids {
 )]
 pub mod efc_dsrc_application {
     extern crate alloc;
-    use super::aviaeinumbering_and_data_structures::{CountryCode, IssuerIdentifier, CS5};
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::aviaeinumbering_and_data_structures::{CountryCode, IssuerIdentifier, CS5};
     #[doc = " defined in ISO 14816 "]
     #[doc = " NOTE: The following are the definitions of the action and response"]
     #[doc = " parameters"]
@@ -731,8 +735,9 @@ pub mod efc_dsrc_application {
 pub mod electronic_registration_identification_vehicle_data_module {
     extern crate alloc;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
     #[doc = " Electronic Registration Identification (ERI)- Vehicle Data"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
@@ -791,8 +796,9 @@ pub mod electronic_registration_identification_vehicle_data_module {
 pub mod gdd {
     extern crate alloc;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
     #[doc = " Definition of data elements used in ISO 14823 attributes"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, identifier = "Code-Units", value("0..=15"))]
@@ -1322,33 +1328,64 @@ pub mod gdd {
 )]
 pub mod ivi {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_1_3_1_1::its_container::{
-        ActionID, Altitude, DangerousGoodsBasic, DeltaLatitude, DeltaLongitude,
-        DeltaReferencePosition, Heading, HeadingValue, LanePosition, Latitude, Longitude,
-        ReferencePosition, RoadType, SpecialTransportType, Speed, SpeedValue, StationType,
-        TimestampIts, VehicleRole,
+        ActionID,
+        Altitude,
+        DangerousGoodsBasic,
+        DeltaLatitude,
+        DeltaLongitude,
+        DeltaReferencePosition,
+        Heading,
+        HeadingValue,
+        LanePosition,
+        Latitude,
+        Longitude,
+        ReferencePosition,
+        RoadType,
+        SpecialTransportType,
+        Speed,
+        SpeedValue,
+        StationType,
+        TimestampIts,
+        VehicleRole,
     };
     use super::super::dsrc_2_2_1::etsi_its_dsrc::{
-        IntersectionReferenceID, LaneID, RoadSegmentReferenceID,
+        IntersectionReferenceID,
+        LaneID,
+        RoadSegmentReferenceID,
     };
     use super::citsappl_mgmt_ids::VarLengthNumber;
     use super::efc_dsrc_application::{
-        AxleWeightLimits, DieselEmissionValues, EngineCharacteristics,
-        EnvironmentalCharacteristics, ExhaustEmissionValues, PassengerCapacity, Provider,
-        SoundLevel, VehicleDimensions, VehicleWeightLimits,
+        AxleWeightLimits,
+        DieselEmissionValues,
+        EngineCharacteristics,
+        EnvironmentalCharacteristics,
+        ExhaustEmissionValues,
+        PassengerCapacity,
+        Provider,
+        SoundLevel,
+        VehicleDimensions,
+        VehicleWeightLimits,
     };
     use super::electronic_registration_identification_vehicle_data_module::{
-        EuVehicleCategoryCode, Iso3833VehicleType,
+        EuVehicleCategoryCode,
+        Iso3833VehicleType,
     };
     use super::gdd::{
-        InternationalSignApplicablePeriod, InternationalSignApplicableVehicleDimensions,
-        InternationalSignDestinationInformation, InternationalSignDirectionalFlowOfLane,
-        InternationalSignDistanceBetweenVehicles, InternationalSignExemptedApplicablePeriod,
-        InternationalSignRateOfIncline, InternationalSignSpeedLimits,
+        InternationalSignApplicablePeriod,
+        InternationalSignApplicableVehicleDimensions,
+        InternationalSignDestinationInformation,
+        InternationalSignDirectionalFlowOfLane,
+        InternationalSignDistanceBetweenVehicles,
+        InternationalSignExemptedApplicablePeriod,
+        InternationalSignRateOfIncline,
+        InternationalSignSpeedLimits,
     };
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
     #[doc = "  Definition of Data Frames"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -2770,11 +2807,13 @@ pub mod ivi {
 )]
 pub mod ivim_pdu_descriptions {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_1_3_1_1::its_container::ItsPduHeader;
     use super::ivi::IviStructure;
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
     #[doc = " In vehicle information Message Message"]
     #[doc = " @brief In vehicle information Message Root"]
     #[doc = " This DF includes DEs for the IVIM protocolVersion, the IVI message type identifier _messageID_,"]

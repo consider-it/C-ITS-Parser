@@ -1094,7 +1094,10 @@ pub mod its_scc {
 /// - [`SpecialTransportType`](`crate::standards::cdd_1_3_1_1::its_container::SpecialTransportType`)
 pub mod cdd_1_3_1_1 {
     use crate::standards::cdd_1_3_1_1::its_container::{
-        AccelerationControl, EmergencyPriority, ExteriorLights, LightBarSirenInUse,
+        AccelerationControl,
+        EmergencyPriority,
+        ExteriorLights,
+        LightBarSirenInUse,
         SpecialTransportType,
     };
 
@@ -1509,10 +1512,22 @@ pub mod dsrc_2_2_1 {
     use rasn::types::Ia5String;
 
     use crate::standards::dsrc_2_2_1::etsi_its_dsrc::{
-        AllowedManeuvers, IntersectionStatusObject, LaneAttributes, LaneAttributesBarrier,
-        LaneAttributesBike, LaneAttributesCrosswalk, LaneAttributesParking, LaneAttributesSidewalk,
-        LaneAttributesStriping, LaneAttributesTrackedVehicle, LaneAttributesVehicle, LaneDirection,
-        LaneSharing, LaneTypeAttributes, OcitRequestorDescriptionContainer, TransitVehicleStatus,
+        AllowedManeuvers,
+        IntersectionStatusObject,
+        LaneAttributes,
+        LaneAttributesBarrier,
+        LaneAttributesBike,
+        LaneAttributesCrosswalk,
+        LaneAttributesParking,
+        LaneAttributesSidewalk,
+        LaneAttributesStriping,
+        LaneAttributesTrackedVehicle,
+        LaneAttributesVehicle,
+        LaneDirection,
+        LaneSharing,
+        LaneTypeAttributes,
+        OcitRequestorDescriptionContainer,
+        TransitVehicleStatus,
     };
 
     // MAPEM/ SPATEM

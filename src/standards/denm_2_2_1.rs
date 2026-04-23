@@ -7,22 +7,68 @@
 )]
 pub mod denm_pdu_description {
     extern crate alloc;
-    use super::super::cdd_2_2_1::etsi_its_cdd::{
-        ActionId, ActionIdList, CauseCodeV2, ClosedLanes, DangerousGoodsExtended,
-        DeltaReferencePosition, DeltaTimeMilliSecondPositive, DeltaTimeSecond, EnergyStorageType,
-        EventZone, GeneralizedLanePositions, HeightLonCarr, InformationQuality, ItineraryPath,
-        ItsPduHeader, IvimReferences, LanePosition, LightBarSirenInUse, MapReferences,
-        MetaInformation, NumberOfOccupants, ObjectFace, OccupiedLanesWithConfidence,
-        PathPredictedList, PerceivedObject, PosCentMass, PosFrontAx, PosLonCarr, Position1d,
-        PositionOfOccupants, PositionOfPillars, PositioningSolutionType, ReferencePosition,
-        RequestResponseIndication, RestrictedTypes, RoadConfigurationSectionList, RoadType, Speed,
-        SpeedLimit, StandardLength12b, StandardLength3b, StationId, StationType, StationarySince,
-        Temperature, TimestampIts, Traces, TracesExtended, TrafficDirection, TrafficRule,
-        TurningRadius, VehicleIdentification, VehicleMass, Wgs84Angle, WheelBaseVehicle,
-    };
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::super::cdd_2_2_1::etsi_its_cdd::{
+        ActionId,
+        ActionIdList,
+        CauseCodeV2,
+        ClosedLanes,
+        DangerousGoodsExtended,
+        DeltaReferencePosition,
+        DeltaTimeMilliSecondPositive,
+        DeltaTimeSecond,
+        EnergyStorageType,
+        EventZone,
+        GeneralizedLanePositions,
+        HeightLonCarr,
+        InformationQuality,
+        ItineraryPath,
+        ItsPduHeader,
+        IvimReferences,
+        LanePosition,
+        LightBarSirenInUse,
+        MapReferences,
+        MetaInformation,
+        NumberOfOccupants,
+        ObjectFace,
+        OccupiedLanesWithConfidence,
+        PathPredictedList,
+        PerceivedObject,
+        PosCentMass,
+        PosFrontAx,
+        PosLonCarr,
+        Position1d,
+        PositionOfOccupants,
+        PositionOfPillars,
+        PositioningSolutionType,
+        ReferencePosition,
+        RequestResponseIndication,
+        RestrictedTypes,
+        RoadConfigurationSectionList,
+        RoadType,
+        Speed,
+        SpeedLimit,
+        StandardLength12b,
+        StandardLength3b,
+        StationId,
+        StationType,
+        StationarySince,
+        Temperature,
+        TimestampIts,
+        Traces,
+        TracesExtended,
+        TrafficDirection,
+        TrafficRule,
+        TurningRadius,
+        VehicleIdentification,
+        VehicleMass,
+        Wgs84Angle,
+        WheelBaseVehicle,
+    };
     #[doc = " Inner type "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]

@@ -8,8 +8,9 @@
 pub mod its_container {
     extern crate alloc;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=102"))]
     pub struct AccelerationConfidence(pub u8);

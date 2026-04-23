@@ -7,11 +7,13 @@
 )]
 pub mod srem_pdu_descriptions {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_2_2_1::etsi_its_cdd::ItsPduHeader;
     use super::super::dsrc_2_2_1::etsi_its_dsrc::SignalRequestMessage;
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
 
     #[doc = "Signal request extended Message Message"]
     #[doc = "This DF includes DEs for the SREM: protocolVersion, the SREM message type identifier `messageID`,"]

@@ -8,8 +8,9 @@
 pub mod efc_data_dictionary {
     extern crate alloc;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
     #[doc = " Clause 5.3\tSingle level data types"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -232,8 +233,9 @@ pub mod efc_data_dictionary {
 pub mod gdd {
     extern crate alloc;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
     #[doc = " Definition of data elements used in ISO 14823 attributes"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, identifier = "Code-Units", value("0..=15"))]
@@ -763,27 +765,63 @@ pub mod gdd {
 )]
 pub mod ivi {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_2_2_1::etsi_its_cdd::{
-        ActionIdList, Altitude, DangerousGoodsBasic, DeltaLatitude, DeltaLongitude,
-        DeltaReferencePosition, Direction, EuVehicleCategoryCode, Heading, HeadingValue,
-        Identifier1B, Iso3833VehicleType, LanePosition, LaneType, LaneWidth, Latitude, Longitude,
-        MapReference, Provider, ReferencePosition, RoadType, SpecialTransportType, Speed,
-        SpeedValue, StandardLength9b, StationType, TimestampIts, VarLengthNumber, VehicleRole,
+        ActionIdList,
+        Altitude,
+        DangerousGoodsBasic,
+        DeltaLatitude,
+        DeltaLongitude,
+        DeltaReferencePosition,
+        Direction,
+        EuVehicleCategoryCode,
+        Heading,
+        HeadingValue,
+        Identifier1B,
+        Iso3833VehicleType,
+        LanePosition,
+        LaneType,
+        LaneWidth,
+        Latitude,
+        Longitude,
+        MapReference,
+        Provider,
+        ReferencePosition,
+        RoadType,
+        SpecialTransportType,
+        Speed,
+        SpeedValue,
+        StandardLength9b,
+        StationType,
+        TimestampIts,
+        VarLengthNumber,
+        VehicleRole,
     };
     use super::efc_data_dictionary::{
-        AxleWeightLimits, DieselEmissionValues, EngineCharacteristics,
-        EnvironmentalCharacteristics, ExhaustEmissionValues, PassengerCapacity, SoundLevel,
-        VehicleDimensions, VehicleWeightLimits,
+        AxleWeightLimits,
+        DieselEmissionValues,
+        EngineCharacteristics,
+        EnvironmentalCharacteristics,
+        ExhaustEmissionValues,
+        PassengerCapacity,
+        SoundLevel,
+        VehicleDimensions,
+        VehicleWeightLimits,
     };
     use super::gdd::{
-        InternationalSignApplicablePeriod, InternationalSignApplicableVehicleDimensions,
-        InternationalSignDestinationInformation, InternationalSignDirectionalFlowOfLane,
-        InternationalSignDistanceBetweenVehicles, InternationalSignExemptedApplicablePeriod,
-        InternationalSignRateOfIncline, InternationalSignSpeedLimits,
+        InternationalSignApplicablePeriod,
+        InternationalSignApplicableVehicleDimensions,
+        InternationalSignDestinationInformation,
+        InternationalSignDirectionalFlowOfLane,
+        InternationalSignDistanceBetweenVehicles,
+        InternationalSignExemptedApplicablePeriod,
+        InternationalSignRateOfIncline,
+        InternationalSignSpeedLimits,
     };
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
     #[doc = " Extension in V3.1"]
     #[doc = "  Definition of Data Frames"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -2293,10 +2331,12 @@ pub mod ivi {
 )]
 pub mod ivi_is {
     extern crate alloc;
-    use super::ivi::*;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::ivi::*;
     pub static DUMMY_ID: LazyLock<ContentId> = LazyLock::new(|| ContentId(Integer::from(0i128)));
     pub static TEST1: LazyLock<ContentId> = LazyLock::new(|| ContentId(Integer::from(1i128)));
 }
@@ -2309,11 +2349,13 @@ pub mod ivi_is {
 )]
 pub mod ivim_pdu_descriptions {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_2_2_1::etsi_its_cdd::ItsPduHeader;
     use super::ivi::IviStructure;
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
 
     #[doc = "In vehicle information Message Message"]
     #[doc = "This DF includes DEs for the IVIM protocolVersion, the IVI message type identifier `messageID`,"]

@@ -7,12 +7,17 @@
 )]
 pub mod etsi_its_dsrc {
     extern crate alloc;
-    use super::super::cdd_2_2_1::etsi_its_cdd::{
-        Iso3833VehicleType, Latitude, Longitude, StationID,
-    };
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::super::cdd_2_2_1::etsi_its_cdd::{
+        Iso3833VehicleType,
+        Latitude,
+        Longitude,
+        StationID,
+    };
     #[doc = " Anonymous SEQUENCE OF member "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags, identifier = "SEQUENCE")]
@@ -4866,14 +4871,24 @@ pub mod etsi_its_dsrc {
 )]
 pub mod etsi_its_dsrc_add_grp_c {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_2_2_1::etsi_its_cdd::{Altitude, DeltaAltitude, StationID, VehicleMass};
     use super::super::dsrc_2_2_1::etsi_its_dsrc::{
-        DeltaTime, FuelType, IntersectionID, LaneConnectionID, LaneID, NodeOffsetPointXY,
-        NodeSetXY, PrioritizationResponseStatus, SignalGroupID, VehicleHeight,
+        DeltaTime,
+        FuelType,
+        IntersectionID,
+        LaneConnectionID,
+        LaneID,
+        NodeOffsetPointXY,
+        NodeSetXY,
+        PrioritizationResponseStatus,
+        SignalGroupID,
+        VehicleHeight,
     };
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
 
     #[doc = "This DE defines an enumerated list of battery states."]
     #[doc = "\n@category: Infrastructure information"]
@@ -5399,14 +5414,23 @@ pub mod etsi_its_dsrc_add_grp_c {
 )]
 pub mod etsi_its_dsrc_region {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::dsrc_2_2_1::etsi_its_dsrc::*;
     use super::super::dsrc_2_2_1::etsi_its_dsrc_add_grp_c::{
-        ConnectionManeuverAssistAddGrpC, ConnectionTrajectoryAddGrpC, IntersectionStateAddGrpC,
-        LaneAttributesAddGrpC, MapDataAddGrpC, MovementEventAddGrpC, NodeAttributeSetAddGrpC,
-        Position3DAddGrpC, RequestorDescriptionAddGrpC, RestrictionUserTypeAddGrpC,
+        ConnectionManeuverAssistAddGrpC,
+        ConnectionTrajectoryAddGrpC,
+        IntersectionStateAddGrpC,
+        LaneAttributesAddGrpC,
+        MapDataAddGrpC,
+        MovementEventAddGrpC,
+        NodeAttributeSetAddGrpC,
+        Position3DAddGrpC,
+        RequestorDescriptionAddGrpC,
+        RestrictionUserTypeAddGrpC,
         SignalStatusPackageAddGrpC,
     };
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
 }

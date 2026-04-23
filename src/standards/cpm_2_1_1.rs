@@ -7,12 +7,19 @@
 )]
 pub mod cpm_originating_station_containers {
     extern crate alloc;
-    use super::super::cdd_2_2_1::etsi_its_cdd::{
-        CartesianAngle, MapReference, Speed, StationType, TrailerData, Wgs84Angle,
-    };
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::super::cdd_2_2_1::etsi_its_cdd::{
+        CartesianAngle,
+        MapReference,
+        Speed,
+        StationType,
+        TrailerData,
+        Wgs84Angle,
+    };
 
     #[doc = "This DF  represents the Originating RSU Container."]
     #[doc = ""]
@@ -89,19 +96,27 @@ pub mod cpm_originating_station_containers {
 )]
 pub mod cpm_pdu_descriptions {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_2_2_1::etsi_its_cdd::{
-        ItsPduHeader, MessageRateHz, MessageSegmentationInfo, OrdinalNumber1B, ReferencePosition,
-        StationType, TimestampIts,
+        ItsPduHeader,
+        MessageRateHz,
+        MessageSegmentationInfo,
+        OrdinalNumber1B,
+        ReferencePosition,
+        StationType,
+        TimestampIts,
     };
     use super::cpm_originating_station_containers::{
-        OriginatingRsuContainer, OriginatingVehicleContainer,
+        OriginatingRsuContainer,
+        OriginatingVehicleContainer,
     };
     use super::cpm_perceived_object_container::PerceivedObjectContainer;
     use super::cpm_perception_region_container::PerceptionRegionContainer;
     use super::cpm_sensor_information_container::SensorInformationContainer;
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
 
     #[doc = "This DF  represents the Collective Perception Message (CPM) and is the top level Protocol Data Unit. "]
     #[doc = ""]
@@ -278,10 +293,12 @@ pub mod cpm_pdu_descriptions {
 )]
 pub mod cpm_perceived_object_container {
     extern crate alloc;
-    use super::super::cdd_2_2_1::etsi_its_cdd::{CardinalNumber1B, PerceivedObject};
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::super::cdd_2_2_1::etsi_its_cdd::{CardinalNumber1B, PerceivedObject};
 
     #[doc = "This DF  represents the Perceived Object Container "]
     #[doc = ""]
@@ -326,13 +343,20 @@ pub mod cpm_perceived_object_container {
 )]
 pub mod cpm_perception_region_container {
     extern crate alloc;
-    use super::super::cdd_2_2_1::etsi_its_cdd::{
-        CardinalNumber1B, ConfidenceLevel, DeltaTimeMilliSecondSigned, Identifier2B, SensorType,
-        SequenceOfIdentifier1B, Shape,
-    };
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::super::cdd_2_2_1::etsi_its_cdd::{
+        CardinalNumber1B,
+        ConfidenceLevel,
+        DeltaTimeMilliSecondSigned,
+        Identifier2B,
+        SensorType,
+        SequenceOfIdentifier1B,
+        Shape,
+    };
 
     #[doc = "This DF  represents a list of identifiers of perceived objects. "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -411,10 +435,12 @@ pub mod cpm_perception_region_container {
 )]
 pub mod cpm_sensor_information_container {
     extern crate alloc;
-    use super::super::cdd_2_2_1::etsi_its_cdd::{ConfidenceLevel, Identifier1B, SensorType, Shape};
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::super::cdd_2_2_1::etsi_its_cdd::{ConfidenceLevel, Identifier1B, SensorType, Shape};
 
     #[doc = "This DF  represents the characteristics of a single sensor or data fusion system."]
     #[doc = ""]
