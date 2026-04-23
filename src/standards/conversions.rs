@@ -73,7 +73,7 @@ latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::DeltaLongitude, 131_072);
 latlon_to_deg!(cdd_2_2_1::etsi_its_cdd::DeltaLatitude, 131_072);
 
 /// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv`
-#[cfg(any(feature = "cpm_1", feature = "_cdd_2_2_1", feature = "_dsrc_2_2_1"))]
+#[cfg(feature = "cpm_1")]
 macro_rules! etsi_to_meters {
     ($t:ty, $tt:ty, $conv:expr) => {
         impl $t {
