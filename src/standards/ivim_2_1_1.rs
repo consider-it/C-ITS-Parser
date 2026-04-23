@@ -8,7 +8,6 @@
 pub mod aviaeinumbering_and_data_structures {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -246,7 +245,6 @@ pub mod aviaeinumbering_and_data_structures {
 pub mod citsappl_mgmt_ids {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -301,7 +299,6 @@ pub mod citsappl_mgmt_ids {
 pub mod efc_dsrc_application {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -735,7 +732,6 @@ pub mod efc_dsrc_application {
 pub mod electronic_registration_identification_vehicle_data_module {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
     #[doc = " Electronic Registration Identification (ERI)- Vehicle Data"]
@@ -796,7 +792,6 @@ pub mod electronic_registration_identification_vehicle_data_module {
 pub mod gdd {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
     #[doc = " Definition of data elements used in ISO 14823 attributes"]
@@ -1329,7 +1324,6 @@ pub mod gdd {
 pub mod ivi {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -2808,7 +2802,6 @@ pub mod ivi {
 pub mod ivim_pdu_descriptions {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 

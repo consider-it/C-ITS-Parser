@@ -8,7 +8,6 @@
 pub mod cpm_originating_station_containers {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -97,7 +96,6 @@ pub mod cpm_originating_station_containers {
 pub mod cpm_pdu_descriptions {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -294,7 +292,6 @@ pub mod cpm_pdu_descriptions {
 pub mod cpm_perceived_object_container {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -344,7 +341,6 @@ pub mod cpm_perceived_object_container {
 pub mod cpm_perception_region_container {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -436,7 +432,6 @@ pub mod cpm_perception_region_container {
 pub mod cpm_sensor_information_container {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 

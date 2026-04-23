@@ -8,7 +8,6 @@
 pub mod ssem_pdu_descriptions {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
