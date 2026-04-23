@@ -1,7 +1,7 @@
 [package]
 name = "c-its-parser"
 version = "2.0.0"
-edition = "2021"
+edition = "2024"
 authors = ["consider it GmbH"]
 keywords = ["its", "c-its", "v2x", "etsi"]
 license = "MIT"

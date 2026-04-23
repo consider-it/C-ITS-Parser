@@ -90,7 +90,7 @@ done
 echo ""
 echo "formatting code..."
 for file in $rootdir/src/standards/*.rs; do
-    rustfmt +nightly ${file}
+    rustfmt +nightly --edition=2024 ${file}
 done
 
 echo ""
