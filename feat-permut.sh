@@ -7,33 +7,33 @@ wasm_target="--chrome --headless"
 extended=${2:-false}
 
 features_base=(
-  geo
-  json
-  transport
-  transport,json
-  v2x
-  v2x,json
+  std,geo
+  std,json
+  std,transport
+  std,transport,json
+  std,v2x
+  std,v2x,json
 )
 features_more=(
-  cam
-  cpm
-  denm
-  ivim
-  mapem
-  spatem
-  srem
-  ssem
-  cpm_1
-  denm_1_3_1
-  ivim_2_1_1
-  cam_1_4_1
-  cpm_2_1_1
-  denm_2_2_1
-  ivim_2_2_1
-  mapem_2_2_1
-  spatem_2_2_1
-  srem_2_2_1
-  ssem_2_2_1
+  std,cam
+  std,cpm
+  std,denm
+  std,ivim
+  std,mapem
+  std,spatem
+  std,srem
+  std,ssem
+  std,cpm_1
+  std,denm_1_3_1
+  std,ivim_2_1_1
+  std,cam_1_4_1
+  std,cpm_2_1_1
+  std,denm_2_2_1
+  std,ivim_2_2_1
+  std,mapem_2_2_1
+  std,spatem_2_2_1
+  std,srem_2_2_1
+  std,ssem_2_2_1
 )
 
 

@@ -3,6 +3,9 @@
 //! Provides Rust and wasm functions to encode C-ITS messages.
 //! The Rust API just needs one method ([`ItsMessage::encode`]) for the [`ItsMessage`] struct while wasm has one function per message type.
 
+#[cfg(not(target_arch = "wasm32"))]
+use alloc::string::ToString;
+
 #[cfg(any(
     all(target_arch = "wasm32", feature = "json"),
     not(target_arch = "wasm32")
@@ -30,7 +33,7 @@ use crate::{EncodingRules, Packet};
 pub type Encoded = js_sys::Uint8Array;
 #[cfg(not(target_arch = "wasm32"))]
 /// Rust output is a `Vec<u8>`
-pub type Encoded = Vec<u8>;
+pub type Encoded = alloc::vec::Vec<u8>;
 
 #[cfg(not(target_arch = "wasm32"))]
 impl ItsMessage<'_> {
@@ -42,7 +45,7 @@ impl ItsMessage<'_> {
     ///
     /// # Errors
     /// Gives a human-readable error description when ASN.1 parsing failed or an unexpected set of headers was found.
-    pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, String> {
+    pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, alloc::string::String> {
         let (geo, tp, mut etsi_uper) = match self {
             #[cfg(feature = "denm_1_3_1")]
             ItsMessage::DenmV1 {
@@ -371,8 +374,8 @@ pub fn encode_ssem(ssem: &JsonItsMessage, version: u32) -> Result<Encoded, Strin
 fn optionally_encode_headers(
     gn_json: &Option<String>,
     tp_json: &Option<String>,
-    mut its: Vec<u8>,
-) -> Result<Vec<u8>, String> {
+    mut its: alloc::vec::Vec<u8>,
+) -> Result<alloc::vec::Vec<u8>, String> {
     match (gn_json, tp_json) {
         (Some(_), None) | (None, Some(_)) => Err(
             "Expecting either both or neither GeoNetworking and Transport headers to be present!"
@@ -394,7 +397,7 @@ fn optionally_encode_headers(
                         .map_err(map_err_to_string)?
                 }
                 h => {
-                    return Err(format!(
+                    return Err(alloc::format!(
                         "Currently only BTP-A and BTP-B headers can be encoded: Encountered {h:?}"
                     ));
                 }
@@ -413,7 +416,7 @@ fn optionally_encode_headers(
 fn fill_gn_and_encode(
     mut geonetworking: UnsecuredHeader,
     payload: &[u8],
-) -> Result<Vec<u8>, String> {
+) -> Result<alloc::vec::Vec<u8>, alloc::string::String> {
     #[allow(clippy::cast_possible_truncation)]
     let gn_payload_length = payload.len() as u16;
 
@@ -447,7 +450,7 @@ fn fill_gn_and_encode(
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 fn transcode_jer_to_uper<T: rasn::Decode + rasn::Encode>(
     input: &String,
-) -> Result<Vec<u8>, String> {
+) -> Result<alloc::vec::Vec<u8>, String> {
     rasn::uper::encode(&rasn::jer::decode::<T>(input).map_err(map_err_to_string)?)
         .map_err(map_err_to_string)
 }

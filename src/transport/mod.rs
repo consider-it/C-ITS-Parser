@@ -1,5 +1,6 @@
 //! GeoNetworking Transport Layer Parser
 
+use alloc::string::ToString;
 use core::fmt::Debug;
 
 use decode::Decode;
@@ -21,7 +22,7 @@ pub enum TransportHeader {
     /// Transport protocol (BTP-B for non-interactive packet transport) as defined in ETSI EN 302 636-5-1
     BtpB(BasicTransportBHeader),
     /// IPv6 header as defined in ETSI EN 302 636-6-1
-    IPv6(Box<IPv6Header>),
+    IPv6(alloc::boxed::Box<IPv6Header>),
 }
 
 impl TransportHeader {
@@ -35,7 +36,7 @@ impl TransportHeader {
     pub fn decode_with_gn_next_header(
         next_header: NextAfterCommon,
         bytes: &[u8],
-    ) -> Result<(&[u8], TransportHeader), String> {
+    ) -> Result<(&[u8], TransportHeader), alloc::string::String> {
         match next_header {
             NextAfterCommon::Any => {
                 Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
@@ -47,7 +48,7 @@ impl TransportHeader {
                 .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
                 .map_err(map_err_to_string),
             NextAfterCommon::IPv6 => IPv6Header::decode(bytes)
-                .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(Box::new(ipv6))))
+                .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(alloc::boxed::Box::new(ipv6))))
                 .map_err(map_err_to_string),
         }
     }
@@ -58,11 +59,13 @@ impl TransportHeader {
     ///
     /// # Errors
     /// Returns a human-readable error when encoding failed.
-    pub fn encode(&self) -> Result<Vec<u8>, String> {
+    pub fn encode(&self) -> Result<alloc::vec::Vec<u8>, alloc::string::String> {
         match self {
             TransportHeader::BtpA(a) => a.encode().map_err(map_err_to_string),
             TransportHeader::BtpB(b) => b.encode().map_err(map_err_to_string),
-            TransportHeader::IPv6(_) => Err(String::from("Encoding IPv6 headers is unsupported!")),
+            TransportHeader::IPv6(_) => Err(alloc::string::String::from(
+                "Encoding IPv6 headers is unsupported!",
+            )),
         }
     }
 
@@ -73,11 +76,13 @@ impl TransportHeader {
     ///
     /// # Errors
     /// Returns a human-readable error when encoding failed.
-    pub fn encode_to_json(&self) -> Result<String, String> {
+    pub fn encode_to_json(&self) -> Result<alloc::string::String, alloc::string::String> {
         match self {
             TransportHeader::BtpA(a) => a.encode_to_json().map_err(map_err_to_string),
             TransportHeader::BtpB(b) => b.encode_to_json().map_err(map_err_to_string),
-            TransportHeader::IPv6(_) => Err(String::from("Encoding IPv6 headers is unsupported!")),
+            TransportHeader::IPv6(_) => Err(alloc::string::String::from(
+                "Encoding IPv6 headers is unsupported!",
+            )),
         }
     }
 }

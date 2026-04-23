@@ -4,8 +4,24 @@
 
 #![allow(non_snake_case)]
 
+#[cfg(feature = "_etsi")]
+use alloc::borrow::ToOwned;
+#[cfg(any(
+    feature = "_etsi",
+    all(target_arch = "wasm32", feature = "v2x", feature = "json"),
+    all(test, feature = "_etsi")
+))]
+use alloc::string::String;
+#[cfg(any(feature = "_etsi", feature = "transport"))]
+use alloc::string::ToString;
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-use std::fmt::Write;
+use core::fmt::Write;
+#[cfg(any(
+    feature = "_etsi",
+    all(target_arch = "wasm32", feature = "v2x", feature = "json"),
+    all(test, feature = "_etsi")
+))]
+use core::primitive::str;
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 use geonetworking::Encode;
@@ -72,7 +88,7 @@ macro_rules! btp {
 ///
 /// # Errors
 /// Throws string error on decoding errors.
-pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, String> {
+pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, alloc::string::String> {
     let (input, transport, geonetworking) = match headers {
         Headers::None => Ok((input, None, None)),
         Headers::GnBtp => {
@@ -87,7 +103,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
     let input = match msg_type {
         // workaround to parse DENM and IVIM as XER/ JER which still uses old CDD
         1 | 6 => {
-            if let Ok(data) = std::str::from_utf8(input) {
+            if let Ok(data) = str::from_utf8(input) {
                 if (data.trim_start().starts_with('<') || data.trim_start().starts_with('{'))
                     && data.contains("messageID")
                 {
@@ -103,7 +119,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
         }
         // workaround to parse MAPEM, SPATEM, SREM, SSEM as XER/ JER which still uses old CDD
         4 | 5 | 9 | 10 => {
-            if let Ok(data) = std::str::from_utf8(input) {
+            if let Ok(data) = str::from_utf8(input) {
                 // live-patch messageID and stationID in PDU header for MAPEMs, SPATEMs, SREMs and SSEMs
                 // Note: an SREM may contain stationID in the requestor, but that's actually fine!!! So we shall only patch the PDU header
                 if data.trim_start().starts_with('<') && data.contains("messageID") {
@@ -146,7 +162,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::DenmV2 {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "denm_1_3_1")]
         (1, _) => encoding_rules
@@ -155,7 +171,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::DenmV1 {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "cam_1_4_1")]
         (2, _) => encoding_rules
@@ -164,7 +180,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Cam {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "spatem_2_2_1")]
         (4, _) => encoding_rules
@@ -173,7 +189,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Spatem {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "mapem_2_2_1")]
         (5, _) => encoding_rules
@@ -182,7 +198,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Mapem {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "ivim_2_2_1")]
         (6, 2) => encoding_rules
@@ -191,7 +207,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::IvimV2 {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "ivim_2_1_1")]
          (6, _) => encoding_rules
@@ -200,7 +216,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::IvimV1 {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "srem_2_2_1")]
         (9, _) => encoding_rules
@@ -209,7 +225,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Srem {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "ssem_2_2_1")]
         (10, _) => encoding_rules
@@ -218,7 +234,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::Ssem {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "cpm_2_1_1")]
         (14, 2) => encoding_rules
@@ -227,7 +243,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::CpmV2 {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         #[cfg(feature = "cpm_1")]
         (14, _) => encoding_rules
@@ -236,10 +252,10 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
             .map(|etsi| ItsMessage::CpmV1 {
                 geonetworking,
                 transport,
-                etsi: Box::new(etsi)
+                etsi: alloc::boxed::Box::new(etsi)
             }),
         (message_i_d, _) => {
-            return Err(format!(
+            return Err(alloc::format!(
                 "Unsupported ITS message type: Found message id {message_i_d}."
             ))
         }
@@ -253,7 +269,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, Strin
 /// Returns human-readable error descriptions when decoding failed
 pub fn decode_gn_btp_headers(
     input: &'_ [u8],
-) -> Result<(&'_ [u8], Box<TransportHeader>, Packet<'_>), String> {
+) -> Result<(&'_ [u8], alloc::boxed::Box<TransportHeader>, Packet<'_>), alloc::string::String> {
     let result = Packet::decode(input).map_err(map_err_to_string)?;
     let payload = match &result.decoded {
         Packet::Unsecured { payload, .. } => *payload,
@@ -272,10 +288,10 @@ pub fn decode_gn_btp_headers(
             .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
             .map_err(map_err_to_string),
         NextAfterCommon::IPv6 => IPv6Header::decode(payload)
-            .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(Box::new(ipv6))))
+            .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(alloc::boxed::Box::new(ipv6))))
             .map_err(map_err_to_string),
     }?;
-    Ok((remaining, Box::new(tp), result.decoded))
+    Ok((remaining, alloc::boxed::Box::new(tp), result.decoded))
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
@@ -433,7 +449,7 @@ pub fn decode_to(
     all(test, feature = "_etsi")
 ))]
 fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
-    let encoding_rules = match std::str::from_utf8(input) {
+    let encoding_rules = match str::from_utf8(input) {
         Ok(s) if s.trim_start().starts_with('<') => EncodingRules::XER,
         Ok(s) if s.trim_start().starts_with('{') => EncodingRules::JER,
         _ => EncodingRules::UPER,
@@ -449,7 +465,7 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                 .find_substring("</")
                 .ok_or("Failed to determine message ID.")?
                 + message_id_start;
-            let message_id = std::str::from_utf8(&input[message_id_start..message_id_end])
+            let message_id = str::from_utf8(&input[message_id_start..message_id_end])
                 .map_err(map_err_to_string)?
                 .trim()
                 .parse()
@@ -463,7 +479,7 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                 .ok_or("Failed to determine protocol version.")?
                 + protocol_version_start;
             let protocol_version =
-                std::str::from_utf8(&input[protocol_version_start..protocol_version_end])
+                str::from_utf8(&input[protocol_version_start..protocol_version_end])
                     .map_err(map_err_to_string)?
                     .trim()
                     .parse()
@@ -482,7 +498,7 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                         end += 1;
                         value = input[end] as char;
                     }
-                    std::str::from_utf8(&input[(start + 11)..end])
+                    str::from_utf8(&input[(start + 11)..end])
                         .map_err(map_err_to_string)
                         .and_then(|s| s.trim().parse::<u8>().map_err(map_err_to_string))
                 })?;
@@ -496,7 +512,7 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                         end += 1;
                         value = input[end] as char;
                     }
-                    std::str::from_utf8(&input[(start + 17)..end])
+                    str::from_utf8(&input[(start + 17)..end])
                         .map_err(map_err_to_string)
                         .and_then(|s| s.trim().parse::<u8>().map_err(map_err_to_string))
                 })?;
@@ -821,7 +837,7 @@ fn transcode<T: rasn::Decode + rasn::Encode>(
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 fn to_ipv6_debug(ipv6: IPv6Header) -> String {
-    format!(r#"{{"ipv6Debug":"{ipv6:?}"}}"#)
+    alloc::format!(r#"{{"ipv6Debug":"{ipv6:?}"}}"#)
 }
 
 #[cfg(all(test, feature = "_etsi"))]

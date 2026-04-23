@@ -49,6 +49,13 @@
 //! - `time`: Enable conversions to [chrono](https://crates.io/crates/chrono) timestamps
 //! - `geo`: Enable conversions to [geo-types](https://crates.io/crates/geo-types) (as lon/lat coordinates in degrees)
 
+#![cfg_attr(not(target_arch = "wasm32"), no_std)]
+
+extern crate alloc;
+
+#[cfg(any(feature = "std", target_arch = "wasm32", test))]
+extern crate std;
+
 pub mod de;
 #[cfg(feature = "_etsi")]
 pub mod en;
@@ -141,78 +148,80 @@ pub enum ItsMessage<'a> {
     /// ETSI EN 302 637-3 v1.3.1 DENM
     DenmV1 {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::denm_1_3_1::denm_pdu_descriptions::DENM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::denm_1_3_1::denm_pdu_descriptions::DENM>,
     },
     #[cfg(feature = "denm_2_2_1")]
     /// ETSI TS 103 831 v2.2.1 (or v2.1.1) DENM
     DenmV2 {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::denm_2_2_1::denm_pdu_description::DENM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::denm_2_2_1::denm_pdu_description::DENM>,
     },
     #[cfg(feature = "cam_1_4_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) CAM
     Cam {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::cam_1_4_1::cam_pdu_descriptions::CAM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::cam_1_4_1::cam_pdu_descriptions::CAM>,
     },
     #[cfg(feature = "spatem_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SPATEM
     Spatem {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>,
     },
     #[cfg(feature = "mapem_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) MAPEM
     Mapem {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>,
     },
     #[cfg(feature = "ivim_2_1_1")]
     /// ETSI TS 103 301 v2.1.1 (or v1.3.1) IVIM
     IvimV1 {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>,
     },
     #[cfg(feature = "ivim_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 IVIM
     IvimV2 {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>,
     },
     #[cfg(feature = "srem_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SREM
     Srem {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::srem_2_2_1::srem_pdu_descriptions::SREM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::srem_2_2_1::srem_pdu_descriptions::SREM>,
     },
     #[cfg(feature = "ssem_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SSEM
     Ssem {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>,
     },
     #[cfg(feature = "cpm_1")]
     /// ETSI TR 103 562 v2.1.1 CPM
     CpmV1 {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::cpm_1::cpm_pdu_descriptions::CPM>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<standards::cpm_1::cpm_pdu_descriptions::CPM>,
     },
     #[cfg(feature = "cpm_2_1_1")]
     /// ETSI TS 103 324 v2.1.1 CPM
     CpmV2 {
         geonetworking: Option<Packet<'a>>,
-        transport: Option<Box<TransportHeader>>,
-        etsi: Box<standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage>,
+        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        etsi: alloc::boxed::Box<
+            standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage,
+        >,
     },
 }
 
@@ -255,6 +264,6 @@ impl EncodingRules {
 }
 
 #[cfg(any(feature = "transport", feature = "_etsi"))]
-pub(crate) fn map_err_to_string<E: core::fmt::Debug>(error: E) -> String {
-    format!("{error:?}")
+pub(crate) fn map_err_to_string<E: core::fmt::Debug>(error: E) -> alloc::string::String {
+    alloc::format!("{error:?}")
 }

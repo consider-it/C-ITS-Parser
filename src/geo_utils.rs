@@ -81,7 +81,7 @@ macro_rules! ph_to_line_string {
             pub fn to_line_string(&self, ref_pos: geo_types::Point) -> geo_types::LineString {
                 self.0
                     .iter()
-                    .fold(vec![ref_pos], |mut acc, pt| {
+                    .fold(alloc::vec![ref_pos], |mut acc, pt| {
                         // vector is primed with one element, so should never return None
                         let origin = acc.last().unwrap();
                         let delta = geo_types::Point::new(
@@ -121,7 +121,7 @@ impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeSetXY {
     )]
     #[must_use]
     pub fn to_line_string(&self, ref_pos: geo_types::Point) -> geo_types::LineString {
-        let mut path = self.0.iter().fold(vec![ref_pos], |mut acc, pt| {
+        let mut path = self.0.iter().fold(alloc::vec![ref_pos], |mut acc, pt| {
             // vector is primed with one element, so should never return None
             let origin = acc.last().unwrap();
             let pos = pt.delta.to_geo(origin);
@@ -306,7 +306,7 @@ mod tests {
                 Longitude::from_deg(ref_pos.x() + -0.042),
                 Latitude::from_deg(ref_pos.y() + 0.),
             );
-            let nodes = vec![
+            let nodes = alloc::vec![
                 NodeXY::new(NodeOffsetPointXY::node_LatLon(point1), None),
                 NodeXY::new(NodeOffsetPointXY::node_LatLon(point2), None),
             ];
@@ -330,7 +330,7 @@ mod tests {
                 OffsetB16::from_meters(66.).unwrap(),
                 OffsetB16::from_meters(0.).unwrap(),
             );
-            let nodes = vec![
+            let nodes = alloc::vec![
                 NodeXY::new(NodeOffsetPointXY::node_XY6(point1), None),
                 NodeXY::new(NodeOffsetPointXY::node_XY6(point2), None),
             ];

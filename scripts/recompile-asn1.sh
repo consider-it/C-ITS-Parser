@@ -41,6 +41,12 @@ for file in $rootdir/src/standards/*_*.rs; do
     sed -i '' 's/use std::sync::LazyLock;//' $file
 done
 
+# change std::default::Default to core::default::Default
+for file in $rootdir/src/standards/*_*.rs; do
+    echo "removing LayzLock imports in $file"
+    sed -i '' 's/std::default::Default/core::default::Default/' $file
+done
+
 # apply additional patch files
 for file in $rootdir/scripts/asn1_rs-patches/*.patch; do
     filename=$(basename $file)

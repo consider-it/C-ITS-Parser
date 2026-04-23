@@ -56,7 +56,7 @@ pub mod cpm_pdu_descriptions {
             Self { r_type, confidence }
         }
     }
-    impl std::default::Default for AnimalSubclass {
+    impl core::default::Default for AnimalSubclass {
         fn default() -> Self {
             Self {
                 r_type: animal_subclass_r_type_default(),
@@ -621,7 +621,7 @@ pub mod cpm_pdu_descriptions {
             Self { r_type, confidence }
         }
     }
-    impl std::default::Default for OtherSubclass {
+    impl core::default::Default for OtherSubclass {
         fn default() -> Self {
             Self {
                 r_type: other_subclass_r_type_default(),
@@ -781,7 +781,7 @@ pub mod cpm_pdu_descriptions {
             Self { r_type, confidence }
         }
     }
-    impl std::default::Default for PersonSubclass {
+    impl core::default::Default for PersonSubclass {
         fn default() -> Self {
             Self {
                 r_type: person_subclass_r_type_default(),
@@ -1010,7 +1010,7 @@ pub mod cpm_pdu_descriptions {
             Self { r_type, confidence }
         }
     }
-    impl std::default::Default for VehicleSubclass {
+    impl core::default::Default for VehicleSubclass {
         fn default() -> Self {
             Self {
                 r_type: vehicle_subclass_r_type_default(),
