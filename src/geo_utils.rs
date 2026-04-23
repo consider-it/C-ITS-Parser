@@ -30,8 +30,7 @@ impl From<crate::standards::dsrc_2_2_1::etsi_its_dsrc::Position3D> for geo_types
 #[cfg(feature = "_dsrc_2_2_1")]
 impl From<geo_types::Point> for crate::standards::dsrc_2_2_1::etsi_its_dsrc::Position3D {
     fn from(other: geo_types::Point) -> Self {
-        use crate::standards::cdd_2_2_1::etsi_its_cdd::Latitude;
-        use crate::standards::cdd_2_2_1::etsi_its_cdd::Longitude;
+        use crate::standards::cdd_2_2_1::etsi_its_cdd::{Latitude, Longitude};
 
         Self {
             lat: Latitude::from_deg(other.y()),
@@ -287,7 +286,12 @@ mod tests {
     fn nodeset_to_line_string() {
         use crate::standards::cdd_2_2_1::etsi_its_cdd::{Latitude, Longitude};
         use crate::standards::dsrc_2_2_1::etsi_its_dsrc::{
-            NodeLLmD64b, NodeOffsetPointXY, NodeSetXY, NodeXY, NodeXY32b, OffsetB16,
+            NodeLLmD64b,
+            NodeOffsetPointXY,
+            NodeSetXY,
+            NodeXY,
+            NodeXY32b,
+            OffsetB16,
         };
 
         let ref_pos = geo_types::point! {x: 9.936_521, y: 53.550_728};

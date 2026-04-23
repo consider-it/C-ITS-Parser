@@ -1,11 +1,10 @@
-use crate::transport::{BasicTransportAHeader, BasicTransportBHeader, IPv6Header};
 use etherparse::PacketHeaders;
-use nom::{
-    bytes::streaming::take,
-    combinator::{into, map_res},
-    error::{ErrorKind, FromExternalError, ParseError},
-    sequence::pair,
-};
+use nom::bytes::streaming::take;
+use nom::combinator::{into, map_res};
+use nom::error::{ErrorKind, FromExternalError, ParseError};
+use nom::sequence::pair;
+
+use crate::transport::{BasicTransportAHeader, BasicTransportBHeader, IPv6Header};
 
 #[derive(Debug, PartialEq)]
 pub enum DecodeError<I> {

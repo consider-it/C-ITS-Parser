@@ -8,8 +8,9 @@
 pub mod etsi_its_cdd {
     extern crate alloc;
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
 
     #[doc = " Specification of CDD Data Frames:"]
     #[doc = "This DF represents an acceleration vector with associated confidence value."]

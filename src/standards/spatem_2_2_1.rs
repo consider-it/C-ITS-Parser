@@ -7,11 +7,13 @@
 )]
 pub mod spatem_pdu_descriptions {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cdd_2_2_1::etsi_its_cdd::ItsPduHeader;
     use super::super::dsrc_2_2_1::etsi_its_dsrc::*;
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
 
     #[doc = "Signal phase and timing extended Message"]
     #[doc = "Signal phase and timing extended Message Root"]

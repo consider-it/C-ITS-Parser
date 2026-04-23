@@ -1,12 +1,12 @@
 diff --git a/src/standards/ivim_2_2_1.rs b/src/standards/ivim_2_2_1.rs
-index a3a4c5c..10f105c 100644
+index 302eb6e..3306cfd 100644
 --- a/src/standards/ivim_2_2_1.rs
 +++ b/src/standards/ivim_2_2_1.rs
-@@ -2002,7 +2002,6 @@ pub mod ivi {
-         InternationalSignDistanceBetweenVehicles, InternationalSignExemptedApplicablePeriod,
-         InternationalSignRateOfIncline, InternationalSignSpeedLimits,
+@@ -822,7 +822,6 @@ pub mod ivi {
+         InternationalSignRateOfIncline,
+         InternationalSignSpeedLimits,
      };
 -    use super::ivi_is::InfrastructureSupportSet;
-     use core::borrow::Borrow;
-     use rasn::prelude::*;
-     use std::sync::LazyLock;
+     #[doc = " Extension in V3.1"]
+     #[doc = "  Definition of Data Frames"]
+     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]

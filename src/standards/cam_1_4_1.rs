@@ -7,19 +7,50 @@
 )]
 pub mod cam_pdu_descriptions {
     extern crate alloc;
-    use super::super::cdd_1_3_1_1::its_container::{
-        AccelerationControl, CauseCode, CenDsrcTollingZone, ClosedLanes, Curvature,
-        CurvatureCalculationMode, DangerousGoodsBasic, DriveDirection, EmbarkationStatus,
-        EmergencyPriority, ExteriorLights, Heading, ItsPduHeader, LanePosition,
-        LateralAcceleration, Latitude, LightBarSirenInUse, Longitude, LongitudinalAcceleration,
-        PathHistory, PerformanceClass, ProtectedCommunicationZone, ProtectedCommunicationZonesRSU,
-        PtActivation, ReferencePosition, RoadworksSubCauseCode, SpecialTransportType, Speed,
-        SpeedLimit, StationType, SteeringWheelAngle, TrafficRule, VehicleLength, VehicleRole,
-        VehicleWidth, VerticalAcceleration, YawRate,
-    };
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::super::cdd_1_3_1_1::its_container::{
+        AccelerationControl,
+        CauseCode,
+        CenDsrcTollingZone,
+        ClosedLanes,
+        Curvature,
+        CurvatureCalculationMode,
+        DangerousGoodsBasic,
+        DriveDirection,
+        EmbarkationStatus,
+        EmergencyPriority,
+        ExteriorLights,
+        Heading,
+        ItsPduHeader,
+        LanePosition,
+        LateralAcceleration,
+        Latitude,
+        LightBarSirenInUse,
+        Longitude,
+        LongitudinalAcceleration,
+        PathHistory,
+        PerformanceClass,
+        ProtectedCommunicationZone,
+        ProtectedCommunicationZonesRSU,
+        PtActivation,
+        ReferencePosition,
+        RoadworksSubCauseCode,
+        SpecialTransportType,
+        Speed,
+        SpeedLimit,
+        StationType,
+        SteeringWheelAngle,
+        TrafficRule,
+        VehicleLength,
+        VehicleRole,
+        VehicleWidth,
+        VerticalAcceleration,
+        YawRate,
+    };
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]

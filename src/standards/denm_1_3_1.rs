@@ -7,19 +7,54 @@
 )]
 pub mod denm_pdu_descriptions {
     extern crate alloc;
-    use super::super::cdd_1_3_1_1::its_container::{
-        ActionID, CauseCode, ClosedLanes, DangerousGoodsExtended, DeltaReferencePosition,
-        EnergyStorageType, EventHistory, Heading, HeightLonCarr, InformationQuality, ItineraryPath,
-        ItsPduHeader, LanePosition, LightBarSirenInUse, NumberOfOccupants, PosCentMass, PosFrontAx,
-        PosLonCarr, PositionOfOccupants, PositionOfPillars, PositioningSolutionType,
-        ReferencePosition, RelevanceDistance, RelevanceTrafficDirection, RequestResponseIndication,
-        RestrictedTypes, RoadType, Speed, SpeedLimit, StationType, StationarySince, Temperature,
-        TimestampIts, Traces, TrafficRule, TransmissionInterval, TurningRadius, ValidityDuration,
-        VehicleIdentification, VehicleMass, WheelBaseVehicle,
-    };
     use core::borrow::Borrow;
-    use rasn::prelude::*;
     use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
+    use super::super::cdd_1_3_1_1::its_container::{
+        ActionID,
+        CauseCode,
+        ClosedLanes,
+        DangerousGoodsExtended,
+        DeltaReferencePosition,
+        EnergyStorageType,
+        EventHistory,
+        Heading,
+        HeightLonCarr,
+        InformationQuality,
+        ItineraryPath,
+        ItsPduHeader,
+        LanePosition,
+        LightBarSirenInUse,
+        NumberOfOccupants,
+        PosCentMass,
+        PosFrontAx,
+        PosLonCarr,
+        PositionOfOccupants,
+        PositionOfPillars,
+        PositioningSolutionType,
+        ReferencePosition,
+        RelevanceDistance,
+        RelevanceTrafficDirection,
+        RequestResponseIndication,
+        RestrictedTypes,
+        RoadType,
+        Speed,
+        SpeedLimit,
+        StationType,
+        StationarySince,
+        Temperature,
+        TimestampIts,
+        Traces,
+        TrafficRule,
+        TransmissionInterval,
+        TurningRadius,
+        ValidityDuration,
+        VehicleIdentification,
+        VehicleMass,
+        WheelBaseVehicle,
+    };
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     #[non_exhaustive]

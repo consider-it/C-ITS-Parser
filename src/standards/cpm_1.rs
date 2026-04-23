@@ -7,19 +7,40 @@
 )]
 pub mod cpm_pdu_descriptions {
     extern crate alloc;
+    use core::borrow::Borrow;
+    use std::sync::LazyLock;
+
+    use rasn::prelude::*;
+
     use super::super::cam_1_4_1::cam_pdu_descriptions::GenerationDeltaTime;
     use super::super::cdd_1_3_1_1::its_container::{
-        DriveDirection, Heading, ItsPduHeader, LateralAcceleration, LongitudinalAcceleration,
-        ReferencePosition, Speed, SpeedConfidence, StationType, VehicleLength, VehicleWidth,
-        VerticalAcceleration, YawRate,
+        DriveDirection,
+        Heading,
+        ItsPduHeader,
+        LateralAcceleration,
+        LongitudinalAcceleration,
+        ReferencePosition,
+        Speed,
+        SpeedConfidence,
+        StationType,
+        VehicleLength,
+        VehicleWidth,
+        VerticalAcceleration,
+        YawRate,
     };
     use super::super::dsrc_2_2_1::etsi_its_dsrc::{
-        IntersectionReferenceID, LaneID, NodeOffsetPointXY, OffsetB10, OffsetB11, OffsetB12,
-        OffsetB13, OffsetB14, OffsetB16, RoadSegmentReferenceID, VehicleHeight,
+        IntersectionReferenceID,
+        LaneID,
+        NodeOffsetPointXY,
+        OffsetB10,
+        OffsetB11,
+        OffsetB12,
+        OffsetB13,
+        OffsetB14,
+        OffsetB16,
+        RoadSegmentReferenceID,
+        VehicleHeight,
     };
-    use core::borrow::Borrow;
-    use rasn::prelude::*;
-    use std::sync::LazyLock;
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=127"))]
     pub struct AngleConfidence(pub u8);

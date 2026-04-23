@@ -7,23 +7,23 @@
     all(target_arch = "wasm32", feature = "json"),
     not(target_arch = "wasm32")
 ))]
+use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
+use wasm_bindgen::prelude::*;
+
+#[cfg(any(
+    all(target_arch = "wasm32", feature = "json"),
+    not(target_arch = "wasm32")
+))]
 use crate::map_err_to_string;
+#[cfg(all(target_arch = "wasm32", feature = "json"))]
+use crate::transport::encode::Encode as TpEncode;
 #[cfg(not(target_arch = "wasm32"))]
 use crate::ItsMessage;
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 use crate::JsonItsMessage;
 #[cfg(not(target_arch = "wasm32"))]
 use crate::{EncodingRules, Packet};
-#[cfg(any(
-    all(target_arch = "wasm32", feature = "json"),
-    not(target_arch = "wasm32")
-))]
-use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
-
-#[cfg(all(target_arch = "wasm32", feature = "json"))]
-use crate::transport::encode::Encode as TpEncode;
-#[cfg(all(target_arch = "wasm32", feature = "json"))]
-use wasm_bindgen::prelude::*;
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 /// Wasm output is a Javascript uint8 array

@@ -208,8 +208,7 @@ mod tests {
         feature = "ssem_2_2_1",
     ))]
     fn moy_and_dsecond_to_time() {
-        use crate::standards::dsrc_2_2_1::etsi_its_dsrc::DSecond;
-        use crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear;
+        use crate::standards::dsrc_2_2_1::etsi_its_dsrc::{DSecond, MinuteOfTheYear};
         use crate::time_utils::time_from_moy_and_dsecond;
 
         // year 2026, moy 0, dsecond 0 shall give 2026-01-01 00:00:00

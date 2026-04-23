@@ -1,17 +1,17 @@
 diff --git a/src/standards/cpm_1.rs b/src/standards/cpm_1.rs
-index 5962dc8..5b02fdf 100644
+index 632e31f..a734ec8 100644
 --- a/src/standards/cpm_1.rs
 +++ b/src/standards/cpm_1.rs
-@@ -7,7 +7,7 @@
- )]
- pub mod cpm_pdu_descriptions {
-     extern crate alloc;
+@@ -12,7 +12,7 @@ pub mod cpm_pdu_descriptions {
+ 
+     use rasn::prelude::*;
+ 
 -    use super::cam_pdu_descriptions::GenerationDeltaTime;
 +    use super::super::cam_1_4_1::cam_pdu_descriptions::GenerationDeltaTime;
      use super::super::dsrc_2_2_1::etsi_its_dsrc::{
-         IntersectionReferenceID, LaneID, NodeOffsetPointXY, OffsetB10, OffsetB11, OffsetB12,
-         OffsetB13, OffsetB14, OffsetB16, RoadSegmentReferenceID, VehicleHeight,
-@@ -586,7 +586,7 @@ pub mod cpm_pdu_descriptions {
+         IntersectionReferenceID,
+         LaneID,
+@@ -607,7 +607,7 @@ pub mod cpm_pdu_descriptions {
          }
      }
      fn originating_vehicle_container_drive_direction_default() -> DriveDirection {
