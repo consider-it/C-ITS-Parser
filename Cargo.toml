@@ -18,8 +18,6 @@ lto = true
 default = ["v2x", "json"]
 # enable all V2X messages
 v2x = ["cpm_1", "denm_1_3_1", "ivim_2_1_1", "cam_1_4_1", "cpm_2_1_1", "denm_2_2_1", "ivim_2_2_1", "mapem_2_2_1", "spatem_2_2_1", "srem_2_2_1", "ssem_2_2_1"]
-# enable common ETSI ASN.1 data types (use `v2x` for the actual messages)
-etsi = ["transport", "dep:nom", "rasn", "dep:hex"]
 # enable GN (and other transport header) parser
 transport = ["dep:geonetworking", "dep:nom", "dep:etherparse"]
 # enable conversions to and from JSON
@@ -30,27 +28,27 @@ geo = ["dep:geo-types"]
 time = ["dep:chrono"]
 
 # enable support for `cpm_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-cpm_1         = ["etsi", "cam_1_4_1", "_cdd_1_3_1_1", "_dsrc_2_2_1"]
+cpm_1         = ["_etsi", "cam_1_4_1", "_cdd_1_3_1_1", "_dsrc_2_2_1"]
 # enable support for `denm_1_3_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-denm_1_3_1    = ["etsi", "_cdd_1_3_1_1"]
+denm_1_3_1    = ["_etsi", "_cdd_1_3_1_1"]
 # enable support for `ivim_2_1_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-ivim_2_1_1    = ["etsi", "_cdd_1_3_1_1", "_dsrc_2_2_1"]
+ivim_2_1_1    = ["_etsi", "_cdd_1_3_1_1", "_dsrc_2_2_1"]
 # enable support for `cam_1_4_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-cam_1_4_1     = ["etsi", "_cdd_1_3_1_1"]
+cam_1_4_1     = ["_etsi", "_cdd_1_3_1_1"]
 # enable support for `cpm_2_1_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-cpm_2_1_1     = ["etsi", "_cdd_2_2_1"]
+cpm_2_1_1     = ["_etsi", "_cdd_2_2_1"]
 # enable support for `denm_2_2_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-denm_2_2_1    = ["etsi", "_cdd_2_2_1"]
+denm_2_2_1    = ["_etsi", "_cdd_2_2_1"]
 # enable support for `ivim_2_2_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-ivim_2_2_1    = ["etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
+ivim_2_2_1    = ["_etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
 # enable support for `mapem_2_2_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-mapem_2_2_1   = ["etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
+mapem_2_2_1   = ["_etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
 # enable support for `spatem_2_2_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-spatem_2_2_1  = ["etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
+spatem_2_2_1  = ["_etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
 # enable support for `srem_2_2_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-srem_2_2_1    = ["etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
+srem_2_2_1    = ["_etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
 # enable support for `ssem_2_2_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
-ssem_2_2_1    = ["etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
+ssem_2_2_1    = ["_etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
 
 # shortcut for `cpm_1` and `cpm_2_1_1`
 cpm     = ["cpm_1", "cpm_2_1_1"]
@@ -75,6 +73,8 @@ _cdd_1_3_1_1  = []
 _cdd_2_2_1    = []
 # internal feature enabling the DSRC 2.2.1
 _dsrc_2_2_1   = []
+# internal feature enabling common ETSI ASN.1 data types and the ASN.1 parser itself
+_etsi = ["transport", "dep:nom", "rasn", "dep:hex"]
 
 [dependencies]
 chrono = { version = "0.4.42", optional = true }

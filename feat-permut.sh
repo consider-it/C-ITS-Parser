@@ -11,8 +11,8 @@ features_base=(
   json
   transport
   transport,json
-  etsi,v2x
-  etsi,v2x,json
+  v2x
+  v2x,json
 )
 features_more=(
   cam

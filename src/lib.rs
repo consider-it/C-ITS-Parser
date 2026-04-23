@@ -9,7 +9,7 @@
 //!
 //! ```
 //! let data = &[0x02, 0x02, 0xde, 0x14, 0x0c, 0xe5]; // provide actual message buffer here
-//! #[cfg(feature = "etsi")]
+//! #[cfg(feature = "_etsi")]
 //! match etsi_web::de::decode(data, etsi_web::Headers::RadioTap802LlcGnBtp) {
 //!     Ok(etsi_web::ItsMessage::Cam {
 //!         geonetworking: _,
@@ -50,9 +50,9 @@
 //! - `geo`: Enable conversions to [geo-types](https://crates.io/crates/geo-types) (as lon/lat coordinates in degrees)
 
 pub mod de;
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 pub mod en;
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 #[allow(clippy::all, clippy::pedantic, clippy::nursery, dead_code)]
 pub mod standards;
 
@@ -70,9 +70,9 @@ pub mod transport;
 pub use geonetworking::{Decode, Packet};
 #[cfg(feature = "transport")]
 pub use pcap::remove_pcap_headers;
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 use transport::TransportHeader;
-#[cfg(all(target_arch = "wasm32", any(feature = "json", feature = "etsi")))]
+#[cfg(all(target_arch = "wasm32", any(feature = "json", feature = "_etsi")))]
 use wasm_bindgen::prelude::*;
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
@@ -131,7 +131,7 @@ impl JsonItsMessage {
     }
 }
 
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 #[derive(Debug, Clone, PartialEq)]
 /// Wrapper for C-ITS messages
 ///
@@ -216,7 +216,7 @@ pub enum ItsMessage<'a> {
     },
 }
 
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 /// Choice which message headers are present in the binary message buffer
@@ -229,7 +229,7 @@ pub enum Headers {
     RadioTap802LlcGnBtp,
 }
 
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 /// Choice of ASN.1 encoding rule
@@ -240,9 +240,9 @@ pub enum EncodingRules {
 }
 
 #[cfg(any(
-    feature = "etsi",
-    all(target_arch = "wasm32", feature = "etsi", feature = "json"),
-    all(test, feature = "etsi")
+    feature = "_etsi",
+    all(target_arch = "wasm32", feature = "_etsi", feature = "json"),
+    all(test, feature = "_etsi")
 ))]
 impl EncodingRules {
     pub(crate) fn codec(self) -> rasn::Codec {
@@ -254,7 +254,7 @@ impl EncodingRules {
     }
 }
 
-#[cfg(any(feature = "transport", feature = "etsi"))]
+#[cfg(any(feature = "transport", feature = "_etsi"))]
 pub(crate) fn map_err_to_string<E: core::fmt::Debug>(error: E) -> String {
     format!("{error:?}")
 }

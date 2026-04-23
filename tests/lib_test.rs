@@ -1,12 +1,12 @@
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi", feature = "json"))]
 use etsi_web::ItsMessage;
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "_etsi", feature = "json"))]
 use etsi_web::JsonItsMessage;
-#[cfg(all(target_arch = "wasm32", feature = "etsi", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "_etsi", feature = "json"))]
 use wasm_bindgen_test::wasm_bindgen_test;
 #[cfg(target_arch = "wasm32")]
 wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-#[cfg(all(not(target_arch = "wasm32"), feature = "etsi", feature = "json"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi", feature = "json"))]
 use geonetworking::Encode;
 
 #[cfg(any(

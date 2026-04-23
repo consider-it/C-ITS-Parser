@@ -4,9 +4,9 @@
 
 #![allow(non_snake_case)]
 
-#[cfg(any(feature = "transport", feature = "etsi"))]
+#[cfg(any(feature = "transport", feature = "_etsi"))]
 use crate::map_err_to_string;
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 use crate::pcap::remove_pcap_headers;
 #[cfg(feature = "transport")]
 use crate::transport::TransportHeader;
@@ -16,12 +16,12 @@ use crate::transport::{
 };
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 use crate::JsonItsMessage;
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 use crate::{standards, Headers, ItsMessage};
 #[cfg(any(
-    feature = "etsi",
+    feature = "_etsi",
     all(target_arch = "wasm32", feature = "v2x", feature = "json"),
-    all(test, feature = "etsi")
+    all(test, feature = "_etsi")
 ))]
 use crate::{standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader, EncodingRules};
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
@@ -29,9 +29,9 @@ use geonetworking::Encode;
 #[cfg(feature = "transport")]
 use geonetworking::{Decode, NextAfterCommon, Packet};
 #[cfg(any(
-    feature = "etsi",
+    feature = "_etsi",
     all(target_arch = "wasm32", feature = "v2x", feature = "json"),
-    all(test, feature = "etsi")
+    all(test, feature = "_etsi")
 ))]
 use nom::FindSubstring;
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
@@ -52,7 +52,7 @@ macro_rules! btp {
     };
 }
 
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 #[allow(clippy::too_many_lines)]
 /// Decodes an ASN.1 message with headers. Supported encoding rules are UPER, JER, and XER. JSON and XML strings are expected as UTF-8 slices.
 ///
@@ -423,9 +423,9 @@ pub fn decode_to(
 }
 
 #[cfg(any(
-    feature = "etsi",
+    feature = "_etsi",
     all(target_arch = "wasm32", feature = "v2x", feature = "json"),
-    all(test, feature = "etsi")
+    all(test, feature = "_etsi")
 ))]
 fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
     let encoding_rules = match std::str::from_utf8(input) {
@@ -819,7 +819,7 @@ fn to_ipv6_debug(ipv6: IPv6Header) -> String {
     format!(r#"{{"ipv6Debug":"{ipv6:?}"}}"#)
 }
 
-#[cfg(all(test, feature = "etsi"))]
+#[cfg(all(test, feature = "_etsi"))]
 mod tests {
     use crate::de::message_type;
 
