@@ -9,15 +9,15 @@ mod tests {
 
         // from ETSI to degrees
         let test = cdd_2_2_1::etsi_its_cdd::Latitude(10_000_000);
-        assert_eq!(1., test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_deg());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::Latitude(-100_000_000);
-        assert_eq!(-10., test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(-10., test.as_deg());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::Latitude(420_000);
-        assert_eq!(0.042, test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(0.042, test.as_deg());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -43,15 +43,15 @@ mod tests {
 
         // from ETSI to degrees
         let test = cdd_2_2_1::etsi_its_cdd::Longitude(10_000_000);
-        assert_eq!(1., test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_deg());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::Longitude(-100_000_000);
-        assert_eq!(-10., test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(-10., test.as_deg());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::Longitude(420_000);
-        assert_eq!(0.042, test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(0.042, test.as_deg());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -77,14 +77,14 @@ mod tests {
 
         // from ETSI to meters
         let test = dsrc_2_2_1::etsi_its_dsrc::OffsetB09(100);
-        assert_eq!(1., test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_meters());
         assert!(!test.is_unavailable());
 
         let test = dsrc_2_2_1::etsi_its_dsrc::OffsetB09(255);
-        assert_eq!(2.55, test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(2.55, test.as_meters());
         assert!(!test.is_unavailable());
         let test = dsrc_2_2_1::etsi_its_dsrc::OffsetB09(-255);
-        assert_eq!(-2.55, test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(-2.55, test.as_meters());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -123,11 +123,11 @@ mod tests {
 
         // from ETSI to meters
         let test = cdd_2_2_1::etsi_its_cdd::ObjectDimensionValue(10);
-        assert_eq!(1., test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_meters());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::ObjectDimensionValue(25);
-        assert_eq!(2.5, test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(2.5, test.as_meters());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -162,11 +162,11 @@ mod tests {
 
         // from ETSI to meters
         let test = cdd_2_2_1::etsi_its_cdd::VehicleWidth(10);
-        assert_eq!(1., test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_meters());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::VehicleWidth(25);
-        assert_eq!(2.5, test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(2.5, test.as_meters());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -201,11 +201,11 @@ mod tests {
 
         // from ETSI to meters
         let test = cdd_2_2_1::etsi_its_cdd::VehicleLengthValue(10);
-        assert_eq!(1., test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_meters());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::VehicleLengthValue(25);
-        assert_eq!(2.5, test.as_meters());
+        assert_float_eq::assert_float_absolute_eq!(2.5, test.as_meters());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -240,11 +240,11 @@ mod tests {
 
         // from ETSI to m/s
         let test = cdd_2_2_1::etsi_its_cdd::SpeedValue(100);
-        assert_eq!(1., test.as_mps());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_mps());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::SpeedValue(1);
-        assert_eq!(0.01, test.as_mps());
+        assert_float_eq::assert_float_absolute_eq!(0.01, test.as_mps());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -279,11 +279,11 @@ mod tests {
 
         // from ETSI to m/s/s
         let test = cdd_2_2_1::etsi_its_cdd::LongitudinalAccelerationValue(10);
-        assert_eq!(1., test.as_mpss());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_mpss());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::LongitudinalAccelerationValue(25);
-        assert_eq!(2.5, test.as_mpss());
+        assert_float_eq::assert_float_absolute_eq!(2.5, test.as_mpss());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -318,11 +318,11 @@ mod tests {
 
         // from ETSI to degrees
         let test = cdd_2_2_1::etsi_its_cdd::CartesianAngleValue(10);
-        assert_eq!(1., test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_deg());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::CartesianAngleValue(25);
-        assert_eq!(2.5, test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(2.5, test.as_deg());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -357,11 +357,11 @@ mod tests {
 
         // from ETSI to degrees
         let test = dsrc_2_2_1::etsi_its_dsrc::Angle(80);
-        assert_eq!(1., test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_deg());
         assert!(!test.is_unavailable());
 
         let test = dsrc_2_2_1::etsi_its_dsrc::Angle(1);
-        assert_eq!(0.0125, test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(0.0125, test.as_deg());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -396,11 +396,11 @@ mod tests {
 
         // from ETSI to degrees
         let test = cdd_2_2_1::etsi_its_cdd::SteeringWheelAngleValue(510);
-        assert_eq!(765., test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(765., test.as_deg());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::SteeringWheelAngleValue(1);
-        assert_eq!(1.5, test.as_deg());
+        assert_float_eq::assert_float_absolute_eq!(1.5, test.as_deg());
         assert!(!test.is_unavailable());
 
         // unavailable value
@@ -435,11 +435,11 @@ mod tests {
 
         // from ETSI to deg/s
         let test = cdd_2_2_1::etsi_its_cdd::YawRateValue(100);
-        assert_eq!(1., test.as_deg_rate());
+        assert_float_eq::assert_float_absolute_eq!(1., test.as_deg_rate());
         assert!(!test.is_unavailable());
 
         let test = cdd_2_2_1::etsi_its_cdd::YawRateValue(1);
-        assert_eq!(0.01, test.as_deg_rate());
+        assert_float_eq::assert_float_absolute_eq!(0.01, test.as_deg_rate());
         assert!(!test.is_unavailable());
 
         // unavailable value
