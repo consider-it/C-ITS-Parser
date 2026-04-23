@@ -8,7 +8,6 @@
 pub mod efc_data_dictionary {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
     #[doc = " Clause 5.3\tSingle level data types"]
@@ -233,7 +232,6 @@ pub mod efc_data_dictionary {
 pub mod gdd {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
     #[doc = " Definition of data elements used in ISO 14823 attributes"]
@@ -766,7 +764,6 @@ pub mod gdd {
 pub mod ivi {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -2332,13 +2329,12 @@ pub mod ivi {
 pub mod ivi_is {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
     use super::ivi::*;
-    pub static DUMMY_ID: LazyLock<ContentId> = LazyLock::new(|| ContentId(Integer::from(0i128)));
-    pub static TEST1: LazyLock<ContentId> = LazyLock::new(|| ContentId(Integer::from(1i128)));
+    pub static DUMMY_ID: ContentId = ContentId(Integer::ZERO);
+    pub static TEST1: ContentId = ContentId(Integer::ONE);
 }
 #[allow(
     non_camel_case_types,
@@ -2350,7 +2346,6 @@ pub mod ivi_is {
 pub mod ivim_pdu_descriptions {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 

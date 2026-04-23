@@ -8,7 +8,6 @@
 pub mod denm_pdu_description {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 

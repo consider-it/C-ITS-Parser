@@ -35,6 +35,12 @@ for file in $rootdir/src/standards/*_*.rs; do
     sed -i '' 's/use super::etsi_its_dsrc/use super::super::dsrc_2_2_1::etsi_its_dsrc/' $file
 done
 
+# remove LazyLock (b/c unused or usage will be replaced by patches in the next step)
+for file in $rootdir/src/standards/*_*.rs; do
+    echo "removing LayzLock imports in $file"
+    sed -i '' 's/use std::sync::LazyLock;//' $file
+done
+
 # apply additional patch files
 for file in $rootdir/scripts/asn1_rs-patches/*.patch; do
     filename=$(basename $file)

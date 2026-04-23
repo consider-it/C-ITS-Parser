@@ -8,7 +8,6 @@
 pub mod etsi_its_dsrc {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -4872,7 +4871,6 @@ pub mod etsi_its_dsrc {
 pub mod etsi_its_dsrc_add_grp_c {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
@@ -5415,7 +5413,6 @@ pub mod etsi_its_dsrc_add_grp_c {
 pub mod etsi_its_dsrc_region {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 

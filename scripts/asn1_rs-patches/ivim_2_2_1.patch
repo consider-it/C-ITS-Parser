@@ -1,5 +1,5 @@
 diff --git a/src/standards/ivim_2_2_1.rs b/src/standards/ivim_2_2_1.rs
-index 302eb6e..3306cfd 100644
+index 302eb6e..e5f1772 100644
 --- a/src/standards/ivim_2_2_1.rs
 +++ b/src/standards/ivim_2_2_1.rs
 @@ -822,7 +822,6 @@ pub mod ivi {
@@ -10,3 +10,14 @@ index 302eb6e..3306cfd 100644
      #[doc = " Extension in V3.1"]
      #[doc = "  Definition of Data Frames"]
      #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+@@ -2338,8 +2337,8 @@ pub mod ivi_is {
+     use rasn::prelude::*;
+ 
+     use super::ivi::*;
+-    pub static DUMMY_ID: LazyLock<ContentId> = LazyLock::new(|| ContentId(Integer::from(0i128)));
+-    pub static TEST1: LazyLock<ContentId> = LazyLock::new(|| ContentId(Integer::from(1i128)));
++    pub static DUMMY_ID: ContentId = ContentId(Integer::ZERO);
++    pub static TEST1: ContentId = ContentId(Integer::ONE);
+ }
+ #[allow(
+     non_camel_case_types,

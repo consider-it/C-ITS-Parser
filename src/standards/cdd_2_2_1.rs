@@ -8,7 +8,6 @@
 pub mod etsi_its_cdd {
     extern crate alloc;
     use core::borrow::Borrow;
-    use std::sync::LazyLock;
 
     use rasn::prelude::*;
 
