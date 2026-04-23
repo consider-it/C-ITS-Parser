@@ -3,7 +3,8 @@
 This library can parse and encode ETSI C-ITS (a.k.a. V2X) messages including GeoNetworking headers and optionally Pcap Radiotap and IEEE 802.11 headers.
 It also provides Javascript/ WebAssembly bindings to transcode (decode and re-encode as JER/ XER/ UPER) packets and to encode them from JSON (JER) representation.
 
-By default, it's a `no_std` library unless compiled for wasm32.
+This library supports `no_std` environments unless compiling for wasm32.
+Just disable the default features to disable the `std` feature flag.
 
 Supported standards:
 
