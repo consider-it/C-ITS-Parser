@@ -1,4 +1,4 @@
-## [unreleased]
+## [1.1.1] - 2026-04-23
 
 ### 🐛 Bug Fixes
 
@@ -8,6 +8,9 @@
 
 - *(standard)* Fix doxygen style doc attributes
 - *(transport)* Remove invalid rust-doc syntax
+- Document releasing process
+- Overhaul readme, improve docs
+- Enable doctest, fix invalid syntax
 
 ### ⚙️ Miscellaneous Tasks
 
