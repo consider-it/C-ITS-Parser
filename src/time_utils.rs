@@ -88,7 +88,7 @@ pub fn time_from_moy_and_dsecond(
 /// But the TimestampIts epoch starts at 2004-01-01 00:00:00 UTC which was 32 seconds
 /// behind TAI, so the difference is 5 seconds since the last leap second insertion on
 /// 2022-01-01.
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 macro_rules! timestampits_conv_datetime {
     ($t:ty) => {
         impl From<$t> for chrono::DateTime<chrono::Utc> {
@@ -126,7 +126,7 @@ macro_rules! timestampits_conv_datetime {
     };
 }
 
-#[cfg(feature = "etsi")]
+#[cfg(feature = "_etsi")]
 fn its_offset_ms(unix_time_ms: u64) -> u16 {
     if unix_time_ms >= 1_483_228_800_000 {
         // leap second introduced at 2016-12-31, so +5 since 2017-01-01
@@ -156,7 +156,7 @@ timestampits_conv_datetime!(crate::standards::cdd_1_3_1_1::its_container::Timest
 #[cfg(any(feature = "cpm_2_1_1", feature = "denm_2_2_1", feature = "ivim_2_2_1"))]
 timestampits_conv_datetime!(crate::standards::cdd_2_2_1::etsi_its_cdd::TimestampIts);
 
-#[cfg(all(test, feature = "etsi"))]
+#[cfg(all(test, feature = "_etsi"))]
 mod tests {
 
     #[test]

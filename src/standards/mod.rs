@@ -18,7 +18,7 @@ pub mod ivim_2_1_1;
 #[cfg(feature = "cam_1_4_1")]
 /// ETSI EN 302 637-2 v1.4.1 CAM
 pub mod cam_1_4_1;
-#[cfg(any(feature = "_cdd_2_2_1", feature = "etsi"))]
+#[cfg(any(feature = "_cdd_2_2_1", feature = "_etsi"))]
 /// CDD v2.2.1
 pub mod cdd_2_2_1;
 #[cfg(feature = "cpm_2_1_1")]
