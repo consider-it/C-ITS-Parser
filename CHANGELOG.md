@@ -1,3 +1,23 @@
+## [2.0.0] - 2026-04-24
+
+### 🚀 Features
+
+- *(tests)* Fix float comparisons in tests
+- Make the library no-std
+- *(ci)* Add crate publishing
+- [**breaking**] Update rust edition
+- *(publishing)* Add "std" to default features, exclude scripts from release package
+
+### 🐛 Bug Fixes
+
+- *(conversions)* Remove excessive features from cfg conditional
+- *(standard)* Remove unused import
+
+### 🚜 Refactor
+
+- [**breaking**] Rename "etsi" feature flag
+- Reformat code
+- [**breaking**] Rename crate, add license
 ## [1.1.1] - 2026-04-23
 
 ### 🐛 Bug Fixes
