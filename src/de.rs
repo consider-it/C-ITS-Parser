@@ -243,11 +243,8 @@ pub fn decode_gn_btp_headers(
     use crate::transport::decode::Decode as _;
 
     let result = geonetworking::Packet::decode(input).map_err(crate::map_err_to_string)?;
-    let payload = match &result.decoded {
-        geonetworking::Packet::Unsecured { payload, .. } => *payload,
-        s @ geonetworking::Packet::Secured { .. } => s
-            .secured_payload_after_gn()
-            .ok_or("No payload in secured geonetworking header!")?,
+    let Some(payload) = result.decoded.payload() else {
+        return Err("No payload in secured geonetworking header!".to_string());
     };
     let (remaining, tp) = match result.decoded.common().next_header {
         geonetworking::NextAfterCommon::Any => {
