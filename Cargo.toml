@@ -36,8 +36,10 @@ json = ["geonetworking/json", "dep:serde", "dep:serde_json", "dep:js-sys"]
 geo = ["dep:geo-types"]
 # enable conversions of time types
 time = ["dep:chrono"]
-# Enable using the libstd runtime
+# enable using the libstd runtime
 std = []
+# use no_std math library
+libm = ["dep:num-traits"]
 
 # enable support for `cpm_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
 cpm_1         = ["_etsi", "cam_1_4_1", "_cdd_1_3_1_1", "_dsrc_2_2_1"]
@@ -94,6 +96,7 @@ etherparse = { version = "0.20", default-features = false, optional = true }
 geonetworking = { version = "0.2", default-features = false, optional = true }
 geo-types = { version = "0.7.17", default-features = false, optional = true }
 nom = { version = "7.1.3", default-features = false, features = ["alloc"], optional = true }
+num-traits = { version = "0.2.19", default-features = false, features = ["libm"], optional = true }
 rasn = { version = "0.28.7", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"], optional = true }
