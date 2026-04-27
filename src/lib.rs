@@ -245,7 +245,9 @@ pub enum Headers {
 /// Choice of ASN.1 encoding rule
 pub enum EncodingRules {
     UPER,
+    #[cfg(feature = "xer")]
     XER,
+    #[cfg(feature = "jer")]
     JER,
 }
 
@@ -258,7 +260,9 @@ impl EncodingRules {
     pub(crate) fn codec(self) -> rasn::Codec {
         match self {
             EncodingRules::UPER => rasn::Codec::Uper,
+            #[cfg(feature = "xer")]
             EncodingRules::XER => rasn::Codec::Xer,
+            #[cfg(feature = "jer")]
             EncodingRules::JER => rasn::Codec::Jer,
         }
     }

@@ -25,13 +25,13 @@ crate-type = ["lib", "cdylib"]
 lto = true
 
 [features]
-default = ["v2x", "json", "std"]
+default = ["v2x", "json", "std", "xer"]
 # enable all V2X messages
 v2x = ["cpm_1", "denm_1_3_1", "ivim_2_1_1", "cam_1_4_1", "cpm_2_1_1", "denm_2_2_1", "ivim_2_2_1", "mapem_2_2_1", "spatem_2_2_1", "srem_2_2_1", "ssem_2_2_1"]
 # enable GN (and other transport header) parser
 transport = ["dep:geonetworking", "dep:nom", "dep:etherparse"]
 # enable conversions to and from JSON
-json = ["geonetworking/json", "dep:serde", "dep:serde_json", "dep:js-sys"]
+json = ["jer", "geonetworking/json", "dep:serde", "dep:serde_json", "dep:js-sys"]
 # enable conversions to geo-types
 geo = ["dep:geo-types"]
 # enable conversions of time types
@@ -40,6 +40,11 @@ time = ["dep:chrono"]
 std = []
 # use no_std math library
 libm = ["dep:num-traits"]
+
+# enable ASN.1 XER codec
+xer = ["rasn/codec_xer"]
+# enable ASN.1 JER codec
+jer = ["rasn/codec_jer"]
 
 # enable support for `cpm_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
 cpm_1         = ["_etsi", "cam_1_4_1", "_cdd_1_3_1_1", "_dsrc_2_2_1"]
@@ -88,7 +93,7 @@ _cdd_2_2_1    = []
 # internal feature enabling the DSRC 2.2.1
 _dsrc_2_2_1   = []
 # internal feature enabling common ETSI ASN.1 data types and the ASN.1 parser itself
-_etsi = ["transport", "dep:nom", "rasn", "dep:hex"]
+_etsi = ["transport", "dep:nom", "dep:rasn", "dep:hex"]
 
 [dependencies]
 chrono = { version = "0.4.42", default-features = false, optional = true }
@@ -97,7 +102,7 @@ geonetworking = { version = "0.2", default-features = false, optional = true }
 geo-types = { version = "0.7.17", default-features = false, optional = true }
 nom = { version = "7.1.3", default-features = false, features = ["alloc"], optional = true }
 num-traits = { version = "0.2.19", default-features = false, features = ["libm"], optional = true }
-rasn = { version = "0.28.7", optional = true }
+rasn = { version = "0.28.7", optional = true, git = "https://github.com/consider-it/rasn.git", branch = "feat/feature-flags", default-features = false, features = ["f32", "f64" , "bytes", "codec_per"] }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"], optional = true }
 

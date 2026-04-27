@@ -449,11 +449,22 @@ pub fn decode_to(
 ))]
 fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
     let encoding_rules = match str::from_utf8(input) {
-        Ok(s) if s.trim_start().starts_with('<') => EncodingRules::XER,
-        Ok(s) if s.trim_start().starts_with('{') => EncodingRules::JER,
+        Ok(s) if s.trim_start().starts_with('<') => {
+            #[cfg(not(feature = "xer"))]
+            return Err("Input looks like XML, but XER codec is not enabled".to_string());
+            #[cfg(feature = "xer")]
+            EncodingRules::XER
+        }
+        Ok(s) if s.trim_start().starts_with('{') => {
+            #[cfg(not(feature = "jer"))]
+            return Err("Input looks like JSON, but JER codec is not enabled".to_string());
+            #[cfg(feature = "jer")]
+            EncodingRules::JER
+        }
         _ => EncodingRules::UPER,
     };
     match encoding_rules {
+        #[cfg(feature = "xer")]
         EncodingRules::XER => {
             let message_id_start = input
                 .find_substring("messageID>")
@@ -485,6 +496,7 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                     .map_err(map_err_to_string)?;
             Ok((encoding_rules, protocol_version, message_id))
         }
+        #[cfg(feature = "jer")]
         EncodingRules::JER => {
             let message_id = input
                 .find_substring("messageID\":")
