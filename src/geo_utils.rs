@@ -6,7 +6,11 @@
 //!
 //! Take a look at the individual data types in [`crate::standards`] to discover available conversion methods and initialization functions.
 //!
-//!  Note: These conversions are only available with the optional `geo` feature flag.
+//! Note: These conversions are only available with the optional `geo` feature flag.
+//! And when used in a `no_std` environment, the `libm` flags is required for conversions from X/Y delta positions.
+
+#[cfg(all(feature = "libm", not(feature = "std")))]
+use num_traits::float::Float;
 
 const EARTH_CIRCUMFERENCE: f32 = 39_940_653.; // Earth's circumference in meters
 
@@ -196,6 +200,7 @@ impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeOffsetPointXY {
     }
 }
 
+#[cfg(any(feature = "std", feature = "libm"))]
 /// Convert ETSI XY deltas to absolute lon/lat position (in degrees)
 ///
 /// X points east (longitude), Y points north (latitude)!
@@ -213,7 +218,7 @@ fn dxy_to_geo(dx: f32, dy: f32, ref_pos: &geo_types::Point) -> (f64, f64) {
 /// Convert absolute lon/lat position to ETSI XY position (in meters)
 ///
 /// X points east (longitude), Y points north (latitude)!
-#[cfg(feature = "mapem_2_2_1")]
+#[cfg(all(feature = "mapem_2_2_1", any(feature = "std", feature = "libm")))]
 fn latlon_to_dcart(
     dpos: &crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeLLmD64b,
     ref_pos: &geo_types::Point,
