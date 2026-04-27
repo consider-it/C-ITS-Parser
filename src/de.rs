@@ -582,6 +582,7 @@ fn message_type(input: &[u8]) -> Result<(crate::EncodingRules, u8, u8), alloc::s
         _ => crate::EncodingRules::UPER,
     };
     match encoding_rules {
+        #[cfg(feature = "xer")]
         crate::EncodingRules::XER => {
             let message_id_start = input
                 .find_substring("messageID>")
@@ -615,6 +616,7 @@ fn message_type(input: &[u8]) -> Result<(crate::EncodingRules, u8, u8), alloc::s
             .map_err(crate::map_err_to_string)?;
             Ok((encoding_rules, protocol_version, message_id))
         }
+        #[cfg(feature = "jer")]
         crate::EncodingRules::JER => {
             let message_id = input
                 .find_substring("messageID\":")
