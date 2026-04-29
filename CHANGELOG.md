@@ -1,3 +1,8 @@
+## [2.0.1] - 2026-04-29
+
+### 🚀 Features
+
+- *(geo-utils)* Add option to use libm in no_std environments
 ## [2.0.0] - 2026-04-24
 
 ### 🚀 Features
