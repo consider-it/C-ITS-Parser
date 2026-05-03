@@ -71,8 +71,9 @@ for file in $rootdir/src/standards/*_*.rs; do
     # remove `*` at the beginning of lines
     sed -i '' -E 's/#\[doc = "\*[[:space:]]?/#\[doc = "/' $file
 
-    # enforce newlines before "@attrs"
-    sed -i '' -E 's/#\[doc = "@/#\[doc = "\\n@/' $file
+    # convert @field into lists and enforce newlines before other "@attrs"
+    sed -i '' -E 's/#\[doc = "@field/#\[doc = "- @field/' $file
+    sed -i '' -E 's/#\[doc = "@/#\[doc = "\\n\\n@/' $file
 
     # add `ignore` to code blocks
     sed -i '' -E 's/#\[doc = "```"/#\[doc = "```text"/' $file

@@ -1,0 +1,16 @@
+diff --git a/autogen/asn.1/ivim_2_1_1-part1.asn b/autogen/asn.1/ivim_2_1_1-part1.asn
+index fafdc1f..a542164 100644
+--- a/autogen/asn.1/ivim_2_1_1-part1.asn
++++ b/autogen/asn.1/ivim_2_1_1-part1.asn
+@@ -21,9 +21,8 @@ FROM IVI { iso (1) standard (0) ivi (19321) version2 (2) }
+ ItsPduHeader
+ FROM ITS-Container { itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (102894) cdd (2) version (2)};
+ 
+--- In vehicle information Message Message
+-
+--- @brief In vehicle information Message Root
++-- In vehicle information Message Root
++--
+ -- This DF includes DEs for the IVIM protocolVersion, the IVI message type identifier _messageID_,
+ -- the station identifier _stationID_ of the originating ITS-S and the IVI data from ISO TS 19321.
+ IVIM ::= SEQUENCE {
