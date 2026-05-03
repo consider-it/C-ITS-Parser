@@ -253,7 +253,7 @@ PerceivedObjectContainer ::= SEQUENCE {
     ...
 }
 
-/** @brief Perceived Objects
+/**
  * This DF provides a list of perceived objects represented in the coordinate system in which the y-axis corresponds to the North direction, the x-axis to the East direction, and the z- axis to the vertical direction.
 */
 PerceivedObjects::= SEQUENCE SIZE(0..255, ...) OF PerceivedObject (WITH COMPONENTS {... ,objectId PRESENT})

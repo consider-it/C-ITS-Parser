@@ -2807,8 +2807,7 @@ pub mod ivim_pdu_descriptions {
 
     use super::super::cdd_1_3_1_1::its_container::ItsPduHeader;
     use super::ivi::IviStructure;
-    #[doc = " In vehicle information Message Message"]
-    #[doc = " @brief In vehicle information Message Root"]
+    #[doc = " In vehicle information Message Root"]
     #[doc = " This DF includes DEs for the IVIM protocolVersion, the IVI message type identifier _messageID_,"]
     #[doc = " the station identifier _stationID_ of the originating ITS-S and the IVI data from ISO TS 19321."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]

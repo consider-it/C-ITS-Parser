@@ -1,0 +1,13 @@
+diff --git a/autogen/asn.1/cpm_2_1_1-part3.asn b/autogen/asn.1/cpm_2_1_1-part3.asn
+index 146bbd7..b152b79 100644
+--- a/autogen/asn.1/cpm_2_1_1-part3.asn
++++ b/autogen/asn.1/cpm_2_1_1-part3.asn
+@@ -26,7 +26,7 @@ PerceivedObjectContainer ::= SEQUENCE {
+     ...
+ }
+ 
+-/** @brief Perceived Objects
++/**
+  * This DF provides a list of perceived objects represented in the coordinate system in which the y-axis corresponds to the North direction, the x-axis to the East direction, and the z- axis to the vertical direction.
+ */
+ PerceivedObjects::= SEQUENCE SIZE(0..255, ...) OF PerceivedObject (WITH COMPONENTS {... ,objectId PRESENT})
