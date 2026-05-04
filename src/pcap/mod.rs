@@ -69,10 +69,11 @@ fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     }
 
     let ieee80211_fc_subtype: u8 = (ieee80211_framecontrol & 0xf0) >> 4; // xxxx.0000
-    if ieee80211_fc_subtype != 0b1000 {
-        // only select QoS frames
+    if !(ieee80211_fc_subtype == 0b1000 || ieee80211_fc_subtype == 0b0000) {
+        // only select QoS or "normal" data frames
         return Err(
-            alloc::format!("Unsupported 802.11 frame subtype {ieee80211_fc_type:#04x}").to_string(),
+            alloc::format!("Unsupported 802.11 frame subtype {ieee80211_fc_subtype:#04x}")
+                .to_string(),
         );
     }
 
