@@ -6,7 +6,7 @@ use alloc::string::ToString;
 /// Returns a human-readable error when parsing failed
 pub fn remove_pcap_headers(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     remove_radiotap_hdr(data)
-        .and_then(remove_80211_hdr)
+        .and_then(|data| remove_80211_hdr(data, false))
         .and_then(remove_llc_hdr)
 }
 
@@ -34,7 +34,10 @@ fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
 }
 
 #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
-fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
+fn remove_80211_hdr(
+    data: &[u8],
+    discard_non_broadcast: bool,
+) -> Result<&[u8], alloc::string::String> {
     /*
      * IEEE 802.11 Header has the following format (26-32 bytes)
      * - 2 bytes frame control
@@ -77,6 +80,15 @@ fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
         );
     }
 
+    let destination_mac = &data[4..10];
+    if destination_mac != [0xff; 6] {
+        // only select broadcast frames
+        return Err(
+            alloc::format!("Unsupported 802.11 frame subtype {ieee80211_fc_subtype:#04x}")
+                .to_string(),
+        );
+    }
+
     let hdr_len: usize = 26; // QoS data frame is usually 26 bytes (sequence control, no addr 4, QoS, no HT)
     let (_, remaining) = data.split_at(hdr_len);
 
@@ -100,7 +112,7 @@ fn remove_llc_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
         return Err(alloc::format!("Unknown LLC payload type {llc_type:#x}").to_string());
     }
 
-    let hdr_len: usize = 8; // TODO: Is this the right size?
+    let hdr_len: usize = 8;
     let (_, remaining) = data.split_at(hdr_len);
 
     Ok(remaining)
