@@ -2,9 +2,24 @@ use alloc::string::ToString;
 
 /// Strips Radiotap, IEEE 802.11p and LLC headers from a binary message buffer
 ///
+/// Convenience function combining [`remove_radiotap_hdr`], [`remove_80211_hdr`] and [`remove_llc_hdr`].
+///
 /// # Errors
 /// Returns a human-readable error when parsing failed
 pub fn remove_pcap_headers(data: &[u8]) -> Result<&[u8], alloc::string::String> {
+    remove_radiotap_hdr(data).and_then(remove_wlan_headers)
+}
+
+/// Strips IEEE 802.11p and LLC headers from a binary message buffer
+///
+/// Convenience function combining [`remove_80211_hdr`] and [`remove_llc_hdr`].
+///
+/// IEEE 802.11 data frames always have an LLC header.
+/// Since `remove_80211_hdr` only allows data frames, we usually need to remove them, too.
+///
+/// # Errors
+/// Returns a human-readable error when parsing failed
+pub fn remove_wlan_headers(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     remove_radiotap_hdr(data)
         .and_then(remove_80211_hdr)
         .and_then(remove_llc_hdr)

@@ -41,15 +41,12 @@ use crate::JsonItsMessage;
 #[cfg(any(feature = "transport", feature = "_etsi"))]
 use crate::map_err_to_string;
 #[cfg(feature = "_etsi")]
-use crate::pcap::remove_pcap_headers;
+use crate::pcap::{remove_pcap_headers, remove_wlan_headers};
 #[cfg(feature = "transport")]
 use crate::transport::TransportHeader;
 #[cfg(feature = "transport")]
 use crate::transport::{
-    BasicTransportAHeader,
-    BasicTransportBHeader,
-    IPv6Header,
-    decode::Decode as TransportDecode,
+    BasicTransportAHeader, BasicTransportBHeader, IPv6Header, decode::Decode as TransportDecode,
 };
 #[cfg(any(
     feature = "_etsi",
@@ -94,6 +91,9 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, alloc
         Headers::GnBtp => {
             decode_gn_btp_headers(input).map(|(rem, tp, gn)| (rem, Some(tp), Some(gn)))
         }
+        Headers::IEEE802LlcGnBtp => remove_wlan_headers(input)
+            .and_then(decode_gn_btp_headers)
+            .map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
         Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input)
             .and_then(decode_gn_btp_headers)
             .map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
@@ -749,6 +749,7 @@ pub fn optionally_decode_headers(
     match headers {
         Headers::None => Ok((input, JsonItsMessage::default())),
         Headers::GnBtp => transcode_gn_tp_to_json(input),
+        Headers::IEEE802LlcGnBtp => remove_wlan_headers(input).and_then(transcode_gn_tp_to_json),
         Headers::RadioTap802LlcGnBtp => {
             remove_pcap_headers(input).and_then(transcode_gn_tp_to_json)
         }
