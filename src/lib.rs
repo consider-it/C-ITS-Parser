@@ -237,6 +237,8 @@ pub enum Headers {
     GnBtp,
     /// Binary message with Radiotap, IEEE 802.11p, LLC, GeoNetworking and BTP headers
     RadioTap802LlcGnBtp,
+    /// Binary message with IEEE 802.11p, LLC, GeoNetworking and BTP headers
+    IEEE802LlcGnBtp,
 }
 
 #[cfg(feature = "_etsi")]
