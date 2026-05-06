@@ -235,6 +235,8 @@ pub enum Headers {
     None,
     /// Binary message with GeoNetworking and BTP headers
     GnBtp,
+    /// Binary message with IEEE 802.11p, LLC, GeoNetworking and BTP headers
+    IEEE802LlcGnBtp,
     /// Binary message with Radiotap, IEEE 802.11p, LLC, GeoNetworking and BTP headers
     RadioTap802LlcGnBtp,
 }
