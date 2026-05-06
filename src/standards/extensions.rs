@@ -43,6 +43,37 @@ impl ItsMessageId {
     }
 }
 
+impl TryInto<crate::standards::extensions::ItsMessageId> for u8 {
+    type Error = alloc::string::String;
+
+    fn try_into(self) -> Result<crate::standards::extensions::ItsMessageId, Self::Error> {
+        match self {
+            1 => Ok(crate::standards::extensions::ItsMessageId::Denm),
+            2 => Ok(crate::standards::extensions::ItsMessageId::Cam),
+            3 => Ok(crate::standards::extensions::ItsMessageId::Poi),
+            4 => Ok(crate::standards::extensions::ItsMessageId::Spatem),
+            5 => Ok(crate::standards::extensions::ItsMessageId::Mapem),
+            6 => Ok(crate::standards::extensions::ItsMessageId::Ivim),
+            7 => Ok(crate::standards::extensions::ItsMessageId::EvRsr),
+            8 => Ok(crate::standards::extensions::ItsMessageId::Tistpgtransaction),
+            9 => Ok(crate::standards::extensions::ItsMessageId::Srem),
+            10 => Ok(crate::standards::extensions::ItsMessageId::Ssem),
+            11 => Ok(crate::standards::extensions::ItsMessageId::Evcsn),
+            12 => Ok(crate::standards::extensions::ItsMessageId::Saem),
+            13 => Ok(crate::standards::extensions::ItsMessageId::Rtcmem),
+            14 => Ok(crate::standards::extensions::ItsMessageId::Cpm),
+            15 => Ok(crate::standards::extensions::ItsMessageId::Imzm),
+            16 => Ok(crate::standards::extensions::ItsMessageId::Vam),
+            17 => Ok(crate::standards::extensions::ItsMessageId::Dsm),
+            18 => Ok(crate::standards::extensions::ItsMessageId::Pcim),
+            19 => Ok(crate::standards::extensions::ItsMessageId::Pcvm),
+            20 => Ok(crate::standards::extensions::ItsMessageId::Mcm),
+            21 => Ok(crate::standards::extensions::ItsMessageId::Pam),
+            _ => Err(alloc::format!("MessageId {} not a known value", self)),
+        }
+    }
+}
+
 #[cfg(feature = "_cdd_2_2_1")]
 macro_rules! itsmessageid_conv {
     ($t:ty) => {
@@ -56,30 +87,7 @@ macro_rules! itsmessageid_conv {
             type Error = alloc::string::String;
 
             fn try_into(self) -> Result<crate::standards::extensions::ItsMessageId, Self::Error> {
-                match self.0 {
-                    1 => Ok(crate::standards::extensions::ItsMessageId::Denm),
-                    2 => Ok(crate::standards::extensions::ItsMessageId::Cam),
-                    3 => Ok(crate::standards::extensions::ItsMessageId::Poi),
-                    4 => Ok(crate::standards::extensions::ItsMessageId::Spatem),
-                    5 => Ok(crate::standards::extensions::ItsMessageId::Mapem),
-                    6 => Ok(crate::standards::extensions::ItsMessageId::Ivim),
-                    7 => Ok(crate::standards::extensions::ItsMessageId::EvRsr),
-                    8 => Ok(crate::standards::extensions::ItsMessageId::Tistpgtransaction),
-                    9 => Ok(crate::standards::extensions::ItsMessageId::Srem),
-                    10 => Ok(crate::standards::extensions::ItsMessageId::Ssem),
-                    11 => Ok(crate::standards::extensions::ItsMessageId::Evcsn),
-                    12 => Ok(crate::standards::extensions::ItsMessageId::Saem),
-                    13 => Ok(crate::standards::extensions::ItsMessageId::Rtcmem),
-                    14 => Ok(crate::standards::extensions::ItsMessageId::Cpm),
-                    15 => Ok(crate::standards::extensions::ItsMessageId::Imzm),
-                    16 => Ok(crate::standards::extensions::ItsMessageId::Vam),
-                    17 => Ok(crate::standards::extensions::ItsMessageId::Dsm),
-                    18 => Ok(crate::standards::extensions::ItsMessageId::Pcim),
-                    19 => Ok(crate::standards::extensions::ItsMessageId::Pcvm),
-                    20 => Ok(crate::standards::extensions::ItsMessageId::Mcm),
-                    21 => Ok(crate::standards::extensions::ItsMessageId::Pam),
-                    _ => Err(alloc::format!("MessageId {} not a known value", self.0)),
-                }
+                self.0.try_into()
             }
         }
     };
