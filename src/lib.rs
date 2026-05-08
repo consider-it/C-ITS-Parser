@@ -227,6 +227,80 @@ pub enum ItsMessage<'a> {
 }
 
 #[cfg(feature = "_etsi")]
+impl From<&ItsMessage<'_>> for standards::extensions::ItsMessageId {
+    fn from(val: &ItsMessage<'_>) -> Self {
+        match val {
+            #[cfg(feature = "denm_1_3_1")]
+            ItsMessage::DenmV1 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Denm,
+            #[cfg(feature = "denm_2_2_1")]
+            ItsMessage::DenmV2 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Denm,
+            #[cfg(feature = "cam_1_4_1")]
+            ItsMessage::Cam {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Cam,
+            #[cfg(feature = "spatem_2_2_1")]
+            ItsMessage::Spatem {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Spatem,
+            #[cfg(feature = "mapem_2_2_1")]
+            ItsMessage::Mapem {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Mapem,
+            #[cfg(feature = "ivim_2_1_1")]
+            ItsMessage::IvimV1 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Ivim,
+            #[cfg(feature = "ivim_2_2_1")]
+            ItsMessage::IvimV2 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Ivim,
+            #[cfg(feature = "srem_2_2_1")]
+            ItsMessage::Srem {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Srem,
+            #[cfg(feature = "ssem_2_2_1")]
+            ItsMessage::Ssem {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Ssem,
+            #[cfg(feature = "cpm_1")]
+            ItsMessage::CpmV1 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Cpm,
+            #[cfg(feature = "cpm_2_1_1")]
+            ItsMessage::CpmV2 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Cpm,
+        }
+    }
+}
+
+#[cfg(feature = "_etsi")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 /// Choice which message headers are present in the binary message buffer
