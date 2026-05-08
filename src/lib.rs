@@ -227,6 +227,69 @@ pub enum ItsMessage<'a> {
 }
 
 #[cfg(feature = "_etsi")]
+impl From<&ItsMessage<'_>> for standards::extensions::ItsMessageId {
+    fn from(val: &ItsMessage<'_>) -> Self {
+        match val {
+            ItsMessage::DenmV1 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            }
+            | ItsMessage::DenmV2 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Denm,
+            ItsMessage::Cam {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Cam,
+            ItsMessage::Spatem {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Spatem,
+            ItsMessage::Mapem {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Mapem,
+            ItsMessage::IvimV1 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            }
+            | ItsMessage::IvimV2 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Ivim,
+            ItsMessage::Srem {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Srem,
+            ItsMessage::Ssem {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Ssem,
+            ItsMessage::CpmV1 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            }
+            | ItsMessage::CpmV2 {
+                geonetworking: _,
+                transport: _,
+                etsi: _,
+            } => Self::Cpm,
+        }
+    }
+}
+
+#[cfg(feature = "_etsi")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 /// Choice which message headers are present in the binary message buffer
