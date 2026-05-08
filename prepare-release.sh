@@ -10,6 +10,9 @@ if [ "$prev_git_tag" = "v${version}" ]; then
   exit 1
 fi
 
+# always stage Cargo.toml (just to be sure it's in the commit)
+git add Cargo.toml
+
 echo "updating changelog for upcoming $version..."
 git-cliff -o CHANGELOG.md --tag $version
 git add CHANGELOG.md
