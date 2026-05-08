@@ -1,3 +1,16 @@
+## [2.1.0] - 2026-05-08
+
+### 🚀 Features
+
+- *(pcap)* Also allow normal data frames
+- *(docs)* Patch asn.1 doc comments even more
+- *(de)* Support packets with just 802.11 header before GN and BTP
+- *(extensions)* Add TryInto<ItsMessageId> from u8
+- *(lib)* Get ItsMessageId from ItsMessage
+
+### ⚙️ Miscellaneous Tasks
+
+- *(releasing)* Always stage Cargo.toml
 ## [2.0.1] - 2026-04-29
 
 ### 🚀 Features
