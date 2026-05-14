@@ -17,6 +17,9 @@ exclude = [
   "cliff.toml",
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [lib]
 name = "c_its_parser"
 crate-type = ["lib", "cdylib"]
