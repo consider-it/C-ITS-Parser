@@ -867,6 +867,79 @@ impl From<dsrc_2_2_1::etsi_its_dsrc::DSecond> for u16 {
     }
 }
 
+// TimeMark: unit 1/10 of a second, 36001 for unknown, 36000 for out-of-range
+#[cfg(feature = "_dsrc_2_2_1")]
+impl dsrc_2_2_1::etsi_its_dsrc::TimeMark {
+    const CONV_FACTOR: u32 = 100;
+    const UNKNOWN: u16 = 36001;
+    const OUT_OF_RANGE: u16 = 36000;
+
+    /// convert ETSI TimeMark to milliseconds
+    #[must_use]
+    pub fn as_millis(&self) -> u32 {
+        self.0 as u32 * Self::CONV_FACTOR
+    }
+
+    /// convert ETSI TimeMark to milliseconds or `None` if "unknown"
+    #[must_use]
+    pub fn try_as_millis(&self) -> Option<u32> {
+        if self.is_unknown() {
+            None
+        } else {
+            Some(self.as_millis())
+        }
+    }
+
+    /// create ETSI TimeMark from milliseconds
+    ///
+    /// # Errors
+    /// human-readable string when input value is out of bounds
+    pub fn from_millis(value: u32) -> Result<Self, alloc::string::String> {
+        #[allow(clippy::cast_possible_truncation)]
+        let etsi_val = (value / Self::CONV_FACTOR) as u16;
+
+        // ASN.1 bounds are bigger than allowed values (0..35990 for normal values, 35991..35999 for leap seconds)
+        if etsi_val > 35999 {
+            return Err(alloc::format!("Value out of bounds"));
+        }
+
+        Ok(Self(etsi_val))
+    }
+
+    /// create ETSI type with "unknown" value
+    pub fn unknown() -> Self {
+        Self(Self::UNKNOWN)
+    }
+
+    /// determines if the ETSI value is special "unknown" value
+    pub fn is_unknown(&self) -> bool {
+        self.0 == Self::UNKNOWN
+    }
+
+    /// create ETSI type with "out-of-range" value
+    pub fn out_of_range() -> Self {
+        Self(Self::OUT_OF_RANGE)
+    }
+
+    /// determines if the ETSI value is special "out-of-range" value
+    pub fn is_out_of_range(&self) -> bool {
+        self.0 == Self::OUT_OF_RANGE
+    }
+}
+
+#[cfg(feature = "_dsrc_2_2_1")]
+impl From<&dsrc_2_2_1::etsi_its_dsrc::TimeMark> for u32 {
+    fn from(other: &dsrc_2_2_1::etsi_its_dsrc::TimeMark) -> u32 {
+        other.as_millis()
+    }
+}
+#[cfg(feature = "_dsrc_2_2_1")]
+impl From<dsrc_2_2_1::etsi_its_dsrc::TimeMark> for u32 {
+    fn from(other: dsrc_2_2_1::etsi_its_dsrc::TimeMark) -> u32 {
+        other.as_millis()
+    }
+}
+
 // MinuteOfTheYear: unit minute, 527040 for invalid
 #[cfg(feature = "_dsrc_2_2_1")]
 impl dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear {

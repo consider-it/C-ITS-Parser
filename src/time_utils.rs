@@ -156,6 +156,96 @@ timestampits_conv_datetime!(crate::standards::cdd_1_3_1_1::its_container::Timest
 #[cfg(any(feature = "cpm_2_1_1", feature = "denm_2_2_1", feature = "ivim_2_2_1"))]
 timestampits_conv_datetime!(crate::standards::cdd_2_2_1::etsi_its_cdd::TimestampIts);
 
+// used by SPATEM 2.2.1
+#[cfg(feature = "_dsrc_2_2_1")]
+impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::TimeMark {
+    /// Converts itself to an UTC date and time by using a reference time
+    ///
+    /// A reference time from the [`IntersectionState`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::IntersectionState`)'s `moy` value need to be supplied.
+    ///
+    /// ## Panics
+    /// May panic if dates suddenly exceed the value range
+    #[must_use]
+    pub fn to_datetime_from_moy(
+        &self,
+        moy: &crate::standards::dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear,
+        year: i32,
+    ) -> chrono::DateTime<chrono::Utc> {
+        // build minute of the year timestamp
+        let start_of_year = chrono::NaiveDate::from_ymd_opt(year, 1, 1)
+            .expect("year of ref time suddenly out of range")
+            .and_time(chrono::NaiveTime::default());
+        let ref_time = start_of_year
+            .checked_add_signed(chrono::TimeDelta::minutes(i64::from(moy.0)))
+            .expect("Resulting DateTime suddenly out of range")
+            .and_utc();
+
+        self.to_datetime_common(ref_time)
+    }
+
+    /// Converts itself to an UTC date and time by using a reference time
+    ///
+    /// The reference time can/ should be taken from the `moy` and `time_stamp` values of the [`IntersectionState`](`crate::standards::dsrc_2_2_1::etsi_its_dsrc::IntersectionState`).
+    ///
+    /// ## Panics
+    /// May panic if dates suddenly exceed the value range
+    #[must_use]
+    pub fn to_datetime_from_timestamp(
+        &self,
+        ref_time: &chrono::DateTime<chrono::Utc>,
+    ) -> chrono::DateTime<chrono::Utc> {
+        use chrono::Timelike;
+
+        // Round reference time down to full minutes
+        #[allow(
+            clippy::unwrap_used,
+            reason = "0 seconds and nanos are in the input range"
+        )]
+        let ref_time = ref_time
+            .with_second(0)
+            .and_then(|t| t.with_nanosecond(0))
+            .unwrap();
+
+        self.to_datetime_common(ref_time)
+    }
+
+    /// Converts itself to an UTC date and time from a reference time with minute-accuracy
+    ///
+    /// Important: `ref_time` **shall not** have seconds, millis or nanoseconds. It needs to have minute-accuracy!
+    fn to_datetime_common(
+        &self,
+        ref_time: chrono::DateTime<chrono::Utc>,
+    ) -> chrono::DateTime<chrono::Utc> {
+        use chrono::Timelike;
+
+        // If the value is out of range return one hour in the future
+        if self.is_out_of_range() {
+            return ref_time
+                .checked_add_signed(chrono::TimeDelta::hours(1))
+                .expect("Resulting DateTime suddenly out of range");
+        }
+
+        // add TimeMark to reference time
+        #[allow(clippy::unwrap_used, reason = "0 minutes is a valid input")]
+        let current_full_hour = ref_time.with_minute(0).unwrap();
+        let time_mark_time = current_full_hour
+            .checked_add_signed(chrono::TimeDelta::milliseconds(self.as_millis().into()))
+            .expect("Resulting DateTime suddenly out of range");
+
+        // add one hour, if timestamp seems to be in the past
+        // Note: C2C C2CCC_RS_2077_SPATMAP_AutomotiveRequirements.pdf and C-Roads state to just use minute-accuracy,
+        // but this is assured since we only used minutes to build our reference time (or rounded down to full minutes)
+        if time_mark_time < ref_time {
+            time_mark_time
+                .checked_add_signed(chrono::TimeDelta::hours(1))
+                .expect("Resulting DateTime suddenly out of range")
+        } else {
+            time_mark_time
+        }
+    }
+}
+// TimeMark
+
 #[cfg(all(test, feature = "_etsi"))]
 mod tests {
 
@@ -268,5 +358,91 @@ mod tests {
 
         let utc: chrono::DateTime<chrono::Utc> = TimestampIts(94_694_401_000).into();
         assert_eq!(ref_date, utc);
+    }
+
+    #[test]
+    #[cfg(feature = "_dsrc_2_2_1")]
+    fn timemark_from_moy() {
+        use crate::standards::dsrc_2_2_1::etsi_its_dsrc::{MinuteOfTheYear, TimeMark};
+
+        // build 2026-01-01 12:10:00 UTC
+        let moy = MinuteOfTheYear(12 * 60 + 10);
+
+        // time mark: 12:10:15
+        let expected = chrono::NaiveDate::from_ymd_opt(2026, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(12, 10, 15).unwrap())
+            .and_utc();
+        let test_val_millis = (10 * 60 + 15) * 1000;
+        let time_mark = TimeMark::from_millis(test_val_millis).unwrap();
+
+        let res = time_mark.to_datetime_from_moy(&moy, 2026);
+        assert_eq!(expected, res);
+
+        // time mark: 12:09:55 -> 13:09:55
+        let expected = chrono::NaiveDate::from_ymd_opt(2026, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(13, 9, 55).unwrap())
+            .and_utc();
+        let test_val_millis = (9 * 60 + 55) * 1000;
+        let time_mark = TimeMark::from_millis(test_val_millis).unwrap();
+
+        let res = time_mark.to_datetime_from_moy(&moy, 2026);
+        assert_eq!(expected, res);
+
+        // time mark: 36000 -> one hour in future (13:10:00)
+        let expected = chrono::NaiveDate::from_ymd_opt(2026, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(13, 10, 00).unwrap())
+            .and_utc();
+        let time_mark = TimeMark::out_of_range();
+
+        let res = time_mark.to_datetime_from_moy(&moy, 2026);
+        assert_eq!(expected, res);
+    }
+
+    #[test]
+    #[cfg(feature = "_dsrc_2_2_1")]
+    fn timemark_from_time() {
+        use crate::standards::dsrc_2_2_1::etsi_its_dsrc::TimeMark;
+
+        // build 2026-01-01 12:10:15 UTC
+        let ref_time = chrono::NaiveDate::from_ymd_opt(2026, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(12, 10, 15).unwrap())
+            .and_utc();
+
+        // time mark: 12:10:15
+        let expected = chrono::NaiveDate::from_ymd_opt(2026, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(12, 10, 15).unwrap())
+            .and_utc();
+        let test_val_millis = (10 * 60 + 15) * 1000;
+        let time_mark = TimeMark::from_millis(test_val_millis).unwrap();
+
+        let res = time_mark.to_datetime_from_timestamp(&ref_time);
+        assert_eq!(expected, res);
+
+        // time mark: 12:09:55 -> 13:09:55
+        let expected = chrono::NaiveDate::from_ymd_opt(2026, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(13, 9, 55).unwrap())
+            .and_utc();
+        let test_val_millis = (9 * 60 + 55) * 1000;
+        let time_mark = TimeMark::from_millis(test_val_millis).unwrap();
+
+        let res = time_mark.to_datetime_from_timestamp(&ref_time);
+        assert_eq!(expected, res);
+
+        // time mark: 12:10:10 (should not be moved to next hour!)
+        let expected = chrono::NaiveDate::from_ymd_opt(2026, 1, 1)
+            .unwrap()
+            .and_time(chrono::NaiveTime::from_hms_opt(12, 10, 10).unwrap())
+            .and_utc();
+        let test_val_millis = (10 * 60 + 10) * 1000;
+        let time_mark = TimeMark::from_millis(test_val_millis).unwrap();
+
+        let res = time_mark.to_datetime_from_timestamp(&ref_time);
+        assert_eq!(expected, res);
     }
 }
