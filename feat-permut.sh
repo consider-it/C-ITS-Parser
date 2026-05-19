@@ -12,7 +12,8 @@ features_base=(
   std,transport
   std,transport,json
   std,v2x
-  std,v2x,json
+  std,v2x,time
+  std,v2x,time,json
 )
 features_more=(
   std,cam
