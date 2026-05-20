@@ -1,3 +1,10 @@
+## [2.2.0] - 2026-05-20
+
+### 🚀 Features
+
+- *(docs)* Enable all features in docs.rs
+- *(time_utils)* Add conversion from TimeMark to chrono time
+- *(ci)* Also build with `time` feature
 ## [2.1.0] - 2026-05-08
 
 ### 🚀 Features
