@@ -228,6 +228,101 @@ pub enum ItsMessage<'a> {
 }
 
 #[cfg(feature = "_etsi")]
+impl<'a> ItsMessage<'a> {
+    /// Returns the `geonetworking` field of the `ItsMessage` variant
+    #[must_use]
+    pub fn get_geonetworking(&self) -> Option<Packet<'a>> {
+        let (gn, _) = self.get_headers();
+        gn.clone()
+    }
+
+    /// Returns the `transport` field of the `ItsMessage` variant
+    #[must_use]
+    pub fn get_transport(&self) -> Option<alloc::boxed::Box<TransportHeader>> {
+        let (_, tp) = self.get_headers();
+        tp.clone()
+    }
+
+    /// Returns the `geonetworking` and `transport` fields of the `ItsMessage` variant
+    #[must_use]
+    fn get_headers(
+        &self,
+    ) -> (
+        &Option<Packet<'a>>,
+        &Option<alloc::boxed::Box<TransportHeader>>,
+    ) {
+        match self {
+            #[cfg(feature = "denm_1_3_1")]
+            ItsMessage::DenmV1 {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "denm_2_2_1")]
+            ItsMessage::DenmV2 {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "cam_1_4_1")]
+            ItsMessage::Cam {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "spatem_2_2_1")]
+            ItsMessage::Spatem {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "mapem_2_2_1")]
+            ItsMessage::Mapem {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "ivim_2_1_1")]
+            ItsMessage::IvimV1 {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "ivim_2_2_1")]
+            ItsMessage::IvimV2 {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "srem_2_2_1")]
+            ItsMessage::Srem {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "ssem_2_2_1")]
+            ItsMessage::Ssem {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "cpm_1")]
+            ItsMessage::CpmV1 {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+            #[cfg(feature = "cpm_2_1_1")]
+            ItsMessage::CpmV2 {
+                geonetworking,
+                transport,
+                etsi: _,
+            } => (geonetworking, transport),
+        }
+    }
+}
+
+#[cfg(feature = "_etsi")]
 impl From<&ItsMessage<'_>> for standards::extensions::ItsMessageId {
     fn from(val: &ItsMessage<'_>) -> Self {
         match val {
