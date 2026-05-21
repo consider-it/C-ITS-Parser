@@ -51,7 +51,7 @@
 //! - `geo`: Enable conversions to [geo-types](https://crates.io/crates/geo-types) (as lon/lat coordinates in degrees)
 
 #![cfg_attr(not(target_arch = "wasm32"), no_std)]
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 extern crate alloc;
 
