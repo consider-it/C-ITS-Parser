@@ -46,6 +46,9 @@ impl ItsMessage<'_> {
     /// Note: When given a secured packet in the `geonetworking` option, this will always generate an unsecured packet.
     /// (Since the geonetworking crate doesn't support creating messages signatures.)
     ///
+    /// Note: When selecting JER or XER rules, geonetworking and transport headers will be omitted.
+    /// If a JSON representation is required call `encode_to_json` on the geonetworking packet and transport headers.
+    ///
     /// # Errors
     /// Gives a human-readable error description when ASN.1 parsing failed or an unexpected set of headers was found.
     pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, alloc::string::String> {
@@ -152,7 +155,8 @@ impl ItsMessage<'_> {
         }
         .map_err(map_err_to_string)?;
 
-        match (tp, geo) {
+        if encoding_rules == EncodingRules::UPER {
+            match (tp, geo) {
             (None, None) => Ok(etsi_uper),
             (
                 Some(tp),
@@ -176,6 +180,9 @@ impl ItsMessage<'_> {
                 "Expecting either both or neither GeoNetworking and Transport headers to be present!"
                     .to_string(),
             ),
+        }
+        } else {
+            Ok(etsi_uper)
         }
     }
 }
