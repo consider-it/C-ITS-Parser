@@ -43,6 +43,9 @@ impl ItsMessage<'_> {
     /// Supports XER, JER, and UPER encoding rules.
     /// XER and JER values are returned as UTF-8 buffers.
     ///
+    /// Note: When given a secured packet in the `geonetworking` option, this will always generate an unsecured packet.
+    /// (Since the geonetworking crate doesn't support creating messages signatures.)
+    ///
     /// # Errors
     /// Gives a human-readable error description when ASN.1 parsing failed or an unexpected set of headers was found.
     pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, alloc::string::String> {
@@ -154,6 +157,11 @@ impl ItsMessage<'_> {
             (
                 Some(tp),
                 Some(Packet::Unsecured {
+                    basic,
+                    common,
+                    extended,
+                    ..
+                } | Packet::Secured {
                     basic,
                     common,
                     extended,
