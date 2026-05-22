@@ -1,3 +1,17 @@
+## [2.2.1] - 2026-05-22
+
+### 🚀 Features
+
+- *(en)* Skip headers when not encoding to UPER
+- Add getters for geonetworking and transport headers to ItsMessage
+
+### 🐛 Bug Fixes
+
+- *(en)* Don't fail when trying to re-encode
+
+### 📚 Documentation
+
+- Replace deprecated `doc_auto_cfg` feature with `doc_cfg`
 ## [2.2.0] - 2026-05-20
 
 ### 🚀 Features
