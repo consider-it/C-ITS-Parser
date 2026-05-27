@@ -653,6 +653,8 @@ angle_to_deg!(
 ); // Unit: 0,1 degrees
 #[cfg(feature = "cpm_1")]
 angle_to_deg!(cpm_1::cpm_pdu_descriptions::WGS84AngleValue, u16, 10., 3601); // Unit: 0,1 degrees
+#[cfg(feature = "_cdd_2_2_1")]
+angle_to_deg!(cdd_2_2_1::etsi_its_cdd::Wgs84AngleValue, u16, 10., 3601); // Unit: 0,1 degrees
 #[cfg(feature = "_dsrc_2_2_1")]
 angle_to_deg!(dsrc_2_2_1::etsi_its_dsrc::Angle, u16, 80., 28800); // Unit: 0.0125 degrees
 #[cfg(feature = "_cdd_2_2_1")]
