@@ -44,6 +44,18 @@ impl From<geo_types::Point> for crate::standards::dsrc_2_2_1::etsi_its_dsrc::Pos
         }
     }
 }
+#[cfg(feature = "_dsrc_2_2_1")]
+impl From<crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeLLmD64b> for geo_types::Point {
+    fn from(other: crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeLLmD64b) -> Self {
+        geo_types::Point::new(other.lon.as_deg(), other.lat.as_deg())
+    }
+}
+#[cfg(feature = "_dsrc_2_2_1")]
+impl From<&crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeLLmD64b> for geo_types::Point {
+    fn from(other: &crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeLLmD64b) -> Self {
+        geo_types::Point::new(other.lon.as_deg(), other.lat.as_deg())
+    }
+}
 
 /// convert ETSI ReferencePosition to [`geo_types::Point`]
 #[cfg(any(feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
@@ -136,6 +148,38 @@ impl crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeSetXY {
         path.remove(0); // remove ref_pos again
 
         path.into()
+    }
+
+    /// Converts all nodes to X/Y deltas relative to the reference point
+    ///
+    /// Input data is assumed to be in ETSI format. This means that the first point is
+    /// relative to the `ref_pos` and subsequent points are relative to the point before.
+    ///
+    /// Output is in meters in the ETSI coordinate system (X pointing east, Y pointing north).
+    #[must_use]
+    pub fn to_line_string_xy(&self, ref_pos: geo_types::Point) -> geo_types::LineString {
+        let mut prev_delta = geo_types::Point::default();
+        let mut prev_ref_pos = ref_pos;
+        self.0
+            .iter()
+            .map(|pt| {
+                let node = match &pt.delta {
+                    crate::standards::dsrc_2_2_1::etsi_its_dsrc::NodeOffsetPointXY::node_LatLon(
+                        node_llm_d64b,
+                    ) => {
+                        let result = pt.delta.to_ddist(&prev_ref_pos);
+
+                        // reference position needs to be the last `node_LatLon`
+                        prev_ref_pos = node_llm_d64b.into();
+                        result
+                    }
+                    _ => prev_delta + pt.delta.to_ddist(&ref_pos),
+                };
+                prev_delta = node;
+
+                node
+            })
+            .collect()
     }
 }
 
@@ -391,6 +435,114 @@ mod tests {
             let geo_point4 = geo_types::Point::new(9.930_123 + 0.001_001, 53.550_420);
             assert_float_eq::assert_float_absolute_eq!(geo_point4.x(), geo_nodes[3].x());
             assert_float_eq::assert_float_absolute_eq!(geo_point4.y(), geo_nodes[3].y());
+        }
+    }
+
+    #[test]
+    #[cfg(feature = "mapem_2_2_1")]
+    fn nodeset_to_line_string_xy() {
+        use crate::standards::cdd_2_2_1::etsi_its_cdd::{Latitude, Longitude};
+        use crate::standards::dsrc_2_2_1::etsi_its_dsrc::{
+            NodeLLmD64b,
+            NodeOffsetPointXY,
+            NodeSetXY,
+            NodeXY,
+            NodeXY32b,
+            OffsetB16,
+        };
+
+        let ref_pos = geo_types::point! {x: 9.936_521, y: 53.550_728};
+
+        // latlon test
+        {
+            let point1 = NodeLLmD64b::new(
+                Longitude::from_deg(ref_pos.x()),
+                Latitude::from_deg(ref_pos.y() + 0.001_667),
+            );
+            let point2 = NodeLLmD64b::new(
+                Longitude::from_deg(ref_pos.x() + 0.001_001),
+                Latitude::from_deg(ref_pos.y() + 0.001_667),
+            );
+            let nodes = alloc::vec![
+                NodeXY::new(NodeOffsetPointXY::node_LatLon(point1), None),
+                NodeXY::new(NodeOffsetPointXY::node_LatLon(point2), None),
+            ];
+
+            let geo_nodes = NodeSetXY(nodes).to_line_string_xy(ref_pos).into_points();
+            let geo_point1 = geo_types::Point::new(0., 184.95);
+            assert_float_eq::assert_float_absolute_eq!(geo_point1.x(), geo_nodes[0].x(), 0.01);
+            assert_float_eq::assert_float_absolute_eq!(geo_point1.y(), geo_nodes[0].y(), 0.01);
+            let geo_point2 = geo_types::Point::new(66., 0.);
+            assert_float_eq::assert_float_absolute_eq!(geo_point2.x(), geo_nodes[1].x(), 0.01);
+            assert_float_eq::assert_float_absolute_eq!(geo_point2.y(), geo_nodes[1].y(), 0.01);
+        }
+
+        // delta X/Y test
+        {
+            let point1 = NodeXY32b::new(
+                OffsetB16::from_meters(0.).unwrap(),
+                OffsetB16::from_meters(185.).unwrap(),
+            );
+            let point2 = NodeXY32b::new(
+                OffsetB16::from_meters(66.).unwrap(),
+                OffsetB16::from_meters(0.).unwrap(),
+            );
+            let nodes = alloc::vec![
+                NodeXY::new(NodeOffsetPointXY::node_XY6(point1), None),
+                NodeXY::new(NodeOffsetPointXY::node_XY6(point2), None),
+            ];
+
+            let geo_nodes = NodeSetXY(nodes).to_line_string_xy(ref_pos).into_points();
+            let geo_point1 = geo_types::Point::new(0., 185.);
+            assert_float_eq::assert_float_absolute_eq!(geo_point1.x(), geo_nodes[0].x());
+            assert_float_eq::assert_float_absolute_eq!(geo_point1.y(), geo_nodes[0].y());
+
+            let geo_point2 = geo_types::Point::new(0. + 66., 185. + 0.);
+            assert_float_eq::assert_float_absolute_eq!(geo_point2.x(), geo_nodes[1].x());
+            assert_float_eq::assert_float_absolute_eq!(geo_point2.y(), geo_nodes[1].y());
+        }
+
+        // delta X/Y with intermediate lat/lon
+        {
+            let point1 = NodeXY32b::new(
+                OffsetB16::from_meters(0.).unwrap(),
+                OffsetB16::from_meters(185.).unwrap(),
+            );
+            let point2 = NodeXY32b::new(
+                OffsetB16::from_meters(66.).unwrap(),
+                OffsetB16::from_meters(0.).unwrap(),
+            );
+            let point3 = NodeLLmD64b::new(
+                Longitude::from_deg(ref_pos.x() + 0.001_001), // 66m
+                Latitude::from_deg(ref_pos.y() + 0.001_667),  // 184.95m
+            );
+            let point4 = NodeXY32b::new(
+                OffsetB16::from_meters(42.).unwrap(),
+                OffsetB16::from_meters(23.).unwrap(),
+            );
+            let nodes = alloc::vec![
+                NodeXY::new(NodeOffsetPointXY::node_XY6(point1), None),
+                NodeXY::new(NodeOffsetPointXY::node_XY6(point2), None),
+                NodeXY::new(NodeOffsetPointXY::node_LatLon(point3), None),
+                NodeXY::new(NodeOffsetPointXY::node_XY6(point4), None),
+            ];
+
+            let geo_nodes = NodeSetXY(nodes).to_line_string_xy(ref_pos).into_points();
+            let geo_point1 = geo_types::Point::new(0., 185.);
+            assert_float_eq::assert_float_absolute_eq!(geo_point1.x(), geo_nodes[0].x());
+            assert_float_eq::assert_float_absolute_eq!(geo_point1.y(), geo_nodes[0].y());
+
+            let geo_point2 = geo_types::Point::new(0. + 66., 185. + 0.);
+            assert_float_eq::assert_float_absolute_eq!(geo_point2.x(), geo_nodes[1].x());
+            assert_float_eq::assert_float_absolute_eq!(geo_point2.y(), geo_nodes[1].y());
+
+            let geo_point3 = geo_types::Point::new(66., 184.95);
+            assert_float_eq::assert_float_absolute_eq!(geo_point3.x(), geo_nodes[2].x(), 0.01);
+            assert_float_eq::assert_float_absolute_eq!(geo_point3.y(), geo_nodes[2].y(), 0.01);
+
+            let geo_point4 = geo_types::Point::new(66. + 42., 184.95 + 23.);
+            assert_float_eq::assert_float_absolute_eq!(geo_point4.x(), geo_nodes[3].x(), 0.01);
+            assert_float_eq::assert_float_absolute_eq!(geo_point4.y(), geo_nodes[3].y(), 0.01);
         }
     }
 }
