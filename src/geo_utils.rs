@@ -349,5 +349,48 @@ mod tests {
             assert_float_eq::assert_float_absolute_eq!(geo_point2.x(), geo_nodes[1].x());
             assert_float_eq::assert_float_absolute_eq!(geo_point2.y(), geo_nodes[1].y());
         }
+
+        // delta X/Y with intermediate lat/lon
+        {
+            let point1 = NodeXY32b::new(
+                OffsetB16::from_meters(0.).unwrap(),
+                OffsetB16::from_meters(185.).unwrap(),
+            );
+            let point2 = NodeXY32b::new(
+                OffsetB16::from_meters(66.).unwrap(),
+                OffsetB16::from_meters(0.).unwrap(),
+            );
+            let point3 = NodeLLmD64b::new(
+                Longitude::from_deg(9.930_123),
+                Latitude::from_deg(53.550_420),
+            );
+            let point4 = NodeXY32b::new(
+                OffsetB16::from_meters(66.).unwrap(),
+                OffsetB16::from_meters(0.).unwrap(),
+            );
+            let nodes = alloc::vec![
+                NodeXY::new(NodeOffsetPointXY::node_XY6(point1), None),
+                NodeXY::new(NodeOffsetPointXY::node_XY6(point2), None),
+                NodeXY::new(NodeOffsetPointXY::node_LatLon(point3), None),
+                NodeXY::new(NodeOffsetPointXY::node_XY6(point4), None),
+            ];
+
+            let geo_nodes = NodeSetXY(nodes).to_line_string(ref_pos).into_points();
+            let geo_point1 = geo_types::Point::new(9.936_521, 53.550_728 + 0.001_667);
+            assert_float_eq::assert_float_absolute_eq!(geo_point1.x(), geo_nodes[0].x());
+            assert_float_eq::assert_float_absolute_eq!(geo_point1.y(), geo_nodes[0].y());
+
+            let geo_point2 = geo_types::Point::new(9.936_521 + 0.001_001, 53.550_728 + 0.001_667);
+            assert_float_eq::assert_float_absolute_eq!(geo_point2.x(), geo_nodes[1].x());
+            assert_float_eq::assert_float_absolute_eq!(geo_point2.y(), geo_nodes[1].y());
+
+            let geo_point3 = geo_types::Point::new(9.930_123, 53.550_420);
+            assert_float_eq::assert_float_absolute_eq!(geo_point3.x(), geo_nodes[2].x());
+            assert_float_eq::assert_float_absolute_eq!(geo_point3.y(), geo_nodes[2].y());
+
+            let geo_point4 = geo_types::Point::new(9.930_123 + 0.001_001, 53.550_420);
+            assert_float_eq::assert_float_absolute_eq!(geo_point4.x(), geo_nodes[3].x());
+            assert_float_eq::assert_float_absolute_eq!(geo_point4.y(), geo_nodes[3].y());
+        }
     }
 }
