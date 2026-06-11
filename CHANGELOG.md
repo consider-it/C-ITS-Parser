@@ -1,3 +1,14 @@
+## [2.2.2] - 2026-06-11
+
+### 🚀 Features
+
+- *(geo_utils)* Add test for mixed use in `NodeOffsetPointXY`
+- *(geo-utils)* Add NodeSetXY conversion to "absolute" XY deltas
+- *(conversions)* Add CDD 2.2.1 Wgs84AngleValue (as used in DENM)
+
+### 🐛 Bug Fixes
+
+- *(ci)* Pack the right package.json files
 ## [2.2.1] - 2026-05-22
 
 ### 🚀 Features
