@@ -13,9 +13,8 @@ cp -f scripts/npmrc-ci $pkgdir/.npmrc
 
 # patch package name and add registry
 cd $pkgdir
-if [ ! -f package.json.orig ]; then
-  mv package.json package.json.orig
-fi
+rm -f package.json.orig # just to be sure
+mv package.json package.json.orig
 jq ".name = (\"${org}\" + .name + \"${postfix}\") | .publishConfig.registry = \"${registry}\"" package.json.orig > package.json
 
 # publish with npm
