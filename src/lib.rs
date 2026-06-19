@@ -71,13 +71,14 @@ pub mod geo_utils;
 pub mod time_utils;
 
 #[cfg(feature = "transport")]
-pub(crate) mod pcap;
+pub mod pcap;
 #[cfg(feature = "transport")]
 pub mod transport;
 
 #[cfg(feature = "transport")]
 pub use geonetworking::{Decode, Packet};
 #[cfg(feature = "transport")]
+#[deprecated = "use `pcap::remove_pcap_headers` instead"]
 pub use pcap::remove_pcap_headers;
 #[cfg(feature = "_etsi")]
 use transport::TransportHeader;
