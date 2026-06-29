@@ -1,3 +1,8 @@
+## [2.2.3] - 2026-06-29
+
+### 🚀 Features
+
+- *(conversions)* Add `CauseCodeChoice` to u8 tuple
 ## [2.2.2] - 2026-06-11
 
 ### 🚀 Features

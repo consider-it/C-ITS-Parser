@@ -1,6 +1,6 @@
 [package]
 name = "c-its-parser"
-version = "2.2.2"
+version = "2.2.3"
 edition = "2024"
 authors = ["consider it GmbH"]
 keywords = ["its", "c-its", "v2x", "etsi"]
