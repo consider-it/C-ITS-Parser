@@ -49,19 +49,19 @@ fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
 #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
 fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     /*
-     * IEEE 802.11 Header has the following format (26-32 bytes)
+     * IEEE 802.11 Header has the following format (24-26 bytes)
      * - 2 bytes frame control
      *      byte 0: .... ..00: Version 0
      *      byte 0: .... 10..: Type data frame
-     *      byte 0: 1000 ....: QoS Data
+     *      byte 0: 1000 ....: QoS Data (or 0 for non-QoS data)
      * - 2 bytes duration
      * - 6 bytes addr 1 (receiver)
      * - 6 bytes addr 2 (transmitter)
      * - 6 bytes addr 3 (BSSID)
      * - 2 bytes sequence control
-     * - 0 or 6 bytes addr 4
+     * - addr 4 not used in 802.11p mode
      * - 0 or 2 bytes QOS control
-     * - 0 or 4 bytes HT control
+     * - HT control not used in 802.11p mode
      */
 
     let ieee80211_framecontrol: u8 = data[0];
@@ -82,15 +82,19 @@ fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     }
 
     let ieee80211_fc_subtype: u8 = (ieee80211_framecontrol & 0xf0) >> 4; // xxxx.0000
-    if !(ieee80211_fc_subtype == 0b1000 || ieee80211_fc_subtype == 0b0000) {
+    let qos_hdr_bytes = if ieee80211_fc_subtype == 0b1000 {
+        2
+    } else if ieee80211_fc_subtype == 0b0000 {
+        0
+    } else {
         // only select QoS or "normal" data frames
         return Err(
             alloc::format!("Unsupported 802.11 frame subtype {ieee80211_fc_subtype:#04x}")
                 .to_string(),
         );
-    }
+    };
 
-    let hdr_len: usize = 26; // QoS data frame is usually 26 bytes (sequence control, no addr 4, QoS, no HT)
+    let hdr_len: usize = 24 + qos_hdr_bytes;
     let (_, remaining) = data.split_at(hdr_len);
 
     Ok(remaining)
