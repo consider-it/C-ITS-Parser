@@ -128,7 +128,8 @@ macro_rules! etsi_to_meters {
 #[cfg(any(
     feature = "_cdd_1_3_1_1",
     feature = "_cdd_2_2_1",
-    feature = "_dsrc_2_2_1"
+    feature = "_dsrc_2_2_1",
+    feature = "cpm_1"
 ))]
 macro_rules! etsi_to_meters_unavailable {
     ($t:ty, $tt:ty, $conv:expr, $unavailable:expr) => {
@@ -235,18 +236,123 @@ etsi_to_meters!(cpm_1::cpm_pdu_descriptions::Range, u16, 10.);
 etsi_to_meters!(cpm_1::cpm_pdu_descriptions::SemiRangeLength, u16, 10.);
 
 #[cfg(feature = "_cdd_1_3_1_1")]
-etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::VehicleWidth, u8, 10., 62);
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::VehicleWidth, u8, 10., 62); // Unit: 0,1 metre
 #[cfg(feature = "_cdd_2_2_1")]
-etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::VehicleWidth, u8, 10., 62);
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::VehicleWidth, u8, 10., 62); // Unit: 0,1 metre
 #[cfg(feature = "_cdd_1_3_1_1")]
 etsi_to_meters_unavailable!(
     cdd_1_3_1_1::its_container::VehicleLengthValue,
     u16,
     10.,
     1023
-);
+); // Unit: 0,1 metre
 #[cfg(feature = "_cdd_2_2_1")]
-etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::VehicleLengthValue, u16, 10., 1023);
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::VehicleLengthValue, u16, 10., 1023); // Unit: 0,1 metre
+
+#[cfg(feature = "_dsrc_2_2_1")]
+etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::VehicleHeight, u8, 20., 127); // Unit: 0,05 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::VehicleHeight, u8, 20., 127); // Unit: 0,05 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::SemiAxisLength, u16, 100., 4095); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::SemiAxisLength, u16, 100., 4095); // Unit: 0,01 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::AltitudeValue, i32, 100., 800001); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::AltitudeValue, i32, 100., 800001); // Unit: 0,01 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::DeltaAltitude, i16, 100., 12800); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::DeltaAltitude, i16, 100., 12800); // Unit: 0,01 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::HeightLonCarr, u8, 100., 100); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::HeightLonCarr, u8, 100., 100); // Unit: 0,01 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::PosLonCarr, u8, 100., 127); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::PosLonCarr, u8, 100., 127); // Unit: 0,01 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::PosFrontAx, u8, 100., 20); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::PosFrontAx, u8, 100., 20); // Unit: 0,01 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::PosPillar, u8, 100., 30); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::PosPillar, u8, 100., 30); // Unit: 0,01 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::WheelBaseVehicle, u8, 100., 127); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::WheelBaseVehicle, u8, 100., 127); // Unit: 0,01 metre
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::TurningRadius, u8, 2.5, 255); // Unit: 0,4 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::TurningRadius, u8, 2.5, 255); // Unit: 0,4 metre
+
+#[cfg(feature = "_cdd_2_2_1")] // CPM v2
+etsi_to_meters_unavailable!(
+    cdd_2_2_1::etsi_its_cdd::CoordinateConfidence,
+    u16,
+    100.,
+    4096
+); // Unit: 0,01 metre
+
+#[cfg(feature = "cpm_1")]
+etsi_to_meters!(
+    cpm_1::cpm_pdu_descriptions::LongitudinalLanePositionValue,
+    u16,
+    10.
+); // Unit: 0,1 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(
+    cdd_2_2_1::etsi_its_cdd::LongitudinalLanePositionValue,
+    u16,
+    10.,
+    32767
+); // Unit: 0,1 metre
+
+#[cfg(feature = "cpm_1")]
+etsi_to_meters_unavailable!(
+    cpm_1::cpm_pdu_descriptions::LongitudinalLanePositionConfidence,
+    u8,
+    100.,
+    102
+); // Unit: 0.01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(
+    cdd_2_2_1::etsi_its_cdd::LongitudinalLanePositionConfidence,
+    u16,
+    10.,
+    1023
+); // Unit: 0,1 metre
+
+#[cfg(feature = "cpm_1")]
+etsi_to_meters_unavailable!(
+    cpm_1::cpm_pdu_descriptions::ObjectDimensionConfidence,
+    u8,
+    100.,
+    102
+); // Unit: 0.01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(
+    cdd_2_2_1::etsi_its_cdd::ObjectDimensionConfidence,
+    u8,
+    10.,
+    32
+); // Unit: 0,1 metre
+
+#[cfg(feature = "_cdd_2_2_1")] // DENM v2
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::Position1d, i16, 1., 8191); // Unit: 1 metre
 
 /// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv` and some "unavailable" value
 macro_rules! etsi_to_mps {
@@ -361,6 +467,19 @@ etsi_to_mps!(cdd_1_3_1_1::its_container::SpeedValue, u16, 100., 16_383); // Unit
 #[cfg(feature = "_cdd_2_2_1")]
 etsi_to_mps!(cdd_2_2_1::etsi_its_cdd::SpeedValue, u16, 100., 16_383); // Unit: 0,01 m/s
 
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_mps!(
+    cdd_2_2_1::etsi_its_cdd::VelocityComponentValue,
+    i16,
+    100.,
+    16_383
+); // Unit: 0,01 m/s
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_mps!(cdd_1_3_1_1::its_container::SpeedConfidence, u8, 100., 127); // Unit: 0,01 m/s
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_mps!(cdd_2_2_1::etsi_its_cdd::SpeedConfidence, u8, 100., 127); // Unit: 0,01 m/s
+
 #[cfg(feature = "_dsrc_2_2_1")]
 etsi_to_mps!(dsrc_2_2_1::etsi_its_dsrc::Velocity, u16, 50., 8191); // Unit: 0.02 m/s
 
@@ -470,6 +589,9 @@ etsi_to_mpss!(
     10.,
     161
 ); // Unit: 0,1 m/s^2
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_mpss!(cdd_2_2_1::etsi_its_cdd::AccelerationValue, i16, 10., 161); // Unit: 0,1 m/s^2
+
 #[cfg(feature = "_cdd_1_3_1_1")]
 etsi_to_mpss!(
     cdd_1_3_1_1::its_container::VerticalAccelerationValue,
@@ -483,6 +605,29 @@ etsi_to_mpss!(
     i16,
     10.,
     161
+); // Unit: 0,1 m/s^2
+
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_mpss!(
+    cdd_2_2_1::etsi_its_cdd::AccelerationMagnitudeValue,
+    u8,
+    10.,
+    161
+); // Unit: 0,1 m/s^2
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+etsi_to_mpss!(
+    cdd_1_3_1_1::its_container::AccelerationConfidence,
+    u8,
+    10.,
+    102
+); // Unit: 0,1 m/s^2
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_mpss!(
+    cdd_2_2_1::etsi_its_cdd::AccelerationConfidence,
+    u8,
+    10.,
+    102
 ); // Unit: 0,1 m/s^2
 
 /// Check for unavailable data of ETSI type `t` (which has underlying data type `tt`)
@@ -558,6 +703,22 @@ macro_rules! etsi_raw_unavailable {
 etsi_raw_unavailable!(cdd_1_3_1_1::its_container::CurvatureValue, i16, 1023);
 #[cfg(feature = "_cdd_2_2_1")]
 etsi_raw_unavailable!(cdd_2_2_1::etsi_its_cdd::CurvatureValue, i16, 1023);
+
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_raw_unavailable!(cdd_2_2_1::etsi_its_cdd::ConfidenceLevel, u8, 101); // Unit: percent
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_raw_unavailable!(cdd_2_2_1::etsi_its_cdd::CorrelationCellValue, i8, 101); // Unit: the value is scaled by 100
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_raw_unavailable!(cdd_2_2_1::etsi_its_cdd::NumberOfOccupants, u8, 127); // Unit: 1 person
+
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_raw_unavailable!(cdd_2_2_1::etsi_its_cdd::StabilityLossProbability, u8, 63); // Unit: 2 %
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_raw_unavailable!(
+    cdd_2_2_1::etsi_its_cdd::TrajectoryInterceptionProbability,
+    u8,
+    63
+); // Unit: 2 %
 
 /// Create conversions for ETSI type `t` with conversion factor `conv` and some "unavailable" value
 #[cfg(any(
@@ -661,6 +822,15 @@ angle_to_deg!(dsrc_2_2_1::etsi_its_dsrc::Angle, u16, 80., 28800); // Unit: 0.012
 angle_to_deg!(cdd_2_2_1::etsi_its_cdd::HeadingValue, u16, 10., 3601); // Unit: 0,1 degree
 #[cfg(feature = "_cdd_1_3_1_1")]
 angle_to_deg!(cdd_1_3_1_1::its_container::HeadingValue, u16, 10., 3601); // Unit: 0,1 degree
+#[cfg(feature = "_cdd_2_2_1")]
+angle_to_deg!(cdd_2_2_1::etsi_its_cdd::HeadingConfidence, u8, 10., 127); // Unit: 0,1 degree
+#[cfg(feature = "_cdd_1_3_1_1")]
+angle_to_deg!(cdd_1_3_1_1::its_container::HeadingConfidence, u8, 10., 127); // Unit: 0,1 degree
+
+#[cfg(feature = "_cdd_2_2_1")]
+angle_to_deg!(cdd_2_2_1::etsi_its_cdd::AngleConfidence, u8, 10., 127); // Unit: 0,1 degrees
+#[cfg(feature = "cpm_1")]
+angle_to_deg!(cpm_1::cpm_pdu_descriptions::AngleConfidence, u8, 10., 127); // Unit: 0,1 degrees
 
 #[cfg(feature = "_cdd_2_2_1")]
 angle_to_deg!(
@@ -677,20 +847,35 @@ angle_to_deg!(
     512
 ); // Unit: 1,5 degree
 
+#[cfg(feature = "_cdd_2_2_1")]
+angle_to_deg!(
+    cdd_2_2_1::etsi_its_cdd::SteeringWheelAngleConfidence,
+    u8,
+    (1. / 1.5),
+    127
+); // Unit: 1,5 degree
+#[cfg(feature = "_cdd_1_3_1_1")]
+angle_to_deg!(
+    cdd_1_3_1_1::its_container::SteeringWheelAngleConfidence,
+    u8,
+    (1. / 1.5),
+    127
+); // Unit: 1,5 degree
+
 /// Create conversions for ETSI type `t` with conversion factor `conv` and some "unavailable" value
 #[cfg(any(feature = "_cdd_2_2_1", feature = "_cdd_1_3_1_1"))]
 macro_rules! angle_to_degrate {
     ($t:ty, $conv:expr, $unavailable:expr) => {
         impl $t {
-            /// convert ETSI YawRateValue to degrees
+            /// convert ETSI YawRateValue to degrees per second
             #[must_use]
             pub fn as_deg_rate(&self) -> f32 {
                 f32::from(self.0) / $conv
             }
 
-            /// convert ETSI YawRateValue to degrees or `None` if "unavailable"
+            /// convert ETSI YawRateValue to degrees per second or `None` if "unavailable"
             #[must_use]
-            pub fn try_as_deg(&self) -> Option<f32> {
+            pub fn try_as_deg_rate(&self) -> Option<f32> {
                 if self.is_unavailable() {
                     None
                 } else {
@@ -698,7 +883,7 @@ macro_rules! angle_to_degrate {
                 }
             }
 
-            /// create ETSI YawRateValue from degrees
+            /// create ETSI YawRateValue from degrees per second
             ///
             /// # Errors
             /// human-readable string when input value is out of bounds
@@ -759,6 +944,13 @@ macro_rules! angle_to_degrate {
 angle_to_degrate!(cdd_2_2_1::etsi_its_cdd::YawRateValue, 100., 32767); // Unit: 0,01 degree per second
 #[cfg(feature = "_cdd_1_3_1_1")]
 angle_to_degrate!(cdd_1_3_1_1::its_container::YawRateValue, 100., 32767); // Unit: 0,01 degree per second
+
+#[cfg(feature = "_cdd_2_2_1")]
+angle_to_degrate!(
+    cdd_2_2_1::etsi_its_cdd::CartesianAngularVelocityComponentValue,
+    1.,
+    256
+); // Unit: degree/s
 
 // DeltaTime: unit 10 seconds, clamping to -121 for <-20 minutes and +120 for >+20 minutes, -122 for unavailable
 #[cfg(feature = "_dsrc_2_2_1")]
