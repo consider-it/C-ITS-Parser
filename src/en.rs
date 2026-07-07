@@ -237,6 +237,122 @@ pub fn encode_to_jer_str<T: rasn::Encode>(
         .map_err(crate::map_err_to_string)
 }
 
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Adds encoding methods to encodable types
+///
+/// This doesn't provide anything more than the encode functions, but adds them as methods for ease of use.
+macro_rules! encode_some_type {
+    ($t:ty) => {
+        impl $t {
+            /// Encodes [`Self`] to UPER buffer
+            ///
+            /// # Errors
+            /// Returns a human-readable string when decoding failed
+            pub fn encode_to_uper(&self) -> Result<Encoded, alloc::string::String> {
+                crate::en::encode_to_uper(&self)
+            }
+
+            /// Encodes [`Self`] to XER buffer
+            ///
+            /// # Errors
+            /// Returns a human-readable string when decoding failed
+            pub fn encode_to_xer_buf(&self) -> Result<Encoded, alloc::string::String> {
+                crate::en::encode_to_xer_buf(&self)
+            }
+
+            /// Encodes [`Self`] to XER buffer
+            ///
+            /// # Errors
+            /// Returns a human-readable string when decoding failed
+            pub fn encode_to_xer_str(
+                &self,
+            ) -> Result<alloc::string::String, alloc::string::String> {
+                crate::en::encode_to_xer_str(&self)
+            }
+
+            /// Encodes [`Self`] to JER buffer
+            ///
+            /// # Errors
+            /// Returns a human-readable string when decoding failed
+            pub fn encode_to_jer_buf(&self) -> Result<Encoded, alloc::string::String> {
+                crate::en::encode_to_jer_buf(&self)
+            }
+
+            /// Encodes [`Self`] to JER buffer
+            ///
+            /// # Errors
+            /// Returns a human-readable string when decoding failed
+            pub fn encode_to_jer_str(
+                &self,
+            ) -> Result<alloc::string::String, alloc::string::String> {
+                crate::en::encode_to_jer_str(&self)
+            }
+        }
+    };
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "_cdd_1_3_1_1"))]
+encode_some_type!(crate::standards::cdd_1_3_1_1::its_container::ItsPduHeader);
+#[cfg(all(not(target_arch = "wasm32"), feature = "_cdd_2_2_1"))]
+encode_some_type!(crate::standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "denm_2_2_1"))]
+encode_some_type!(crate::standards::denm_2_2_1::denm_pdu_description::DENM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "denm_2_2_1"))]
+encode_some_type!(crate::standards::denm_2_2_1::denm_pdu_description::DenmPayload);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "denm_1_3_1"))]
+encode_some_type!(crate::standards::denm_1_3_1::denm_pdu_descriptions::DENM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "denm_1_3_1"))]
+encode_some_type!(
+    crate::standards::denm_1_3_1::denm_pdu_descriptions::DecentralizedEnvironmentalNotificationMessage
+);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "cam_1_4_1"))]
+encode_some_type!(crate::standards::cam_1_4_1::cam_pdu_descriptions::CAM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "cam_1_4_1"))]
+encode_some_type!(crate::standards::cam_1_4_1::cam_pdu_descriptions::CoopAwareness);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "spatem_2_2_1"))]
+encode_some_type!(crate::standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "_dsrc_2_2_1"))]
+encode_some_type!(crate::standards::dsrc_2_2_1::etsi_its_dsrc::SPAT);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "mapem_2_2_1"))]
+encode_some_type!(crate::standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "_dsrc_2_2_1"))]
+encode_some_type!(crate::standards::dsrc_2_2_1::etsi_its_dsrc::MapData);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_2_1"))]
+encode_some_type!(crate::standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_2_1"))]
+encode_some_type!(crate::standards::ivim_2_2_1::ivi::IviStructure);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_1_1"))]
+encode_some_type!(crate::standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "ivim_2_1_1"))]
+encode_some_type!(crate::standards::ivim_2_1_1::ivi::IviStructure);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "srem_2_2_1"))]
+encode_some_type!(crate::standards::srem_2_2_1::srem_pdu_descriptions::SREM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "_dsrc_2_2_1"))]
+encode_some_type!(crate::standards::dsrc_2_2_1::etsi_its_dsrc::SignalRequestMessage);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "ssem_2_2_1"))]
+encode_some_type!(crate::standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "_dsrc_2_2_1"))]
+encode_some_type!(crate::standards::dsrc_2_2_1::etsi_its_dsrc::SignalStatusMessage);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "cpm_2_1_1"))]
+encode_some_type!(crate::standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage);
+#[cfg(all(not(target_arch = "wasm32"), feature = "cpm_2_1_1"))]
+encode_some_type!(crate::standards::cpm_2_1_1::cpm_pdu_descriptions::CpmPayload);
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "cpm_1"))]
+encode_some_type!(crate::standards::cpm_1::cpm_pdu_descriptions::CPM);
+#[cfg(all(not(target_arch = "wasm32"), feature = "cpm_1"))]
+encode_some_type!(crate::standards::cpm_1::cpm_pdu_descriptions::CollectivePerceptionMessage);
+
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeDenm)]
 /// Encodes a DENM message into binary UPER with optional headers
