@@ -1,3 +1,13 @@
+## [2.2.4] - 2026-07-08
+
+### 🚀 Features
+
+- *(time_utils)* Make `TimestampIts` conversion available universally
+- *(conversions)* Add conversions for additional CDD data types
+
+### 🐛 Bug Fixes
+
+- *(pcap)* Non-QoS frames are 2 bytes shorter
 ## [2.2.3] - 2026-06-29
 
 ### 🚀 Features
