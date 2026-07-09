@@ -24,7 +24,7 @@ pub fn remove_wlan_headers(data: &[u8]) -> Result<&[u8], alloc::string::String> 
 }
 
 #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
-fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
+pub fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     /*
      * Radiotap Header has the following format
      * - u_int8_t   header version (currently always zero)
@@ -47,7 +47,7 @@ fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
 }
 
 #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
-fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
+pub fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     /*
      * IEEE 802.11 Header has the following format (24-26 bytes)
      * - 2 bytes frame control
@@ -101,7 +101,7 @@ fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
 }
 
 #[allow(clippy::missing_errors_doc, reason = "no documentation present")]
-fn remove_llc_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
+pub fn remove_llc_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     /*
      * LLC Header has the following format (8 bytes)
      * - 1 bytes DSAP
