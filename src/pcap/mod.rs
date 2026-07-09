@@ -23,8 +23,19 @@ pub fn remove_wlan_headers(data: &[u8]) -> Result<&[u8], alloc::string::String> 
     remove_80211_hdr(data).and_then(remove_llc_hdr)
 }
 
-#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+/// Strips Radiotap header from a binary message buffer
+///
+/// # Errors
+/// Return a human-readable error when parsing failed
 pub fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
+    extract_radiotap_hdr(data).map(|(_, remaining)| remaining)
+}
+
+/// Extracts Radiotap header from a binary message buffer and returns the header and remaining buffer
+///
+/// # Errors
+/// Return a human-readable error when parsing failed
+pub fn extract_radiotap_hdr(data: &[u8]) -> Result<(&[u8], &[u8]), alloc::string::String> {
     /*
      * Radiotap Header has the following format
      * - u_int8_t   header version (currently always zero)
@@ -41,13 +52,22 @@ pub fn remove_radiotap_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> 
     }
 
     let hdr_len: usize = u16::from_le_bytes([data[2], data[3]]).into();
-    let (_, remaining) = data.split_at(hdr_len);
-
-    Ok(remaining)
+    Ok(data.split_at(hdr_len))
 }
 
-#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+/// Strips IEEE 802.11p header from a binary message buffer
+///
+/// # Errors
+/// Return a human-readable error when parsing failed
 pub fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
+    extract_80211_hdr(data).map(|(_, remaining)| remaining)
+}
+
+/// Extracts IEEE 802.11p header from a binary message buffer and returns the header and remaining buffer
+///
+/// # Errors
+/// Return a human-readable error when parsing failed
+pub fn extract_80211_hdr(data: &[u8]) -> Result<(&[u8], &[u8]), alloc::string::String> {
     /*
      * IEEE 802.11 Header has the following format (24-26 bytes)
      * - 2 bytes frame control
@@ -95,13 +115,22 @@ pub fn remove_80211_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     };
 
     let hdr_len: usize = 24 + qos_hdr_bytes;
-    let (_, remaining) = data.split_at(hdr_len);
-
-    Ok(remaining)
+    Ok(data.split_at(hdr_len))
 }
 
-#[allow(clippy::missing_errors_doc, reason = "no documentation present")]
+/// Strips LLC header from a binary message buffer
+///
+/// # Errors
+/// Return a human-readable error when parsing failed
 pub fn remove_llc_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
+    extract_llc_hdr(data).map(|(_, remaining)| remaining)
+}
+
+/// Extracts LLC header from a binary message buffer and returns the header and remaining buffer
+///
+/// # Errors
+/// Return a human-readable error when parsing failed
+pub fn extract_llc_hdr(data: &[u8]) -> Result<(&[u8], &[u8]), alloc::string::String> {
     /*
      * LLC Header has the following format (8 bytes)
      * - 1 bytes DSAP
@@ -118,7 +147,5 @@ pub fn remove_llc_hdr(data: &[u8]) -> Result<&[u8], alloc::string::String> {
     }
 
     let hdr_len: usize = 8; // TODO: Is this the right size?
-    let (_, remaining) = data.split_at(hdr_len);
-
-    Ok(remaining)
+    Ok(data.split_at(hdr_len))
 }
