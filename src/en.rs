@@ -568,13 +568,13 @@ fn optionally_encode_headers(
             let geonetworking =
                 geonetworking::UnsecuredHeader::from_json(gn).map_err(crate::map_err_to_string)?;
             let mut transport = match geonetworking.common.next_header {
-                geonetworking::NextAfterCommon::BTPA => {
+                geonetworking::en302636_4_1::NextAfterCommon::BTPA => {
                     crate::transport::BasicTransportAHeader::decode_from_json(tp)
                         .map_err(crate::map_err_to_string)?
                         .encode()
                         .map_err(crate::map_err_to_string)?
                 }
-                geonetworking::NextAfterCommon::BTPB => {
+                geonetworking::en302636_4_1::NextAfterCommon::BTPB => {
                     crate::transport::BasicTransportBHeader::decode_from_json(tp)
                         .map_err(crate::map_err_to_string)?
                         .encode()
