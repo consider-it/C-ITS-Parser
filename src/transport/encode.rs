@@ -1,7 +1,5 @@
 use alloc::string::ToString;
 
-use super::{BasicTransportAHeader, BasicTransportBHeader, Debug, IPv6Header};
-
 #[allow(dead_code)]
 #[derive(Debug)]
 pub enum EncodeError {
@@ -14,7 +12,7 @@ pub trait Encode: Sized {
     fn encode(&self) -> Result<alloc::vec::Vec<u8>, EncodeError>;
 }
 
-impl Encode for BasicTransportAHeader {
+impl Encode for super::BasicTransportAHeader {
     fn encode(&self) -> Result<alloc::vec::Vec<u8>, EncodeError> {
         Ok([
             self.destination_port.to_be_bytes(),
@@ -24,7 +22,7 @@ impl Encode for BasicTransportAHeader {
     }
 }
 
-impl BasicTransportAHeader {
+impl super::BasicTransportAHeader {
     #[cfg(feature = "json")]
     /// Encodes a BTP-A as a JSON representation
     ///
@@ -36,7 +34,7 @@ impl BasicTransportAHeader {
     }
 }
 
-impl Encode for BasicTransportBHeader {
+impl Encode for super::BasicTransportBHeader {
     fn encode(&self) -> Result<alloc::vec::Vec<u8>, EncodeError> {
         Ok([
             self.destination_port.to_be_bytes(),
@@ -46,7 +44,7 @@ impl Encode for BasicTransportBHeader {
     }
 }
 
-impl BasicTransportBHeader {
+impl super::BasicTransportBHeader {
     #[cfg(feature = "json")]
     /// Encodes a BTP-B as a JSON representation
     ///
@@ -58,7 +56,7 @@ impl BasicTransportBHeader {
     }
 }
 
-impl Encode for IPv6Header {
+impl Encode for super::IPv6Header {
     fn encode(&self) -> Result<alloc::vec::Vec<u8>, EncodeError> {
         Err(EncodeError::Unsupported(
             "Encoding IPv6 headers is currently unsupported.".to_string(),

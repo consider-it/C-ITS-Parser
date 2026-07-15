@@ -3,9 +3,6 @@
 use alloc::string::ToString;
 use core::fmt::Debug;
 
-use decode::Decode;
-use encode::Encode;
-use geonetworking::NextAfterCommon;
 #[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
 
@@ -34,20 +31,22 @@ impl TransportHeader {
     /// # Errors
     /// Returns a human-readable error when parsing failed of unsupported header type was selected.
     pub fn decode_with_gn_next_header(
-        next_header: NextAfterCommon,
+        next_header: geonetworking::NextAfterCommon,
         bytes: &[u8],
     ) -> Result<(&[u8], TransportHeader), alloc::string::String> {
+        use decode::Decode as _;
+
         match next_header {
-            NextAfterCommon::Any => {
+            geonetworking::NextAfterCommon::Any => {
                 Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
             }
-            NextAfterCommon::BTPA => BasicTransportAHeader::decode(bytes)
+            geonetworking::NextAfterCommon::BTPA => BasicTransportAHeader::decode(bytes)
                 .map(|(rem, btpa)| (rem, TransportHeader::BtpA(btpa)))
                 .map_err(map_err_to_string),
-            NextAfterCommon::BTPB => BasicTransportBHeader::decode(bytes)
+            geonetworking::NextAfterCommon::BTPB => BasicTransportBHeader::decode(bytes)
                 .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
                 .map_err(map_err_to_string),
-            NextAfterCommon::IPv6 => IPv6Header::decode(bytes)
+            geonetworking::NextAfterCommon::IPv6 => IPv6Header::decode(bytes)
                 .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(alloc::boxed::Box::new(ipv6))))
                 .map_err(map_err_to_string),
         }
@@ -60,6 +59,8 @@ impl TransportHeader {
     /// # Errors
     /// Returns a human-readable error when encoding failed.
     pub fn encode(&self) -> Result<alloc::vec::Vec<u8>, alloc::string::String> {
+        use encode::Encode as _;
+
         match self {
             TransportHeader::BtpA(a) => a.encode().map_err(map_err_to_string),
             TransportHeader::BtpB(b) => b.encode().map_err(map_err_to_string),

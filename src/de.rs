@@ -4,70 +4,19 @@
 
 #![allow(non_snake_case)]
 
-#[cfg(feature = "_etsi")]
-use alloc::borrow::ToOwned;
-#[cfg(any(
-    feature = "_etsi",
-    all(target_arch = "wasm32", feature = "v2x", feature = "json"),
-    all(test, feature = "_etsi")
-))]
-use alloc::string::String;
-#[cfg(any(feature = "_etsi", feature = "transport"))]
-use alloc::string::ToString;
-#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-use core::fmt::Write;
-#[cfg(any(
-    feature = "_etsi",
-    all(target_arch = "wasm32", feature = "v2x", feature = "json"),
-    all(test, feature = "_etsi")
-))]
-use core::primitive::str;
-
-#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-use geonetworking::Encode;
-#[cfg(feature = "transport")]
-use geonetworking::{Decode, NextAfterCommon, Packet};
-#[cfg(any(
-    feature = "_etsi",
-    all(target_arch = "wasm32", feature = "v2x", feature = "json"),
-    all(test, feature = "_etsi")
-))]
-use nom::FindSubstring;
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 use wasm_bindgen::prelude::*;
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-use crate::JsonItsMessage;
-#[cfg(any(feature = "transport", feature = "_etsi"))]
-use crate::map_err_to_string;
-#[cfg(feature = "_etsi")]
-use crate::pcap::{remove_pcap_headers, remove_wlan_headers};
-#[cfg(feature = "transport")]
-use crate::transport::TransportHeader;
-#[cfg(feature = "transport")]
-use crate::transport::{
-    BasicTransportAHeader,
-    BasicTransportBHeader,
-    IPv6Header,
-    decode::Decode as TransportDecode,
-};
-#[cfg(any(
-    feature = "_etsi",
-    all(target_arch = "wasm32", feature = "v2x", feature = "json"),
-    all(test, feature = "_etsi")
-))]
-use crate::{EncodingRules, standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader};
-#[cfg(feature = "_etsi")]
-use crate::{Headers, ItsMessage, standards};
-
+use crate::transport::decode::Decode as _;
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 macro_rules! btp {
     ($btp_ty:ty, $input:ident) => {
         <$btp_ty>::decode($input)
-            .map_err(map_err_to_string)
+            .map_err(crate::map_err_to_string)
             .and_then(|(rem, tp)| {
                 tp.encode_to_json()
-                    .map_err(map_err_to_string)
+                    .map_err(crate::map_err_to_string)
                     .map(|json| (rem, json))
             })
     };
@@ -88,16 +37,24 @@ macro_rules! btp {
 ///
 /// # Errors
 /// Throws string error on decoding errors.
-pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, alloc::string::String> {
+pub fn decode(
+    input: &'_ [u8],
+    headers: crate::Headers,
+) -> Result<crate::ItsMessage<'_>, alloc::string::String> {
+    use alloc::borrow::ToOwned as _;
+    use alloc::string::ToString as _;
+
+    use crate::{ItsMessage, standards};
+
     let (input, transport, geonetworking) = match headers {
-        Headers::None => Ok((input, None, None)),
-        Headers::GnBtp => {
+        crate::Headers::None => Ok((input, None, None)),
+        crate::Headers::GnBtp => {
             decode_gn_btp_headers(input).map(|(rem, tp, gn)| (rem, Some(tp), Some(gn)))
         }
-        Headers::IEEE802LlcGnBtp => remove_wlan_headers(input)
+        crate::Headers::IEEE802LlcGnBtp => crate::pcap::remove_wlan_headers(input)
             .and_then(decode_gn_btp_headers)
             .map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
-        Headers::RadioTap802LlcGnBtp => remove_pcap_headers(input)
+        crate::Headers::RadioTap802LlcGnBtp => crate::pcap::remove_pcap_headers(input)
             .and_then(decode_gn_btp_headers)
             .map(|(rem, tp, gn)| (rem, Some(tp), Some(gn))),
     }?;
@@ -106,7 +63,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, alloc
     let input = match msg_type {
         // workaround to parse DENM and IVIM as XER/ JER which still uses old CDD
         1 | 6 => {
-            if let Ok(data) = str::from_utf8(input)
+            if let Ok(data) = core::primitive::str::from_utf8(input)
                 && (data.trim_start().starts_with('<') || data.trim_start().starts_with('{'))
                 && data.contains("messageID")
             {
@@ -121,7 +78,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, alloc
         }
         // workaround to parse MAPEM, SPATEM, SREM, SSEM as XER/ JER which still uses old CDD
         4 | 5 | 9 | 10 => {
-            if let Ok(data) = str::from_utf8(input) {
+            if let Ok(data) = core::primitive::str::from_utf8(input) {
                 // live-patch messageID and stationID in PDU header for MAPEMs, SPATEMs, SREMs and SSEMs
                 // Note: an SREM may contain stationID in the requestor, but that's actually fine!!! So we shall only patch the PDU header
                 if data.trim_start().starts_with('<') && data.contains("messageID") {
@@ -261,7 +218,7 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, alloc
                 "Unsupported ITS message type: Found message id {message_i_d}."
             ))
         }
-    }.map_err(map_err_to_string)
+    }.map_err(crate::map_err_to_string)
 }
 
 #[cfg(feature = "transport")]
@@ -271,27 +228,49 @@ pub fn decode(input: &'_ [u8], headers: Headers) -> Result<ItsMessage<'_>, alloc
 /// Returns human-readable error descriptions when decoding failed
 pub fn decode_gn_btp_headers(
     input: &'_ [u8],
-) -> Result<(&'_ [u8], alloc::boxed::Box<TransportHeader>, Packet<'_>), alloc::string::String> {
-    let result = Packet::decode(input).map_err(map_err_to_string)?;
+) -> Result<
+    (
+        &'_ [u8],
+        alloc::boxed::Box<crate::transport::TransportHeader>,
+        geonetworking::Packet<'_>,
+    ),
+    alloc::string::String,
+> {
+    use alloc::string::ToString as _;
+
+    use geonetworking::Decode as _;
+
+    use crate::transport::decode::Decode as _;
+
+    let result = geonetworking::Packet::decode(input).map_err(crate::map_err_to_string)?;
     let payload = match &result.decoded {
-        Packet::Unsecured { payload, .. } => *payload,
-        s @ Packet::Secured { .. } => s
+        geonetworking::Packet::Unsecured { payload, .. } => *payload,
+        s @ geonetworking::Packet::Secured { .. } => s
             .secured_payload_after_gn()
             .ok_or("No payload in secured geonetworking header!")?,
     };
     let (remaining, tp) = match result.decoded.common().next_header {
-        NextAfterCommon::Any => {
+        geonetworking::NextAfterCommon::Any => {
             Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
         }
-        NextAfterCommon::BTPA => BasicTransportAHeader::decode(payload)
-            .map(|(rem, btpa)| (rem, TransportHeader::BtpA(btpa)))
-            .map_err(map_err_to_string),
-        NextAfterCommon::BTPB => BasicTransportBHeader::decode(payload)
-            .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
-            .map_err(map_err_to_string),
-        NextAfterCommon::IPv6 => IPv6Header::decode(payload)
-            .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(alloc::boxed::Box::new(ipv6))))
-            .map_err(map_err_to_string),
+        geonetworking::NextAfterCommon::BTPA => {
+            crate::transport::BasicTransportAHeader::decode(payload)
+                .map(|(rem, btpa)| (rem, crate::transport::TransportHeader::BtpA(btpa)))
+                .map_err(crate::map_err_to_string)
+        }
+        geonetworking::NextAfterCommon::BTPB => {
+            crate::transport::BasicTransportBHeader::decode(payload)
+                .map(|(rem, btpb)| (rem, crate::transport::TransportHeader::BtpB(btpb)))
+                .map_err(crate::map_err_to_string)
+        }
+        geonetworking::NextAfterCommon::IPv6 => crate::transport::IPv6Header::decode(payload)
+            .map(|(rem, ipv6)| {
+                (
+                    rem,
+                    crate::transport::TransportHeader::IPv6(alloc::boxed::Box::new(ipv6)),
+                )
+            })
+            .map_err(crate::map_err_to_string),
     }?;
     Ok((remaining, alloc::boxed::Box::new(tp), result.decoded))
 }
@@ -307,9 +286,9 @@ pub fn decode_gn_btp_headers(
 /// Throws string error on decoding errors.
 pub fn decode_to(
     message: &[u8],
-    headersPresent: Headers,
-    outputEncodingRules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headersPresent: crate::Headers,
+    outputEncodingRules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(message, headersPresent)?;
     let (input_encoding_rules, protocol_version, message_type) = message_type(input)?;
     let (msg_ty, decoded) = match (message_type, protocol_version) {
@@ -318,7 +297,7 @@ pub fn decode_to(
             decode_denm(
                 input,
                 Some(211),
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -329,7 +308,7 @@ pub fn decode_to(
             decode_denm(
                 input,
                 Some(131),
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -340,7 +319,7 @@ pub fn decode_to(
             decode_cam(
                 input,
                 None,
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -351,7 +330,7 @@ pub fn decode_to(
             decode_spatem(
                 input,
                 None,
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -362,7 +341,7 @@ pub fn decode_to(
             decode_mapem(
                 input,
                 None,
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -373,7 +352,7 @@ pub fn decode_to(
             decode_ivim(
                 input,
                 Some(221),
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -384,7 +363,7 @@ pub fn decode_to(
             decode_ivim(
                 input,
                 Some(131),
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -395,7 +374,7 @@ pub fn decode_to(
             decode_srem(
                 input,
                 None,
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -406,7 +385,7 @@ pub fn decode_to(
             decode_ssem(
                 input,
                 None,
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -417,7 +396,7 @@ pub fn decode_to(
             decode_cpm(
                 input,
                 Some(211),
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -428,7 +407,7 @@ pub fn decode_to(
             decode_cpm(
                 input,
                 Some(131),
-                Headers::None,
+                crate::Headers::None,
                 input_encoding_rules,
                 outputEncodingRules,
             )?
@@ -450,14 +429,16 @@ pub fn decode_to(
     all(target_arch = "wasm32", feature = "v2x", feature = "json"),
     all(test, feature = "_etsi")
 ))]
-fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
-    let encoding_rules = match str::from_utf8(input) {
-        Ok(s) if s.trim_start().starts_with('<') => EncodingRules::XER,
-        Ok(s) if s.trim_start().starts_with('{') => EncodingRules::JER,
-        _ => EncodingRules::UPER,
+fn message_type(input: &[u8]) -> Result<(crate::EncodingRules, u8, u8), alloc::string::String> {
+    use nom::FindSubstring as _;
+
+    let encoding_rules = match core::primitive::str::from_utf8(input) {
+        Ok(s) if s.trim_start().starts_with('<') => crate::EncodingRules::XER,
+        Ok(s) if s.trim_start().starts_with('{') => crate::EncodingRules::JER,
+        _ => crate::EncodingRules::UPER,
     };
     match encoding_rules {
-        EncodingRules::XER => {
+        crate::EncodingRules::XER => {
             let message_id_start = input
                 .find_substring("messageID>")
                 .or(input.find_substring("messageId>"))
@@ -467,11 +448,12 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                 .find_substring("</")
                 .ok_or("Failed to determine message ID.")?
                 + message_id_start;
-            let message_id = str::from_utf8(&input[message_id_start..message_id_end])
-                .map_err(map_err_to_string)?
-                .trim()
-                .parse()
-                .map_err(map_err_to_string)?;
+            let message_id =
+                core::primitive::str::from_utf8(&input[message_id_start..message_id_end])
+                    .map_err(crate::map_err_to_string)?
+                    .trim()
+                    .parse()
+                    .map_err(crate::map_err_to_string)?;
             let protocol_version_start = input
                 .find_substring("protocolVersion>")
                 .ok_or("Failed to determine protocol version.")?
@@ -480,19 +462,22 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                 .find_substring("</")
                 .ok_or("Failed to determine protocol version.")?
                 + protocol_version_start;
-            let protocol_version =
-                str::from_utf8(&input[protocol_version_start..protocol_version_end])
-                    .map_err(map_err_to_string)?
-                    .trim()
-                    .parse()
-                    .map_err(map_err_to_string)?;
+            let protocol_version = core::primitive::str::from_utf8(
+                &input[protocol_version_start..protocol_version_end],
+            )
+            .map_err(crate::map_err_to_string)?
+            .trim()
+            .parse()
+            .map_err(crate::map_err_to_string)?;
             Ok((encoding_rules, protocol_version, message_id))
         }
-        EncodingRules::JER => {
+        crate::EncodingRules::JER => {
             let message_id = input
                 .find_substring("messageID\":")
                 .or(input.find_substring("messageId\":"))
-                .ok_or(String::from("Failed to determine message ID."))
+                .ok_or(alloc::string::String::from(
+                    "Failed to determine message ID.",
+                ))
                 .and_then(|start| {
                     let mut end = start + 11;
                     let mut value = input[end] as char;
@@ -500,13 +485,15 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                         end += 1;
                         value = input[end] as char;
                     }
-                    str::from_utf8(&input[(start + 11)..end])
-                        .map_err(map_err_to_string)
-                        .and_then(|s| s.trim().parse::<u8>().map_err(map_err_to_string))
+                    core::primitive::str::from_utf8(&input[(start + 11)..end])
+                        .map_err(crate::map_err_to_string)
+                        .and_then(|s| s.trim().parse::<u8>().map_err(crate::map_err_to_string))
                 })?;
             let protocol_version = input
                 .find_substring("protocolVersion\":")
-                .ok_or(String::from("Failed to determine message ID."))
+                .ok_or(alloc::string::String::from(
+                    "Failed to determine message ID.",
+                ))
                 .and_then(|start| {
                     let mut end = start + 17;
                     let mut value = input[end] as char;
@@ -514,15 +501,15 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                         end += 1;
                         value = input[end] as char;
                     }
-                    str::from_utf8(&input[(start + 17)..end])
-                        .map_err(map_err_to_string)
-                        .and_then(|s| s.trim().parse::<u8>().map_err(map_err_to_string))
+                    core::primitive::str::from_utf8(&input[(start + 17)..end])
+                        .map_err(crate::map_err_to_string)
+                        .and_then(|s| s.trim().parse::<u8>().map_err(crate::map_err_to_string))
                 })?;
             Ok((encoding_rules, protocol_version, message_id))
         }
-        EncodingRules::UPER => EncodingRules::UPER
+        crate::EncodingRules::UPER => crate::EncodingRules::UPER
             .codec()
-            .decode_from_binary::<ItsPduHeader>(input)
+            .decode_from_binary::<crate::standards::cdd_2_2_1::etsi_its_cdd::ItsPduHeader>(input)
             .map(|header| {
                 (
                     encoding_rules,
@@ -530,7 +517,7 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
                     header.message_id.0,
                 )
             })
-            .map_err(map_err_to_string),
+            .map_err(crate::map_err_to_string),
     }
 }
 
@@ -538,10 +525,10 @@ fn message_type(input: &[u8]) -> Result<(EncodingRules, u8, u8), String> {
 fn decode_denm(
     denm: &[u8],
     mut version: Option<u32>,
-    headers_present: Headers,
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headers_present: crate::Headers,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(denm, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -552,16 +539,12 @@ fn decode_denm(
     }
     etsi_json.its = match version {
         Some(131) => Some(transcode::<
-            standards::denm_1_3_1::denm_pdu_descriptions::DENM,
+            crate::standards::denm_1_3_1::denm_pdu_descriptions::DENM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        None | Some(221) => Some(
-            transcode::<standards::denm_2_2_1::denm_pdu_description::DENM>(
-                input,
-                input_encoding_rules,
-                output_encoding_rules,
-            ),
-        )
+        None | Some(221) => Some(transcode::<
+            crate::standards::denm_2_2_1::denm_pdu_description::DENM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
             return Err(
@@ -576,19 +559,15 @@ fn decode_denm(
 fn decode_cam(
     cam: &[u8],
     version: Option<u32>,
-    headers_present: Headers,
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headers_present: crate::Headers,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cam, headers_present)?;
     etsi_json.its = match version {
-        None | Some(141) => Some(
-            transcode::<standards::cam_1_4_1::cam_pdu_descriptions::CAM>(
-                input,
-                input_encoding_rules,
-                output_encoding_rules,
-            ),
-        )
+        None | Some(141) => Some(transcode::<
+            crate::standards::cam_1_4_1::cam_pdu_descriptions::CAM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => return Err("Unsupported DENM version: Supported CAM version is 141.".to_string()),
     }?;
@@ -599,14 +578,14 @@ fn decode_cam(
 fn decode_mapem(
     mapem: &[u8],
     version: Option<u32>,
-    headers_present: Headers,
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headers_present: crate::Headers,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(mapem, headers_present)?;
     etsi_json.its = match version {
         None | Some(221) => Some(transcode::<
-            standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM,
+            crate::standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => return Err("Unsupported MAPEM version: Supported MAPEM version is 221.".to_string()),
@@ -618,14 +597,14 @@ fn decode_mapem(
 fn decode_spatem(
     spatem: &[u8],
     version: Option<u32>,
-    headers_present: Headers,
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headers_present: crate::Headers,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(spatem, headers_present)?;
     etsi_json.its = match version {
         None | Some(131) => Some(transcode::<
-            standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM,
+            crate::standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
@@ -639,10 +618,10 @@ fn decode_spatem(
 fn decode_ivim(
     ivim: &[u8],
     mut version: Option<u32>,
-    headers_present: Headers,
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headers_present: crate::Headers,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ivim, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -653,11 +632,11 @@ fn decode_ivim(
     }
     etsi_json.its = match version {
         Some(131) | Some(211) => Some(transcode::<
-            standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM,
+            crate::standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         None | Some(221) => Some(transcode::<
-            standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM,
+            crate::standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
@@ -674,14 +653,14 @@ fn decode_ivim(
 fn decode_srem(
     srem: &[u8],
     version: Option<u32>,
-    headers_present: Headers,
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headers_present: crate::Headers,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(srem, headers_present)?;
     etsi_json.its = match version {
         None | Some(221) => Some(transcode::<
-            standards::srem_2_2_1::srem_pdu_descriptions::SREM,
+            crate::standards::srem_2_2_1::srem_pdu_descriptions::SREM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => return Err("Unsupported SREM version: Supported SREM version is 221.".to_string()),
@@ -693,10 +672,10 @@ fn decode_srem(
 fn decode_cpm(
     cpm: &[u8],
     mut version: Option<u32>,
-    headers_present: Headers,
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headers_present: crate::Headers,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(cpm, headers_present)?;
     if version.is_none() {
         version = match input.first() {
@@ -707,14 +686,12 @@ fn decode_cpm(
     }
     etsi_json.its = match version {
         None | Some(211) => Some(transcode::<
-            standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage,
+            crate::standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
-        Some(131) => Some(transcode::<standards::cpm_1::cpm_pdu_descriptions::CPM>(
-            input,
-            input_encoding_rules,
-            output_encoding_rules,
-        ))
+        Some(131) => Some(transcode::<
+            crate::standards::cpm_1::cpm_pdu_descriptions::CPM,
+        >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => {
             return Err(
@@ -729,14 +706,14 @@ fn decode_cpm(
 fn decode_ssem(
     ssem: &[u8],
     version: Option<u32>,
-    headers_present: Headers,
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
-) -> Result<JsonItsMessage, String> {
+    headers_present: crate::Headers,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
+) -> Result<crate::JsonItsMessage, String> {
     let (input, mut etsi_json) = optionally_decode_headers(ssem, headers_present)?;
     etsi_json.its = match version {
         None | Some(221) => Some(transcode::<
-            standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM,
+            crate::standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM,
         >(input, input_encoding_rules, output_encoding_rules))
         .transpose(),
         _ => return Err("Unsupported SSEM version: Supported SSEM version is 221.".to_string()),
@@ -747,25 +724,27 @@ fn decode_ssem(
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 pub fn optionally_decode_headers(
     input: &[u8],
-    headers: Headers,
-) -> Result<(&[u8], JsonItsMessage), String> {
+    headers: crate::Headers,
+) -> Result<(&[u8], crate::JsonItsMessage), String> {
     match headers {
-        Headers::None => Ok((input, JsonItsMessage::default())),
-        Headers::GnBtp => transcode_gn_tp_to_json(input),
-        Headers::IEEE802LlcGnBtp => remove_wlan_headers(input).and_then(transcode_gn_tp_to_json),
-        Headers::RadioTap802LlcGnBtp => {
-            remove_pcap_headers(input).and_then(transcode_gn_tp_to_json)
+        crate::Headers::None => Ok((input, crate::JsonItsMessage::default())),
+        crate::Headers::GnBtp => transcode_gn_tp_to_json(input),
+        crate::Headers::IEEE802LlcGnBtp => {
+            crate::pcap::remove_wlan_headers(input).and_then(transcode_gn_tp_to_json)
+        }
+        crate::Headers::RadioTap802LlcGnBtp => {
+            crate::pcap::remove_pcap_headers(input).and_then(transcode_gn_tp_to_json)
         }
     }
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], JsonItsMessage), String> {
+fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], crate::JsonItsMessage), String> {
     decode_geonetworking_header(input).and_then(|(remaining, gn_json, next_header)| {
         decode_transport_header(remaining, next_header).map(|(rem, tp)| {
             (
                 rem,
-                JsonItsMessage {
+                crate::JsonItsMessage {
                     geonetworking: Some(gn_json),
                     transport: Some(tp),
                     ..Default::default()
@@ -776,11 +755,18 @@ fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], JsonItsMessage), Stri
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-fn decode_geonetworking_header(input: &[u8]) -> Result<(&[u8], String, NextAfterCommon), String> {
-    let result = Packet::decode(input).map_err(map_err_to_string)?;
-    let gn_json = result.decoded.encode_to_json().map_err(map_err_to_string)?;
+fn decode_geonetworking_header(
+    input: &[u8],
+) -> Result<(&[u8], String, geonetworking::NextAfterCommon), String> {
+    use geonetworking::{Decode as _, Encode as _};
+
+    let result = geonetworking::Packet::decode(input).map_err(crate::map_err_to_string)?;
+    let gn_json = result
+        .decoded
+        .encode_to_json()
+        .map_err(crate::map_err_to_string)?;
     match result.decoded {
-        Packet::Unsecured {
+        geonetworking::Packet::Unsecured {
             common, payload, ..
         } => Ok((payload, gn_json, common.next_header)),
         p => p
@@ -793,16 +779,21 @@ fn decode_geonetworking_header(input: &[u8]) -> Result<(&[u8], String, NextAfter
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 fn decode_transport_header(
     input: &[u8],
-    header_type: NextAfterCommon,
+    header_type: geonetworking::NextAfterCommon,
 ) -> Result<(&[u8], String), String> {
     match header_type {
-        NextAfterCommon::Any => {
+        geonetworking::NextAfterCommon::Any => {
             Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
         }
-        NextAfterCommon::BTPA => btp![BasicTransportAHeader, input],
-        NextAfterCommon::BTPB => btp![BasicTransportBHeader, input],
-        NextAfterCommon::IPv6 => {
-            let (remaining, ipv6) = IPv6Header::decode(input).map_err(map_err_to_string)?;
+        geonetworking::NextAfterCommon::BTPA => {
+            btp![crate::transport::BasicTransportAHeader, input]
+        }
+        geonetworking::NextAfterCommon::BTPB => {
+            btp![crate::transport::BasicTransportBHeader, input]
+        }
+        geonetworking::NextAfterCommon::IPv6 => {
+            let (remaining, ipv6) =
+                crate::transport::IPv6Header::decode(input).map_err(crate::map_err_to_string)?;
             Ok((remaining, to_ipv6_debug(ipv6)))
         }
     }
@@ -811,35 +802,37 @@ fn decode_transport_header(
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 fn transcode<T: rasn::Decode + rasn::Encode>(
     input: &[u8],
-    input_encoding_rules: EncodingRules,
-    output_encoding_rules: EncodingRules,
+    input_encoding_rules: crate::EncodingRules,
+    output_encoding_rules: crate::EncodingRules,
 ) -> Result<String, String> {
-    if let (EncodingRules::UPER, EncodingRules::UPER) =
+    use core::fmt::Write as _;
+
+    if let (crate::EncodingRules::UPER, crate::EncodingRules::UPER) =
         (input_encoding_rules, output_encoding_rules)
     {
         return input.iter().try_fold(String::new(), |mut acc, byte| {
             write!(&mut acc, "{byte:02X?}")
-                .map_err(map_err_to_string)
+                .map_err(crate::map_err_to_string)
                 .map(|_| acc)
         });
     }
     let decoded: T = input_encoding_rules
         .codec()
         .decode_from_binary(input)
-        .map_err(map_err_to_string)?;
+        .map_err(crate::map_err_to_string)?;
     match output_encoding_rules {
-        EncodingRules::UPER => rasn::uper::encode(&decoded)
+        crate::EncodingRules::UPER => rasn::uper::encode(&decoded)
             .map(hex::encode)
-            .map_err(map_err_to_string),
+            .map_err(crate::map_err_to_string),
         o => o
             .codec()
             .encode_to_string(&decoded)
-            .map_err(map_err_to_string),
+            .map_err(crate::map_err_to_string),
     }
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-fn to_ipv6_debug(ipv6: IPv6Header) -> String {
+fn to_ipv6_debug(ipv6: crate::transport::IPv6Header) -> String {
     alloc::format!(r#"{{"ipv6Debug":"{ipv6:?}"}}"#)
 }
 
