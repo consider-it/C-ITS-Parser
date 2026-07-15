@@ -1,3 +1,8 @@
+## [2.2.5] - 2026-07-15
+
+### 🐛 Bug Fixes
+
+- *(conversions)* Use right feature flags for `SemiAxisLength`
 ## [2.2.4] - 2026-07-08
 
 ### 🚀 Features
