@@ -76,7 +76,7 @@ pub mod pcap;
 pub mod transport;
 
 #[cfg(feature = "transport")]
-pub use geonetworking::{Decode, Packet};
+pub use geonetworking as gn;
 #[cfg(feature = "transport")]
 #[deprecated = "use `pcap::remove_pcap_headers` instead"]
 pub use pcap::remove_pcap_headers;
