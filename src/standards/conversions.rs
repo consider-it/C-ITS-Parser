@@ -255,9 +255,9 @@ etsi_to_meters_unavailable!(dsrc_2_2_1::etsi_its_dsrc::VehicleHeight, u8, 20., 1
 etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::VehicleHeight, u8, 20., 127); // Unit: 0,05 metre
 
 #[cfg(feature = "_cdd_1_3_1_1")]
-etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::SemiAxisLength, u16, 100., 4095); // Unit: 0,01 metre
-#[cfg(feature = "_cdd_2_2_1")]
 etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::SemiAxisLength, u16, 100., 4095); // Unit: 0,01 metre
+#[cfg(feature = "_cdd_2_2_1")]
+etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::SemiAxisLength, u16, 100., 4095); // Unit: 0,01 metre
 
 #[cfg(feature = "_cdd_1_3_1_1")]
 etsi_to_meters_unavailable!(cdd_1_3_1_1::its_container::AltitudeValue, i32, 100., 800001); // Unit: 0,01 metre
