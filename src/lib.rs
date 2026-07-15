@@ -80,8 +80,6 @@ pub use geonetworking::{Decode, Packet};
 #[cfg(feature = "transport")]
 #[deprecated = "use `pcap::remove_pcap_headers` instead"]
 pub use pcap::remove_pcap_headers;
-#[cfg(feature = "_etsi")]
-use transport::TransportHeader;
 #[cfg(all(target_arch = "wasm32", any(feature = "json", feature = "_etsi")))]
 use wasm_bindgen::prelude::*;
 
@@ -150,78 +148,78 @@ pub enum ItsMessage<'a> {
     #[cfg(feature = "denm_1_3_1")]
     /// ETSI EN 302 637-3 v1.3.1 DENM
     DenmV1 {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::denm_1_3_1::denm_pdu_descriptions::DENM>,
     },
     #[cfg(feature = "denm_2_2_1")]
     /// ETSI TS 103 831 v2.2.1 (or v2.1.1) DENM
     DenmV2 {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::denm_2_2_1::denm_pdu_description::DENM>,
     },
     #[cfg(feature = "cam_1_4_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) CAM
     Cam {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::cam_1_4_1::cam_pdu_descriptions::CAM>,
     },
     #[cfg(feature = "spatem_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SPATEM
     Spatem {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::spatem_2_2_1::spatem_pdu_descriptions::SPATEM>,
     },
     #[cfg(feature = "mapem_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) MAPEM
     Mapem {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::mapem_2_2_1::mapem_pdu_descriptions::MAPEM>,
     },
     #[cfg(feature = "ivim_2_1_1")]
     /// ETSI TS 103 301 v2.1.1 (or v1.3.1) IVIM
     IvimV1 {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::ivim_2_1_1::ivim_pdu_descriptions::IVIM>,
     },
     #[cfg(feature = "ivim_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 IVIM
     IvimV2 {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::ivim_2_2_1::ivim_pdu_descriptions::IVIM>,
     },
     #[cfg(feature = "srem_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SREM
     Srem {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::srem_2_2_1::srem_pdu_descriptions::SREM>,
     },
     #[cfg(feature = "ssem_2_2_1")]
     /// ETSI TS 103 301 v2.2.1 (or v2.1.1 or v1.3.1) SSEM
     Ssem {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::ssem_2_2_1::ssem_pdu_descriptions::SSEM>,
     },
     #[cfg(feature = "cpm_1")]
     /// ETSI TR 103 562 v2.1.1 CPM
     CpmV1 {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<standards::cpm_1::cpm_pdu_descriptions::CPM>,
     },
     #[cfg(feature = "cpm_2_1_1")]
     /// ETSI TS 103 324 v2.1.1 CPM
     CpmV2 {
-        geonetworking: Option<Packet<'a>>,
-        transport: Option<alloc::boxed::Box<TransportHeader>>,
+        geonetworking: Option<geonetworking::Packet<'a>>,
+        transport: Option<alloc::boxed::Box<transport::TransportHeader>>,
         etsi: alloc::boxed::Box<
             standards::cpm_2_1_1::cpm_pdu_descriptions::CollectivePerceptionMessage,
         >,
@@ -232,14 +230,14 @@ pub enum ItsMessage<'a> {
 impl<'a> ItsMessage<'a> {
     /// Returns the `geonetworking` field of the `ItsMessage` variant
     #[must_use]
-    pub fn get_geonetworking(&self) -> Option<Packet<'a>> {
+    pub fn get_geonetworking(&self) -> Option<geonetworking::Packet<'a>> {
         let (gn, _) = self.get_headers();
         gn.clone()
     }
 
     /// Returns the `transport` field of the `ItsMessage` variant
     #[must_use]
-    pub fn get_transport(&self) -> Option<alloc::boxed::Box<TransportHeader>> {
+    pub fn get_transport(&self) -> Option<alloc::boxed::Box<transport::TransportHeader>> {
         let (_, tp) = self.get_headers();
         tp.clone()
     }
@@ -249,8 +247,8 @@ impl<'a> ItsMessage<'a> {
     fn get_headers(
         &self,
     ) -> (
-        &Option<Packet<'a>>,
-        &Option<alloc::boxed::Box<TransportHeader>>,
+        &Option<geonetworking::Packet<'a>>,
+        &Option<alloc::boxed::Box<transport::TransportHeader>>,
     ) {
         match self {
             #[cfg(feature = "denm_1_3_1")]

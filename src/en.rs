@@ -6,27 +6,8 @@
 #[cfg(not(target_arch = "wasm32"))]
 use alloc::string::ToString;
 
-#[cfg(any(
-    all(target_arch = "wasm32", feature = "json"),
-    not(target_arch = "wasm32")
-))]
-use geonetworking::{Encode, ExtendedHeader, HeaderType, UnsecuredHeader};
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 use wasm_bindgen::prelude::*;
-
-#[cfg(not(target_arch = "wasm32"))]
-use crate::ItsMessage;
-#[cfg(all(target_arch = "wasm32", feature = "json"))]
-use crate::JsonItsMessage;
-#[cfg(any(
-    all(target_arch = "wasm32", feature = "json"),
-    not(target_arch = "wasm32")
-))]
-use crate::map_err_to_string;
-#[cfg(all(target_arch = "wasm32", feature = "json"))]
-use crate::transport::encode::Encode as TpEncode;
-#[cfg(not(target_arch = "wasm32"))]
-use crate::{EncodingRules, Packet};
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 /// Wasm output is a Javascript uint8 array
@@ -36,7 +17,7 @@ pub type Encoded = js_sys::Uint8Array;
 pub type Encoded = alloc::vec::Vec<u8>;
 
 #[cfg(not(target_arch = "wasm32"))]
-impl ItsMessage<'_> {
+impl crate::ItsMessage<'_> {
     #[allow(clippy::too_many_lines)]
     /// Encodes an ITS message with optional headers.
     ///
@@ -51,7 +32,12 @@ impl ItsMessage<'_> {
     ///
     /// # Errors
     /// Gives a human-readable error description when ASN.1 parsing failed or an unexpected set of headers was found.
-    pub fn encode(self, encoding_rules: EncodingRules) -> Result<Encoded, alloc::string::String> {
+    pub fn encode(
+        self,
+        encoding_rules: crate::EncodingRules,
+    ) -> Result<Encoded, alloc::string::String> {
+        use crate::ItsMessage;
+
         let (geo, tp, mut etsi_uper) = match self {
             #[cfg(feature = "denm_1_3_1")]
             ItsMessage::DenmV1 {
@@ -153,19 +139,19 @@ impl ItsMessage<'_> {
                 .encode_to_binary(&etsi)
                 .map(|enc| (geonetworking, transport, enc)),
         }
-        .map_err(map_err_to_string)?;
+        .map_err(crate::map_err_to_string)?;
 
-        if encoding_rules == EncodingRules::UPER {
+        if encoding_rules == crate::EncodingRules::UPER {
             match (tp, geo) {
             (None, None) => Ok(etsi_uper),
             (
                 Some(tp),
-                Some(Packet::Unsecured {
+                Some(geonetworking::Packet::Unsecured {
                     basic,
                     common,
                     extended,
                     ..
-                } | Packet::Secured {
+                } | geonetworking::Packet::Secured {
                     basic,
                     common,
                     extended,
@@ -174,7 +160,7 @@ impl ItsMessage<'_> {
             ) => {
                 let mut encoded = tp.encode()?;
                 encoded.append(&mut etsi_uper);
-                fill_gn_and_encode(UnsecuredHeader { basic, common, extended }, &encoded)
+                fill_gn_and_encode(geonetworking::UnsecuredHeader { basic, common, extended }, &encoded)
             }
             _ => Err(
                 "Expecting either both or neither GeoNetworking and Transport headers to be present!"
@@ -193,7 +179,7 @@ impl ItsMessage<'_> {
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, denms of the following versions are supported: v2.2.1 (221) and v1.3.1 (131)
 /// Throws string error on encoding error
-pub fn encode_denm(denm: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
+pub fn encode_denm(denm: &crate::JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&denm.its, version) {
         (None, 131) | (None, 221) => return Err("No DENM JSON provided.".to_string()),
@@ -223,7 +209,7 @@ pub fn encode_denm(denm: &JsonItsMessage, version: u32) -> Result<Encoded, Strin
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cams of the following versions are supported: v1.4.1 (141)
 /// Throws string error on encoding error
-pub fn encode_cam(cam: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
+pub fn encode_cam(cam: &crate::JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&cam.its, version) {
         (None, 141) => return Err("No CAM JSON provided.".to_string()),
@@ -244,7 +230,7 @@ pub fn encode_cam(cam: &JsonItsMessage, version: u32) -> Result<Encoded, String>
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, mapems of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
-pub fn encode_mapem(mapem: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
+pub fn encode_mapem(mapem: &crate::JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&mapem.its, version) {
         (None, 221) => return Err("No MAPEM JSON provided.".to_string()),
@@ -265,7 +251,7 @@ pub fn encode_mapem(mapem: &JsonItsMessage, version: u32) -> Result<Encoded, Str
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, spatems of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
-pub fn encode_spatem(spatem: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
+pub fn encode_spatem(spatem: &crate::JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&spatem.its, version) {
         (None, 221) => return Err("No SPATEM JSON provided.".to_string()),
@@ -288,7 +274,7 @@ pub fn encode_spatem(spatem: &JsonItsMessage, version: u32) -> Result<Encoded, S
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ivims of the following versions are supported: v1.3.1 (131)/ v2.1.1 (211), v2.2.1 (221)
 /// Throws string error on encoding error
-pub fn encode_ivim(ivim: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
+pub fn encode_ivim(ivim: &crate::JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&ivim.its, version) {
         (None, 131) | (None, 211) | (None, 221) => return Err("No IVIM JSON provided.".to_string()),
@@ -319,7 +305,7 @@ pub fn encode_ivim(ivim: &JsonItsMessage, version: u32) -> Result<Encoded, Strin
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, srems of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
-pub fn encode_srem(srem: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
+pub fn encode_srem(srem: &crate::JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&srem.its, version) {
         (None, 221) => return Err("No SREM JSON provided.".to_string()),
@@ -340,7 +326,7 @@ pub fn encode_srem(srem: &JsonItsMessage, version: u32) -> Result<Encoded, Strin
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cpms of the following versions are supported: v1.3.1 (131), v2.1.1 (211)
 /// Throws string error on encoding error
-pub fn encode_cpm(cpm: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
+pub fn encode_cpm(cpm: &crate::JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&cpm.its, version) {
         (None, 131) | (None, 211) => return Err("No CPM JSON provided.".to_string()),
@@ -370,7 +356,7 @@ pub fn encode_cpm(cpm: &JsonItsMessage, version: u32) -> Result<Encoded, String>
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ssems of the following versions are supported: v2.2.1 (221)
 /// Throws string error on encoding error
-pub fn encode_ssem(ssem: &JsonItsMessage, version: u32) -> Result<Encoded, String> {
+pub fn encode_ssem(ssem: &crate::JsonItsMessage, version: u32) -> Result<Encoded, String> {
     let mut payload = vec![];
     match (&ssem.its, version) {
         (None, 221) => return Err("No SSEM JSON provided.".to_string()),
@@ -391,25 +377,28 @@ fn optionally_encode_headers(
     tp_json: &Option<String>,
     mut its: alloc::vec::Vec<u8>,
 ) -> Result<alloc::vec::Vec<u8>, String> {
+    use crate::transport::encode::Encode as _;
+
     match (gn_json, tp_json) {
         (Some(_), None) | (None, Some(_)) => Err(
             "Expecting either both or neither GeoNetworking and Transport headers to be present!"
                 .to_string(),
         ),
         (Some(gn), Some(tp)) => {
-            let geonetworking = UnsecuredHeader::from_json(gn).map_err(map_err_to_string)?;
+            let geonetworking =
+                geonetworking::UnsecuredHeader::from_json(gn).map_err(crate::map_err_to_string)?;
             let mut transport = match geonetworking.common.next_header {
                 geonetworking::NextAfterCommon::BTPA => {
                     crate::transport::BasicTransportAHeader::decode_from_json(tp)
-                        .map_err(map_err_to_string)?
+                        .map_err(crate::map_err_to_string)?
                         .encode()
-                        .map_err(map_err_to_string)?
+                        .map_err(crate::map_err_to_string)?
                 }
                 geonetworking::NextAfterCommon::BTPB => {
                     crate::transport::BasicTransportBHeader::decode_from_json(tp)
-                        .map_err(map_err_to_string)?
+                        .map_err(crate::map_err_to_string)?
                         .encode()
-                        .map_err(map_err_to_string)?
+                        .map_err(crate::map_err_to_string)?
                 }
                 h => {
                     return Err(alloc::format!(
@@ -429,43 +418,50 @@ fn optionally_encode_headers(
     not(target_arch = "wasm32")
 ))]
 fn fill_gn_and_encode(
-    mut geonetworking: UnsecuredHeader,
+    mut geonetworking: geonetworking::UnsecuredHeader,
     payload: &[u8],
 ) -> Result<alloc::vec::Vec<u8>, alloc::string::String> {
+    use geonetworking::{
+        AreaType,
+        BroadcastType,
+        Encode as _,
+        ExtendedHeader,
+        HeaderType,
+        LocationServiceType,
+    };
+
     #[allow(clippy::cast_possible_truncation)]
     let gn_payload_length = payload.len() as u16;
 
     geonetworking.common.payload_length = gn_payload_length;
     geonetworking.common.header_type_and_subtype = match geonetworking.extended {
         Some(ExtendedHeader::Beacon(_)) => HeaderType::Beacon,
-        Some(ExtendedHeader::GAC(_)) => HeaderType::GeoAnycast(geonetworking::AreaType::Circular),
-        Some(ExtendedHeader::GBC(_)) => HeaderType::GeoBroadcast(geonetworking::AreaType::Circular),
+        Some(ExtendedHeader::GAC(_)) => HeaderType::GeoAnycast(AreaType::Circular),
+        Some(ExtendedHeader::GBC(_)) => HeaderType::GeoBroadcast(AreaType::Circular),
         Some(ExtendedHeader::GUC(_)) => HeaderType::GeoUnicast,
         Some(ExtendedHeader::TSB(_)) => {
-            HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::MultiHop)
+            HeaderType::TopologicallyScopedBroadcast(BroadcastType::MultiHop)
         }
         Some(ExtendedHeader::SHB(_)) => {
-            HeaderType::TopologicallyScopedBroadcast(geonetworking::BroadcastType::SingleHop)
+            HeaderType::TopologicallyScopedBroadcast(BroadcastType::SingleHop)
         }
         Some(ExtendedHeader::LSRequest(_)) => {
-            HeaderType::LocationService(geonetworking::LocationServiceType::Request)
+            HeaderType::LocationService(LocationServiceType::Request)
         }
-        Some(ExtendedHeader::LSReply(_)) => {
-            HeaderType::LocationService(geonetworking::LocationServiceType::Reply)
-        }
+        Some(ExtendedHeader::LSReply(_)) => HeaderType::LocationService(LocationServiceType::Reply),
         None => HeaderType::Any,
     };
     geonetworking
         .with_payload(payload)
-        .map_err(map_err_to_string)?
+        .map_err(crate::map_err_to_string)?
         .encode_to_vec()
-        .map_err(map_err_to_string)
+        .map_err(crate::map_err_to_string)
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 fn transcode_jer_to_uper<T: rasn::Decode + rasn::Encode>(
     input: &String,
 ) -> Result<alloc::vec::Vec<u8>, String> {
-    rasn::uper::encode(&rasn::jer::decode::<T>(input).map_err(map_err_to_string)?)
-        .map_err(map_err_to_string)
+    rasn::uper::encode(&rasn::jer::decode::<T>(input).map_err(crate::map_err_to_string)?)
+        .map_err(crate::map_err_to_string)
 }

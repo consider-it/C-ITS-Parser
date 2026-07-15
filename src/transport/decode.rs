@@ -4,8 +4,6 @@ use nom::combinator::{into, map_res};
 use nom::error::{ErrorKind, FromExternalError, ParseError};
 use nom::sequence::pair;
 
-use crate::transport::{BasicTransportAHeader, BasicTransportBHeader, IPv6Header};
-
 #[derive(Debug, PartialEq)]
 pub enum DecodeError<I> {
     IntegerError(alloc::string::String),
@@ -52,13 +50,13 @@ pub trait Decode: Sized {
     fn decode(input: &[u8]) -> IResult<&[u8], Self>;
 }
 
-impl Decode for BasicTransportAHeader {
+impl Decode for super::BasicTransportAHeader {
     fn decode(input: &[u8]) -> IResult<&[u8], Self> {
         into(pair(u16_from_be_bytes, u16_from_be_bytes))(input)
     }
 }
 
-impl From<(u16, u16)> for BasicTransportAHeader {
+impl From<(u16, u16)> for super::BasicTransportAHeader {
     fn from(value: (u16, u16)) -> Self {
         Self {
             destination_port: value.0,
@@ -67,7 +65,7 @@ impl From<(u16, u16)> for BasicTransportAHeader {
     }
 }
 
-impl BasicTransportAHeader {
+impl super::BasicTransportAHeader {
     #[cfg(feature = "json")]
     /// Decodes a BTP-A header from JSON
     ///
@@ -79,13 +77,13 @@ impl BasicTransportAHeader {
     }
 }
 
-impl Decode for BasicTransportBHeader {
+impl Decode for super::BasicTransportBHeader {
     fn decode(input: &[u8]) -> IResult<&[u8], Self> {
         into(pair(u16_from_be_bytes, u16_from_be_bytes))(input)
     }
 }
 
-impl From<(u16, u16)> for BasicTransportBHeader {
+impl From<(u16, u16)> for super::BasicTransportBHeader {
     fn from(value: (u16, u16)) -> Self {
         Self {
             destination_port: value.0,
@@ -94,7 +92,7 @@ impl From<(u16, u16)> for BasicTransportBHeader {
     }
 }
 
-impl BasicTransportBHeader {
+impl super::BasicTransportBHeader {
     #[cfg(feature = "json")]
     /// Decodes a BTP-B header from JSON
     ///
@@ -116,7 +114,7 @@ fn u16_from_be_bytes(input: &[u8]) -> IResult<&[u8], u16> {
     })(input)
 }
 
-impl Decode for IPv6Header {
+impl Decode for super::IPv6Header {
     fn decode(input: &[u8]) -> IResult<&[u8], Self> {
         etherparse::PacketHeaders::from_ip_slice(input)
             .map(|headers| {
@@ -136,7 +134,10 @@ impl Decode for IPv6Header {
                         .link_exts
                         .first()
                         .map_or(0, etherparse::LinkExtHeader::header_len);
-                (&input[first_after_headers..], IPv6Header::from(headers))
+                (
+                    &input[first_after_headers..],
+                    super::IPv6Header::from(headers),
+                )
             })
             .map_err(|e| {
                 nom::Err::Error(DecodeError::IPv6Parsing(alloc::format!(
@@ -146,7 +147,7 @@ impl Decode for IPv6Header {
     }
 }
 
-impl From<PacketHeaders<'_>> for IPv6Header {
+impl From<PacketHeaders<'_>> for super::IPv6Header {
     fn from(value: PacketHeaders<'_>) -> Self {
         Self {
             ip: value.net,
