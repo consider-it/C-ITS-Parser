@@ -247,27 +247,29 @@ pub fn decode_gn_btp_headers(
         return Err("No payload in secured geonetworking header!".to_string());
     };
     let (remaining, tp) = match result.decoded.common().next_header {
-        geonetworking::NextAfterCommon::Any => {
+        geonetworking::en302636_4_1::NextAfterCommon::Any => {
             Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
         }
-        geonetworking::NextAfterCommon::BTPA => {
+        geonetworking::en302636_4_1::NextAfterCommon::BTPA => {
             crate::transport::BasicTransportAHeader::decode(payload)
                 .map(|(rem, btpa)| (rem, crate::transport::TransportHeader::BtpA(btpa)))
                 .map_err(crate::map_err_to_string)
         }
-        geonetworking::NextAfterCommon::BTPB => {
+        geonetworking::en302636_4_1::NextAfterCommon::BTPB => {
             crate::transport::BasicTransportBHeader::decode(payload)
                 .map(|(rem, btpb)| (rem, crate::transport::TransportHeader::BtpB(btpb)))
                 .map_err(crate::map_err_to_string)
         }
-        geonetworking::NextAfterCommon::IPv6 => crate::transport::IPv6Header::decode(payload)
-            .map(|(rem, ipv6)| {
-                (
-                    rem,
-                    crate::transport::TransportHeader::IPv6(alloc::boxed::Box::new(ipv6)),
-                )
-            })
-            .map_err(crate::map_err_to_string),
+        geonetworking::en302636_4_1::NextAfterCommon::IPv6 => {
+            crate::transport::IPv6Header::decode(payload)
+                .map(|(rem, ipv6)| {
+                    (
+                        rem,
+                        crate::transport::TransportHeader::IPv6(alloc::boxed::Box::new(ipv6)),
+                    )
+                })
+                .map_err(crate::map_err_to_string)
+        }
     }?;
     Ok((remaining, alloc::boxed::Box::new(tp), result.decoded))
 }
@@ -921,7 +923,7 @@ fn transcode_gn_tp_to_json(input: &[u8]) -> Result<(&[u8], crate::JsonItsMessage
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 fn decode_geonetworking_header(
     input: &[u8],
-) -> Result<(&[u8], String, geonetworking::NextAfterCommon), String> {
+) -> Result<(&[u8], String, geonetworking::en302636_4_1::NextAfterCommon), String> {
     use geonetworking::{Decode as _, Encode as _};
 
     let result = geonetworking::Packet::decode(input).map_err(crate::map_err_to_string)?;
@@ -943,19 +945,19 @@ fn decode_geonetworking_header(
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 fn decode_transport_header(
     input: &[u8],
-    header_type: geonetworking::NextAfterCommon,
+    header_type: geonetworking::en302636_4_1::NextAfterCommon,
 ) -> Result<(&[u8], String), String> {
     match header_type {
-        geonetworking::NextAfterCommon::Any => {
+        geonetworking::en302636_4_1::NextAfterCommon::Any => {
             Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
         }
-        geonetworking::NextAfterCommon::BTPA => {
+        geonetworking::en302636_4_1::NextAfterCommon::BTPA => {
             btp![crate::transport::BasicTransportAHeader, input]
         }
-        geonetworking::NextAfterCommon::BTPB => {
+        geonetworking::en302636_4_1::NextAfterCommon::BTPB => {
             btp![crate::transport::BasicTransportBHeader, input]
         }
-        geonetworking::NextAfterCommon::IPv6 => {
+        geonetworking::en302636_4_1::NextAfterCommon::IPv6 => {
             let (remaining, ipv6) =
                 crate::transport::IPv6Header::decode(input).map_err(crate::map_err_to_string)?;
             Ok((remaining, to_ipv6_debug(ipv6)))

@@ -31,22 +31,26 @@ impl TransportHeader {
     /// # Errors
     /// Returns a human-readable error when parsing failed of unsupported header type was selected.
     pub fn decode_with_gn_next_header(
-        next_header: geonetworking::NextAfterCommon,
+        next_header: geonetworking::en302636_4_1::NextAfterCommon,
         bytes: &[u8],
     ) -> Result<(&[u8], TransportHeader), alloc::string::String> {
         use decode::Decode as _;
 
         match next_header {
-            geonetworking::NextAfterCommon::Any => {
+            geonetworking::en302636_4_1::NextAfterCommon::Any => {
                 Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
             }
-            geonetworking::NextAfterCommon::BTPA => BasicTransportAHeader::decode(bytes)
-                .map(|(rem, btpa)| (rem, TransportHeader::BtpA(btpa)))
-                .map_err(map_err_to_string),
-            geonetworking::NextAfterCommon::BTPB => BasicTransportBHeader::decode(bytes)
-                .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
-                .map_err(map_err_to_string),
-            geonetworking::NextAfterCommon::IPv6 => IPv6Header::decode(bytes)
+            geonetworking::en302636_4_1::NextAfterCommon::BTPA => {
+                BasicTransportAHeader::decode(bytes)
+                    .map(|(rem, btpa)| (rem, TransportHeader::BtpA(btpa)))
+                    .map_err(map_err_to_string)
+            }
+            geonetworking::en302636_4_1::NextAfterCommon::BTPB => {
+                BasicTransportBHeader::decode(bytes)
+                    .map(|(rem, btpb)| (rem, TransportHeader::BtpB(btpb)))
+                    .map_err(map_err_to_string)
+            }
+            geonetworking::en302636_4_1::NextAfterCommon::IPv6 => IPv6Header::decode(bytes)
                 .map(|(rem, ipv6)| (rem, TransportHeader::IPv6(alloc::boxed::Box::new(ipv6))))
                 .map_err(map_err_to_string),
         }
