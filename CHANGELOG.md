@@ -1,3 +1,19 @@
+## [2.3.0] - 2026-07-21
+
+### 🚀 Features
+
+- *(lib)* Make `pcap` module public
+- *(pcap)* Make remove header functions public
+- *(pcap)* Add functions to extract headers
+- *(lib)* Export geonetworking crate as `gn`
+
+### 🐛 Bug Fixes
+
+- *(conversions)* Use right feature flags for `SemiAxisLength`
+
+### ⚙️ Miscellaneous Tasks
+
+- Cleanup imports
 ## [2.2.4] - 2026-07-08
 
 ### 🚀 Features
