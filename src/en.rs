@@ -30,6 +30,11 @@ impl crate::ItsMessage<'_> {
     /// Note: When selecting JER or XER rules, geonetworking and transport headers will be omitted.
     /// If a JSON representation is required call `encode_to_json` on the geonetworking packet and transport headers.
     ///
+    /// Note: The following fields in the `geonetworking::Packet` will be filled automatically:
+    ///
+    /// - `common.payload_length`: Set to binary size of ITS message and transport header
+    /// - `basic.remaining_hop_limit`: Set to `maximum_hop_limit` from common header
+    ///
     /// # Errors
     /// Gives a human-readable error description when ASN.1 parsing failed or an unexpected set of headers was found.
     pub fn encode(
@@ -421,36 +426,13 @@ fn fill_gn_and_encode(
     mut geonetworking: geonetworking::UnsecuredHeader,
     payload: &[u8],
 ) -> Result<alloc::vec::Vec<u8>, alloc::string::String> {
-    use geonetworking::{
-        AreaType,
-        BroadcastType,
-        Encode as _,
-        ExtendedHeader,
-        HeaderType,
-        LocationServiceType,
-    };
+    use geonetworking::Encode as _;
 
     #[allow(clippy::cast_possible_truncation)]
     let gn_payload_length = payload.len() as u16;
 
     geonetworking.common.payload_length = gn_payload_length;
-    geonetworking.common.header_type_and_subtype = match geonetworking.extended {
-        Some(ExtendedHeader::Beacon(_)) => HeaderType::Beacon,
-        Some(ExtendedHeader::GAC(_)) => HeaderType::GeoAnycast(AreaType::Circular),
-        Some(ExtendedHeader::GBC(_)) => HeaderType::GeoBroadcast(AreaType::Circular),
-        Some(ExtendedHeader::GUC(_)) => HeaderType::GeoUnicast,
-        Some(ExtendedHeader::TSB(_)) => {
-            HeaderType::TopologicallyScopedBroadcast(BroadcastType::MultiHop)
-        }
-        Some(ExtendedHeader::SHB(_)) => {
-            HeaderType::TopologicallyScopedBroadcast(BroadcastType::SingleHop)
-        }
-        Some(ExtendedHeader::LSRequest(_)) => {
-            HeaderType::LocationService(LocationServiceType::Request)
-        }
-        Some(ExtendedHeader::LSReply(_)) => HeaderType::LocationService(LocationServiceType::Reply),
-        None => HeaderType::Any,
-    };
+    geonetworking.basic.remaining_hop_limit = geonetworking.common.maximum_hop_limit;
     geonetworking
         .with_payload(payload)
         .map_err(crate::map_err_to_string)?
