@@ -272,6 +272,61 @@ pub fn decode_gn_btp_headers(
     Ok((remaining, alloc::boxed::Box::new(tp), result.decoded))
 }
 
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Decodes some ASN.1 data type from UPER buffer
+///
+/// # Errors
+/// Returns a human-readable string when decoding failed
+pub fn decode_from_uper<T: rasn::Decode>(input: &[u8]) -> Result<T, alloc::string::String> {
+    rasn::Codec::Uper
+        .decode_from_binary(input)
+        .map_err(crate::map_err_to_string)
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Decodes some ASN.1 data type from XER buffer
+///
+/// # Errors
+/// Returns a human-readable string when decoding failed
+pub fn decode_from_xer_buf<T: rasn::Decode>(input: &[u8]) -> Result<T, alloc::string::String> {
+    rasn::Codec::Xer
+        .decode_from_binary(input)
+        .map_err(crate::map_err_to_string)
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Decodes some ASN.1 data type from XER string
+///
+/// # Errors
+/// Returns a human-readable string when decoding failed
+pub fn decode_from_xer_str<T: rasn::Decode>(input: &str) -> Result<T, alloc::string::String> {
+    rasn::Codec::Xer
+        .decode_from_str(input)
+        .map_err(crate::map_err_to_string)
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Decodes some ASN.1 data type from JER buffer
+///
+/// # Errors
+/// Returns a human-readable string when decoding failed
+pub fn decode_from_jer_buf<T: rasn::Decode>(input: &[u8]) -> Result<T, alloc::string::String> {
+    rasn::Codec::Jer
+        .decode_from_binary(input)
+        .map_err(crate::map_err_to_string)
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Decodes some ASN.1 data type from JER string
+///
+/// # Errors
+/// Returns a human-readable string when decoding failed
+pub fn decode_from_jer_str<T: rasn::Decode>(input: &str) -> Result<T, alloc::string::String> {
+    rasn::Codec::Jer
+        .decode_from_str(input)
+        .map_err(crate::map_err_to_string)
+}
+
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
 #[wasm_bindgen(js_name = decode)]
 /// Decodes an ITS message of undefined type.
