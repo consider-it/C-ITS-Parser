@@ -178,6 +178,39 @@ impl crate::ItsMessage<'_> {
     }
 }
 
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Encodes some ASN.1 data type to UPER buffer
+///
+/// # Errors
+/// Returns a human-readable string when encoding failed
+pub fn encode_to_uper<T: rasn::Encode>(input: &T) -> Result<Encoded, alloc::string::String> {
+    rasn::Codec::Uper
+        .encode_to_binary(input)
+        .map_err(crate::map_err_to_string)
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Encodes some ASN.1 data type to XER buffer
+///
+/// # Errors
+/// Returns a human-readable string when encoding failed
+pub fn encode_to_xer<T: rasn::Encode>(input: &T) -> Result<Encoded, alloc::string::String> {
+    rasn::Codec::Xer
+        .encode_to_binary(input)
+        .map_err(crate::map_err_to_string)
+}
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "_etsi"))]
+/// Encodes some ASN.1 data type to JER buffer
+///
+/// # Errors
+/// Returns a human-readable string when encoding failed
+pub fn encode_to_jer<T: rasn::Encode>(input: &T) -> Result<Encoded, alloc::string::String> {
+    rasn::Codec::Jer
+        .encode_to_binary(input)
+        .map_err(crate::map_err_to_string)
+}
+
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
 #[wasm_bindgen(js_name = encodeDenm)]
 /// Encodes a DENM message into binary UPER with optional headers
