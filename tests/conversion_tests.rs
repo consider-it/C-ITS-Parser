@@ -500,4 +500,30 @@ mod tests {
         assert!(dsrc_2_2_1::etsi_its_dsrc::DSecond::from_millis(60999).is_ok());
         assert!(dsrc_2_2_1::etsi_its_dsrc::DSecond::from_millis(61000).is_err());
     }
+
+    #[test]
+    #[cfg(feature = "_cdd_2_2_1")]
+    fn path_delta_time_test() {
+        use c_its_parser::standards::cdd_2_2_1;
+
+        // from ETSI to millis
+        let test = cdd_2_2_1::etsi_its_cdd::PathDeltaTime(100.into());
+        assert_eq!(1000, test.as_millis());
+        let test = cdd_2_2_1::etsi_its_cdd::PathDeltaTime(1.into());
+        assert_eq!(10, test.as_millis());
+
+        // from millis to ETSI
+        assert_eq!(
+            cdd_2_2_1::etsi_its_cdd::PathDeltaTime(100.into()),
+            cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(1000).unwrap()
+        );
+
+        assert_eq!(
+            cdd_2_2_1::etsi_its_cdd::PathDeltaTime(1.into()),
+            cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(10).unwrap()
+        );
+
+        assert!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(655350).is_ok());
+        assert!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(655360).is_err());
+    }
 }
