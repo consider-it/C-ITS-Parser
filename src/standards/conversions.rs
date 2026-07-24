@@ -1134,6 +1134,52 @@ impl From<dsrc_2_2_1::etsi_its_dsrc::TimeMark> for u32 {
     }
 }
 
+/// Create conversions for PathDeltaTime
+///
+/// Value range is 1..65535 (extensible), so u16 fits currently, but u32 should have enough space for extensions
+#[cfg(any(feature = "_cdd_2_2_1", feature = "_cdd_1_3_1_1"))]
+macro_rules! path_delta_time_to_millis {
+    ($t:ty) => {
+        impl $t {
+            const ETSI_TO_MS_FACTOR: u32 = 10; // unit: 10 milliseconds
+
+            /// convert ETSI PathDeltaTime to milliseconds
+            #[must_use]
+            pub fn as_millis(&self) -> u32 {
+                let etsi_val: i64 = (&self.0).try_into().unwrap_or_default();
+
+                #[allow(clippy::cast_possible_truncation)]
+                let etsi_val = etsi_val as u32;
+                etsi_val * Self::ETSI_TO_MS_FACTOR
+            }
+
+            /// create ETSI PathDeltaTime from milliseconds
+            ///
+            /// # Errors
+            /// human-readable string when input value is out of bounds
+            pub fn from_millis(value: u32) -> Result<Self, alloc::string::String> {
+                use rasn::AsnType;
+
+                #[allow(clippy::cast_possible_truncation)]
+                let etsi_val = value / Self::ETSI_TO_MS_FACTOR;
+
+                if let Some(constraints) = Self::CONSTRAINTS.value() {
+                    if !constraints.constraint.in_bound(&etsi_val) {
+                        return Err(alloc::format!("Value out of bounds"));
+                    }
+                }
+
+                Ok(Self(etsi_val.into()))
+            }
+        }
+    };
+}
+
+#[cfg(feature = "_cdd_1_3_1_1")]
+path_delta_time_to_millis!(cdd_1_3_1_1::its_container::PathDeltaTime);
+#[cfg(feature = "_cdd_2_2_1")]
+path_delta_time_to_millis!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime);
+
 // MinuteOfTheYear: unit minute, 527040 for invalid
 #[cfg(feature = "_dsrc_2_2_1")]
 impl dsrc_2_2_1::etsi_its_dsrc::MinuteOfTheYear {
