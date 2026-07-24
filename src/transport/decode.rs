@@ -1,4 +1,3 @@
-use etherparse::PacketHeaders;
 use nom::bytes::streaming::take;
 use nom::combinator::{into, map_res};
 use nom::error::{ErrorKind, FromExternalError, ParseError};
@@ -147,8 +146,8 @@ impl Decode for super::IPv6Header {
     }
 }
 
-impl From<PacketHeaders<'_>> for super::IPv6Header {
-    fn from(value: PacketHeaders<'_>) -> Self {
+impl From<etherparse::PacketHeaders<'_>> for super::IPv6Header {
+    fn from(value: etherparse::PacketHeaders<'_>) -> Self {
         Self {
             ip: value.net,
             link: value.link,
