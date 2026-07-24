@@ -1,3 +1,11 @@
+## [2.4.0] - 2026-07-24
+
+### 🚀 Features
+
+- *(en)* Auto-set hop-limit, remove auto-set of common header type
+- *(en,de)* Add encoding and decoding functions for all ASN.1 types
+- *(en,de)* Add encoding methods for common messages
+- *(deps)* Update GN to patched parser
 ## [2.3.0] - 2026-07-21
 
 ### 🚀 Features
