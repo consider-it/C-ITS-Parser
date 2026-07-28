@@ -43,33 +43,33 @@ impl ItsMessageId {
     }
 }
 
-impl TryInto<crate::standards::extensions::ItsMessageId> for u8 {
+impl TryFrom<u8> for ItsMessageId {
     type Error = alloc::string::String;
 
-    fn try_into(self) -> Result<crate::standards::extensions::ItsMessageId, Self::Error> {
-        match self {
-            1 => Ok(crate::standards::extensions::ItsMessageId::Denm),
-            2 => Ok(crate::standards::extensions::ItsMessageId::Cam),
-            3 => Ok(crate::standards::extensions::ItsMessageId::Poi),
-            4 => Ok(crate::standards::extensions::ItsMessageId::Spatem),
-            5 => Ok(crate::standards::extensions::ItsMessageId::Mapem),
-            6 => Ok(crate::standards::extensions::ItsMessageId::Ivim),
-            7 => Ok(crate::standards::extensions::ItsMessageId::EvRsr),
-            8 => Ok(crate::standards::extensions::ItsMessageId::Tistpgtransaction),
-            9 => Ok(crate::standards::extensions::ItsMessageId::Srem),
-            10 => Ok(crate::standards::extensions::ItsMessageId::Ssem),
-            11 => Ok(crate::standards::extensions::ItsMessageId::Evcsn),
-            12 => Ok(crate::standards::extensions::ItsMessageId::Saem),
-            13 => Ok(crate::standards::extensions::ItsMessageId::Rtcmem),
-            14 => Ok(crate::standards::extensions::ItsMessageId::Cpm),
-            15 => Ok(crate::standards::extensions::ItsMessageId::Imzm),
-            16 => Ok(crate::standards::extensions::ItsMessageId::Vam),
-            17 => Ok(crate::standards::extensions::ItsMessageId::Dsm),
-            18 => Ok(crate::standards::extensions::ItsMessageId::Pcim),
-            19 => Ok(crate::standards::extensions::ItsMessageId::Pcvm),
-            20 => Ok(crate::standards::extensions::ItsMessageId::Mcm),
-            21 => Ok(crate::standards::extensions::ItsMessageId::Pam),
-            _ => Err(alloc::format!("MessageId {} not a known value", self)),
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            1 => Ok(Self::Denm),
+            2 => Ok(Self::Cam),
+            3 => Ok(Self::Poi),
+            4 => Ok(Self::Spatem),
+            5 => Ok(Self::Mapem),
+            6 => Ok(Self::Ivim),
+            7 => Ok(Self::EvRsr),
+            8 => Ok(Self::Tistpgtransaction),
+            9 => Ok(Self::Srem),
+            10 => Ok(Self::Ssem),
+            11 => Ok(Self::Evcsn),
+            12 => Ok(Self::Saem),
+            13 => Ok(Self::Rtcmem),
+            14 => Ok(Self::Cpm),
+            15 => Ok(Self::Imzm),
+            16 => Ok(Self::Vam),
+            17 => Ok(Self::Dsm),
+            18 => Ok(Self::Pcim),
+            19 => Ok(Self::Pcvm),
+            20 => Ok(Self::Mcm),
+            21 => Ok(Self::Pam),
+            _ => Err(alloc::format!("MessageId {value} not a known value")),
         }
     }
 }
@@ -126,6 +126,31 @@ impl ItsStationType {
     }
 }
 
+impl TryFrom<u8> for ItsStationType {
+    type Error = alloc::string::String;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Self::Unknown),
+            1 => Ok(Self::Pedestrian),
+            2 => Ok(Self::Cyclist),
+            3 => Ok(Self::Moped),
+            4 => Ok(Self::Motorcycle),
+            5 => Ok(Self::Passengercar),
+            6 => Ok(Self::Bus),
+            7 => Ok(Self::Lighttruck),
+            8 => Ok(Self::Heavytruck),
+            9 => Ok(Self::Trailer),
+            10 => Ok(Self::Specialvehicles),
+            11 => Ok(Self::Tram),
+            12 => Ok(Self::LightVruVehicle),
+            13 => Ok(Self::Animal),
+            15 => Ok(Self::Roadsideunit),
+            _ => Err(alloc::format!("ItsStationType {value} not a known value")),
+        }
+    }
+}
+
 #[cfg(any(feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
 macro_rules! itsstationtype_conv {
     ($t:ty) => {
@@ -139,24 +164,7 @@ macro_rules! itsstationtype_conv {
             type Error = alloc::string::String;
 
             fn try_into(self) -> Result<crate::standards::extensions::ItsStationType, Self::Error> {
-                match self.0 {
-                    0 => Ok(crate::standards::extensions::ItsStationType::Unknown),
-                    1 => Ok(crate::standards::extensions::ItsStationType::Pedestrian),
-                    2 => Ok(crate::standards::extensions::ItsStationType::Cyclist),
-                    3 => Ok(crate::standards::extensions::ItsStationType::Moped),
-                    4 => Ok(crate::standards::extensions::ItsStationType::Motorcycle),
-                    5 => Ok(crate::standards::extensions::ItsStationType::Passengercar),
-                    6 => Ok(crate::standards::extensions::ItsStationType::Bus),
-                    7 => Ok(crate::standards::extensions::ItsStationType::Lighttruck),
-                    8 => Ok(crate::standards::extensions::ItsStationType::Heavytruck),
-                    9 => Ok(crate::standards::extensions::ItsStationType::Trailer),
-                    10 => Ok(crate::standards::extensions::ItsStationType::Specialvehicles),
-                    11 => Ok(crate::standards::extensions::ItsStationType::Tram),
-                    12 => Ok(crate::standards::extensions::ItsStationType::LightVruVehicle),
-                    13 => Ok(crate::standards::extensions::ItsStationType::Animal),
-                    15 => Ok(crate::standards::extensions::ItsStationType::Roadsideunit),
-                    _ => Err(alloc::format!("StationType {} not a known value", self.0)),
-                }
+                self.0.try_into()
             }
         }
     };
