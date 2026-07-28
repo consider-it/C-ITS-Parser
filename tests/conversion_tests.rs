@@ -523,7 +523,7 @@ mod tests {
             cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(10).unwrap()
         );
 
-        assert!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(655350).is_ok());
-        assert!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(655360).is_err());
+        assert!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(655_350).is_ok());
+        assert!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(655_360).is_err());
     }
 }

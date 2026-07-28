@@ -16,6 +16,7 @@ use crate::standards::cpm_1;
 use crate::standards::dsrc_2_2_1;
 
 /// Create conversions for ETSI type `t` and some "unavailable" value
+#[cfg(any(feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
 macro_rules! latlon_to_deg {
     ($t:ty, $unavailable:expr) => {
         impl $t {
@@ -355,6 +356,7 @@ etsi_to_meters_unavailable!(
 etsi_to_meters_unavailable!(cdd_2_2_1::etsi_its_cdd::Position1d, i16, 1., 8191); // Unit: 1 metre
 
 /// Create conversions for ETSI type `t` (which has underlying data type `tt`) with conversion factor `conv` and some "unavailable" value
+#[cfg(any(feature = "cpm_1", feature = "_cdd_1_3_1_1", feature = "_cdd_2_2_1"))]
 macro_rules! etsi_to_mps {
     ($t:ty, $tt:ty, $conv:expr, $unavailable:expr) => {
         impl $t {

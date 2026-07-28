@@ -171,6 +171,7 @@ macro_rules! itsstationtype_conv {
 }
 
 /// DENM Sub Cause Codes
+#[cfg(feature = "_cdd_2_2_1")]
 pub mod its_scc {
     /// Common conversions for manual ETSI Enums
     macro_rules! scc_conv_part {

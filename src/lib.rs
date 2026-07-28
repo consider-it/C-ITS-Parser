@@ -61,7 +61,6 @@ extern crate std;
 pub mod de;
 #[cfg(feature = "_etsi")]
 pub mod en;
-#[cfg(feature = "_etsi")]
 #[allow(clippy::all, clippy::pedantic, clippy::nursery, dead_code)]
 pub mod standards;
 
