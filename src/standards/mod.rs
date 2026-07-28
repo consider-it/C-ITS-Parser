@@ -46,6 +46,7 @@ pub mod srem_2_2_1;
 /// ETSI TS 103 301 v2.2.1 SSEM (compatible with v1.3.1 and v2.1.1)
 pub mod ssem_2_2_1;
 
+#[cfg(feature = "extensions")]
 pub mod extensions;
 
 pub mod conversions;

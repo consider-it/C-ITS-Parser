@@ -66,6 +66,8 @@ spatem_2_2_1  = ["_etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
 srem_2_2_1    = ["_etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
 # enable support for `ssem_2_2_1`. Note: wasm shall only be used with all messages enabled (`v2x` feature flag)!
 ssem_2_2_1    = ["_etsi", "_cdd_2_2_1", "_dsrc_2_2_1"]
+# enable support for additional types (only needed when no v2x message is enabled)
+extensions    = []
 
 # shortcut for `cpm_1` and `cpm_2_1_1`
 cpm     = ["cpm_1", "cpm_2_1_1"]
@@ -91,7 +93,7 @@ _cdd_2_2_1    = []
 # internal feature enabling the DSRC 2.2.1
 _dsrc_2_2_1   = []
 # internal feature enabling common ETSI ASN.1 data types and the ASN.1 parser itself
-_etsi = ["transport", "dep:nom", "rasn", "dep:hex"]
+_etsi = ["transport", "dep:nom", "rasn", "dep:hex", "extensions"]
 
 [dependencies]
 chrono = { version = "0.4.42", default-features = false, optional = true }
