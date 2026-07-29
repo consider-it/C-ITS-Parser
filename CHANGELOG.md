@@ -1,3 +1,10 @@
+## [2.4.1] - 2026-07-29
+
+### 🚀 Features
+
+- *(conversions)* Add conversion for PathDeltaTime to and from millis
+- *(extensions)* Add `TryFrom<u8>` for `ItsStationType`
+- Make `standards::extensions` available without ASN.1 messages
 ## [2.4.0] - 2026-07-24
 
 ### 🚀 Features
