@@ -240,37 +240,15 @@ pub fn decode_gn_btp_headers(
 
     use geonetworking::Decode as _;
 
-    use crate::transport::decode::Decode as _;
-
     let result = geonetworking::Packet::decode(input).map_err(crate::map_err_to_string)?;
     let Some(payload) = result.decoded.payload() else {
         return Err("No payload in secured geonetworking header!".to_string());
     };
-    let (remaining, tp) = match result.decoded.common().next_header {
-        geonetworking::en302636_4_1::NextAfterCommon::Any => {
-            Err("Currently, only BTP and IPv6 Headers can be decoded!".to_string())
-        }
-        geonetworking::en302636_4_1::NextAfterCommon::BTPA => {
-            crate::transport::BasicTransportAHeader::decode(payload)
-                .map(|(rem, btpa)| (rem, crate::transport::TransportHeader::BtpA(btpa)))
-                .map_err(crate::map_err_to_string)
-        }
-        geonetworking::en302636_4_1::NextAfterCommon::BTPB => {
-            crate::transport::BasicTransportBHeader::decode(payload)
-                .map(|(rem, btpb)| (rem, crate::transport::TransportHeader::BtpB(btpb)))
-                .map_err(crate::map_err_to_string)
-        }
-        geonetworking::en302636_4_1::NextAfterCommon::IPv6 => {
-            crate::transport::IPv6Header::decode(payload)
-                .map(|(rem, ipv6)| {
-                    (
-                        rem,
-                        crate::transport::TransportHeader::IPv6(alloc::boxed::Box::new(ipv6)),
-                    )
-                })
-                .map_err(crate::map_err_to_string)
-        }
-    }?;
+    let (remaining, tp) = crate::transport::TransportHeader::decode_with_gn_next_header(
+        result.decoded.common().next_header,
+        payload,
+    )?;
+
     Ok((remaining, alloc::boxed::Box::new(tp), result.decoded))
 }
 
