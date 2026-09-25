@@ -1380,4 +1380,212 @@ impl cdd_2_2_1::etsi_its_cdd::CauseCodeChoice {
             Self::reserved128(scc) => (128, scc.0),
         }
     }
+
+    /// Creates CauseCodeChoice from Cause Code/ Sub Cause Code Tuple
+    ///
+    /// # Errors
+    /// human-readable string when input value is out of bounds
+    pub fn try_from_u8_tuple(cc: u8, scc: u8) -> Result<Self, alloc::string::String> {
+        match cc {
+            0 => Ok(Self::reserved0(scc.into())),
+            1 => Ok(Self::trafficCondition1(scc.into())),
+            2 => Ok(Self::accident2(scc.into())),
+            3 => Ok(Self::roadworks3(scc.into())),
+            4 => Ok(Self::reserved4(scc.into())),
+            5 => Ok(Self::impassability5(scc.into())),
+            6 => Ok(Self::adverseWeatherCondition_Adhesion6(scc.into())),
+            7 => Ok(Self::aquaplaning7(scc.into())),
+            8 => Ok(Self::reserved8(scc.into())),
+            9 => Ok(Self::hazardousLocation_SurfaceCondition9(scc.into())),
+            10 => Ok(Self::hazardousLocation_ObstacleOnTheRoad10(scc.into())),
+            11 => Ok(Self::hazardousLocation_AnimalOnTheRoad11(scc.into())),
+            12 => Ok(Self::humanPresenceOnTheRoad12(scc.into())),
+            13 => Ok(Self::reserved13(scc.into())),
+            14 => Ok(Self::wrongWayDriving14(scc.into())),
+            15 => Ok(Self::rescueAndRecoveryWorkInProgress15(scc.into())),
+            16 => Ok(Self::reserved16(scc.into())),
+            17 => Ok(Self::adverseWeatherCondition_ExtremeWeatherCondition17(
+                scc.into(),
+            )),
+            18 => Ok(Self::adverseWeatherCondition_Visibility18(scc.into())),
+            19 => Ok(Self::adverseWeatherCondition_Precipitation19(scc.into())),
+            20 => Ok(Self::violence20(scc.into())),
+            21 => Ok(Self::reserved21(scc.into())),
+            22 => Ok(Self::reserved22(scc.into())),
+            23 => Ok(Self::reserved23(scc.into())),
+            24 => Ok(Self::reserved24(scc.into())),
+            25 => Ok(Self::reserved25(scc.into())),
+            26 => Ok(Self::slowVehicle26(scc.into())),
+            27 => Ok(Self::dangerousEndOfQueue27(scc.into())),
+            28 => Ok(Self::publicTransportVehicleApproaching28(scc.into())),
+            29 => Ok(Self::reserved29(scc.into())),
+            30 => Ok(Self::reserved30(scc.into())),
+            31 => Ok(Self::reserved31(scc.into())),
+            32 => Ok(Self::reserved32(scc.into())),
+            33 => Ok(Self::reserved33(scc.into())),
+            34 => Ok(Self::reserved34(scc.into())),
+            35 => Ok(Self::reserved35(scc.into())),
+            36 => Ok(Self::reserved36(scc.into())),
+            37 => Ok(Self::reserved37(scc.into())),
+            38 => Ok(Self::reserved38(scc.into())),
+            39 => Ok(Self::reserved39(scc.into())),
+            40 => Ok(Self::reserved40(scc.into())),
+            41 => Ok(Self::reserved41(scc.into())),
+            42 => Ok(Self::reserved42(scc.into())),
+            43 => Ok(Self::reserved43(scc.into())),
+            44 => Ok(Self::reserved44(scc.into())),
+            45 => Ok(Self::reserved45(scc.into())),
+            46 => Ok(Self::reserved46(scc.into())),
+            47 => Ok(Self::reserved47(scc.into())),
+            48 => Ok(Self::reserved48(scc.into())),
+            49 => Ok(Self::reserved49(scc.into())),
+            50 => Ok(Self::reserved50(scc.into())),
+            51 => Ok(Self::reserved51(scc.into())),
+            52 => Ok(Self::reserved52(scc.into())),
+            53 => Ok(Self::reserved53(scc.into())),
+            54 => Ok(Self::reserved54(scc.into())),
+            55 => Ok(Self::reserved55(scc.into())),
+            56 => Ok(Self::reserved56(scc.into())),
+            57 => Ok(Self::reserved57(scc.into())),
+            58 => Ok(Self::reserved58(scc.into())),
+            59 => Ok(Self::reserved59(scc.into())),
+            60 => Ok(Self::reserved60(scc.into())),
+            61 => Ok(Self::reserved61(scc.into())),
+            62 => Ok(Self::reserved62(scc.into())),
+            63 => Ok(Self::reserved63(scc.into())),
+            64 => Ok(Self::reserved64(scc.into())),
+            65 => Ok(Self::reserved65(scc.into())),
+            66 => Ok(Self::reserved66(scc.into())),
+            67 => Ok(Self::reserved67(scc.into())),
+            68 => Ok(Self::reserved68(scc.into())),
+            69 => Ok(Self::reserved69(scc.into())),
+            70 => Ok(Self::reserved70(scc.into())),
+            71 => Ok(Self::reserved71(scc.into())),
+            72 => Ok(Self::reserved72(scc.into())),
+            73 => Ok(Self::reserved73(scc.into())),
+            74 => Ok(Self::reserved74(scc.into())),
+            75 => Ok(Self::reserved75(scc.into())),
+            76 => Ok(Self::reserved76(scc.into())),
+            77 => Ok(Self::reserved77(scc.into())),
+            78 => Ok(Self::reserved78(scc.into())),
+            79 => Ok(Self::reserved79(scc.into())),
+            80 => Ok(Self::reserved80(scc.into())),
+            81 => Ok(Self::reserved81(scc.into())),
+            82 => Ok(Self::reserved82(scc.into())),
+            83 => Ok(Self::reserved83(scc.into())),
+            84 => Ok(Self::reserved84(scc.into())),
+            85 => Ok(Self::reserved85(scc.into())),
+            86 => Ok(Self::reserved86(scc.into())),
+            87 => Ok(Self::reserved87(scc.into())),
+            88 => Ok(Self::reserved88(scc.into())),
+            89 => Ok(Self::reserved89(scc.into())),
+            90 => Ok(Self::reserved90(scc.into())),
+            91 => Ok(Self::vehicleBreakdown91(scc.into())),
+            92 => Ok(Self::postCrash92(scc.into())),
+            93 => Ok(Self::humanProblem93(scc.into())),
+            94 => Ok(Self::stationaryVehicle94(scc.into())),
+            95 => Ok(Self::emergencyVehicleApproaching95(scc.into())),
+            96 => Ok(Self::hazardousLocation_DangerousCurve96(scc.into())),
+            97 => Ok(Self::collisionRisk97(scc.into())),
+            98 => Ok(Self::signalViolation98(scc.into())),
+            99 => Ok(Self::dangerousSituation99(scc.into())),
+            100 => Ok(Self::railwayLevelCrossing100(scc.into())),
+            101 => Ok(Self::reserved101(scc.into())),
+            102 => Ok(Self::reserved102(scc.into())),
+            103 => Ok(Self::reserved103(scc.into())),
+            104 => Ok(Self::reserved104(scc.into())),
+            105 => Ok(Self::reserved105(scc.into())),
+            106 => Ok(Self::reserved106(scc.into())),
+            107 => Ok(Self::reserved107(scc.into())),
+            108 => Ok(Self::reserved108(scc.into())),
+            109 => Ok(Self::reserved109(scc.into())),
+            110 => Ok(Self::reserved110(scc.into())),
+            111 => Ok(Self::reserved111(scc.into())),
+            112 => Ok(Self::reserved112(scc.into())),
+            113 => Ok(Self::reserved113(scc.into())),
+            114 => Ok(Self::reserved114(scc.into())),
+            115 => Ok(Self::reserved115(scc.into())),
+            116 => Ok(Self::reserved116(scc.into())),
+            117 => Ok(Self::reserved117(scc.into())),
+            118 => Ok(Self::reserved118(scc.into())),
+            119 => Ok(Self::reserved119(scc.into())),
+            120 => Ok(Self::reserved120(scc.into())),
+            121 => Ok(Self::reserved121(scc.into())),
+            122 => Ok(Self::reserved122(scc.into())),
+            123 => Ok(Self::reserved123(scc.into())),
+            124 => Ok(Self::reserved124(scc.into())),
+            125 => Ok(Self::reserved125(scc.into())),
+            126 => Ok(Self::reserved126(scc.into())),
+            127 => Ok(Self::reserved127(scc.into())),
+            128 => Ok(Self::reserved128(scc.into())),
+            _ => Err(alloc::format!("Cause code value out of range: {cc} > 128")),
+        }
+    }
 }
+
+#[cfg(feature = "_cdd_2_2_1")]
+macro_rules! scc_conv {
+    ($etsi:ty) => {
+        impl From<u8> for $etsi {
+            fn from(value: u8) -> Self {
+                Self(value)
+            }
+        }
+    };
+}
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::SubCauseCodeType);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::TrafficConditionSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::AccidentSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::RoadworksSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::ImpassabilitySubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionAdhesionSubCauseCode);
+// Note: aquaplaning7 uses generic `SubCauseCodeType` currently (already added above)
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::HazardousLocationSurfaceConditionSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::HazardousLocationObstacleOnTheRoadSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::HazardousLocationAnimalOnTheRoadSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::HumanPresenceOnTheRoadSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::WrongWayDrivingSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::RescueAndRecoveryWorkInProgressSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionExtremeWeatherConditionSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionVisibilitySubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::AdverseWeatherConditionPrecipitationSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::SlowVehicleSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::DangerousEndOfQueueSubCauseCode);
+// Note: publicTransportVehicleApproaching28 uses generic `SubCauseCodeType` currently (already added above)
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::VehicleBreakdownSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::PostCrashSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::HumanProblemSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::StationaryVehicleSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::HazardousLocationDangerousCurveSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::CollisionRiskSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::SignalViolationSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::DangerousSituationSubCauseCode);
+#[cfg(feature = "_cdd_2_2_1")]
+scc_conv!(cdd_2_2_1::etsi_its_cdd::RailwayLevelCrossingSubCauseCode);
