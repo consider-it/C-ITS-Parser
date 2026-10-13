@@ -1,5 +1,60 @@
 use alloc::string::ToString;
 
+pub struct Headers<'a> {
+    pub radiotap: &'a [u8],
+    pub ieee_802_11: &'a [u8],
+    pub llc: &'a [u8],
+    pub gn_slice: &'a [u8],
+    pub btp_slice: &'a [u8],
+    pub gn: crate::gn::Packet<'a>,
+}
+
+/// Extracts all headers from a binary message buffer and returns the headers as well as the remaining buffer
+///
+/// Convenience function combining [`extract_radiotap_hdr`], [`extract_80211_hdr`], [`extract_llc_hdr`] and decoding of the geonetworking header.
+/// In order to determine the length of the geonetworking header it needs to be decoded,
+/// therefore the decoded geonetworking header is returned together with the array slices.
+///
+/// # Errors
+/// Returns a human-readable error when parsing failed
+pub fn extract_headers(data: &[u8]) -> Result<(Headers<'_>, &'_ [u8]), alloc::string::String> {
+    use crate::gn::Decode as _;
+
+    let (radiotap, data) = extract_radiotap_hdr(data)?;
+    let (ieee_802_11, data) = extract_80211_hdr(data)?;
+    let (llc, data) = extract_llc_hdr(data)?;
+    let (gn, bytes_consumed) = {
+        let result = crate::gn::Packet::decode(data)
+            .map_err(|err| alloc::format!("Error decoding gn header: {err:?}"))?;
+        (result.decoded, result.bytes_consumed)
+    };
+    let Some(gn_payload) = gn.payload() else {
+        return Err("Encountered geonetworking packet without payload".to_string());
+    };
+
+    let (remaining, _) = crate::transport::TransportHeader::decode_with_gn_next_header(
+        gn.common().next_header,
+        gn_payload,
+    )
+    .map_err(|err| alloc::format!("Error decoding btp header: {err}"))?;
+
+    let gn_slice = &data[..bytes_consumed];
+    let btp_length = gn_payload.len() - remaining.len();
+    let btp_slice = &gn_payload[..btp_length];
+
+    Ok((
+        Headers {
+            radiotap,
+            ieee_802_11,
+            llc,
+            gn_slice,
+            btp_slice,
+            gn,
+        },
+        &gn_payload[btp_length..],
+    ))
+}
+
 /// Strips Radiotap, IEEE 802.11p and LLC headers from a binary message buffer
 ///
 /// Convenience function combining [`remove_radiotap_hdr`], [`remove_80211_hdr`] and [`remove_llc_hdr`].
