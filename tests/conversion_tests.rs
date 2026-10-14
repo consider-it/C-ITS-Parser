@@ -526,4 +526,65 @@ mod tests {
         assert!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(655_350).is_ok());
         assert!(cdd_2_2_1::etsi_its_cdd::PathDeltaTime::from_millis(655_360).is_err());
     }
+
+    #[test]
+    #[cfg(feature = "_cdd_2_2_1")]
+    fn cause_code_choice_test() {
+        use c_its_parser::standards::cdd_2_2_1::etsi_its_cdd::CauseCodeChoice;
+        use c_its_parser::standards::extensions::its_scc;
+
+        // build a CC 3/3
+        let ref_tuple = (3, 3);
+        let ref_ccc =
+            CauseCodeChoice::roadworks3(its_scc::Roadworks::SlowMovingRoadMaintenance.into());
+
+        let test = CauseCodeChoice::try_from_u8_tuple(ref_tuple.0, ref_tuple.1).unwrap();
+        assert_eq!(ref_ccc, test);
+        assert_eq!(ref_tuple, test.to_u8_tuple());
+
+        // build a CC 95/1
+        let ref_tuple = (95, 1);
+        let ref_ccc = CauseCodeChoice::emergencyVehicleApproaching95(
+            its_scc::EmergencyVehicleApproaching::EmergencyVehicleApproaching.into(),
+        );
+
+        let test = CauseCodeChoice::try_from_u8_tuple(ref_tuple.0, ref_tuple.1).unwrap();
+        assert_eq!(ref_ccc, test);
+        assert_eq!(ref_tuple, test.to_u8_tuple());
+    }
+
+    #[test]
+    #[cfg(feature = "_cdd_2_2_1")]
+    fn scc_test() {
+        use c_its_parser::standards::cdd_2_2_1::etsi_its_cdd;
+
+        // build a roadworks SCC
+        assert_eq!(
+            etsi_its_cdd::RoadworksSubCauseCode(3),
+            etsi_its_cdd::RoadworksSubCauseCode::from(3)
+        );
+
+        // build a roadworks SCC
+        assert_eq!(
+            etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode(1),
+            etsi_its_cdd::EmergencyVehicleApproachingSubCauseCode::from(1)
+        );
+    }
+
+    #[test]
+    #[cfg(feature = "_cdd_2_2_1")]
+    fn cause_code_ext_test() {
+        use c_its_parser::standards::cdd_2_2_1;
+        use c_its_parser::standards::extensions::its_scc;
+
+        assert_eq!(
+            cdd_2_2_1::etsi_its_cdd::RoadworksSubCauseCode(0),
+            its_scc::Roadworks::Unavailable.into()
+        );
+
+        assert_eq!(
+            cdd_2_2_1::etsi_its_cdd::RoadworksSubCauseCode(3),
+            its_scc::Roadworks::SlowMovingRoadMaintenance.into()
+        );
+    }
 }
