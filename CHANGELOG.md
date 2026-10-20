@@ -1,3 +1,13 @@
+## [2.4.2] - 2026-10-20
+
+### 🚀 Features
+
+- *(conversions)* Create CauseCodeChoice from Cause Code/ Sub Cause Code Tuple
+- *(pcap)* Add function to extract all headers at once
+
+### ⚙️ Miscellaneous Tasks
+
+- *(de)* Remove code duplication in `decode_gn_btp_headers`
 ## [2.4.1] - 2026-07-29
 
 ### 🚀 Features
