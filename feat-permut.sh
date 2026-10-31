@@ -14,6 +14,7 @@ features_base=(
   std,v2x
   std,v2x,time
   std,v2x,time,json
+  std,v2x,json,wasm-bindings
 )
 features_more=(
   std,cam

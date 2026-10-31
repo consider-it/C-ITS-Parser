@@ -6,7 +6,7 @@
 #[cfg(not(target_arch = "wasm32"))]
 use alloc::string::ToString;
 
-#[cfg(all(target_arch = "wasm32", feature = "json"))]
+#[cfg(all(target_arch = "wasm32", feature = "json", feature = "wasm-bindings"))]
 use wasm_bindgen::prelude::*;
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
@@ -354,7 +354,7 @@ encode_some_type!(crate::standards::cpm_1::cpm_pdu_descriptions::CPM);
 encode_some_type!(crate::standards::cpm_1::cpm_pdu_descriptions::CollectivePerceptionMessage);
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(js_name = encodeDenm)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = encodeDenm))]
 /// Encodes a DENM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, denms of the following versions are supported: v2.2.1 (221) and v1.3.1 (131)
@@ -384,7 +384,7 @@ pub fn encode_denm(denm: &crate::JsonItsMessage, version: u32) -> Result<Encoded
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(js_name = encodeCam)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = encodeCam))]
 /// Encodes a CAM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cams of the following versions are supported: v1.4.1 (141)
@@ -405,7 +405,7 @@ pub fn encode_cam(cam: &crate::JsonItsMessage, version: u32) -> Result<Encoded, 
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(js_name = encodeMapem)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = encodeMapem))]
 /// Encodes a MAPEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, mapems of the following versions are supported: v2.2.1 (221)
@@ -426,7 +426,7 @@ pub fn encode_mapem(mapem: &crate::JsonItsMessage, version: u32) -> Result<Encod
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(js_name = encodeSpatem)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = encodeSpatem))]
 /// Encodes a SPATEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, spatems of the following versions are supported: v2.2.1 (221)
@@ -449,7 +449,7 @@ pub fn encode_spatem(spatem: &crate::JsonItsMessage, version: u32) -> Result<Enc
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(js_name = encodeIvim)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = encodeIvim))]
 /// Encodes a IVIM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ivims of the following versions are supported: v1.3.1 (131)/ v2.1.1 (211), v2.2.1 (221)
@@ -480,7 +480,7 @@ pub fn encode_ivim(ivim: &crate::JsonItsMessage, version: u32) -> Result<Encoded
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(js_name = encodeSrem)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = encodeSrem))]
 /// Encodes a SREM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, srems of the following versions are supported: v2.2.1 (221)
@@ -501,7 +501,7 @@ pub fn encode_srem(srem: &crate::JsonItsMessage, version: u32) -> Result<Encoded
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(js_name = encodeCpm)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = encodeCpm))]
 /// Encodes a CPM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, cpms of the following versions are supported: v1.3.1 (131), v2.1.1 (211)
@@ -531,7 +531,7 @@ pub fn encode_cpm(cpm: &crate::JsonItsMessage, version: u32) -> Result<Encoded, 
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(js_name = encodeSsem)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = encodeSsem))]
 /// Encodes a SSEM message into binary UPER with optional headers
 /// The encoder expects either both (GeoNetworking and Transport) headers or none
 /// Currently, ssems of the following versions are supported: v2.2.1 (221)
