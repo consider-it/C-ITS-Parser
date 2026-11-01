@@ -40,8 +40,9 @@ and enable `v2x` and `json` to use the existing Rust decoding API:
 c-its-parser = { version = "2.4.2", default-features = false, features = ["std", "v2x", "json"] }
 ```
 
-This lets the linker remove unused API functions from the application. Keep
-`wasm-bindings` enabled when building the standalone JavaScript package.
+This lets the linker remove unused API functions from the application.
+JavaScript builds using `--no-default-features` must explicitly enable
+`wasm-bindings` alongside their message and codec features.
 
 ### Javascript API
 
