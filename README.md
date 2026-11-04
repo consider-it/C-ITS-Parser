@@ -32,19 +32,12 @@ So either use `npm install @consider-it/etsi-web-node` or `npm install @consider
 
 Please refer to [docs.rs](https://docs.rs/c_its_parser) for auto-generated documentation.
 
-The default `wasm-bindings` feature exports the JavaScript API. When using this
-crate as a Rust dependency in a WebAssembly application, disable default features
-and enable `v2x` and `json` to use the existing Rust decoding API:
-
-```toml
-c-its-parser = { version = "2.4.2", default-features = false, features = ["std", "v2x", "json"] }
-```
-
-This lets the linker remove unused API functions from the application.
-JavaScript builds using `--no-default-features` must explicitly enable
-`wasm-bindings` alongside their message and codec features.
+For Rust-only WebAssembly use, disable default features and enable `std`, `v2x` and `json`.
 
 ### Javascript API
+
+The `wasm-bindings` feature exports this API and is enabled by default.
+With `--no-default-features`, enable `wasm-bindings`, `v2x` and `json` explicitly.
 
 The `decode` function is a catch-all method for ITS messages of undefined type.
 
