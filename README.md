@@ -32,7 +32,12 @@ So either use `npm install @consider-it/etsi-web-node` or `npm install @consider
 
 Please refer to [docs.rs](https://docs.rs/c_its_parser) for auto-generated documentation.
 
+For Rust-only WebAssembly use, disable default features and enable `std`, `v2x` and `json`.
+
 ### Javascript API
+
+The `wasm-bindings` feature exports this API and is enabled by default.
+With `--no-default-features`, enable `wasm-bindings`, `v2x` and `json` explicitly.
 
 The `decode` function is a catch-all method for ITS messages of undefined type.
 

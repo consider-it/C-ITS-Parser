@@ -4,7 +4,12 @@
 
 #![allow(non_snake_case)]
 
-#[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
+#[cfg(all(
+    target_arch = "wasm32",
+    feature = "v2x",
+    feature = "json",
+    feature = "wasm-bindings"
+))]
 use wasm_bindgen::prelude::*;
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
@@ -420,7 +425,7 @@ decode_some_type!(crate::standards::cpm_1::cpm_pdu_descriptions::CPM);
 decode_some_type!(crate::standards::cpm_1::cpm_pdu_descriptions::CollectivePerceptionMessage);
 
 #[cfg(all(target_arch = "wasm32", feature = "v2x", feature = "json"))]
-#[wasm_bindgen(js_name = decode)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(js_name = decode))]
 /// Decodes an ITS message of undefined type.
 /// Tries to parse the ITS PDU header to read the message ID that identifies the message type.
 /// ### Params

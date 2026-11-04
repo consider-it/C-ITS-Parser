@@ -79,11 +79,15 @@ pub use geonetworking as gn;
 #[cfg(feature = "transport")]
 #[deprecated = "use `pcap::remove_pcap_headers` instead"]
 pub use pcap::remove_pcap_headers;
-#[cfg(all(target_arch = "wasm32", any(feature = "json", feature = "_etsi")))]
+#[cfg(all(
+    target_arch = "wasm32",
+    feature = "wasm-bindings",
+    any(feature = "json", feature = "_etsi")
+))]
 use wasm_bindgen::prelude::*;
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen(getter_with_clone)]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen(getter_with_clone))]
 #[derive(Debug, Clone, PartialEq, Default)]
 /// Wrapper for the stringified JSON of headers and ITS ETSI message
 pub struct JsonItsMessage {
@@ -120,9 +124,9 @@ pub struct JsonItsMessage {
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "json"))]
-#[wasm_bindgen]
+#[cfg_attr(feature = "wasm-bindings", wasm_bindgen)]
 impl JsonItsMessage {
-    #[wasm_bindgen(constructor)]
+    #[cfg_attr(feature = "wasm-bindings", wasm_bindgen(constructor))]
     pub fn from(
         its: Option<String>,
         geonetworking: Option<String>,
@@ -395,7 +399,7 @@ impl From<&ItsMessage<'_>> for standards::extensions::ItsMessageId {
 }
 
 #[cfg(feature = "_etsi")]
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+#[cfg_attr(all(target_arch = "wasm32", feature = "wasm-bindings"), wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 /// Choice which message headers are present in the binary message buffer
 pub enum Headers {
@@ -410,7 +414,7 @@ pub enum Headers {
 }
 
 #[cfg(feature = "_etsi")]
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+#[cfg_attr(all(target_arch = "wasm32", feature = "wasm-bindings"), wasm_bindgen)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 /// Choice of ASN.1 encoding rule
 pub enum EncodingRules {

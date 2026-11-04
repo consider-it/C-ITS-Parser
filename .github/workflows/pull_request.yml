@@ -74,6 +74,11 @@ jobs:
       # - name: wasm-pack test
       #   run: wasm-pack test --chrome --headless
 
+      - name: Test default JavaScript bindings
+        run: |
+          wasm-pack build --release --target nodejs
+          node tests/wasm.cjs
+
       - name: free some disk space
         run: |
           # Remove Java (JDKs)
