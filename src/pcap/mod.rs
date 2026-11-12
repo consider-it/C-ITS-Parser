@@ -17,10 +17,18 @@ pub struct Headers<'a> {
 ///
 /// # Errors
 /// Returns a human-readable error when parsing failed
-pub fn extract_headers(data: &[u8]) -> Result<(Headers<'_>, &'_ [u8]), alloc::string::String> {
+pub fn extract_headers(
+    data: &[u8],
+    has_radiotap: bool,
+) -> Result<(Headers<'_>, &'_ [u8]), alloc::string::String> {
     use crate::gn::Decode as _;
 
-    let (radiotap, data) = extract_radiotap_hdr(data)?;
+    let (radiotap, data) = if has_radiotap {
+        extract_radiotap_hdr(data)?
+    } else {
+        let empty_slice: &[u8] = &[];
+        (empty_slice, data)
+    };
     let (ieee_802_11, data) = extract_80211_hdr(data)?;
     let (llc, data) = extract_llc_hdr(data)?;
     let (gn, bytes_consumed) = {
