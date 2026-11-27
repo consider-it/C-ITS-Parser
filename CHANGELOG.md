@@ -1,3 +1,8 @@
+## [2.4.4] - 2026-11-27
+
+### 🐛 Bug Fixes
+
+- *(pcap)* Match function names for header extraction
 ## [2.4.3] - 2026-11-27
 
 ### 🚀 Features
