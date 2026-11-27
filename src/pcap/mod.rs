@@ -32,7 +32,7 @@ impl Headers<'_> {
     ///
     /// # Errors
     /// Returns a human-readable error when parsing failed
-    pub fn extract_headers_80211(
+    pub fn extract_from_80211(
         data: &[u8],
     ) -> Result<(Headers<'_>, &'_ [u8]), alloc::string::String> {
         Self::extract_headers(data, false, true)
@@ -46,9 +46,7 @@ impl Headers<'_> {
     ///
     /// # Errors
     /// Returns a human-readable error when parsing failed
-    pub fn extract_headers_gn(
-        data: &[u8],
-    ) -> Result<(Headers<'_>, &'_ [u8]), alloc::string::String> {
+    pub fn extract_from_gn(data: &[u8]) -> Result<(Headers<'_>, &'_ [u8]), alloc::string::String> {
         Self::extract_headers(data, false, false)
     }
 
