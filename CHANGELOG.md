@@ -1,3 +1,8 @@
+## [2.4.3] - 2026-11-27
+
+### 🚀 Features
+
+- *(pcap)* Add variant of `extract_headers` without radiotap header
 ## [2.4.2] - 2026-10-20
 
 ### 🚀 Features
